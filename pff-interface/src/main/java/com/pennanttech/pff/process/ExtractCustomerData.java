@@ -83,9 +83,7 @@ public class ExtractCustomerData {
 			long headerId = extractCustomerDataDAO.saveDownloadheader(processType, "F");
 			List<Long> extractCustomers = extractCustomerDataDAO.extractCustomers(curTime);
 
-			extractCustomers.forEach(custId -> {
-				processCustomer(custId, headerId);
-			});
+			extractCustomers.forEach(custId -> processCustomer(custId, headerId));
 
 			extractCustomerDataDAO.updateDownloadheader(headerId, count);
 
@@ -104,9 +102,7 @@ public class ExtractCustomerData {
 			long headerId = extractCustomerDataDAO.saveDownloadheader(processType, "A");
 			List<Long> customerIDs = extractCustomerDataDAO.getFinApprovedCustomers(prevTime, curTime);
 
-			customerIDs.forEach(custId -> {
-				processCustomer(custId, headerId);
-			});
+			customerIDs.forEach(custId -> processCustomer(custId, headerId));
 
 			extractCustomerDataDAO.updateDownloadheader(headerId, count);
 
@@ -130,9 +126,7 @@ public class ExtractCustomerData {
 				List<Long> closedData = closedCustomers.stream().filter(item -> !activeCustomers.contains(item))
 						.collect(Collectors.toList());
 
-				closedData.forEach(custID -> {
-					processCustomer(custID, headerId);
-				});
+				closedData.forEach(custID -> processCustomer(custID, headerId));
 			}
 
 			extractCustomerDataDAO.updateDownloadheader(headerId, count);
