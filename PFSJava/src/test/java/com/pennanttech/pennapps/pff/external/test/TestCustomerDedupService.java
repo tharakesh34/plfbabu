@@ -80,12 +80,9 @@ public class TestCustomerDedupService {
 		try {
 			response = customerDedupService.invokeDedup(customerDetails);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			logger.error(Literal.EXCEPTION, e);
 
 		}
-		System.out.println(response.toString());
-
 	}
 
 	@Test(enabled = false)

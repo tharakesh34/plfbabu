@@ -1794,7 +1794,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					bal = advAmount.subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
 				}
 				soaFeeDetails = new SOAFeeDetails();
-				if (!(bal.compareTo(BigDecimal.ZERO) == 0)) {
+				if (bal.compareTo(BigDecimal.ZERO) != 0) {
 					soaFeeDetails.setFeeType(advise.getFeeTypeDesc());
 					soaFeeDetails.setAmount(PennantApplicationUtil.formateAmount(bal, soa.getCcyEditField()));
 					soaFeeDetails.setBookingDate(advise.getPostDate());

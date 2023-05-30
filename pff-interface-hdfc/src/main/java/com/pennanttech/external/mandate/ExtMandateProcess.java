@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -353,19 +352,16 @@ public class ExtMandateProcess extends AbstractInterface implements MandateProce
 	}
 
 	public List<String> getEntityCodes() {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = null;
 		try {
-			sql = new StringBuilder("Select EntityCode ");
-			sql.append("from  Entity ");
+			String sql = "Select EntityCode from Entity";
 
-			logger.debug("Query--->" + sql.toString());
-			return jdbcTemplate.queryForList(sql.toString(), String.class);
+			logger.debug(Literal.SQL.concat(sql));
+
+			return jdbcTemplate.queryForList(sql, String.class);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
+			return new ArrayList<>();
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	/**

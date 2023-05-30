@@ -570,8 +570,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			}
 			if (this.row_FinAssetValue.isVisible()) {
 				// Validate if the total disbursement amount exceeds maximum disbursement Amount
-				if (((StringUtils.isEmpty(moduleDefiner)
-						|| StringUtils.equals(FinServiceEvent.ADDDISB, moduleDefiner)))) {
+				if (StringUtils.isEmpty(moduleDefiner) || FinServiceEvent.ADDDISB.equals(moduleDefiner)) {
 					if (this.finCurrentAssetValue.getActualValue() != null
 							&& finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
 							&& finCurrentAssetValue.getActualValue().compareTo(finAssetValue.getActualValue()) > 0) {

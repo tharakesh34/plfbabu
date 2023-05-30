@@ -84,9 +84,8 @@ public class ExtLienMarkingDAOImpl extends SequenceDao implements ExtLienMarking
 				ps.setTimestamp(index, curTimeStamp);
 			});
 		} catch (Exception e) {
-
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override

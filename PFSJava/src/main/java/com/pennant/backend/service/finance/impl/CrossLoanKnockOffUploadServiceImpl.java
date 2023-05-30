@@ -896,7 +896,6 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 						uad.setPaidAmount(paidAmount);
 
 						list.add(uad);
-						continue;
 					}
 				}
 			}

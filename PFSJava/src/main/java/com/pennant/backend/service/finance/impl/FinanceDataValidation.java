@@ -4459,7 +4459,7 @@ public class FinanceDataValidation {
 			return;
 		}
 
-		if (!(finType.getPlanEMIHLockPeriod() >= fm.getPlanEMIHLockPeriod())) {
+		if (finType.getPlanEMIHLockPeriod() < fm.getPlanEMIHLockPeriod()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "PlanEMIHLockPeriod";
 			valueParm[1] = String.valueOf(finType.getPlanEMIHLockPeriod());

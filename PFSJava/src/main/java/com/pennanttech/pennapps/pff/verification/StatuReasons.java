@@ -67,7 +67,7 @@ public enum StatuReasons {
 
 	public static StatuReasons getType(String key) {
 		for (StatuReasons type : values()) {
-			if (type.getKey() == key) {
+			if (type.getKey().equals(key)) {
 				return type;
 			}
 		}

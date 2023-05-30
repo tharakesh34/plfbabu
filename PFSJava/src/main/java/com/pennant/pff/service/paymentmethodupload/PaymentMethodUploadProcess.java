@@ -322,7 +322,6 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 		for (FinanceScheduleDetail curSchd : schedules) {
 			if (DateUtil.compare(curSchd.getSchDate(), appDate) >= 0 && curSchd.isRepayOnSchDate()) {
 				repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd());
-				continue;
 			}
 		}
 
