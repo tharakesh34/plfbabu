@@ -6196,6 +6196,11 @@ public class ScheduleCalculator {
 			fm.setEventToDate(effcToDate);
 		}
 
+		if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage()) && fm.getAdvTerms() > 0
+				&& PROC_GETCALSCHD.equals(finScheduleData.getModuleDefiner())) {
+			fm.setAdjustClosingBal(true);
+		}
+
 		finScheduleData = graceSchdCal(finScheduleData);
 		finScheduleData = repaySchdCal(finScheduleData, false);
 		finScheduleData = setFinanceTotals(finScheduleData);
@@ -6239,6 +6244,11 @@ public class ScheduleCalculator {
 
 			finScheduleData = procChangeRate(finScheduleData, null, null, BigDecimal.ZERO, effRateofReturn, false,
 					false);
+
+			if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
+					&& fm.getAdvTerms() > 0 && PROC_GETCALSCHD.equals(finScheduleData.getModuleDefiner())) {
+				fm.setAdjustClosingBal(true);
+			}
 
 			finScheduleData = getRpyInstructDetails(finScheduleData);
 
@@ -6284,6 +6294,12 @@ public class ScheduleCalculator {
 			// Calculate Schedule Building process with Effective Rate
 			finScheduleData = procChangeRate(finScheduleData, null, null, BigDecimal.ZERO, effRateofReturn, false,
 					false);
+
+			if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
+					&& fm.getAdvTerms() > 0 && PROC_GETCALSCHD.equals(finScheduleData.getModuleDefiner())) {
+				fm.setAdjustClosingBal(true);
+			}
+
 			finScheduleData = graceSchdCal(finScheduleData);
 			finScheduleData = repaySchdCal(finScheduleData, false);
 
@@ -6301,6 +6317,11 @@ public class ScheduleCalculator {
 		}
 
 		finScheduleData = procChangeRate(finScheduleData, null, null, BigDecimal.ZERO, effRateofReturn, false, false);
+
+		if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage()) && fm.getAdvTerms() > 0
+				&& PROC_GETCALSCHD.equals(finScheduleData.getModuleDefiner())) {
+			fm.setAdjustClosingBal(true);
+		}
 
 		finScheduleData = graceSchdCal(finScheduleData);
 		finScheduleData = repaySchdCal(finScheduleData, false);
