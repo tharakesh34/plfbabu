@@ -3825,7 +3825,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2509.10.1_pre" author="AnilKumar.G" dbms="postgresql">
+	<changeSet id="TK#2509.10.2.1_pre" author="AnilKumar.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'feetypes_tview');
@@ -3833,7 +3833,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2509.10.1" author="AnilKumar.G">
+	<changeSet id="TK#2509.10.2.1" author="AnilKumar.G">
 		<createView replaceIfExists="true" viewName="FEETYPES_TVIEW">
 			<![CDATA[
 			   SELECT T1.FEETYPEID
@@ -3880,7 +3880,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="TK#2509.10.1_post" author="AnilKumar.G" dbms="postgresql">
+	<changeSet id="TK#2509.10.2.1_post" author="AnilKumar.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'feetypes_tview');
