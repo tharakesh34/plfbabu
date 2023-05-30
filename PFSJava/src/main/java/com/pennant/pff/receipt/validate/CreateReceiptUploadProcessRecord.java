@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +37,7 @@ import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
@@ -537,8 +540,8 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 				return;
 			}
 
-			if (!(ClosureType.isClosure(closureType) || ClosureType.isCancel(closureType))) {
-				setError(rud, "Values other than CANCEL/CLOSURE in [CLOSURETYPE] ");
+			if (!(ClosureType.isClosure(closureType) && ClosureType.isCancel(closureType))) {
+				setError(rud, "Values other than Cancel/Closure in [CLOSURETYPE] ");
 				return;
 			}
 		}
@@ -562,7 +565,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 
 		String favourNumber = rud.getTransactionRef();
 		if (StringUtils.isBlank(favourNumber)) {
-			setError(rud, "[FAVOURNUMBER] is Mandatory");
+			setError(rud, "[TRANSCATIONNUMBER] is Mandatory");
 			return;
 		}
 
@@ -570,20 +573,18 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 
 		if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
 			if (favourNumber.length() > 6) {
-				setError(rud, "[FAVOURNUMBER] with length more than 6");
+				setError(rud, "[TRANCATIONNUMBER] with length more than 6");
 				return;
 			}
 
-			if (StringUtils.isBlank(rud.getChequeNumber())) {
+			if (StringUtils.isBlank(rud.getChequeAccountNumber())) {
 				setError(rud, "[CHEQUEACNO] is Mandatory");
 				return;
 			}
 
-			if (StringUtils.isNotBlank(rud.getChequeNumber())) {
-				if (rud.getChequeNumber().length() > 50) {
-					setError(rud, "[CHEQUEACNO] with length more than 50");
-					return;
-				}
+			if (rud.getChequeAccountNumber().length() > 50) {
+				setError(rud, "[CHEQUEACNO] with length more than 50");
+				return;
 			}
 
 			if (StringUtils.isBlank(bankcode)) {
@@ -693,7 +694,29 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		}
 
 		String panNumber = rud.getPanNumber();
+
+		String cashPanLimit = SysParamUtil.getValueAsString(SMTParameterConstants.RECEIPT_CASH_PAN_LIMIT);
+		BigDecimal cashLimit = new BigDecimal(cashPanLimit);
+		if (rud.getReceiptAmount().compareTo(cashLimit) > 0
+				&& DisbursementConstants.PAYMENT_TYPE_CASH.equals(receiptMode)) {
+			if (StringUtils.isEmpty(panNumber)) {
+				setError(rud, "[PANNUMBER] is Mandatory , ReceiptAmount exceeded the configured Limit i.e"
+						.concat(String.valueOf(cashLimit)));
+				return;
+			}
+		}
+
 		if (StringUtils.isNotEmpty(panNumber)) {
+
+			Pattern pattern = Pattern
+					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_PANNUMBER));
+			Matcher matcher = pattern.matcher(panNumber);
+			if (!matcher.matches()) {
+				setError(rud, "[PANNUMBER] invalid format ".concat(String.valueOf(panNumber))
+						+ " Format Should be CCCCCNNNNC ");
+				return;
+			}
+
 			if (MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN)) {
 				DocVerificationHeader docHeader = new DocVerificationHeader();
 				docHeader.setDocNumber(panNumber);

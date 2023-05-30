@@ -5120,6 +5120,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		fsi.setBckdtdWthOldDues(rud.isBckdtdWthOldDues());
 		fsi.setTdsAmount(rud.getTdsAmount());
 		fsi.setLoggedInUser(rud.getLoggedInUser());
+		fsi.setReceiptPurpose(rud.getReceiptPurpose());
 
 		boolean bounceOrCancel = RepayConstants.PAYSTATUS_BOUNCE.equals(status)
 				|| RepayConstants.PAYSTATUS_CANCEL.equals(status);
@@ -8755,6 +8756,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			BigDecimal penaltyWaived = BigDecimal.ZERO;
 			BigDecimal penaltyDue = BigDecimal.ZERO;
 			fod.setLppDueAmt(BigDecimal.ZERO);
+			dueDays = 0;
 
 			for (FinOverDueCharges odcAmount : odcAmounts) {
 				if (fod.getFinODSchdDate().compareTo(odcAmount.getSchDate()) != 0) {
