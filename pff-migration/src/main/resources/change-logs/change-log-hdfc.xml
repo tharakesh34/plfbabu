@@ -2252,7 +2252,35 @@
 		</createTable>
 	</changeSet>
 
-	
+	<changeSet id="21" author="goutham.ch">
+		<createTable tableName="UCIC_RESP_FILES">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FILE_NAME" type="VARCHAR(2000)" />
+			<column name="STATUS" type="int" />
+			<column name="FILE_LOCATION" type="VARCHAR(2000)" />
+			<column name="CREATED_DATE" type="datetime" />
+			<column name="EXTRACTION" type="int" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="22" author="goutham.ch">
+		<createTable tableName="UCIC_RESP_FILE_DATA">
+
+			<column name="UCIC_ID" type="VARCHAR(50)" />
+			<column name="CUSTID" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PROCESS_FLAG" type="int" />
+			<column name="ACK_SENT" type="int" />
+			<column name="HEADER_ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="STATUS" type="int" />
+			<column name="PROCESS_DESC" type="VARCHAR(2000)" />
+		</createTable>
+	</changeSet>
 
 	<changeSet id="23" author="goutham.ch" dbms="ORACLE">
 		<createProcedure>
