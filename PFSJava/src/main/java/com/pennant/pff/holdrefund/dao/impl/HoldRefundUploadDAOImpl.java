@@ -85,9 +85,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 			ps.setLong(++index, headerID);
 			ps.setInt(++index, ReceiptDetailStatus.SUCCESS.getValue());
 
-		}, (rs, roNum) -> {
-			return rs.getString(1);
-		});
+		}, (rs, roNum) -> rs.getString(1));
 	}
 
 	@Override

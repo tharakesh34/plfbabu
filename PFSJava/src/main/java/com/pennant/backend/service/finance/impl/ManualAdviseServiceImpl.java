@@ -904,12 +904,10 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		logger.debug(Literal.ENTERING);
 
 		boolean isGSTInvOnDue = SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE);
-		custEODEvent.getFinEODEvents().forEach(fodEvent -> {
-			fodEvent.getPostingManualAdvises().forEach(ma -> {
-				ma.setInvoiceReq(isGSTInvOnDue);
-				postManualAdvise(fodEvent, custEODEvent, ma);
-			});
-		});
+		custEODEvent.getFinEODEvents().forEach(fodEvent -> fodEvent.getPostingManualAdvises().forEach(ma -> {
+			ma.setInvoiceReq(isGSTInvOnDue);
+			postManualAdvise(fodEvent, custEODEvent, ma);
+		}));
 
 		logger.debug(Literal.LEAVING);
 	}

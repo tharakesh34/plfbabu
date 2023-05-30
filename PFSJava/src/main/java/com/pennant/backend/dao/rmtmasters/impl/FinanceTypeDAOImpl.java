@@ -1453,10 +1453,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql, (rs, i) -> {
-			return rs.getString("AlloweDocrs");
-		});
-
+		return this.jdbcOperations.query(sql, (rs, i) -> rs.getString("AlloweDocrs"));
 	}
 
 	@Override
