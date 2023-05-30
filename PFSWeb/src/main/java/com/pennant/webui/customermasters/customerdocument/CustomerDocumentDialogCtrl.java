@@ -1462,8 +1462,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			Date addMonths = DateUtil.addMonths(this.custDocIssuedOn.getValue(), 72);
 			if (DateUtility.compare(addMonths, this.custDocExpDate.getValue()) < 0) {
 				MessageUtil.showError("Difference Between Issued On & Expiry Date Sholud be Less Than 6 Years");
+				return;
 			}
-			return;
 		}
 
 		// Write the additional validations as per below example
