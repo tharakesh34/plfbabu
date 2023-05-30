@@ -75,14 +75,10 @@
 													align="right" sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_HoldDialog_HoldMarking.label')}"
 													align="right" sort="false" hflex="min" />
-												<listheader label="${c:l('listheader_HoldDialog_Finreference.label')}"
-													align="right" sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_HoldDialog_HoldStatus.label')}"
 													align="right" sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_HoldDialog_HoldReason.label')}"
 													align="right" sort="false" hflex="min" />
-													
-												
 											</listhead>
 										</listbox>
 									</groupbox>

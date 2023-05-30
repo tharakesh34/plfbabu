@@ -127,19 +127,25 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 				if (amount.compareTo(headerList.getBalance()) > 0) {
 					headerList.setBalance(BigDecimal.ZERO);
 					headerList.setReleaseAmount(headerList.getHoldAmount());
+
+					headerList.setId(headerList.getId());
+					headerList.setHoldID(headerList.getHoldID());
+					headerList.setRemovalAmount(headerList.getHoldAmount());
+					saveDetail(headerList);
 				} else {
 					headerList.setBalance(headerList.getBalance().subtract(amount));
 					headerList.setReleaseAmount(headerList.getReleaseAmount().add(amount));
+
+					headerList.setId(headerList.getId());
+					headerList.setHoldID(headerList.getHoldID());
+					headerList.setRemovalAmount(amount);
+					saveDetail(headerList);
 				}
 				amount.subtract(headerList.getHoldAmount());
 
 				holdMarkingHeaderDAO.updateHeader(headerList);
-				headerList.setId(headerList.getId());
-				headerList.setHoldID(headerList.getHoldID());
-				headerList.setRemovalAmount(amount);
 			}
 
-			saveDetail(headerList);
 		}
 
 		logger.debug(Literal.LEAVING);

@@ -1,5 +1,6 @@
 package com.pennant.pff.holdmarking.dao.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.pennant.pff.holdmarking.model.HoldMarkingHeader;
@@ -165,6 +166,14 @@ public class HoldMarkingHeaderDAOImpl extends SequenceDao<HoldMarkingHeader> imp
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
+	}
+
+	@Override
+	public BigDecimal getHoldBalance(long finID, String accountNumber) {
+		String sql = "Select coalesce(sum(balance), 0) from Hold_Marking_Header  where FinID = ? and AccountNumber = ?";
+
+		logger.debug(Literal.SQL + sql);
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, accountNumber);
 	}
 
 }

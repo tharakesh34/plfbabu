@@ -89,9 +89,20 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 		}
 
 		BigDecimal amount = detail.getAmount();
+		BigDecimal holdBalance = holdMarkingHeaderDAO.getHoldBalance(finID, detail.getAccountNumber());
 
 		if (amount.compareTo(BigDecimal.ZERO) < 0) {
 			setError(detail, HoldMarkingUploadError.HM_06);
+			return;
+		}
+
+		if (amount == BigDecimal.ZERO) {
+			setError(detail, HoldMarkingUploadError.HM_07);
+			return;
+		}
+
+		if (PennantConstants.REMOVE_HOLD_MARKING.equals(type) && holdBalance.compareTo(amount) < 0) {
+			setError(detail, HoldMarkingUploadError.HM_07);
 			return;
 		}
 
@@ -272,10 +283,10 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 						.collect(Collectors.toList());
 			}
 
+			HoldMarkingDetail hmd = new HoldMarkingDetail();
+			BigDecimal detailAmount = detail.getAmount();
+
 			for (HoldMarkingHeader headerList : list) {
-
-				BigDecimal detailAmount = detail.getAmount();
-
 				if (detailAmount.compareTo(BigDecimal.ZERO) > 0) {
 
 					if (detailAmount.compareTo(headerList.getBalance()) > 0) {
@@ -283,50 +294,61 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 						headerList.setReleaseAmount(headerList.getHoldAmount());
 
 						detailAmount = detailAmount.subtract(headerList.getHoldAmount());
+						hmd.setAmount(headerList.getHoldAmount());
+						hmd.setiD(headerList.getId());
+						hmd.setHoldID(headerList.getHoldID());
+						updateMovementDetails(detail, hmd, list);
 					} else {
 						headerList.setBalance(headerList.getBalance().subtract(detailAmount));
 						headerList.setReleaseAmount(headerList.getReleaseAmount().add(detailAmount));
 
+						hmd.setAmount(headerList.getReleaseAmount());
+						hmd.setiD(headerList.getId());
+						hmd.setHoldID(headerList.getHoldID());
+						updateMovementDetails(detail, hmd, list);
 						detailAmount = BigDecimal.ZERO;
 					}
-
 					holdMarkingHeaderDAO.updateHeader(headerList);
 				}
-
 			}
+		}
+	}
 
-			HoldMarkingHeader hmh = new HoldMarkingHeader();
+	private void updateMovementDetails(HoldMarkingUpload detail, HoldMarkingDetail hmd, List<HoldMarkingHeader> list) {
+		int count;
 
-			if (CollectionUtils.isNotEmpty(list)) {
-				hmh = list.stream().sorted((l1, l2) -> Long.compare(l1.getHoldID(), l2.getHoldID()))
-						.collect(Collectors.toList()).get(0);
-			}
+		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+		Date appDate = SysParamUtil.getAppDate();
+		long userId = 1000;
 
-			count = holdMarkingDetailDAO.getCountId(hmh.getHoldID());
+		HoldMarkingHeader hmh = new HoldMarkingHeader();
 
-			HoldMarkingDetail hmd = new HoldMarkingDetail();
-			hmd.setHoldID(hmh.getHoldID());
-			hmd.setHeaderID(hmh.getId());
-			hmd.setFinReference(detail.getReference());
-			hmd.setFinID(detail.getReferenceID());
-			hmd.setHoldType(detail.getType());
-			hmd.setMarking(PennantConstants.MANUAL_ASSIGNMENT);
-			hmd.setMovementDate(appDate);
-			hmd.setStatus(InsuranceConstants.PENDING);
-			hmd.setAmount(detail.getAmount());
-			hmd.setLogID(++count);
-			hmd.setHoldReleaseReason(detail.getRemarks());
-			hmd.setCreatedBy(userId);
-			hmd.setCreatedOn(currentTime);
-			hmd.setLastMntBy(userId);
-			hmd.setLastMntOn(currentTime);
-			hmd.setApprovedOn(currentTime);
-			hmd.setApprovedBy(userId);
-
-			holdMarkingDetailDAO.saveDetail(hmd);
-
+		if (CollectionUtils.isNotEmpty(list)) {
+			hmh = list.stream().sorted((l1, l2) -> Long.compare(l1.getHoldID(), l2.getHoldID()))
+					.collect(Collectors.toList()).get(0);
 		}
 
+		count = holdMarkingDetailDAO.getCountId(hmh.getHoldID());
+
+		hmd.setHoldID(hmd.getHoldID());
+		hmd.setHeaderID(hmd.getiD());
+		hmd.setFinReference(detail.getReference());
+		hmd.setFinID(detail.getReferenceID());
+		hmd.setHoldType(detail.getType());
+		hmd.setMarking(PennantConstants.MANUAL_ASSIGNMENT);
+		hmd.setMovementDate(appDate);
+		hmd.setStatus(InsuranceConstants.PENDING);
+		hmd.setAmount(hmd.getAmount());
+		hmd.setLogID(++count);
+		hmd.setHoldReleaseReason(detail.getRemarks());
+		hmd.setCreatedBy(userId);
+		hmd.setCreatedOn(currentTime);
+		hmd.setLastMntBy(userId);
+		hmd.setLastMntOn(currentTime);
+		hmd.setApprovedOn(currentTime);
+		hmd.setApprovedBy(userId);
+
+		holdMarkingDetailDAO.saveDetail(hmd);
 	}
 
 	private void validateType(HoldMarkingUpload detail, String type) {

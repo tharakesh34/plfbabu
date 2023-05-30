@@ -10,7 +10,11 @@ public enum HoldMarkingUploadError {
 
 	HM_05("Type is mandatory."),
 
-	HM_06("Amount should not be negative.");
+	HM_06("Amount should not be negative."),
+
+	HM_07("Amount should not be Empty and should be greater than Zero."),
+
+	HM_08("Release amount should be less than or equal to Hold amount againt loan Reference and Account number");
 
 	private String description;
 

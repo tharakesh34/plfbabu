@@ -93,7 +93,6 @@ public class SelectHoldEnquiryListCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		} else {
 			accNumber.setDisabled(true);
 
-			this.finReference.setMandatoryStyle(true);
 			this.finReference.setModuleName("FinanceDetail");
 			this.finReference.setValueColumn("FinReference");
 			this.finReference.setDescColumn("FinType");

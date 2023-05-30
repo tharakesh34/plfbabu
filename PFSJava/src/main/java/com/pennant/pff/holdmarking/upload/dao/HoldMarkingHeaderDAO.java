@@ -1,5 +1,6 @@
 package com.pennant.pff.holdmarking.upload.dao;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.pennant.pff.holdmarking.model.HoldMarkingHeader;
@@ -17,4 +18,6 @@ public interface HoldMarkingHeaderDAO {
 	void updateHeader(HoldMarkingHeader hmh);
 
 	List<HoldMarkingHeader> getHoldByAccNum(String accNum);
+
+	BigDecimal getHoldBalance(long finID, String accountNumber);
 }
