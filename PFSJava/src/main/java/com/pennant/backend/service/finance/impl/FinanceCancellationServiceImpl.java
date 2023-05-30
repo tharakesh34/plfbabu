@@ -666,6 +666,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			notificationService.sendNotifications(notification, fd, fm.getFinType(), fd.getDocumentDetailsList());
 		}
 
+		fd.setAppDate(appData);
 		if (ImplementationConstants.ALLOW_LIEN
 				&& FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
 			lienService.update(fd);

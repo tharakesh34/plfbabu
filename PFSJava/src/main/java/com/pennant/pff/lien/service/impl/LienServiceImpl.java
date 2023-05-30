@@ -18,6 +18,7 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.pff.lien.service.LienService;
 import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennanttech.model.lien.LienDetails;
 import com.pennanttech.model.lien.LienHeader;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -186,9 +187,11 @@ public class LienServiceImpl implements LienService {
 		String accNum = "";
 		FinanceMain fmBef = fm.getBefImage();
 		fm.setModuleDefiner(fd.getModuleDefiner());
+
 		if (fm.getClosureType() != null) {
-			fm.setModuleDefiner("Closure");
+			fm.setModuleDefiner(ClosureType.CLOSURE.code());
 		}
+
 		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 		if (fmBef != null) {
 			if (fmBef.getMandateID() == null) {
@@ -207,8 +210,8 @@ public class LienServiceImpl implements LienService {
 			logger.debug(Literal.LEAVING);
 			return;
 		}
-		for (LienHeader lh : lienheader) {
 
+		for (LienHeader lh : lienheader) {
 			if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())
 					&& !lh.getAccountNumber().equals(accNum)) {
 				continue;
@@ -254,7 +257,7 @@ public class LienServiceImpl implements LienService {
 					if (fd.getMandate() != null && fd.getMandate().getSwapEffectiveDate() != null) {
 						lh.setDemarkingDate(fd.getMandate().getSwapEffectiveDate());
 					} else {
-						lh.setDemarkingDate(currentTime);
+						lh.setDemarkingDate(fd.getAppDate());
 					}
 				} else {
 					lh.setDemarkingDate(fm.getClosedDate());

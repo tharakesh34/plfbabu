@@ -146,6 +146,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 
 		List<FinanceMain> fmList = paymentMethodUploadDAO.getFinanceMain(header.getId());
 		Date appDate = SysParamUtil.getAppDate();
+		header.setAppDate(appDate);
 
 		logger.info("Validationg the records...");
 		for (PaymentMethodUpload pmu : header.getPaymentmethodUpload()) {
@@ -373,6 +374,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 			fd.getFinScheduleData().setFinanceMain(fm);
 			fd.getFinScheduleData().getFinanceMain().setBefImage(fm);
 			fd.setMandate(mandateService.getMandate(changePayment.getMandateId()));
+			fd.setAppDate(header.getAppDate());
 
 			if (ImplementationConstants.ALLOW_LIEN) {
 				fd.setModuleDefiner(FinServiceEvent.RPYBASICMAINTAIN);

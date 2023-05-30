@@ -938,6 +938,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			linkedTranId = aeEvent.getLinkedTranId();
 		}
 
+		fd.setAppDate(appDate);
 		if (ImplementationConstants.ALLOW_LIEN) {
 			fd.setModuleDefiner(FinServiceEvent.RPYBASICMAINTAIN);
 			if (InstrumentType.isSI(fm.getFinRepayMethod())) {

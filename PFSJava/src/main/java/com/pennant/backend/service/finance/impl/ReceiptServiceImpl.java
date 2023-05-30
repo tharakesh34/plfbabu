@@ -2342,6 +2342,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		// =======================================
 		if (ImplementationConstants.ALLOW_LIEN && FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			fd.setModuleDefiner(FinServiceEvent.RECEIPT);
+			fd.setAppDate(appDate);
 			lienService.update(fd);
 		}
 
