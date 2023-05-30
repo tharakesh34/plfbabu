@@ -127,9 +127,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, requestData.getHeaderId());
-		}, (rs, rowNum) -> {
+		return jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, requestData.getHeaderId()), (rs, rowNum) -> {
 			DisbursementRequest req = new DisbursementRequest();
 
 			req.setAutoDownload(requestData.isAutoDownload());
@@ -479,9 +477,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 	@Override
 	public List<Long> getMovementList() {
 		return jdbcOperations.query(DisbursementRequestsQueries.getMovementListQuery(), ps -> ps.setInt(1, 0),
-				(rs, rowNum) -> {
-					return rs.getLong(1);
-				});
+				(rs, rowNum) -> rs.getLong(1));
 	}
 
 	@Override
@@ -1059,9 +1055,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, respBatchId);
-		}, (rs, rowNum) -> {
+		return jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, respBatchId), (rs, rowNum) -> {
 			FinAdvancePayments fap = new FinAdvancePayments();
 
 			fap.setPaymentId(rs.getLong("PAYMENTID"));
@@ -1116,9 +1110,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, respBatchId);
-		}, (rs, rowNum) -> {
+		return jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, respBatchId), (rs, rowNum) -> {
 			PaymentInstruction pi = new PaymentInstruction();
 
 			pi.setFinID(rs.getLong("FINID"));

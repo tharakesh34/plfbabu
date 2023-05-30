@@ -43,10 +43,7 @@ public class ExcessKnockOffQueueDAOImpl extends SequenceDao<CustEODEvent> implem
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.update(sql, ps -> {
-			ps.setInt(1, EodConstants.PROGRESS_SUCCESS);
-
-		});
+		this.jdbcOperations.update(sql, ps -> ps.setInt(1, EodConstants.PROGRESS_SUCCESS));
 
 		sql = "Update Cross_Loan_KnockOff_Queue Set Progress = ? Where Progress = ?";
 
