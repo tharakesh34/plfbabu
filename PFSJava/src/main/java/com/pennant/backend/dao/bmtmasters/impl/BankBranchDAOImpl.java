@@ -717,28 +717,29 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			return jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
 				BankBranch bb = new BankBranch();
 
 				bb.setBankBranchID(rs.getLong("BankBranchID"));
 				bb.setBankCode(rs.getString("BankCode"));
 				return bb;
 			}, ifsc);
-		} catch (Exception e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
 	public Long getBankBrachByCode(String ifscCode, String bankCode) {
-		String sql = "Select BankBranchId From BankBranches  Where BranchCode = ?  and BankCode = ?";
+		String sql = "Select BankBranchId From BankBranches  Where BranchCode = ? and BankCode = ?";
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, ifscCode, bankCode);
+			return this.jdbcOperations.queryForObject(sql, Long.class, ifscCode, bankCode);
 		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
@@ -747,18 +748,20 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	public BankBranch getBankBrachDetails(String ifscCode, String bankCode) {
 		String sql = "Select BankBranchId, BranchDesc From BankBranches  Where BranchCode = ?  and BankCode = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
 				BankBranch bankBranch = new BankBranch();
-				bankBranch.setBankBranchID(JdbcUtil.setLong(rs.getLong("BankBranchId")));
+
+				bankBranch.setBankBranchID(JdbcUtil.getLong(rs.getObject("BankBranchId")));
 				bankBranch.setBranchDesc(rs.getString("BranchDesc"));
+
 				return bankBranch;
 			}, ifscCode, bankCode);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 }

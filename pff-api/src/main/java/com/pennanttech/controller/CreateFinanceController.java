@@ -762,7 +762,6 @@ public class CreateFinanceController extends AbstractController {
 			if (ch.getNoOfCheques() < number) {
 				valueParm[1] = String.valueOf(number);
 				schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
-				return;
 			}
 		}
 	}

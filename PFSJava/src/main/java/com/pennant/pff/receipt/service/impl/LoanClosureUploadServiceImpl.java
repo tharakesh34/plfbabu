@@ -351,7 +351,6 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		if (calcClosureAmt.compareTo(receiptAmount.add(fsd.getFinanceType().getClosureThresholdLimit())) > 0) {
 			setFailureStatus(lcu, "", "Receipt amount is in sufficient for closure. Excepted amount is :"
 					+ CurrencyUtil.format(calcClosureAmt, 2));
-			return;
 		}
 	}
 

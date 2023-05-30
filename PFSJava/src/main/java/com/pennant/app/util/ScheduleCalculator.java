@@ -5267,9 +5267,7 @@ public class ScheduleCalculator {
 								.compareTo(prvClosingBalance.add(curSchd.getDisbAmount())) >= 0) {
 							curSchd.setPrincipalSchd(prvClosingBalance.add(curSchd.getDisbAmount()));
 
-							if (!fm.isManualSchedule()) {
-								isRepayComplete = true;
-							} else if (curSchDate.compareTo(derivedMDT) == 0) {
+							if (!fm.isManualSchedule() || curSchDate.compareTo(derivedMDT) == 0) {
 								isRepayComplete = true;
 							}
 

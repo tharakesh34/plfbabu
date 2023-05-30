@@ -163,8 +163,6 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 
 					record.addValue("STATUS", "F");
 					record.addValue("PROGRESS", EodConstants.PROGRESS_FAILED);
-
-					continue;
 				}
 			}
 

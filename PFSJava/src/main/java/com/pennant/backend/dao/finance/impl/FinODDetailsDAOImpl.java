@@ -1239,7 +1239,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.update(sql.toString(), finID);
+		this.jdbcOperations.update(sql, finID);
 	}
 
 	@Override

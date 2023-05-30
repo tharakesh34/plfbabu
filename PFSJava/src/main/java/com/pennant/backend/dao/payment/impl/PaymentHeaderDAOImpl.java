@@ -531,7 +531,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), paymentId);
+		return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> rs.getInt(1), paymentId);
 	}
 
 	@Override
@@ -552,8 +552,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), paymentId,
-				finReference);
+		return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> rs.getInt(1), paymentId, finReference);
 	}
 
 	@Override

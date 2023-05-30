@@ -152,7 +152,7 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
 
-		Filter filters[] = new Filter[2];
+		Filter[] filters = new Filter[2];
 
 		filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
 		filters[1] = new Filter("AllowCancelFin", 1, Filter.OP_EQUAL);

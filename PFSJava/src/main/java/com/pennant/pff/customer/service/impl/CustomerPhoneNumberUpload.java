@@ -108,7 +108,6 @@ public class CustomerPhoneNumberUpload extends KycDetailsUploadServiceImpl {
 
 		if (!(detail.getPhoneTypePriority() >= 1 && detail.getPhoneTypePriority() <= 5)) {
 			setError(detail, "90115", String.valueOf(detail.getPhoneTypePriority()));
-			return;
 		}
 	}
 
