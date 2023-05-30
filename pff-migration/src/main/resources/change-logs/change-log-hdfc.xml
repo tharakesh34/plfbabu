@@ -2112,69 +2112,69 @@
 	</changeSet>
 
 
-<changeSet id="18" author="goutham.ch">
-	<createTable tableName="UCIC_CUSTOMERS">
-		<column name="CUSTID" type="bigint" />
-		<column name="CUSTCIF" type="VARCHAR(20)" />
-		<column name="FINREFERENCE" type="VARCHAR(20)" />
-		<column name="CREATION_DATE" type="datetime" />
-		<column name="CUSTCOREBANK" type="VARCHAR(50)" />
-		<column name="SOURCE_SYSTEM" type="VARCHAR(10)" />
-		<column name="CUSTCTGCODE" type="VARCHAR(8)" />
-		<column name="CUSTOMER_TYPE" type="VARCHAR(8)" />
-		<column name="SUBCATEGORY" type="NVARCHAR(200)" />
-		<column name="CUSTSHRTNAME" type="VARCHAR(200)" />
-		<column name="CUSTDOB" type="datetime" />
-		<column name="CUSTISBLOCKED" type="VARCHAR(2)" />
-		<column name="CLOSEDDATE" type="datetime" />
-		<column name="CLOSINGSTATUS" type="VARCHAR(100)" />
-		<column name="CUSTMOTHERMAIDEN" type="VARCHAR(50)" />
-		<column name="ACCNUMBER" type="VARCHAR(50)" />
-		<column name="COMPANYNAME" type="VARCHAR(100)" />
-		<column name="EMAIL1" type="VARCHAR(100)" />
-		<column name="EMAIL2" type="VARCHAR(100)" />
-		<column name="EMAIL3" type="VARCHAR(100)" />
-		<column name="MOBILE1" type="VARCHAR(20)" />
-		<column name="MOBILE2" type="VARCHAR(20)" />
-		<column name="MOBILE3" type="VARCHAR(20)" />
-		<column name="LANDLINE1" type="VARCHAR(50)" />
-		<column name="LANDLINE2" type="VARCHAR(50)" />
-		<column name="LANDLINE3" type="VARCHAR(50)" />
-		<column name="PAN" type="VARCHAR(100)" />
-		<column name="AADHAAR" type="VARCHAR(100)" />
-		<column name="VOTER_ID" type="VARCHAR(100)" />
-		<column name="DRIVING_LICENCE" type="VARCHAR(100)" />
-		<column name="PASSPORT" type="VARCHAR(100)" />
-		<column name="ADDR1TYPE" type="VARCHAR(10)" />
-		<column name="ADDR1LINE1" type="VARCHAR(150)" />
-		<column name="ADDR1LINE2" type="VARCHAR(150)" />
-		<column name="ADDR1LINE3" type="VARCHAR(150)" />
-		<column name="ADDR1LINE4" type="VARCHAR(150)" />
-		<column name="ADDR1CITY" type="VARCHAR(150)" />
-		<column name="ADDR1STATE" type="VARCHAR(150)" />
-		<column name="ADDR1PIN" type="VARCHAR(10)" />
-		<column name="ADDR2TYPE" type="VARCHAR(10)" />
-		<column name="ADDR2LINE1" type="VARCHAR(150)" />
-		<column name="ADDR2LINE2" type="VARCHAR(150)" />
-		<column name="ADDR2LINE3" type="VARCHAR(150)" />
-		<column name="ADDR2LINE4" type="VARCHAR(150)" />
-		<column name="ADDR2CITY" type="VARCHAR(150)" />
-		<column name="ADDR2STATE" type="VARCHAR(150)" />
-		<column name="ADDR2PIN" type="VARCHAR(10)" />
-		<column name="ADDR3TYPE" type="VARCHAR(10)" />
-		<column name="ADDR3LINE1" type="VARCHAR(150)" />
-		<column name="ADDR3LINE2" type="VARCHAR(150)" />
-		<column name="ADDR3LINE3" type="VARCHAR(150)" />
-		<column name="ADDR3LINE4" type="VARCHAR(150)" />
-		<column name="ADDR3CITY" type="VARCHAR(150)" />
-		<column name="ADDR3STATE" type="VARCHAR(150)" />
-		<column name="ADDR3PIN" type="VARCHAR(10)" />
-		<column name="INSERT_UPDATE_FLAG" type="VARCHAR(2)" />
-		<column name="LASTMNTON" type="datetime" />
-		<column name="PROCESS_DATE" type="datetime" />
-		<column name="FINID" type="bigint" />
-	</createTable>
-</changeSet>
+	<changeSet id="18" author="goutham.ch">
+		<createTable tableName="UCIC_CUSTOMERS">
+			<column name="CUSTID" type="bigint" />
+			<column name="CUSTCIF" type="VARCHAR(20)" />
+			<column name="FINREFERENCE" type="VARCHAR(20)" />
+			<column name="CREATION_DATE" type="datetime" />
+			<column name="CUSTCOREBANK" type="VARCHAR(50)" />
+			<column name="SOURCE_SYSTEM" type="VARCHAR(10)" />
+			<column name="CUSTCTGCODE" type="VARCHAR(8)" />
+			<column name="CUSTOMER_TYPE" type="VARCHAR(8)" />
+			<column name="SUBCATEGORY" type="NVARCHAR(200)" />
+			<column name="CUSTSHRTNAME" type="VARCHAR(200)" />
+			<column name="CUSTDOB" type="datetime" />
+			<column name="CUSTISBLOCKED" type="VARCHAR(2)" />
+			<column name="CLOSEDDATE" type="datetime" />
+			<column name="CLOSINGSTATUS" type="VARCHAR(100)" />
+			<column name="CUSTMOTHERMAIDEN" type="VARCHAR(50)" />
+			<column name="ACCNUMBER" type="VARCHAR(50)" />
+			<column name="COMPANYNAME" type="VARCHAR(100)" />
+			<column name="EMAIL1" type="VARCHAR(100)" />
+			<column name="EMAIL2" type="VARCHAR(100)" />
+			<column name="EMAIL3" type="VARCHAR(100)" />
+			<column name="MOBILE1" type="VARCHAR(20)" />
+			<column name="MOBILE2" type="VARCHAR(20)" />
+			<column name="MOBILE3" type="VARCHAR(20)" />
+			<column name="LANDLINE1" type="VARCHAR(50)" />
+			<column name="LANDLINE2" type="VARCHAR(50)" />
+			<column name="LANDLINE3" type="VARCHAR(50)" />
+			<column name="PAN" type="VARCHAR(100)" />
+			<column name="AADHAAR" type="VARCHAR(100)" />
+			<column name="VOTER_ID" type="VARCHAR(100)" />
+			<column name="DRIVING_LICENCE" type="VARCHAR(100)" />
+			<column name="PASSPORT" type="VARCHAR(100)" />
+			<column name="ADDR1TYPE" type="VARCHAR(10)" />
+			<column name="ADDR1LINE1" type="VARCHAR(150)" />
+			<column name="ADDR1LINE2" type="VARCHAR(150)" />
+			<column name="ADDR1LINE3" type="VARCHAR(150)" />
+			<column name="ADDR1LINE4" type="VARCHAR(150)" />
+			<column name="ADDR1CITY" type="VARCHAR(150)" />
+			<column name="ADDR1STATE" type="VARCHAR(150)" />
+			<column name="ADDR1PIN" type="VARCHAR(10)" />
+			<column name="ADDR2TYPE" type="VARCHAR(10)" />
+			<column name="ADDR2LINE1" type="VARCHAR(150)" />
+			<column name="ADDR2LINE2" type="VARCHAR(150)" />
+			<column name="ADDR2LINE3" type="VARCHAR(150)" />
+			<column name="ADDR2LINE4" type="VARCHAR(150)" />
+			<column name="ADDR2CITY" type="VARCHAR(150)" />
+			<column name="ADDR2STATE" type="VARCHAR(150)" />
+			<column name="ADDR2PIN" type="VARCHAR(10)" />
+			<column name="ADDR3TYPE" type="VARCHAR(10)" />
+			<column name="ADDR3LINE1" type="VARCHAR(150)" />
+			<column name="ADDR3LINE2" type="VARCHAR(150)" />
+			<column name="ADDR3LINE3" type="VARCHAR(150)" />
+			<column name="ADDR3LINE4" type="VARCHAR(150)" />
+			<column name="ADDR3CITY" type="VARCHAR(150)" />
+			<column name="ADDR3STATE" type="VARCHAR(150)" />
+			<column name="ADDR3PIN" type="VARCHAR(10)" />
+			<column name="INSERT_UPDATE_FLAG" type="VARCHAR(2)" />
+			<column name="LASTMNTON" type="datetime" />
+			<column name="PROCESS_DATE" type="datetime" />
+			<column name="FINID" type="bigint" />
+		</createTable>
+	</changeSet>
 
 
 	<changeSet id="19" author="goutham.ch">
@@ -2540,21 +2540,25 @@
 
 
 			SELECT COUNT(*) INTO newRec FROM UCIC_CUSTOMERS WHERE
-			INSERT_UPDATE_FLAG = 'N' AND PROCESS_DATE = (SELECT TO_CHAR(
+			INSERT_UPDATE_FLAG =
+			'N' AND PROCESS_DATE = (SELECT TO_CHAR(
 			TO_DATE(SYSPARMVALUE
 			,'YYYY-MM-DD')
 			,'DD-MM-YY')
 			FROM
-			SMTPARAMETERS where SYSPARMCODE='APP_DATE');
+			SMTPARAMETERS where
+			SYSPARMCODE='APP_DATE');
 			SELECT COUNT(*) INTO
 			modRec FROM UCIC_CUSTOMERS WHERE
-			INSERT_UPDATE_FLAG='M' AND PROCESS_DATE = (SELECT TO_CHAR(
+			INSERT_UPDATE_FLAG='M' AND PROCESS_DATE =
+			(SELECT TO_CHAR(
 			TO_DATE(SYSPARMVALUE
 			,'YYYY-MM-DD')
 			,'DD-MM-YY')
 			FROM
 			SMTPARAMETERS where SYSPARMCODE='APP_DATE');
-			SELECT COUNT(*) INTO allRec FROM
+			SELECT
+			COUNT(*) INTO allRec FROM
 			UCIC_CUSTOMERS WHERE PROCESS_DATE =
 			(SELECT TO_CHAR(
 			TO_DATE(SYSPARMVALUE
@@ -2564,7 +2568,8 @@
 			where SYSPARMCODE='APP_DATE');
 
 			fLine
-			:= 'HDR|' || allRec || '|A|' ||newRec || '|M|' || modRec ;
+			:= 'HDR|' || allRec || '|A|' ||newRec || '|M|' ||
+			modRec ;
 			UTL_FILE.put_line(pFile, convert(fLine, 'WE8ISO8859P1',
 			'UTF8'));
 
@@ -2583,12 +2588,15 @@
 			State|Address3 Pincode|Employer
 			Name|Voter ID|Passport No|Drining Lic No|Casa AccountNo|Loan Number');
 
-			For UCIC_CUSTOMERS IN (Select * From UCIC_CUSTOMERS WHERE PROCESS_DATE = (SELECT TO_CHAR(
+			For UCIC_CUSTOMERS IN (Select * From
+			UCIC_CUSTOMERS WHERE PROCESS_DATE = (SELECT TO_CHAR(
 			TO_DATE(SYSPARMVALUE
 			,'YYYY-MM-DD')
 			,'DD-MM-YY')
-			FROM SMTPARAMETERS where SYSPARMCODE='APP_DATE')) Loop
-			UTL_FILE.PUT_LINE(pFile,UCIC_CUSTOMERS.CUSTCOREBANK ||'|"'|| UCIC_CUSTOMERS.SOURCE_SYSTEM ||'"|"'||
+			FROM SMTPARAMETERS
+			where SYSPARMCODE='APP_DATE')) Loop
+			UTL_FILE.PUT_LINE(pFile,UCIC_CUSTOMERS.CUSTCOREBANK ||'|"'||
+			UCIC_CUSTOMERS.SOURCE_SYSTEM ||'"|"'||
 			UCIC_CUSTOMERS.CUSTID ||'|"'|| UCIC_CUSTOMERS.CUSTCTGCODE ||'"|"'||
 			UCIC_CUSTOMERS.CUSTOMER_TYPE ||'"|"'||
 			UCIC_CUSTOMERS.SUBCATEGORY||'"|"'|| UCIC_CUSTOMERS.CUSTSHRTNAME||'"|'||
@@ -2671,18 +2679,24 @@
 			SELECT COUNT(*) INTO allRec FROM UCIC_CUSTOMERS;
 
 			fLine := 'HDR|' || allRec ;
-			UTL_FILE.put_line(pFile, convert(fLine,
+			UTL_FILE.put_line(pFile,
+			convert(fLine,
 			'WE8ISO8859P1', 'UTF8'));
 
 			UTL_FILE.put_line(pFile,'UCIC|Source
-			system|UniqueID|Customer Category|Customer Type|Customer
+			system|UniqueID|Customer Category|Customer
+			Type|Customer
 			Type Desc|Customer Full
-			Name|DOB|AddressType1|Address1|Address1 City|Address1 State|Address1 Pincode|EMail 1|EMail
+			Name|DOB|AddressType1|Address1|Address1 City|Address1 State|Address1
+			Pincode|EMail 1|EMail
 			2|EMail 3|Mobile
-			No1|Mobile No2|Mobile No3|Land Phone1|Land Phone2|Land Phone3|PAN No|Aadhar Number|Mothers Maiden
+			No1|Mobile No2|Mobile No3|Land Phone1|Land Phone2|Land Phone3|PAN No|Aadhar
+			Number|Mothers Maiden
 			Name|Creation
-			Date|Updation date|Blocked Flag|Blocked Code and Desc|Blocked eff. date|Insert Update Flag|Address2
-			Type|Address2|Address2 City|Address2 State|Address2 Pincode|Address3 Type|Address3|Address3 City|Address3
+			Date|Updation date|Blocked Flag|Blocked Code and Desc|Blocked eff. date|Insert
+			Update Flag|Address2
+			Type|Address2|Address2 City|Address2 State|Address2 Pincode|Address3 Type|Address3|Address3
+			City|Address3
 			State|Address3 Pincode|Employer Name|Voter ID|Passport No|Drining Lic No|Casa AccountNo|Loan Number');
 
 			For UCIC_CUSTOMERS IN (Select * From UCIC_CUSTOMERS) Loop
@@ -2735,19 +2749,23 @@
 			LOOP
 			UTL_FILE.get_line(l_file,fileRecord);
 			IF
-			fileRecord != 'TRAILER 20230302000000'
+			fileRecord != 'TRAILER
+			20230302000000'
 			THEN
 			IF fileRecord != 'EOF'
 			THEN
 			cusId :=
 			regexp_substr(fileRecord,'[^,]+', 1, 1);
-			cusId := regexp_replace(cusId, '(^[[:space:]]+)|([[:space:]]+$)',null);
+			cusId :=
+			regexp_replace(cusId, '(^[[:space:]]+)|([[:space:]]+$)',null);
 			ucicId :=
 			TRIM(regexp_substr(fileRecord,'[^,]+', 1, 2));
 			ucicId := regexp_replace(ucicId,
 			'(^[[:space:]]+)|([[:space:]]+$)',null);
-			DBMS_OUTPUT.put_line('Update custId='||cusId || 'where ucicId=' || ucicId);
-			INSERT INTO UCIC_CUSTOMERS_STATUS (CUSTID,UCICID,status) VALUES(cusId,ucicId,'SUCCESS');
+			DBMS_OUTPUT.put_line('Update custId='||cusId
+			|| 'where ucicId=' || ucicId);
+			INSERT INTO UCIC_CUSTOMERS_STATUS (CUSTID,UCICID,status)
+			VALUES(cusId,ucicId,'SUCCESS');
 			UPDATE CUSTOMERS SET
 			CUSTCOREBANK = ucicId WHERE CUSTID = cusId ;
 			COMMIT;
@@ -2757,10 +2775,12 @@
 			UTL_FILE.fclose(l_file);
 			EXCEPTION
 			WHEN
-			UTL_FILE.invalid_operation THEN dbms_output.PUT_LINE('cannot open file invalid name');
+			UTL_FILE.invalid_operation THEN dbms_output.PUT_LINE('cannot open file
+			invalid name');
 			WHEN UTL_FILE.read_error THEN
 			dbms_output.PUT_LINE('cannot be read');
-			WHEN no_data_found THEN dbms_output.PUT_LINE('end of file');
+			WHEN no_data_found THEN
+			dbms_output.PUT_LINE('end of file');
 			UTL_FILE.fclose(l_file);
 			END;
 			END SP_READ_UCIC_RESP_FILE;
@@ -2786,14 +2806,16 @@
 			Begin
 			pFile := UTL_FILE.fopen(fDirectory, aFileName, 'w');
 
-			SELECT COUNT(*) INTO allRec FROM UCIC_CUSTOMERS_STATUS;
+			SELECT COUNT(*)
+			INTO allRec FROM UCIC_CUSTOMERS_STATUS;
 			DBMS_OUTPUT.put_line('allRec:'||allRec);
 			fLine := 'HDR|' ||
 			allRec ||
 			'|1' ;
 			UTL_FILE.put_line(pFile, convert(fLine, 'WE8ISO8859P1', 'UTF8'));
 
-			UTL_FILE.PUT_LINE(pFile,'CUSTOMER ID|UCIC|STATUS|REASON REJECTION');
+			UTL_FILE.PUT_LINE(pFile,'CUSTOMER
+			ID|UCIC|STATUS|REASON REJECTION');
 			For UCIC_CUSTOMERS_STATUS IN (Select
 			CUSTID,UCICID,STATUS,ERROR_DESC From
 			UCIC_CUSTOMERS_STATUS)
@@ -2809,4 +2831,15 @@
 			End;
 		</createProcedure>
 	</changeSet>
+	
+	<changeSet id="28" author="goutham.ch">
+		<dropTable tableName="UCIC_RESP_FILES" />
+		<dropTable tableName="UCIC_RESP_FILE_DATA" />
+	</changeSet>
+	
+	<changeSet id="29" author="sreeram.r">
+	   <createSequence sequenceName="SEQ_RNUM" incrementBy="1" startValue="1" minValue="1"
+		maxValue="9223372036854775807" />
+    </changeSet>
+	
 </databaseChangeLog>

@@ -2373,6 +2373,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			}
 
 		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		agreement.setSmplTolerance(StringUtils.trimToEmpty(sampling.getSamplingTolerance()));

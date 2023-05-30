@@ -218,7 +218,7 @@ public class LoanClosureUploadDAOImpl extends SequenceDao<LoanClosureUpload> imp
 	public boolean getReason(String code) {
 		String sql = "Select count(code) From Reasons_Aview where code = ?";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, code) > 0;
 	}

@@ -331,7 +331,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 
 		fsi.setReqType("Post");
 		fsi.setReceiptUpload(true);
-		fsi.setRequestSource(RequestSource.UPLOAD);
+		fsi.setRequestSource(RequestSource.API);
 		LoggedInUser userDetails = detail.getUserDetails();
 
 		if (userDetails == null) {

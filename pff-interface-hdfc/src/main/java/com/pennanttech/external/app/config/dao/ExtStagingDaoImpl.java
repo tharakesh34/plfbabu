@@ -39,9 +39,7 @@ public class ExtStagingDaoImpl implements ExtStagingDao {
 		query.append(" WHERE  PICK_FINNONE = ?");
 		queryStr = query.toString();
 
-		extNamedJdbcTemplate.getJdbcOperations().query(queryStr, ps -> {
-			ps.setString(1, flag);// FIXME
-		}, rs -> {
+		extNamedJdbcTemplate.getJdbcOperations().query(queryStr, ps -> ps.setString(1, flag), rs -> {
 			ExtPresentmentFile details = new ExtPresentmentFile();
 			details.setClusterId(StringUtils.trimToEmpty(rs.getString("FINNONE_BATCHID")));
 			details.setFinReference(rs.getString("AGREEMENTID"));

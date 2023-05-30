@@ -1902,10 +1902,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				if (StringUtils.equals(getComboboxValue(this.sameasAddressType), address.getCustAddrType())) {
 					final CustomerAddres customerAddres = new CustomerAddres();
 					BeanUtils.copyProperties(address, customerAddres);
-					customerAddres
-							.setCustAddrType(this.custAddrType.getValue() == "" ? null : this.custAddrType.getValue());
-					customerAddres.setLovDescCustAddrTypeName(
-							this.custAddrType.getDescription() == "" ? null : this.custAddrType.getDescription());
+					customerAddres.setCustAddrType(StringUtils.isEmpty(this.custAddrType.getValue()) ? null : this.custAddrType.getValue());
+					customerAddres.setLovDescCustAddrTypeName(StringUtils.isEmpty(this.custAddrType.getDescription()) ? null : this.custAddrType.getDescription());
 					customerAddres.setCustID(Long.MIN_VALUE);
 					customerAddres.setLovDescCustCIF(this.custCIF.getValue());
 					customerAddres.setLovDescCustShrtName(this.custShrtName.getValue());

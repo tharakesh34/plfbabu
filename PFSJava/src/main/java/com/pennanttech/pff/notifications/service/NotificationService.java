@@ -135,7 +135,7 @@ public class NotificationService extends GenericService<Notification> {
 	private DocumentTypeDAO documentTypeDAO;
 
 	private PresentmentBounceService presentmentBounceService;
-	private final String ERROR_MESSAGE = "Unable to parse the email template, please check the configured email template";
+	private static final String ERROR_MESSAGE = "Unable to parse the email template, please check the configured email template";
 
 	public NotificationService() {
 		super();

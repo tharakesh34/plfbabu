@@ -2097,8 +2097,8 @@ public class ReceiptCalculator {
 			}
 		}
 
-		if (rd.getFinanceDetail().getFinScheduleData().getFinServiceInstruction().isClosureReceipt()
-				&& rd.isAdjSchedule()) {
+		FinServiceInstruction fsi = rd.getFinanceDetail().getFinScheduleData().getFinServiceInstruction();
+		if (fsi != null && fsi.isClosureReceipt() && rd.isAdjSchedule()) {
 			rd = earlySettleAllocation(rd);
 			if (rd.isSetPaidValues()) {
 				setPaidValues(rd);

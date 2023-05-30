@@ -190,11 +190,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		logger.debug(Literal.SQL + sql);
 
-		List<Long> list = jdbcOperations.query(sql, ps -> {
-			ps.setString(1, keyReference);
-		}, (rs, i) -> {
-			return rs.getLong(1);
-		});
+		List<Long> list = jdbcOperations.query(sql, ps -> ps.setString(1, keyReference), (rs, i) -> rs.getLong(1));
 
 		if (CollectionUtils.isNotEmpty(list)) {
 			return true;

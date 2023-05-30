@@ -359,10 +359,8 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
 				AccountMapping am = new AccountMapping();
 
 				am.setAccountTypeDesc(rs.getString("AccountTypeDesc"));

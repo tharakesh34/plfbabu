@@ -1110,8 +1110,6 @@ public class RepaymentPostingsUtil {
 		fm.setClosureType(rch == null ? null : rch.getClosureType());
 		letterService.logForAutoLetter(fm, appDate);
 
-		System.out.println("");
-
 		pftDetail.setFinStatus(fm.getFinStatus());
 		pftDetail.setFinStsReason(fm.getFinStsReason());
 		pftDetail.setFinIsActive(fm.isFinIsActive());

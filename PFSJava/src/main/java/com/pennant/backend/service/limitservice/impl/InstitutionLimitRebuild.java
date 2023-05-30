@@ -137,9 +137,8 @@ public class InstitutionLimitRebuild {
 				financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), whereClause, true));
 			}
 
-			financeMains.forEach(financeMain -> {
-				financeMain.setOsPriBal(limitDetailDAO.getOsPriBal(financeMain.getFinReference()));
-			});
+			financeMains.forEach(
+					financeMain -> financeMain.setOsPriBal(limitDetailDAO.getOsPriBal(financeMain.getFinReference())));
 			Map<Long, List<FinanceMain>> custmains = new HashMap<>();
 
 			StepUtil.INSTITUTION_LIMITS_UPDATE.setTotalRecords(financeMains.size());

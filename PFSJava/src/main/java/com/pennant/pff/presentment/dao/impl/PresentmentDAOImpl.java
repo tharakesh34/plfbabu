@@ -1604,9 +1604,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		List<Long> list = this.jdbcOperations.query(sql, ps -> {
 			ps.setLong(1, finID);
 			ps.setDate(2, JdbcUtil.getDate(schDate));
-		}, (rs, rowNum) -> {
-			return JdbcUtil.getLong(rs.getObject("MandateID"));
-		});
+		}, (rs, rowNum) -> JdbcUtil.getLong(rs.getObject("MandateID")));
 
 		if (CollectionUtils.isEmpty(list)) {
 			return null;

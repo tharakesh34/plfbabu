@@ -895,9 +895,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		}, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), (rs, rowNum) -> {
 			ManualAdviseMovements ma = new ManualAdviseMovements();
 
 			ma.setMovementID(rs.getLong("MovementID"));
@@ -2215,7 +2213,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	public List<ManualAdvise> getAdviseStatus(long finID) {
 		String sql = "Select Status, ValueDate, AdviseId, FinReference From ManualAdvise Where FinID = ? and Status != ?";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			ManualAdvise ma = new ManualAdvise();

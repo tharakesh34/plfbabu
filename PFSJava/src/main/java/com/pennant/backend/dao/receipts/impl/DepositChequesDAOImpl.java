@@ -219,9 +219,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, branchCode);
-		}, (rs, i) -> {
+		return jdbcOperations.query(sql.toString(), ps -> ps.setString(1, branchCode), (rs, i) -> {
 			DepositCheques dc = new DepositCheques();
 
 			dc.setReceiptId(JdbcUtil.getLong(rs.getLong("ReceiptId")));

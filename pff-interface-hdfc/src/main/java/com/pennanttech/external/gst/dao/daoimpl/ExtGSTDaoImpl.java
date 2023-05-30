@@ -45,13 +45,24 @@ public class ExtGSTDaoImpl extends SequenceDao implements ExtGSTDao {
 	public void extractGSTVouchers() {
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("  INSERT INTO GST_VOUCHER_DETAILS(FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1,"
-				+ "REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE) "
-				+ "  (select  frh.reference FINREFERENCE,'FEE' ,ffr.feeid ,"
-				+ "  ffr.receiptid,ffr.paidamount,frh.receiptamount,to_date(substr(sysdate,1,10),'YYYY-MM-DD')  from finfeereceipts ffr "
-				+ " inner join finfeedetail ffd on ffr.FEEID=ffd.FEEID "
-				+ "  inner join finreceiptheader frh on ffr.receiptid=frh.receiptid"
-				+ "  where ffr.paidamount >0 and ffd.TAXAPPLICABLE=1)");
+		sql.append(" INSERT INTO GST_VOUCHER_DETAILS(FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
+				+ " REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE) "
+				+ "  SELECT FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
+				+ " REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE FROM( "
+
+				+ "   (select  frh.reference FINREFERENCE,'FEE' AMOUNT_TYPE,ffr.feeid REFERENCE_FIELD1, "
+				+ "   ffr.receiptid  REFERENCE_FIELD2,ffr.paidamount REFERENCE_AMOUNT,frh.receiptamount ACTUAL_AMOUNT, "
+				+ "   to_date(substr(sysdate,1,10),'YYYY-MM-DD' ) AS CREATED_DATE  " + "   from finfeereceipts ffr  "
+				+ "   inner join finfeedetail ffd on ffr.FEEID=ffd.FEEID  "
+				+ "   inner join finreceiptheader frh on ffr.receiptid=frh.receiptid "
+				+ "   where ffr.paidamount >0 and ffd.TAXAPPLICABLE=1) " + "   UNION  "
+
+				+ "   (select mad.FINREFERENCE FINREFERENCE,'ADVISE' AMOUNTTYPE, MOVEMENTID REFERENCE_FIELD1, "
+				+ "   madm.RECEIPTID REFERENCE_FIELD2,madm.PAIDAMOUNT REFERENCE_AMOUNT,frh.receiptamount ACTUAL_AMOUNT, "
+				+ "   to_date(substr(sysdate,1,10),'YYYY-MM-DD' ) AS CREATED_DATE "
+				+ "   from manualadvisemovements madm "
+				+ "   inner join manualadvise mad on madm.ADVISEID=mad.ADVISEID "
+				+ "   inner join finreceiptheader frh on madm.RECEIPTID=frh.receiptid))T");
 
 		// not exist with feeid and receipt id
 

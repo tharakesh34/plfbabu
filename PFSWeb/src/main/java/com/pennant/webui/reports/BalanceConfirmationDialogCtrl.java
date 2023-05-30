@@ -113,7 +113,7 @@ public class BalanceConfirmationDialogCtrl extends GFCBaseCtrl<BalanceConfirmati
 		doWriteComponentsToBean(this.balanceConfirmation);
 
 		try {
-			String path = App.getResourcePath(PathUtil.BalanceConfirmation);
+			String path = App.getResourcePath(PathUtil.BALANCE_CONFIRMATION);
 
 			Date appldate = SysParamUtil.getAppDate();
 			String appDate = DateUtil.formatToLongDate(appldate);

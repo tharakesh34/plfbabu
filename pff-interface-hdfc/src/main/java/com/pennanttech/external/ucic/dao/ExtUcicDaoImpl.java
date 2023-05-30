@@ -21,7 +21,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicDao {
 	private static final Logger logger = LogManager.getLogger(ExtUcicDaoImpl.class);
-	private NamedParameterJdbcTemplate extNamedJdbcTemplate;
+	private NamedParameterJdbcTemplate mainNamedJdbcTemplate;
 
 	public ExtUcicDaoImpl() {
 		super();
@@ -29,7 +29,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 
 	@Override
 	public long getSeqNumber(String tableName) {
-		setDataSource(extNamedJdbcTemplate.getJdbcTemplate().getDataSource());
+		setDataSource(mainNamedJdbcTemplate.getJdbcTemplate().getDataSource());
 		return getNextValue(tableName);
 	}
 
@@ -38,7 +38,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 		logger.debug(Literal.ENTERING);
 		String queryStr = "UPDATE UCIC_CUSTOMERS SET PROCESS_FLAG = ?,FILE_STATUS = ? WHERE CUSTID = ? AND FINREFERENCE = ?";
 		logger.debug(Literal.SQL + queryStr);
-		extNamedJdbcTemplate.getJdbcOperations().update(queryStr.toString(), ps -> {
+		mainNamedJdbcTemplate.getJdbcOperations().update(queryStr.toString(), ps -> {
 			int index = 1;
 			ps.setLong(index++, process_flag);
 			ps.setLong(index++, file_status);
@@ -54,7 +54,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 		String sql = "Select count(1) from UCIC_RESP_FILES Where FILE_NAME= ?";
 		logger.debug(Literal.SQL + sql);
 		try {
-			return extNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, Integer.class, fileName) > 0;
+			return mainNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, Integer.class, fileName) > 0;
 		} catch (EmptyResultDataAccessException e) {
 			return false;
 		}
@@ -70,7 +70,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+		mainNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
 			int index = 1;
 			ps.setString(index++, fileName);
 			ps.setString(index++, fileLocation);
@@ -86,7 +86,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 	public void updateResponseFileProcessingFlag(long id, int status, String errorCode, String errorMessage) {
 		String sql = "UPDATE UCIC_RESP_FILES SET STATUS = ?,ERROR_CODE = ? ,ERROR_MESSAGE =? Where ID= ? ";
 		logger.debug(Literal.SQL + sql);
-		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
+		mainNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 			ps.setInt(index++, status);
 			ps.setString(index++, errorCode);
@@ -102,7 +102,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 		logger.info("Extracting UCIC data");
 		String status = "FAIL";
 		try {
-			extNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
+			mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
 
 				@Override
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
@@ -126,7 +126,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 	public String executeUcicRequestFileSP(String fileName) {
 		String status = "FAIL";
 		try {
-			extNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
+			mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
 
 				@Override
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
@@ -151,7 +151,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 	public String executeUcicWeeklyRequestFileSP(String fileName) {
 		String status = "FAIL";
 		try {
-			extNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
+			mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
 
 				@Override
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
@@ -176,7 +176,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 	public String executeUcicResponseFileSP(String fileName) {
 		String status = "FAIL";
 		try {
-			extNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
+			mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
 				@Override
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
 					CallableStatement callableStatement = connection
@@ -197,7 +197,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 	public String executeUcicAckFileSP(String fileName) {
 		String status = "FAIL";
 		try {
-			extNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
+			mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
 
 				@Override
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
@@ -226,14 +226,14 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+		return mainNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
 			ps.setLong(1, ackStatus);
 			ps.setString(2, fileName);
 		});
 
 	}
 
-	public void setExtDataSource(DataSource extDataSource) {
-		this.extNamedJdbcTemplate = new NamedParameterJdbcTemplate(extDataSource);
+	public void setMainDataSource(DataSource extDataSource) {
+		this.mainNamedJdbcTemplate = new NamedParameterJdbcTemplate(extDataSource);
 	}
 }

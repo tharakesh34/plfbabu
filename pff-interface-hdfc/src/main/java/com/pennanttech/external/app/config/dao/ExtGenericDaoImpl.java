@@ -59,10 +59,13 @@ public class ExtGenericDaoImpl implements ExtGenericDao {
 
 	@Override
 	public void resetAllSequences() {
-		/*
-		 * resetSequences("SEQ_PRMNT_SI", 1); resetSequences("SEQ_PRMNT_SI_INTERNAL", 1);
-		 * resetSequences("SEQ_PRMNT_ACH", 1); resetSequences("SEQ_PRMNT_PDC", 1);
-		 */
+		resetSequences("SEQ_PRMNT_SI", 1);
+		resetSequences("SEQ_PRMNT_SI_INTERNAL", 1);
+		resetSequences("SEQ_PRMNT_ACH", 1);
+		resetSequences("SEQ_PRMNT_PDC", 1);
+		resetSequences("SEQ_SILIEN", 1);
+		resetSequences("SEQ_FINCON_GL", 1);
+		resetSequences("SEQ_COLLECTION_RECEIPT", 1);
 	}
 
 	public void setExtDataSource(DataSource extDataSource) {

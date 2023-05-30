@@ -189,21 +189,20 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 
 		logger.trace(Literal.SQL + sql);
 
-		return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), ps -> {
-			ps.setInt(1, EodConstants.PROGRESS_WAIT);
-		}, (rs, rowNum) -> {
-			CustomerGroupQueuing customerGroupQueuing = new CustomerGroupQueuing();
-			customerGroupQueuing.setGroupId(rs.getLong("GroupId"));
-			customerGroupQueuing.setEodDate(rs.getDate("EodDate"));
-			customerGroupQueuing.setStartTime(rs.getDate("StartTime"));
-			customerGroupQueuing.setEndTime(rs.getDate("EndTime"));
-			customerGroupQueuing.setProgress(rs.getInt("Progress"));
-			customerGroupQueuing.setErrorLog(rs.getString("ErrorLog"));
-			customerGroupQueuing.setStatus(rs.getString("Status"));
-			customerGroupQueuing.setEodProcess(rs.getBoolean("EodProcess"));
+		return this.jdbcTemplate.getJdbcOperations().query(sql.toString(),
+				ps -> ps.setInt(1, EodConstants.PROGRESS_WAIT), (rs, rowNum) -> {
+					CustomerGroupQueuing customerGroupQueuing = new CustomerGroupQueuing();
+					customerGroupQueuing.setGroupId(rs.getLong("GroupId"));
+					customerGroupQueuing.setEodDate(rs.getDate("EodDate"));
+					customerGroupQueuing.setStartTime(rs.getDate("StartTime"));
+					customerGroupQueuing.setEndTime(rs.getDate("EndTime"));
+					customerGroupQueuing.setProgress(rs.getInt("Progress"));
+					customerGroupQueuing.setErrorLog(rs.getString("ErrorLog"));
+					customerGroupQueuing.setStatus(rs.getString("Status"));
+					customerGroupQueuing.setEodProcess(rs.getBoolean("EodProcess"));
 
-			return customerGroupQueuing;
-		});
+					return customerGroupQueuing;
+				});
 
 	}
 

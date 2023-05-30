@@ -56,9 +56,7 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.update(sql, ps -> {
-			ps.setInt(1, EodConstants.PROGRESS_SUCCESS);
-		});
+		this.jdbcOperations.update(sql, ps -> ps.setInt(1, EodConstants.PROGRESS_SUCCESS));
 
 		sql = "Update LETTER_GENERATION_QUEUE Set Progress = ? Where Progress = ?";
 

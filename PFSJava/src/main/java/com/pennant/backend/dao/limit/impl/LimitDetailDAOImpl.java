@@ -385,9 +385,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql, ps -> {
-			ps.setLong(1, headerId);
-		}, (rs, i) -> {
+		return this.jdbcOperations.query(sql, ps -> ps.setLong(1, headerId), (rs, i) -> {
 			LimitDetails ld = new LimitDetails();
 
 			ld.setLimitLine(rs.getString(1));
@@ -438,9 +436,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		sql.append(StringUtils.trimToEmpty(type));
 		logger.trace(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, headeId);
-		}, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headeId), (rs, rowNum) -> {
 			LimitDetails ld = new LimitDetails();
 			ld.setLimitLine(rs.getString("RuleCode"));
 			ld.setLimitLineDesc(rs.getString("LimitLineDesc"));

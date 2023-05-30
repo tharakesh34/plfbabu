@@ -4459,7 +4459,7 @@ public class FinanceDataValidation {
 			return;
 		}
 
-		if (!(finType.getPlanEMIHLockPeriod() >= fm.getPlanEMIHLockPeriod())) {
+		if (finType.getPlanEMIHLockPeriod() < fm.getPlanEMIHLockPeriod()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "PlanEMIHLockPeriod";
 			valueParm[1] = String.valueOf(finType.getPlanEMIHLockPeriod());
@@ -8451,7 +8451,7 @@ public class FinanceDataValidation {
 		validateBigDecimal(fm.getRpyMaxRate(), "RpyMaxRate", errors);
 		validateBigDecimal(fm.getFinAssetValue(), "FinAssetValue", errors);
 
-		ServiceExceptionDetails exceptions[] = new ServiceExceptionDetails[errors.size()];
+		ServiceExceptionDetails[] exceptions = new ServiceExceptionDetails[errors.size()];
 
 		int errorCount = 0;
 		for (ErrorDetail error : errors) {

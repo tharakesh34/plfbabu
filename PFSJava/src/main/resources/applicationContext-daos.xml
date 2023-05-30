@@ -8017,12 +8017,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="extendedFieldExtensionService" ref="extendedFieldExtensionService" />
 	</bean>
-
-	<!-- custom service tasks -->
-	<!-- <bean id="customServiceTask" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"> <property 
-		name="transactionManager"> <ref bean="transactionManager" /> </property> <property name="target"> <ref bean="customServiceTaskTarget" 
-		/> </property> <property name="transactionAttributes"> <props> <prop key="*">PROPAGATION_REQUIRED,readOnly</prop> </props> 
-		</property> </bean> -->
+	
 	<bean id="customServiceTask" class="com.pennant.backend.service.custom.FinanceExternalServiceTask">
 		<property name="serviceTaskDAO" ref="serviceTaskDAO" />
 	</bean>
@@ -9428,9 +9423,6 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="customerDAO" ref="customerDAO" />
 	</bean>
-
-	<!-- <bean id="defaultJobSchedular" class="com.pennanttech.pff.jobs.DefaultJobSchedular"> <property name="dMSService" ref="dMSService" 
-		/> <property name="disbursementRequestService" ref="disbursementRequestService" /> </bean> -->
 
 	<bean id="systemNotificationsDAO" class="com.pennanttech.pff.notifications.dao.SystemNotificationsDAOImpl"
 		parent="sequenceDao">

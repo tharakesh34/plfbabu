@@ -35,9 +35,7 @@ public class ExtLienMarkingDAOImpl extends SequenceDao implements ExtLienMarking
 		List<LienMarkDetail> unprocessedLienDetailsList = new ArrayList<LienMarkDetail>();
 
 		queryStr = " Select * from LIEN_HEADER  WHERE INTERFACESTATUS = ?";
-		mainNamedJdbcTemplate.getJdbcOperations().query(queryStr, ps -> {
-			ps.setString(1, status);
-		}, rs -> {
+		mainNamedJdbcTemplate.getJdbcOperations().query(queryStr, ps -> ps.setString(1, status), rs -> {
 			LienMarkDetail lienDetails = new LienMarkDetail();
 			lienDetails.setAccNumber(rs.getString("ACCNUMBER"));
 			lienDetails.setLienMark((rs.getInt("LIENSTATUS") == 0 ? "N" : "Y"));
@@ -86,9 +84,8 @@ public class ExtLienMarkingDAOImpl extends SequenceDao implements ExtLienMarking
 				ps.setTimestamp(index, curTimeStamp);
 			});
 		} catch (Exception e) {
-
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override

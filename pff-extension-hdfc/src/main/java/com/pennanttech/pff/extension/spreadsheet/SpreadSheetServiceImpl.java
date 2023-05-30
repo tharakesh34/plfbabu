@@ -511,7 +511,6 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 		for (FinCreditReviewDetails id : idList) {
 			Map<String, Object> tempMap1 = new HashMap<>();
-			// tempMap1 = dataAccess.getFinCreditRevSummaryDetails(id.getId(), id.getAuditYear());
 			tempMap1 = dataAccess.getFinCreditRevSummaryDetails(id.getId());
 
 			for (String str : tempMap1.keySet()) {
@@ -544,7 +543,6 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				if (CollectionUtils.isNotEmpty(coAppidList)) {
 					for (FinCreditReviewDetails id : coAppidList) {
 						Map<String, Object> tempMap2 = new HashMap<>();
-						// tempMap2 = dataAccess.getFinCreditRevSummaryDetails(id.getId(),id.getAuditYear());
 						tempMap2 = dataAccess.getFinCreditRevSummaryDetails(id.getId());
 
 						for (String str : tempMap2.keySet()) {

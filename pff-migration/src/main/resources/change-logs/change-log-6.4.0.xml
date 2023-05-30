@@ -16572,6 +16572,24 @@
    			 ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#15956.106" author="NagaVamsi.P">
+		<renameTable newTableName="LOAN_LETTER_MANUAL_TEMP" oldTableName="LETTER_GENERATE_MANUAL_TEMP" />
+	</changeSet>
+
+	<changeSet id="ST#15956.107" author="NagaVamsi.P">
+		<renameTable newTableName="LOAN_LETTER_MANUAL" oldTableName="LETTER_GENERATE_MANUAL" />
+	</changeSet>
+
+	<changeSet id="ST#15956.108" author="NagaVamsi.P">
+		<renameTable newTableName="LOAN_LETTER_BLOCKING" oldTableName="LETTER_BLOCKING" />
+	</changeSet>
+
+	<changeSet id="ST#15956.109" author="NagaVamsi.P">
+		<renameTable newTableName="LOAN_LETTER_BLOCKING_LOG" oldTableName="LETTER_BLOCKING_LOG" />
+	</changeSet>
+	
+	
 
 	<changeSet id="ST#1561.37.1" author="Mounika.M">
 		<addColumn tableName="Loan_Letter_Manual_Temp">
@@ -16620,7 +16638,7 @@
 			<column name="FinBranch" type="varchar(13)" />
 		</addColumn>
 	</changeSet>
-
+	
 	<changeSet id="ST#1561.30_03" author="vasudevarao.S">
 		<sql>
 			<![CDATA[

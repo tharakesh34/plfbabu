@@ -53,13 +53,13 @@ public class TextFileUtil {
 				sb.append(sc.nextLine());
 				dataList.add(sb);
 			}
+			
+			logger.debug(Literal.LEAVING);
 			return dataList;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
+			return new ArrayList<>();
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	public static void appendData(StringBuilder builder, String appender, int times) {

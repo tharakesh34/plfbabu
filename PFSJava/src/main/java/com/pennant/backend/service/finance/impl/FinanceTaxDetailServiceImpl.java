@@ -438,7 +438,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 			return errorsList;
 		}
 
-		if (StringUtils.isNotBlank(ftd.getTaxNumber()) && (!(StringUtils.length(ftd.getTaxNumber()) == 15))) {
+		if (StringUtils.isNotBlank(ftd.getTaxNumber()) && (StringUtils.length(ftd.getTaxNumber()) != 15)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "gstNumber";
 			valueParm[1] = "15";
@@ -589,7 +589,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		case PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER:
 			/* business logic */
 			FinanceMain finMain = financeMainDAO.getFinanceDetailsForService(finID, "_AView", false);
-			if (!(finMain.getCustID() == customer.getCustID())) {
+			if (finMain.getCustID() != customer.getCustID()) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Customer";
 				valueParm[1] = "Loan : " + finReference;
@@ -609,7 +609,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 
 				return errorsList;
 			} else {
-				if (!(customer.getCustID() == jointAccountDetail.getCustID())) {
+				if (customer.getCustID() != jointAccountDetail.getCustID()) {
 					String[] valueParm = new String[1];
 					valueParm[0] = ftd.getCustCIF();
 					errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90102", valueParm)));
