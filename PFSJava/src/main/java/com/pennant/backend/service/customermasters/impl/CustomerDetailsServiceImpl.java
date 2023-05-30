@@ -3123,9 +3123,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		for (int i = 0; i < gstDetailList.size(); i++) {
 			for (int j = 0; j < gstDetailList.size() - 1; j++) {
-				if (i == j) {
-					continue;
-				} else {
+				if (i != j) {
 					String gstState1 = gstDetailList.get(i).getStateCode();
 					gstState2 = gstDetailList.get(j).getStateCode();
 					if (StringUtils.equals(gstState1, gstState2)) {

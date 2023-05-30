@@ -100,7 +100,6 @@ public class CustomerEmailUpload extends KycDetailsUploadServiceImpl {
 
 		if (!EmailValidator.getInstance().isValid(detail.getCustEMail())) {
 			setError(detail, "90237", detail.getCustEMail());
-			return;
 		}
 	}
 

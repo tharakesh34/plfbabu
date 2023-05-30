@@ -192,7 +192,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
+		return this.jdbcOperations.query(sql, ps -> {
 
 		}, (rs, Num) -> {
 			Queing queing = new Queing();

@@ -781,8 +781,6 @@ public class GSTCalculator {
 		BigDecimal totalGST = BigDecimal.ZERO;
 
 		if (isGSTCalculationOnMaster()) {
-			totalGST = BigDecimal.ZERO;
-
 			if (dataMap.containsKey("fromState") && dataMap.containsKey("toState")) {
 				String fromState = (String) dataMap.get("fromState");
 				String toState = (String) dataMap.get("toState");

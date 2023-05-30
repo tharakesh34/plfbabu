@@ -614,8 +614,6 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 						uad.setPaidAmount(paidAmount);
 
 						list.add(uad);
-						continue;
-
 					}
 				}
 			}

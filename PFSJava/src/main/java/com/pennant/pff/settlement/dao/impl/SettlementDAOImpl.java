@@ -194,7 +194,7 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 			break;
 		}
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
 	}

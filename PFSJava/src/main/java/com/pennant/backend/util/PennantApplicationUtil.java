@@ -1038,7 +1038,7 @@ public class PennantApplicationUtil {
 		JdbcSearchObject<SecurityRole> searchObject = new JdbcSearchObject<>(SecurityRole.class);
 
 		if (nextRoleCode.contains(",")) {
-			String roleCodes[] = nextRoleCode.split(",");
+			String[] roleCodes = nextRoleCode.split(",");
 			searchObject.addFilterIn("RoleCd", Arrays.asList(roleCodes));
 		} else {
 			searchObject.addFilterEqual("RoleCd", nextRoleCode);

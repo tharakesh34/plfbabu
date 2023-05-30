@@ -132,7 +132,6 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 
 		if ((StringUtils.isNotBlank(custAddrZIP)) && (custAddrZIP.length() < 3 || custAddrZIP.length() > 6)) {
 			setError(detail, "65031", "pinCode", "2 digits", "7 digits");
-			return;
 		}
 	}
 
