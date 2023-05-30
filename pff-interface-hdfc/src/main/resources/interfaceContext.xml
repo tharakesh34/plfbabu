@@ -60,7 +60,7 @@
 	</bean>
 
 	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.ExtUcicDaoImpl">
-		<property name="extDataSource" ref="extDataSource" />
+		<property name="mainDataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.ExtExtractionDaoImpl">

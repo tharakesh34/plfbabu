@@ -22,7 +22,7 @@
 	</bean>
 
 	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.ExtUcicDaoImpl">
-		<property name="extDataSource" ref="extDataSource" />
+		<property name="mainDataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="extUcicExtractData" class="com.pennanttech.external.ucic.service.ExtUcicDataExtractor">
