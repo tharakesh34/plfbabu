@@ -182,7 +182,7 @@ public class ExtCollectionFileProcessorJob extends AbstractJob
 		cru.setAllocationType("M");
 		cru.setAppDate(SysParamUtil.getAppDate());
 		cru.setValueDate(SysParamUtil.getAppDate());
-		cru.setReceiptModeStatus("F");
+		cru.setReceiptModeStatus("R");
 		cru.setRealizationDate(getFormattedDate(collectionData.getReceiptDate()));
 		cru.setReceiptAmount(collectionData.getGrandTotal());
 		cru.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
