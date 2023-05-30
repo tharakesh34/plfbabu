@@ -32,7 +32,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.lien.service.LienService;
@@ -250,14 +249,6 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 					setErrorDeatils(pmu, remarks, error, "CPU001");
 					continue;
 				}
-
-				// validations for MandateRef()
-				error = "Mandate reference not available with this Mandate Id : " + mandate.getMandateID();
-				if (!MandateConstants.skipRegistration().contains(mandate.getMandateType()))
-					if (StringUtils.isBlank(mandate.getMandateRef())) {
-						setErrorDeatils(pmu, remarks, error, "CPU002");
-						continue;
-					}
 
 				error = " Selected Mandate ID : " + mandate.getMandateID() + " is Not Valid.";
 				if (!paymentMethodUploadDAO.isValidMandate(pmu)) {
