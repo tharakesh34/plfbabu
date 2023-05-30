@@ -424,9 +424,7 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 		logger.debug(Literal.SQL + sql);
 
-		jdbcOperations.update(sql, ps -> {
-			ps.setLong(1, 0);
-		});
+		jdbcOperations.update(sql, ps -> ps.setLong(1, 0));
 	}
 
 	@Override
@@ -450,9 +448,8 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
-				return (JdbcUtil.getLong(rs.getLong("InvoiceId")));
-			}, tranId);
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> JdbcUtil.getLong(rs.getLong("InvoiceId")),
+					tranId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

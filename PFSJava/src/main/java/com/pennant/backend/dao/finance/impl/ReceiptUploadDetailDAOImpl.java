@@ -279,9 +279,8 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		String sql = "Select UploadDetailId From ReceiptUploadDetails Where UploadHeaderId = ?";
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql, ps -> ps.setLong(1, uploadHeaderId), (rs, rowNum) -> {
-			return JdbcUtil.getLong(rs.getObject("UploadDetailId"));
-		});
+		return this.jdbcOperations.query(sql, ps -> ps.setLong(1, uploadHeaderId),
+				(rs, rowNum) -> JdbcUtil.getLong(rs.getObject("UploadDetailId")));
 	}
 
 	@Override
@@ -302,9 +301,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			}
 
 			ps.setInt(index, ReceiptDetailStatus.SUCCESS.getValue());
-		}, (rs, rowNum) -> {
-			return JdbcUtil.getLong(rs.getObject(1));
-		});
+		}, (rs, rowNum) -> JdbcUtil.getLong(rs.getObject(1)));
 
 	}
 
@@ -475,9 +472,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 				ps.setString(index, rud.getTransactionRef());
 			}
 
-		}, (rs, roNum) -> {
-			return rs.getString(1);
-		});
+		}, (rs, roNum) -> rs.getString(1));
 	}
 
 	@Override

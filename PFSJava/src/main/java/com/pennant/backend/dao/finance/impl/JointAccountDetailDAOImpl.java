@@ -111,9 +111,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-				ps.setLong(1, jad.getJointAccountId());
-			});
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, jad.getJointAccountId()));
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -618,9 +616,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
-			return rs.getLong(1);
-		}, finID);
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> rs.getLong(1), finID);
 	}
 
 	@Override

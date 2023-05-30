@@ -137,9 +137,7 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			parameterizedSetter(ps, ri, type);
-		});
+		this.jdbcOperations.update(sql.toString(), ps -> parameterizedSetter(ps, ri, type));
 
 		return ri.getId();
 	}
