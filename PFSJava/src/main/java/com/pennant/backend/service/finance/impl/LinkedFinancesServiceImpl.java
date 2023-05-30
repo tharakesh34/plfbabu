@@ -315,6 +315,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 			}
 			finMaintainInstructionDAO.delete(finMainInst, TableType.TEMP_TAB);
 			linkedFinancesDAO.delete(finMainInst.getFinID(), "_Temp");
+			financeMainDAO.updateMaintainceStatus(finMainInst.getFinID(), "");
 
 			finServiceInstructionDAO.deleteList(fmi.getFinID(), fd.getExtendedFieldHeader().getEvent(), "_Temp");
 			// Extended field Render Details.
