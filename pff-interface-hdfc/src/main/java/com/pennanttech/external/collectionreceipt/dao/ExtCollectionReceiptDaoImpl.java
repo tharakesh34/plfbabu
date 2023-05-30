@@ -156,9 +156,7 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 
 		logger.debug(Literal.SQL + query.toString());
 
-		extNamedJdbcTemplate.getJdbcOperations().query(query.toString(), ps -> {
-			ps.setLong(1, header_id);
-		}, rs -> {
+		extNamedJdbcTemplate.getJdbcOperations().query(query.toString(), ps -> ps.setLong(1, header_id), rs -> {
 			CollReceiptDetail details = new CollReceiptDetail();
 			details.setId(rs.getLong("ID"));
 			details.setHeaderId(rs.getLong("HEADER_ID"));

@@ -236,9 +236,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.update(sql, ps -> {
-			ps.setInt(1, EodConstants.PROGRESS_SUCCESS);
-		});
+		this.jdbcOperations.update(sql, ps -> ps.setInt(1, EodConstants.PROGRESS_SUCCESS));
 
 		sql = "Update Asset_Classification_Queue Set Progress = ? Where Progress = ?";
 

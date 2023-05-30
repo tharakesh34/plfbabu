@@ -310,18 +310,17 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		List<CustomerPhoneNumber> phList = this.jdbcTemplate.getJdbcOperations().query(sql.toString(), ps -> {
-			ps.setLong(1, id);
-		}, (rs, rowNum) -> {
-			CustomerPhoneNumber custPhnNumbr = new CustomerPhoneNumber();
+		List<CustomerPhoneNumber> phList = this.jdbcTemplate.getJdbcOperations().query(sql.toString(),
+				ps -> ps.setLong(1, id), (rs, rowNum) -> {
+					CustomerPhoneNumber custPhnNumbr = new CustomerPhoneNumber();
 
-			custPhnNumbr.setPhoneCountryCode(rs.getString("PhoneCountryCode"));
-			custPhnNumbr.setPhoneAreaCode(rs.getString("PhoneAreaCode"));
-			custPhnNumbr.setPhoneTypeCode(rs.getString("PhoneTypeCode"));
-			custPhnNumbr.setPhoneNumber(rs.getString("PhoneNumber"));
+					custPhnNumbr.setPhoneCountryCode(rs.getString("PhoneCountryCode"));
+					custPhnNumbr.setPhoneAreaCode(rs.getString("PhoneAreaCode"));
+					custPhnNumbr.setPhoneTypeCode(rs.getString("PhoneTypeCode"));
+					custPhnNumbr.setPhoneNumber(rs.getString("PhoneNumber"));
 
-			return custPhnNumbr;
-		});
+					return custPhnNumbr;
+				});
 
 		return phList.stream()
 				.sorted((ph1, ph2) -> Integer.compare(ph2.getPhoneTypePriority(), ph1.getPhoneTypePriority()))
@@ -339,17 +338,16 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		List<CustomerEMail> customerEMails = this.jdbcTemplate.getJdbcOperations().query(sql.toString(), ps -> {
-			ps.setLong(1, id);
-		}, (rs, rowNum) -> {
-			CustomerEMail custEMail = new CustomerEMail();
-			custEMail.setCustID(rs.getLong("CustID"));
-			custEMail.setCustEMail(rs.getString("CustEMail"));
-			custEMail.setCustEMailPriority(rs.getInt("CustEMailPriority"));
-			custEMail.setCustEMailTypeCode(rs.getString("CustEMailTypeCode"));
+		List<CustomerEMail> customerEMails = this.jdbcTemplate.getJdbcOperations().query(sql.toString(),
+				ps -> ps.setLong(1, id), (rs, rowNum) -> {
+					CustomerEMail custEMail = new CustomerEMail();
+					custEMail.setCustID(rs.getLong("CustID"));
+					custEMail.setCustEMail(rs.getString("CustEMail"));
+					custEMail.setCustEMailPriority(rs.getInt("CustEMailPriority"));
+					custEMail.setCustEMailTypeCode(rs.getString("CustEMailTypeCode"));
 
-			return custEMail;
-		});
+					return custEMail;
+				});
 
 		return customerEMails.stream()
 				.sorted((em1, em2) -> em2.getCustEMailTypeCode().compareTo(em1.getCustEMailTypeCode()))

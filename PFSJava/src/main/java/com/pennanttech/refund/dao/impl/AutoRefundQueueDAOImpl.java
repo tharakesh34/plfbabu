@@ -67,10 +67,7 @@ public class AutoRefundQueueDAOImpl extends SequenceDao<CustEODEvent> implements
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.update(sql, ps -> {
-			ps.setInt(1, EodConstants.PROGRESS_SUCCESS);
-
-		});
+		this.jdbcOperations.update(sql, ps -> ps.setInt(1, EodConstants.PROGRESS_SUCCESS));
 
 		sql = "Update Auto_Refund_Queue Set Progress = ? Where Progress = ?";
 

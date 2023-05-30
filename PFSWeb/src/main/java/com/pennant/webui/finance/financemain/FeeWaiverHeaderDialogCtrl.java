@@ -362,9 +362,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 			Map<String, FeeWaiverDetail> map = new HashMap<>();
 
-			list.forEach(wd -> {
-				map.put(wd.getFeeTypeCode(), wd);
-			});
+			list.forEach(wd -> map.put(wd.getFeeTypeCode(), wd));
 
 			doFillFeeWaiverEnqDetails(new ArrayList<>(map.values()));
 		} else {

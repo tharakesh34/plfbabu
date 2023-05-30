@@ -102,9 +102,7 @@ public class ExtGSTDaoImpl extends SequenceDao implements ExtGSTDao {
 
 		logger.debug(Literal.SQL + query.toString());
 
-		mainNamedJdbcTemplate.getJdbcOperations().query(query.toString(), ps -> {
-			ps.setInt(1, status);
-		}, rs -> {
+		mainNamedJdbcTemplate.getJdbcOperations().query(query.toString(), ps -> ps.setInt(1, status), rs -> {
 			GSTRequestDetail detail = new GSTRequestDetail();
 			detail.setRequestType(rs.getString("REQUESTTYPE"));
 			detail.setCustomerId(rs.getString("CUSTOMERID"));

@@ -199,9 +199,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setLong(1, AssetClassSetupHeader.getId());
-		});
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, AssetClassSetupHeader.getId()));
 	}
 
 	@Override
@@ -500,12 +498,6 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = na.FinType and acsd.SetupId = ft.AssetClassSetup");
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		}, (rs, rowNum) -> {
-			return rs.getString(1);
-		});
-
+		return jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), (rs, rowNum) -> rs.getString(1));
 	}
-
 }
