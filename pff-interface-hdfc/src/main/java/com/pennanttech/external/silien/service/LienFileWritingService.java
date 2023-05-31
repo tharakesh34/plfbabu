@@ -50,7 +50,7 @@ public class LienFileWritingService extends TextFileUtil
 				int requiredRecordCount = (int) lienConfig.getNoOfRecords();
 				if (!lienMarkingList.isEmpty()) {
 					int listSize = lienMarkingList.size();
-					fileCount = listSize / requiredRecordCount;
+					fileCount = (int) Math.ceil((double) listSize / requiredRecordCount);
 
 					int frmIndx = 0;
 					int toIndx = requiredRecordCount;
