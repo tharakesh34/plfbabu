@@ -103,9 +103,10 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 					.collect(Collectors.toList());
 		}
 
+		BigDecimal releaseAmount = BigDecimal.ZERO;
 		for (HoldMarkingDetail hd : lu) {
+			releaseAmount = hd.getAmount().add(releaseAmount);
 			Listitem li = new Listitem();
-
 			int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 
 			li.appendChild(new Listcell(String.valueOf(hd.getHoldID())));
@@ -117,9 +118,9 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getHoldAmount(), formatter)));
 			} else {
 				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getHoldAmount(), formatter)));
-				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getAmount(), formatter)));
+				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(releaseAmount, formatter)));
 				li.appendChild(new Listcell(
-						PennantApplicationUtil.amountFormate(hd.getHoldAmount().subtract(hd.getAmount()), formatter)));
+						PennantApplicationUtil.amountFormate(hd.getHoldAmount().subtract(releaseAmount), formatter)));
 			}
 
 			li.appendChild(new Listcell(String.valueOf(hd.getHoldType())));

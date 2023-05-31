@@ -52,7 +52,7 @@
 							<row id="finTypeRow" spans="1,3">
 								<label id="label_SelectHoldEnquiryList_finReference"
 									value="${c:l('label_SelectHoldEnquiryList_finReference.value')}" />
-								<extendedcombobox id="finReference" width="171px" />
+								<textbox id="finReference" width="171px" />
 							</row>
 							<row id="finAccNum" spans="1,3">
 								<label id="label_SelectHoldEnquiryList_accNum"

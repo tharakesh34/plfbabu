@@ -1953,7 +1953,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
 		}
 
-		if (fsi.getRequestSource() == RequestSource.UPLOAD && RepayConstants.PAYSTATUS_DEPOSITED.equals(status)) {
+		if (fsi != null && fsi.getRequestSource() == RequestSource.UPLOAD
+				&& RepayConstants.PAYSTATUS_DEPOSITED.equals(status)) {
 			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
 		}
 
@@ -2351,14 +2352,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		if (MandateExtension.ALLOW_HOLD_MARKING && !FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
-			List<FinExcessAmount> excessList = rch.getExcessAmounts();
-			BigDecimal refund = BigDecimal.ZERO;
-			for (FinExcessAmount finExcessAmount : excessList) {
-				refund = refund.add(finExcessAmount.getBalanceAmt());
-			}
-
-			BigDecimal receiptAmount = rch.getReceiptAmount().subtract(refund);
-			holdMarkingService.updateHoldRemoval(receiptAmount, fm.getFinID(), fm.getFinReference());
+			holdMarkingService.updateHoldRemoval(ReceiptUtil.getAllocatedAmount(rch.getAllocations()), fm.getFinID(),
+					fm.getFinReference());
 		}
 
 		logger.debug(Literal.LEAVING);
