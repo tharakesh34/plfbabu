@@ -8885,7 +8885,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 		}
 
-		if (FinServiceEvent.EARLYRPY.equals(receiptPurpose)) {
+		if ((FinServiceEvent.EARLYRPY.equals(receiptPurpose)) || (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose))) {
 			List<Date> dates = finServiceInstructionDAO.getListDates(finID, receiptDt);
 
 			if (CollectionUtils.isNotEmpty(dates)) {
