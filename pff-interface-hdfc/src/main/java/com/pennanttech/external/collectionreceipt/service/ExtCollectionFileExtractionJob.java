@@ -173,6 +173,8 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 
 					sc.close();
 
+					boolean isLastLineRemoved = false;
+
 					// Start the transaction
 					if (dataValid && extCollectionLineList.size() > 0) {
 
@@ -185,6 +187,7 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 						}
 
 						extCollectionLineList.remove(extCollectionLineList.size() - 1);
+						isLastLineRemoved = true;
 
 						for (CollReceiptDetail lineData : extCollectionLineList) {
 
@@ -212,6 +215,7 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 						}
 						logger.debug(dataValid + "MAINCHKSUM:::: mainChksum:" + mainChksum + ", gTotalChk:"
 								+ (dataRows - 1) + "" + gTotalChk);
+
 						if (dataValid && !mainChksum.equals((dataRows - 1) + "" + gTotalChk)) {
 							dataValid = false;
 						}
@@ -232,7 +236,9 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 					}
 
 					if (!dataValid) {
-						extCollectionLineList.remove(extCollectionLineList.size() - 1);
+						if (!isLastLineRemoved) {
+							extCollectionLineList.remove(extCollectionLineList.size() - 1);
+						}
 						saveDetails(extCollectionLineList, extReceiptHeader.getId());
 						extReceiptHeader.setStatus(FAILED);
 						extReceiptHeader.setWriteResponse(ENABLED);
