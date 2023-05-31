@@ -57,7 +57,7 @@ public class LienFileWritingService extends TextFileUtil
 					for (int i = 0; i < fileCount; i++) {
 						writeDataToFile(lienMarkingList.subList(frmIndx, toIndx), appDate);
 						frmIndx = toIndx;
-						toIndx = toIndx + requiredRecordCount;
+						toIndx = toIndx + (requiredRecordCount - 1);
 					}
 				}
 			}
