@@ -73,6 +73,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 	private BounceReasonDAO bounceReasonDAO;
 	private RejectDetailDAO rejectDetailDAO;
 	private BankDetailDAO bankDetailDAO;
+	Date appDate = SysParamUtil.getAppDate();
 
 	@Autowired
 	private UploadService createReceiptUploadService;
@@ -540,8 +541,18 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 				return;
 			}
 
-			if (!(ClosureType.isClosure(closureType) && ClosureType.isCancel(closureType))) {
-				setError(rud, "Values other than Cancel/Closure in [CLOSURETYPE] ");
+			if (ClosureType.getType(closureType) == null) {
+				setError(rud, "Values other than Closure/Fore-Closure/Cancel/Repossession/Top Up in [CLOSURETYPE] ");
+				return;
+			}
+
+			if (fm.getMaturityDate().compareTo(appDate) <= 0) {
+				if (ClosureType.isForeClosure(closureType) || ClosureType.isCancel(closureType)) {
+					setError(rud, "Values other than Closure/Repossession/Top Up in [CLOSURETYPE] ");
+					return;
+				}
+			} else if (ClosureType.isClosure(closureType)) {
+				setError(rud, "Values other than Fore-Closure/Cancel/Repossession/Top Up in [CLOSURETYPE] ");
 				return;
 			}
 		}
