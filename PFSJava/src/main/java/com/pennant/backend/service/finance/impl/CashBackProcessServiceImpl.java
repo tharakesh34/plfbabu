@@ -840,6 +840,10 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		if (detail.getReturnStatus() != null) {
 			throw new AppException("AppException", detail.getReturnStatus().getReturnText());
 		}
+
+		if (CollectionUtils.isNotEmpty(detail.getFinScheduleData().getErrorDetails())) {
+			throw new AppException("AppException", detail.getFinScheduleData().getErrorDetails().get(0).getError());
+		}
 	}
 
 	@Autowired

@@ -6404,11 +6404,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return fd;
 		}
 
+		setFinanceMain(schdData, receiptPurpose);
+
 		if (receiptPurpose == ReceiptPurpose.RESTRUCTURE) {
 			schdData.getFinanceMain().setOldSchedules(schdData.getFinanceScheduleDetails());
 		}
-
-		setFinanceMain(schdData, receiptPurpose);
 
 		FinanceMain fm = schdData.getFinanceMain();
 		fm.setCancelType(fsi.getLoanCancellationType());
