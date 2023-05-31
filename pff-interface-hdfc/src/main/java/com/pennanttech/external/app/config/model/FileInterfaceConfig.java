@@ -1,10 +1,8 @@
 package com.pennanttech.external.app.config.model;
 
-import java.math.BigDecimal;
-
 public class FileInterfaceConfig {
 	private String interfaceName = "";
-	private BigDecimal NoOfRecords;
+	private long NoOfRecords;
 	private String fileLocation = "";
 	private int hodlType;
 	private String filePrepend;
@@ -35,11 +33,11 @@ public class FileInterfaceConfig {
 		this.interfaceName = interfaceName;
 	}
 
-	public BigDecimal getNoOfRecords() {
+	public long getNoOfRecords() {
 		return NoOfRecords;
 	}
 
-	public void setNoOfRecords(BigDecimal noOfRecords) {
+	public void setNoOfRecords(long noOfRecords) {
 		NoOfRecords = noOfRecords;
 	}
 
