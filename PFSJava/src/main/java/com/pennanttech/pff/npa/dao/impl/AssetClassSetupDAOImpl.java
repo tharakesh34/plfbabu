@@ -494,7 +494,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 		sql.append(" Select acc.Code ClassCode, ascc.Code SubClassCode From Asset_Class_Setup_Details acsd ");
 		sql.append(" Inner Join Asset_Class_Codes acc On acc.Id = acsd.ClassID");
 		sql.append(" Inner Join Asset_Sub_Class_Codes ascc On ascc.Id = acsd.SubClassID");
-		sql.append(" Inner Join NPA_Loan_Info na on na.PastDueDays <= acsd.DPDMAX and na.FinID =?");
+		sql.append(" Inner Join NPA_Loan_Info na on na.NpaPastDueDays <= acsd.DPDMAX and na.FinID =?");
 		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = na.FinType and acsd.SetupId = ft.AssetClassSetup");
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

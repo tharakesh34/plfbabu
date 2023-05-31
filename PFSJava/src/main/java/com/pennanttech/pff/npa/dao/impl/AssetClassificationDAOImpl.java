@@ -1028,11 +1028,11 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 			ps.setString(index++, as.getEffFinReference());
 			ps.setObject(index++, as.getEffFinID());
 			ps.setDate(index++, JdbcUtil.getDate(as.getClassDate()));
-			ps.setLong(index++, as.getNpaClassID());
-			ps.setLong(index++, as.getEffNpaClassID());
+			ps.setLong(index++, 0);
+			ps.setLong(index++, 0);
 
-			ps.setLong(index++, as.getEffNpaClassID());
-			ps.setLong(index, as.getNpaClassID());
+			ps.setLong(index++, 0);
+			ps.setLong(index, 0);
 		});
 	}
 

@@ -377,7 +377,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			wve.add(we);
 		}
 		try {
-			if (this.effManualAssetClassification.getSelectedIndex() <= 0) {
+			if (this.effManualAssetClassification.getSelectedIndex() < 0) {
 				provision.setManualAssetClassID(null);
 			} else {
 				provision.setManualAssetClassID(getSelectedValue(this.effManualAssetClassification));
@@ -783,6 +783,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			this.manProvisionAmount.setValue(BigDecimal.ZERO);
 			this.effManualAssetClassification.setDisabled(true);
 			this.effManualAssetSubClassification.setDisabled(true);
+			this.effManualAssetClassification.setValue(null);
+			this.effManualAssetSubClassification.setValue(null);
 			doClearmessage();
 		}
 
