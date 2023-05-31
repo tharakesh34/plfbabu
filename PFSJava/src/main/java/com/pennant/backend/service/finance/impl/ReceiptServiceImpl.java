@@ -2513,7 +2513,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return auditHeader;
 		}
 
-		// AuditHeader auditHeader = copy(aAuditHeader);
 		FinReceiptData rceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinReceiptHeader receiptHeader = rceiptData.getReceiptHeader();
 		receiptHeader.setPostBranch(auditHeader.getAuditBranchCode());
@@ -3600,7 +3599,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		totalDues = PennantApplicationUtil.formateAmount(totalDues, CurrencyUtil.getFormat(fm.getFinCcy()));
 		String excessAdjustTo = rh.getExcessAdjustTo();
 
-		if (!fsi.isClosureReceipt() && RequestSource.UPLOAD == requestSource
+		if (!fsi.isClosureReceipt() && RequestSource.EOD == requestSource
 				&& totalDues.compareTo(rh.getReceiptAmount().add(rh.getClosureThresholdLimit())) > 0
 				&& !RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(excessAdjustTo)) {
 			setError(schdData, "RU0051");
@@ -5281,10 +5280,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			FinReceiptDetail rcd = rcdList.get(size - 1);
 			rch.setValueDate(rcd.getValueDate());
 			// PSD#165780 Setting realization date to Value date irrespective of receipt purpose
-			/*
-			 * if (finReceiptHeader.getReceiptPurpose().equals(FinServiceEvent.EARLYSETTLE) &&
-			 * finReceiptHeader.getRealizationDate() != null) {
-			 */
 			if (rch.getRealizationDate() != null) {
 				rch.setValueDate(rch.getRealizationDate());
 			}
@@ -8863,7 +8858,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				return;
 			}
 
-			if (ClosureType.isClosure(closuretype)) {
+			if (ClosureType.isForeClosure(closuretype)) {
 				setError(schdData, "90337", errCode, ClosureType.allowedTypes(ClosureType.FORE_CLOSURE));
 				return;
 			}
