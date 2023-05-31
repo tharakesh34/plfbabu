@@ -1953,6 +1953,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
 		}
 
+		if (fsi.getRequestSource() == RequestSource.UPLOAD && RepayConstants.PAYSTATUS_DEPOSITED.equals(status)) {
+			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
+		}
+
 		if (!StringUtils.equals(ReceiptMode.CHEQUE, rch.getReceiptMode())) {
 			rch.setRealizationDate(rch.getValueDate());
 			rch.setReceivedDate(rch.getValueDate());
@@ -3093,7 +3097,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			rch.setBefImage(befFinReceiptHeader);
 		}
 
-		if (isExcessUtilized(rch, method)) {
+		if (rch.getReceiptID() > 0 && isExcessUtilized(rch, method)) {
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60219", "", null)));
 		}
 
@@ -5147,7 +5151,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			fsi.setBounceReason(rud.getBounceReason());
 			fsi.setReceiptId(rud.getReceiptId());
 			fsi.setNewReceipt(rud.isNewReceipt());
-			fsi.setNewReceipt(rud.getReceiptId() == 0);
 		} else {
 			fsi.setNewReceipt(true);
 		}

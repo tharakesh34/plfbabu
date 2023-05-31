@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -23,6 +24,7 @@ import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.receipt.dao.CreateReceiptUploadDAO;
@@ -49,6 +51,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 	private CreateReceiptUploadDAO createReceiptUploadDAO;
 	private CreateReceiptUploadProcessRecord createReceiptUploadProcessRecord;
 	private PartnerBankDAO partnerBankDAO;
+	private BounceReasonDAO bounceReasonDAO;
 
 	public CreateReceiptUploadServiceImpl() {
 		super();
@@ -138,7 +141,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setReceiptMode(detail.getReceiptMode());
 		rud.setSubReceiptMode(detail.getSubReceiptMode());
 		rud.setReceiptPurpose(detail.getReceiptPurpose());
-		rud.setStatus(detail.getStatus());
+		rud.setStatus(detail.getReceiptModeStatus());
 		rud.setReceiptChannel(detail.getReceiptChannel());
 		rud.setDepositDate(detail.getDepositDate());
 		rud.setBankCode(detail.getBankCode());
@@ -154,10 +157,17 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setReceivedFrom(detail.getReceivedFrom());
 		rud.setBounceDate(detail.getBounceDate());
 		rud.setBounceReason(detail.getBounceReason());
+		rud.setCancelReason(detail.getBounceReason());
+		rud.setRemarks(detail.getBounceRemarks());
 
 		PartnerBank pb = partnerBankDAO.getPartnerBankByCode(detail.getPartnerBankCode(), "");
 		if (pb != null) {
 			rud.setFundingAc(String.valueOf(pb.getPartnerBankId()));
+		}
+
+		if (RepayConstants.PAYSTATUS_BOUNCE.equals(detail.getReceiptModeStatus())) {
+			String returncode = bounceReasonDAO.getReturnCode(detail.getBounceReason());
+			rud.setBounceReason(returncode);
 		}
 
 		String receiptMode = detail.getReceiptMode();
@@ -197,7 +207,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setListAllocationDetails(list);
 
 		if (AllocationType.MANUAL.equals(detail.getAllocationType()) && list != null
-				&& !(detail.getReceiptAmount().equals(getSumOfAllocations(list)))) {
+				&& !(detail.getReceiptAmount().compareTo(getSumOfAllocations(list)) > 0)) {
 			setFailureStatus(detail, "", "RECEIPT Amount and Allocations amount should be same");
 			return;
 		}
@@ -438,6 +448,11 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 	@Autowired
 	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
 		this.partnerBankDAO = partnerBankDAO;
+	}
+
+	@Autowired
+	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
+		this.bounceReasonDAO = bounceReasonDAO;
 	}
 
 }

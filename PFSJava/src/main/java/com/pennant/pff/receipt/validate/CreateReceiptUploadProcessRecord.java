@@ -73,7 +73,6 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 	private BounceReasonDAO bounceReasonDAO;
 	private RejectDetailDAO rejectDetailDAO;
 	private BankDetailDAO bankDetailDAO;
-	Date appDate = SysParamUtil.getAppDate();
 
 	@Autowired
 	private UploadService createReceiptUploadService;
@@ -503,6 +502,11 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 				setError(rud, "Values other than IMPS/RTGS/NEFT/FT in [RECEIPTMODE] ");
 				return;
 			}
+
+			if (StringUtils.isBlank(rud.getTransactionRef())) {
+				setError(rud, "[TRANSCATIONREF] is Mandatory For ONLINE Mode");
+				return;
+			}
 		}
 
 		String channel = rud.getReceiptChannel();
@@ -575,11 +579,6 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		}
 
 		String favourNumber = rud.getTransactionRef();
-		if (StringUtils.isBlank(favourNumber)) {
-			setError(rud, "[TRANSCATIONNUMBER] is Mandatory");
-			return;
-		}
-
 		String bankcode = rud.getBankCode();
 
 		if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
@@ -588,14 +587,11 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 				return;
 			}
 
-			if (StringUtils.isBlank(rud.getChequeAccountNumber())) {
-				setError(rud, "[CHEQUEACNO] is Mandatory");
-				return;
-			}
-
-			if (rud.getChequeAccountNumber().length() > 50) {
-				setError(rud, "[CHEQUEACNO] with length more than 50");
-				return;
+			if (StringUtils.isNotBlank(rud.getChequeAccountNumber())) {
+				if (rud.getChequeAccountNumber().length() > 50) {
+					setError(rud, "[CHEQUEACNO] with length more than 50");
+					return;
+				}
 			}
 
 			if (StringUtils.isBlank(bankcode)) {
@@ -636,11 +632,11 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			return;
 		}
 
-		if (RepayConstants.PAYSTATUS_REALIZED.equals(modeStatus)
+		if (RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus)
 				|| RepayConstants.PAYSTATUS_DEPOSITED.equals(modeStatus)) {
-			if (RepayConstants.PAYSTATUS_CANCEL.equals(modeStatus)
-					|| RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus)) {
-				setError(rud, "[STATUS] 'B' Or 'C' is allowed only when RECEIPTMODE is 'CHEQUE' or 'DD' ");
+			if (!DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(receiptMode)
+					&& !DisbursementConstants.PAYMENT_TYPE_DD.equals(receiptMode)) {
+				setError(rud, "[STATUS] 'B' Or 'D' is allowed only when RECEIPTMODE is 'CHEQUE' or 'DD' ");
 				return;
 			}
 		}
@@ -692,6 +688,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 				setError(rud, "[REALIZATIONDATE]  Should  be greater than [DEPOSITDATE] ");
 				return;
 			}
+
 		}
 
 		String entityCode = financeMainDAO.getEntityCodeByRef(reference);

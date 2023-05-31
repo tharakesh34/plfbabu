@@ -393,4 +393,13 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, bouncecode);
 	}
+
+	@Override
+	public String getReturnCode(String bouncecode) {
+		String sql = "Select Returncode From BounceReasons Where BounceCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, String.class, bouncecode);
+	}
 }
