@@ -27,5 +27,6 @@ public interface ErrorCodesConstants {
 	String F402 = "F402";
 	String F403 = "F403";
 	String F404 = "F404";
+	String F405 = "F405";
 
 }

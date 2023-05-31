@@ -3,6 +3,7 @@ package com.pennanttech.external.gst.dao;
 import java.util.List;
 
 import com.pennanttech.external.gst.model.GSTCompDetail;
+import com.pennanttech.external.gst.model.GSTInvoiceDetail;
 import com.pennanttech.external.gst.model.GSTRequestDetail;
 
 public interface ExtGSTDao {
@@ -29,5 +30,9 @@ public interface ExtGSTDao {
 	long saveGSTRequestFileData(String fileName, String fileLocation);
 
 	int updateGSTVoucherWithReqHeaderId(List<Long> txnUidList, long headerId);
+
+	boolean isVoucherFound(long transactionUID);
+
+	long saveGSTInvoiceDetails(GSTInvoiceDetail gstInvoiceDetail);
 
 }

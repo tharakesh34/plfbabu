@@ -1,6 +1,7 @@
 package com.pennanttech.external.gst.dao.daoimpl;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -20,6 +21,7 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennanttech.external.gst.dao.ExtGSTDao;
 import com.pennanttech.external.gst.model.GSTCompDetail;
+import com.pennanttech.external.gst.model.GSTInvoiceDetail;
 import com.pennanttech.external.gst.model.GSTRequestDetail;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -302,4 +304,76 @@ public class ExtGSTDaoImpl extends SequenceDao implements ExtGSTDao {
 
 	}
 
+	@Override
+	public boolean isVoucherFound(long transactionUID) {
+		logger.debug(Literal.ENTERING);
+		String sql = "Select count(1) from GST_VOUCHER_DETAILS Where GST_VOUCHER_ID= ?";
+		logger.debug(Literal.SQL + sql);
+		try {
+			return extNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, Integer.class, transactionUID) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			logger.debug(Literal.EXCEPTION, e);
+			return false;
+		}
+	}
+
+	@Override
+	public long saveGSTInvoiceDetails(GSTInvoiceDetail gstInvoiceDetail) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO GST_INVOICE_DETAILS (CUSTOMER_NAME,CUSTOMER_ADDRESS,CURRENT_GSTIN,"
+				+ "LOAN_BRANCH_ADDRESS,GSTIN,TRANSACTION_DATE, INVOICE_NUMBER,CHARGE_DESCRIPTION,CHARGE_AMOUNT,"
+				+ "CGST_RATE,CGST_AMOUNT,SGST_RATE, SGST_AMOUNT,IGST_RATE,IGST_AMOUNT,"
+				+ "UGST_RATE,UGST_AMOUNT,CESS_AMOUNT, POP,POS,CIN,PAN,SAC,WEBSITE_ADDRESS,"
+				+ "EMAILID,REG_BANK_ADDRESS,DISCLAIMER)"
+				+ "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+
+		jdbcOperations.update(new PreparedStatementCreator() {
+
+			@Override
+			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+				PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
+				int index = 1;
+				ps.setString(index++, gstInvoiceDetail.getCustomerName());
+				ps.setString(index++, gstInvoiceDetail.getCustomerAddress());
+				ps.setString(index++, gstInvoiceDetail.getCurrentGstin());
+				ps.setString(index++, gstInvoiceDetail.getLoanBranchAddress());
+				ps.setString(index++, gstInvoiceDetail.getGstin());
+				ps.setDate(index++, (Date) gstInvoiceDetail.getTransactionDate());
+				ps.setString(index++, gstInvoiceDetail.getInvoiceNumber());
+				ps.setString(index++, gstInvoiceDetail.getChargeDescription());
+				ps.setBigDecimal(index++, gstInvoiceDetail.getChargeAmount());
+				ps.setBigDecimal(index++, gstInvoiceDetail.getCgstRate());
+				ps.setBigDecimal(index++, gstInvoiceDetail.getCgstAmount());
+				ps.setBigDecimal(index++, gstInvoiceDetail.getSgstRate());
+				ps.setBigDecimal(index++, gstInvoiceDetail.getSgstAmount());
+				ps.setBigDecimal(index++, gstInvoiceDetail.getIgstRate());
+				ps.setBigDecimal(index++, gstInvoiceDetail.getIgstAmount());
+				ps.setBigDecimal(index++, gstInvoiceDetail.getUgstRate());
+				ps.setBigDecimal(index++, gstInvoiceDetail.getUgstAmount());
+				ps.setBigDecimal(index++, gstInvoiceDetail.getCessAmount());
+				ps.setString(index++, gstInvoiceDetail.getPop());
+				ps.setString(index++, gstInvoiceDetail.getPos());
+				ps.setString(index++, gstInvoiceDetail.getCin());
+				ps.setString(index++, gstInvoiceDetail.getPan());
+				ps.setString(index++, gstInvoiceDetail.getSac());
+				ps.setString(index++, gstInvoiceDetail.getWebsiteAddress());
+				ps.setString(index++, gstInvoiceDetail.getEmailId());
+				ps.setString(index++, gstInvoiceDetail.getRegBankAddress());
+				ps.setString(index, gstInvoiceDetail.getDisclaimer());
+
+				return ps;
+			}
+		}, keyHolder);
+
+		Number key = keyHolder.getKey();
+
+		if (key == null) {
+			return 0;
+		}
+
+		return key.longValue();
+	}
 }

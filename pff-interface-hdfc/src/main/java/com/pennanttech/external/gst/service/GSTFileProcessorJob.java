@@ -26,6 +26,7 @@ import com.pennanttech.external.app.util.ParseUtil;
 import com.pennanttech.external.gst.dao.ExtGSTDao;
 import com.pennanttech.external.gst.model.GSTCompDetail;
 import com.pennanttech.external.gst.model.GSTCompHeader;
+import com.pennanttech.external.gst.model.GSTInvoiceDetail;
 import com.pennanttech.external.gst.model.GSTRespDetail;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -90,13 +91,13 @@ public class GSTFileProcessorJob extends AbstractJob
 					// Update file status as processed
 					extGSTDao.updateFileStatus(header.getId(), COMPLETED);
 				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
+					logger.debug(Literal.EXCEPTION, e);
 					extGSTDao.updateFileStatus(header.getId(), EXCEPTION);
 				}
 			}
 
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			e.printStackTrace();
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -152,6 +153,18 @@ public class GSTFileProcessorJob extends AbstractJob
 						// FIXME process in PLF
 
 						// Fetch GST VOUCHER from GST_VOUCHER_DETAILS based on ID, If not found error.
+						boolean isGstVoucherFound = extGSTDao.isVoucherFound(responseBean.getTransactionUID());
+						if (!isGstVoucherFound) {
+							// save record with error mentioning as GST voucher not found in PLF
+							detail.setStatus(FAILED);
+							detail.setErrorCode(F405);
+							detail.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F405));
+							extGSTDao.updateGSTRecordDetailStatus(detail);
+							continue;
+						}
+
+						GSTInvoiceDetail invoiceDetail = getInvoiceDetail(responseBean);
+						extGSTDao.saveGSTInvoiceDetails(invoiceDetail);
 
 						// Update GST VOUCHER ID in Response detail record for successful transaction
 						detail.setGstVoucherId(responseBean.getTransactionUID());
@@ -181,6 +194,13 @@ public class GSTFileProcessorJob extends AbstractJob
 		}
 		logger.debug(Literal.LEAVING);
 
+	}
+
+	private GSTInvoiceDetail getInvoiceDetail(GSTRespDetail respBean) {
+		GSTInvoiceDetail detail = new GSTInvoiceDetail();
+		detail.setCustomerName(respBean.getCustomerName());
+		// detail.setCustomerAddress(respBean.get);
+		return null;
 	}
 
 	private GSTRespDetail convertRecordToBean(GSTCompDetail detail) {
