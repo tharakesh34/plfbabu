@@ -68,7 +68,7 @@ public class LienFileWritingService extends TextFileUtil
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void writeDataToFile(List<LienMarkDetail> lienMarkingList, Date appDate) {
+	private void writeDataToFile(List<LienMarkDetail> lienMarkingList, Date appDate) throws Exception {
 		List<StringBuilder> itemList = new ArrayList<StringBuilder>();
 
 		if (!lienMarkingList.isEmpty()) {
