@@ -167,16 +167,16 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	@Override
 	public CustomerDetails createCustomer(CustomerDetails cd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
-		
-		if(cd == null) {
-			
+
+		if (cd == null) {
+			return null;
 		}
-		
+
 		String[] logFields = getCustomerLogDetails(cd);
 		APIErrorHandlerService.logKeyFields(logFields);
-		
+
 		validationUtility.validate(cd, SaveValidationGroup.class);
-		
+
 		doBasicMandatoryValidations(cd.getCustomer());
 
 		AuditHeader auditHeader = getAuditHeader(cd, PennantConstants.TRAN_WF);
@@ -260,45 +260,46 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	private BlackListCustomers doSetBlackListCustomerData(CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
 		Customer customer = customerDetails.getCustomer();
-		if (customer != null) {
-			BlackListCustomers blackListCustomer = new BlackListCustomers();
-			String mobileNumber = "";
 
-			List<CustomerPhoneNumber> phoneNumberList = customerDetails.getCustomerPhoneNumList();
-			if (phoneNumberList != null && !phoneNumberList.isEmpty()) {
-				if (phoneNumberList.size() > 1) {
-					Collections.sort(phoneNumberList, new Comparator<CustomerPhoneNumber>() {
-						@Override
-						public int compare(CustomerPhoneNumber detail1, CustomerPhoneNumber detail2) {
-							return detail2.getPhoneTypePriority() - detail1.getPhoneTypePriority();
-						}
-					});
-				}
-				CustomerPhoneNumber custPhone = phoneNumberList.get(0);
-				mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
-						custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
-			}
-			blackListCustomer.setCustCIF(customer.getCustCIF());
-			blackListCustomer.setCustShrtName(customer.getCustShrtName());
-			blackListCustomer.setCustFName(customer.getCustFName());
-			blackListCustomer.setCustLName(customer.getCustLName());
-			blackListCustomer.setCustCRCPR(customer.getCustCRCPR());
-			blackListCustomer.setCustPassportNo(customer.getCustPassportNo());
-			blackListCustomer.setMobileNumber(mobileNumber);
-			blackListCustomer.setCustNationality(customer.getCustNationality());
-			blackListCustomer.setCustDOB(customer.getCustDOB());
-			blackListCustomer.setCustCtgCode(customer.getCustCtgCode());
-
-			blackListCustomer.setLikeCustFName(
-					blackListCustomer.getCustFName() != null ? "%" + blackListCustomer.getCustFName() + "%" : "");
-			blackListCustomer.setLikeCustLName(
-					blackListCustomer.getCustLName() != null ? "%" + blackListCustomer.getCustLName() + "%" : "");
-
-			logger.debug(Literal.LEAVING);
-			return blackListCustomer;
-		} else {
+		if (customer == null) {
 			return null;
 		}
+
+		BlackListCustomers blackListCustomer = new BlackListCustomers();
+		String mobileNumber = "";
+
+		List<CustomerPhoneNumber> phoneNumberList = customerDetails.getCustomerPhoneNumList();
+		if (phoneNumberList != null && !phoneNumberList.isEmpty()) {
+			if (phoneNumberList.size() > 1) {
+				Collections.sort(phoneNumberList, new Comparator<CustomerPhoneNumber>() {
+					@Override
+					public int compare(CustomerPhoneNumber detail1, CustomerPhoneNumber detail2) {
+						return detail2.getPhoneTypePriority() - detail1.getPhoneTypePriority();
+					}
+				});
+			}
+			CustomerPhoneNumber custPhone = phoneNumberList.get(0);
+			mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
+					custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+		}
+		blackListCustomer.setCustCIF(customer.getCustCIF());
+		blackListCustomer.setCustShrtName(customer.getCustShrtName());
+		blackListCustomer.setCustFName(customer.getCustFName());
+		blackListCustomer.setCustLName(customer.getCustLName());
+		blackListCustomer.setCustCRCPR(customer.getCustCRCPR());
+		blackListCustomer.setCustPassportNo(customer.getCustPassportNo());
+		blackListCustomer.setMobileNumber(mobileNumber);
+		blackListCustomer.setCustNationality(customer.getCustNationality());
+		blackListCustomer.setCustDOB(customer.getCustDOB());
+		blackListCustomer.setCustCtgCode(customer.getCustCtgCode());
+
+		blackListCustomer.setLikeCustFName(
+				blackListCustomer.getCustFName() != null ? "%" + blackListCustomer.getCustFName() + "%" : "");
+		blackListCustomer.setLikeCustLName(
+				blackListCustomer.getCustLName() != null ? "%" + blackListCustomer.getCustLName() + "%" : "");
+
+		logger.debug(Literal.LEAVING);
+		return blackListCustomer;
 	}
 
 	/**
@@ -337,37 +338,32 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for update customer in PLF system.
-	 * 
-	 * @param customerDetails
-	 */
 	@Override
-	public WSReturnStatus updateCustomer(CustomerDetails customerDetails) throws ServiceException {
+	public WSReturnStatus updateCustomer(CustomerDetails cd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 		// for logging purpose
-		String[] logFields = getCustomerLogDetails(customerDetails);
+		String[] logFields = getCustomerLogDetails(cd);
 		APIErrorHandlerService.logKeyFields(logFields);
 		// bean validations
-		validationUtility.validate(customerDetails, UpdateValidationGroup.class);
-		doBasicMandatoryValidations(customerDetails.getCustomer());
+		validationUtility.validate(cd, UpdateValidationGroup.class);
+		doBasicMandatoryValidations(cd.getCustomer());
 		// set empty to null
-		setDefaults(customerDetails);
+		setDefaults(cd);
 		WSReturnStatus status = null;
 		// customer validations
-		status = validateCustomerCIF(customerDetails.getCustCIF());
+		status = validateCustomerCIF(cd.getCustCIF());
 		if (status != null) {
 			return status;
 		}
 		// customer catageory validations
-		status = validateCustomerCatageory(customerDetails);
+		status = validateCustomerCatageory(cd);
 		if (status != null) {
 			return status;
 		}
 
 		// for logging purpose
-		logReference(customerDetails.getCustCIF());
-		AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
+		logReference(cd.getCustCIF());
+		AuditHeader auditHeader = getAuditHeader(cd, PennantConstants.TRAN_WF);
 
 		AuditDetail auditDetail = customerDetailsService.doCustomerValidations(auditHeader);
 
@@ -381,7 +377,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		// call update customer if there is no errors
-		WSReturnStatus returnStatus = customerController.updateCustomer(customerDetails);
+		WSReturnStatus returnStatus = customerController.updateCustomer(cd);
 
 		logger.debug(Literal.LEAVING);
 		return returnStatus;

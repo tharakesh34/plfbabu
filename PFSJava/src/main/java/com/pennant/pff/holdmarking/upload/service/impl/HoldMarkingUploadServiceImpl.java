@@ -102,7 +102,7 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 		}
 
 		if (PennantConstants.REMOVE_HOLD_MARKING.equals(type) && holdBalance.compareTo(amount) < 0) {
-			setError(detail, HoldMarkingUploadError.HM_07);
+			setError(detail, HoldMarkingUploadError.HM_08);
 			return;
 		}
 

@@ -1,6 +1,10 @@
 package com.pennanttech.pff.receipt.util;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -99,4 +103,25 @@ public class ReceiptUtil {
 						|| ReceiptPurpose.SCHDRPY.equals(fsi.getReceiptPurpose()));
 	}
 
+	public static BigDecimal getAllocatedAmount(List<ReceiptAllocationDetail> allocations) {
+		BigDecimal paidAmount = allocations.stream().map(ReceiptAllocationDetail::getPaidAmount).reduce(BigDecimal.ZERO,
+				BigDecimal::add);
+
+		BigDecimal waivedAmount = allocations.stream().map(ReceiptAllocationDetail::getWaivedAmount)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		BigDecimal paidGST = allocations.stream().map(ReceiptAllocationDetail::getPaidGST).reduce(BigDecimal.ZERO,
+				BigDecimal::add);
+
+		BigDecimal waivedGST = allocations.stream().map(ReceiptAllocationDetail::getWaivedGST).reduce(BigDecimal.ZERO,
+				BigDecimal::add);
+
+		BigDecimal tdsPaid = allocations.stream().map(ReceiptAllocationDetail::getTdsPaid).reduce(BigDecimal.ZERO,
+				BigDecimal::add);
+
+		BigDecimal tdsWaived = allocations.stream().map(ReceiptAllocationDetail::getTdsWaived).reduce(BigDecimal.ZERO,
+				BigDecimal::add);
+
+		return paidAmount.add(waivedAmount).add(paidGST).add(waivedGST).subtract(tdsPaid.add(tdsWaived));
+	}
 }
