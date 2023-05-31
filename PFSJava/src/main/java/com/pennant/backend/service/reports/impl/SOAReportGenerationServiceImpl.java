@@ -76,6 +76,7 @@ import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.AdviseDueTaxDetail;
+import com.pennant.backend.model.finance.CrossLoanTransfer;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -1881,6 +1882,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		}
 
 		String overDuePenalty = "Overdue Penalty";
+		String fromLoanCreditEntry = "Internal Transfer to ";
+		String crossLoanExcessEntry = "XCESS";
+		String toLoanDebitEntry = "Internal Transfer from A/C ";
+		String toLoanCreditEntry = "EMIRE";
+
 		SOATransactionReport soaTranReport = null;
 		List<SOATransactionReport> soaTransactionReports = new ArrayList<SOATransactionReport>();
 
@@ -1923,6 +1929,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			// LPP Due creation on monthly
 			List<FinOverDueCharges> odcAmounts = getFinODCAmtByRef(finMain.getFinID());
+
+			List<CrossLoanTransfer> fromReferenceList = getCrossLoanPaymentDetails(finMain.getFinID(), true);
+			List<CrossLoanTransfer> toReferenceList = getCrossLoanPaymentDetails(finMain.getFinID(), false);
 
 			// Finance Schedule Details
 			String closingStatus = finMain.getClosingStatus();
@@ -2740,6 +2749,69 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 						}
 					}
+				}
+			}
+
+			if (CollectionUtils.isNotEmpty(fromReferenceList)) {
+				for (CrossLoanTransfer clt : fromReferenceList) {
+					soaTranReport = new SOATransactionReport();
+					soaTranReport.setEvent(crossLoanExcessEntry);
+					soaTranReport.setTransactionDate(clt.getValueDate());
+					soaTranReport.setValueDate(clt.getValueDate());
+					soaTranReport.setCreditAmount(BigDecimal.ZERO);
+					soaTranReport.setDebitAmount(clt.getTransferAmount());
+					soaTranReport.setPriority(23);
+					soaTransactionReports.add(soaTranReport);
+
+					soaTranReport = new SOATransactionReport();
+					soaTranReport.setEvent(fromLoanCreditEntry + clt.getToFinReference());
+					soaTranReport.setTransactionDate(clt.getValueDate());
+					soaTranReport.setValueDate(clt.getValueDate());
+					soaTranReport.setCreditAmount(clt.getTransferAmount());
+					soaTranReport.setDebitAmount(BigDecimal.ZERO);
+					soaTranReport.setPriority(24);
+					soaTransactionReports.add(soaTranReport);
+				}
+			}
+
+			if (CollectionUtils.isNotEmpty(toReferenceList)) {
+
+				for (CrossLoanTransfer clt : toReferenceList) {
+					soaTranReport = new SOATransactionReport();
+					soaTranReport.setEvent(toLoanDebitEntry + clt.getFromFinReference());
+					soaTranReport.setTransactionDate(clt.getValueDate());
+					soaTranReport.setValueDate(clt.getValueDate());
+					soaTranReport.setCreditAmount(BigDecimal.ZERO);
+					soaTranReport.setDebitAmount(clt.getTransferAmount());
+					soaTranReport.setPriority(25);
+					soaTransactionReports.add(soaTranReport);
+
+					soaTranReport = new SOATransactionReport();
+					soaTranReport.setEvent(crossLoanExcessEntry);
+					soaTranReport.setTransactionDate(clt.getValueDate());
+					soaTranReport.setValueDate(clt.getValueDate());
+					soaTranReport.setCreditAmount(clt.getTransferAmount());
+					soaTranReport.setDebitAmount(BigDecimal.ZERO);
+					soaTranReport.setPriority(26);
+					soaTransactionReports.add(soaTranReport);
+
+					soaTranReport = new SOATransactionReport();
+					soaTranReport.setEvent(crossLoanExcessEntry);
+					soaTranReport.setTransactionDate(clt.getValueDate());
+					soaTranReport.setValueDate(clt.getValueDate());
+					soaTranReport.setCreditAmount(BigDecimal.ZERO);
+					soaTranReport.setDebitAmount(clt.getTransferAmount());
+					soaTranReport.setPriority(27);
+					soaTransactionReports.add(soaTranReport);
+
+					soaTranReport = new SOATransactionReport();
+					soaTranReport.setEvent(toLoanCreditEntry);
+					soaTranReport.setTransactionDate(clt.getValueDate());
+					soaTranReport.setValueDate(clt.getValueDate());
+					soaTranReport.setCreditAmount(clt.getTransferAmount());
+					soaTranReport.setDebitAmount(BigDecimal.ZERO);
+					soaTranReport.setPriority(28);
+					soaTransactionReports.add(soaTranReport);
 				}
 			}
 
@@ -3745,6 +3817,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 	public List<FinOverDueCharges> getFinODCAmtByRef(long finID) {
 		return finODCAmountDAO.getFinODCAmtByRef(finID, RepayConstants.FEE_TYPE_LPP);
+	}
+
+	public List<CrossLoanTransfer> getCrossLoanPaymentDetails(long finId, boolean fromLoan) {
+		return soaReportGenerationDAO.getCrossLoanDetail(finId, fromLoan);
 	}
 
 	private SOATransactionReport addInstallment(FinanceScheduleDetail schedule, BigDecimal amount, String allocation) {
