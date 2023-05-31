@@ -22,7 +22,7 @@ public class TestDPDStringCalculator {
 	private static final String LABEL_RESOURCE_SUFFIX = "label.properties";
 
 	@BeforeTest
-	public void initilize() {
+	public void initilize() throws IOException {
 		App.CODE = "PFF";
 		App.HOME_PATH = "D:\\Pennant\\CORE\\HDFC\\BASE";
 
@@ -491,14 +491,10 @@ public class TestDPDStringCalculator {
 		return fsd;
 	}
 
-	private Resource[] getResources(String labelResourcePrefix) {
+	private Resource[] getResources(String labelResourcePrefix) throws IOException {
 		ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-		try {
-			return resolver.getResources("classpath*:*".concat(labelResourcePrefix));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+
+		return resolver.getResources("classpath*:*".concat(labelResourcePrefix));
 	}
 
 	@Test

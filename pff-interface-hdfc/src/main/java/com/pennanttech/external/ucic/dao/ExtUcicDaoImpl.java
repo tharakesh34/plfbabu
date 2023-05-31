@@ -140,7 +140,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 
 			status = "SUCCESS";
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 			status = "Error In Calling Procedure";
 		}
 		logger.info("UCIC request file writing Completed.");
@@ -165,7 +165,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 
 			status = "SUCCESS";
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 			status = "Error In Calling Procedure";
 		}
 		logger.info("UCIC request file writing Completed.");
@@ -186,7 +186,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 			}, new ArrayList<SqlParameter>());
 			status = "SUCCESS";
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 			status = "Error In Calling Procedure";
 		}
 		logger.info("UCIC request file writing Completed.");
@@ -211,7 +211,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 
 			status = "SUCCESS";
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 			status = "Error In Calling Procedure";
 		}
 		logger.info("UCIC request file writing Completed.");

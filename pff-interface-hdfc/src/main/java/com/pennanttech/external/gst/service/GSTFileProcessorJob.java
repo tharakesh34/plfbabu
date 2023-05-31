@@ -90,13 +90,13 @@ public class GSTFileProcessorJob extends AbstractJob
 					// Update file status as processed
 					extGSTDao.updateFileStatus(header.getId(), COMPLETED);
 				} catch (Exception e) {
-					logger.debug(Literal.EXCEPTION, e);
+					logger.error(Literal.EXCEPTION, e);
 					extGSTDao.updateFileStatus(header.getId(), EXCEPTION);
 				}
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
 	}

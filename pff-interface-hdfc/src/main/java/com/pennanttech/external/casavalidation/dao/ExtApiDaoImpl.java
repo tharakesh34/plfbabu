@@ -71,8 +71,7 @@ public class ExtApiDaoImpl extends BasicDao<Object> implements ExtApiDao {
 			ps.setLong(index, id);
 			ps.executeUpdate();
 		} catch (SQLException e) {
-			logger.error("Exception: ", e);
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
 	}

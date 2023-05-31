@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtExtractionDaoImpl extends SequenceDao implements ExtExtractionDao {
 	private static final Logger logger = LogManager.getLogger(ExtExtractionDaoImpl.class);
@@ -49,7 +50,7 @@ public class ExtExtractionDaoImpl extends SequenceDao implements ExtExtractionDa
 			}, new ArrayList<SqlParameter>());
 			status = "SUCCESS";
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 			status = "Error In Calling Procedure";
 		}
 		logger.info("SP Execution Completed.");
@@ -74,7 +75,7 @@ public class ExtExtractionDaoImpl extends SequenceDao implements ExtExtractionDa
 			}, new ArrayList<SqlParameter>());
 			status = "SUCCESS";
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 			status = "Error In Calling Procedure";
 		}
 		logger.info("SP Execution Completed.");
