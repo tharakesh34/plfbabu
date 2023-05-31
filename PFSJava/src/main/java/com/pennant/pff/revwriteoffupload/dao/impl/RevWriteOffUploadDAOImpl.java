@@ -267,7 +267,7 @@ public class RevWriteOffUploadDAOImpl extends SequenceDao<RevWriteOffUploadDetai
 				return Long.MIN_VALUE;
 			}
 
-			return (long) receiptID;
+			return receiptID;
 		} catch (EmptyResultDataAccessException dae) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return Long.MIN_VALUE;
