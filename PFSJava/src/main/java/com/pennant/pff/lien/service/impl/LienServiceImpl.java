@@ -92,30 +92,20 @@ public class LienServiceImpl implements LienService {
 					lh.setLienStatus(false);
 					lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
 					lh.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
+					lh.setDemarkingDate(fm.getClosedDate());
 					if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
-						if (fd.getMandate() != null && fd.getMandate().getSwapEffectiveDate() != null) {
-							lh.setDemarkingDate(fd.getMandate().getSwapEffectiveDate());
-						} else {
-							lh.setDemarkingDate(appDate);
-						}
-					} else {
-						lh.setDemarkingDate(fm.getClosedDate());
-					}
+						lh.setDemarkingDate(appDate);
+					} 
 					lienHeaderDAO.update(lh);
 
 					LienDetails lu = getLienDetails(lh, fm);
 
 					lu.setLienStatus(false);
 					lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
+					lu.setDemarkingDate(fm.getClosedDate());
 					if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
-						if (fd.getMandate() != null && fd.getMandate().getSwapEffectiveDate() != null) {
-							lu.setDemarkingDate(fd.getMandate().getSwapEffectiveDate());
-						} else {
-							lu.setDemarkingDate(appDate);
-						}
-					} else {
-						lu.setDemarkingDate(fm.getClosedDate());
-					}
+						lu.setDemarkingDate(appDate);
+					} 
 					setLienDeMarkStatus(lu, fm.getModuleDefiner());
 					setLienDeMarkReason(lu, fm.getModuleDefiner());
 
@@ -124,15 +114,10 @@ public class LienServiceImpl implements LienService {
 					lh.setLienStatus(true);
 					lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
 					lh.setMarking(Labels.getLabel("label_Lien_Type_Auto"));
+					lh.setMarkingDate(fm.getFinStartDate());
 					if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
-						if (fd.getMandate() != null && fd.getMandate().getSwapEffectiveDate() != null) {
-							lh.setMarkingDate(fd.getMandate().getSwapEffectiveDate());
-						} else {
-							lh.setMarkingDate(appDate);
-						}
-					} else {
-						lh.setMarkingDate(fm.getFinStartDate());
-					}
+						lh.setMarkingDate(appDate);
+					} 
 					lienHeaderDAO.update(lh);
 
 					LienDetails lu = getLienDetails(lh, fm);
@@ -140,15 +125,10 @@ public class LienServiceImpl implements LienService {
 					lu.setLienStatus(true);
 					lu.setMarking(Labels.getLabel("label_Lien_Type_Auto"));
 					lu.setDemarking("");
+					lu.setMarkingDate(fm.getFinStartDate());
 					if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
-						if (fd.getMandate() != null && fd.getMandate().getSwapEffectiveDate() != null) {
-							lu.setMarkingDate(fd.getMandate().getSwapEffectiveDate());
-						} else {
-							lu.setMarkingDate(appDate);
-						}
-					} else {
-						lu.setMarkingDate(fm.getFinStartDate());
-					}
+						lu.setMarkingDate(appDate);
+					} 
 					setLienMarkStatus(lu, fm.getModuleDefiner());
 					lienDetailsDAO.update(lu);
 
@@ -192,7 +172,7 @@ public class LienServiceImpl implements LienService {
 			fm.setModuleDefiner(ClosureType.CLOSURE.code());
 		}
 
-		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+		Date appDate = SysParamUtil.getAppDate();
 		if (fmBef != null) {
 			if (fmBef.getMandateID() == null) {
 				return;
@@ -230,10 +210,11 @@ public class LienServiceImpl implements LienService {
 					lu.setLienStatus(false);
 					lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
 					if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
+						lu.setDemarkingDate(appDate);
 						if (fd.getMandate() != null && fd.getMandate().getSwapEffectiveDate() != null) {
-							lu.setDemarkingDate(fd.getMandate().getSwapEffectiveDate());
-						} else {
-							lu.setDemarkingDate(currentTime);
+							if (fd.getMandate().getSwapEffectiveDate().compareTo(appDate) > 0) {
+								lu.setDemarkingDate(fd.getMandate().getSwapEffectiveDate());
+							}
 						}
 					} else {
 						lu.setDemarkingDate(fm.getClosedDate());
@@ -254,10 +235,11 @@ public class LienServiceImpl implements LienService {
 				lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
 				lh.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
 				if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
+					lh.setDemarkingDate(appDate);
 					if (fd.getMandate() != null && fd.getMandate().getSwapEffectiveDate() != null) {
-						lh.setDemarkingDate(fd.getMandate().getSwapEffectiveDate());
-					} else {
-						lh.setDemarkingDate(fd.getAppDate());
+						if (fd.getMandate().getSwapEffectiveDate().compareTo(appDate) > 0) {
+							lh.setDemarkingDate(fd.getMandate().getSwapEffectiveDate());
+						}
 					}
 				} else {
 					lh.setDemarkingDate(fm.getClosedDate());
