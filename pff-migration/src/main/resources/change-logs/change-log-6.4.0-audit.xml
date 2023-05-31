@@ -410,16 +410,16 @@
 	<changeSet id="ST#1561.2" author="Mounika.M">
 		<createTable tableName="AdtService_Branches_LoanType">
 			<column name="AuditID" type="bigint">
-				<constraints nullable="false" primaryKey="true" />
+				<constraints nullable="false" />
 			</column>
 			<column name="AuditDate" type="datetime">
-				<constraints nullable="false" primaryKey="true" />
+				<constraints nullable="false" />
 			</column>
 			<column name="AuditSeq" type="int">
-				<constraints nullable="false" primaryKey="true" />
+				<constraints nullable="false" />
 			</column>
 			<column name="AuditImage" type="char(2)">
-				<constraints nullable="false" primaryKey="true" />
+				<constraints nullable="false" />
 			</column>
 			<column name="Id" type="bigint">
 				<constraints nullable="false" />
@@ -452,6 +452,10 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#1561.2_post" author="Mounika.M">
+    	<addPrimaryKey columnNames="AuditID, AuditDate,AuditSeq,AuditImage" constraintName="PK_AdtSrv_Branches_LoanType" tableName="AdtService_Branches_LoanType"/>
 	</changeSet>
 
 	<changeSet id="ST#1561.3" author="saikrishna.b">

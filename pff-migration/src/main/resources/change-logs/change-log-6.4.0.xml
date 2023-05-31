@@ -14989,7 +14989,7 @@
 			<![CDATA[
 				UPDATE REJECTFINANCEMAIN T1 SET CREATEDBY = T2.CREATEDBY, CREATEDON = T2.CREATEDON 
 				FROM (SELECT T3.FINID, T3.CREATEDBY, T3.CREATEDON FROM FINANCEMAIN_TEMP T3
-				WHERE T3.CNT = 1) T2 WHERE T1.FINID = T2.FINID;	
+				) T2 WHERE T1.FINID = T2.FINID;	
 			]]>
 		</sql>
 	</changeSet>
@@ -15000,7 +15000,7 @@
 				UPDATE T1 SET T1.CREATEDBY = T3.CREATEDBY, T1.CREATEDON = T3.CREATEDON 
 				FROM REJECTFINANCEMAIN T1 
 				INNER JOIN (SELECT FINID, CREATEDBY, CREATEDON FROM FINANCEMAIN_TEMP T2
-				WHERE CNT = 1) T3 ON T1.FINID = T3.FINID;
+				) T3 ON T1.FINID = T3.FINID;
 			]]>
 		</sql>
 	</changeSet>
@@ -18666,12 +18666,30 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#1561.40_pre" author="Mounika.M" dbms="postgresql">
+		<sql> 
+		<![CDATA[ 
+			select deps_save_and_drop_dependencies ('plf', 'loan_letters_stage'); 
+			select deps_save_and_drop_dependencies ('plf', 'loan_letters'); 
+		]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#1561.40" author="Mounika.M">
 		<modifyDataType tableName="Loan_Letters_Stage" columnName="RequestType" newDataType="varchar(3)"/>
 	</changeSet>
 	
 	<changeSet id="ST#1561.42" author="Mounika.M">
 		<modifyDataType tableName="Loan_Letters" columnName="RequestType" newDataType="varchar(3)"/>
+	</changeSet>
+	
+	<changeSet id="ST#1561.40_post" author="Poojitha.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'loan_letters_stage');	
+				select deps_restore_dependencies ('plf', 'loan_letters');	
+			]]>
+		</sql>
 	</changeSet>
 	
 	
