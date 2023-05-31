@@ -163,7 +163,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 
 		this.pagedListWrapper.initList(excludeCodes, lbGenerateLetter, pagingGenerateLetterList);
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnRefresh(Event event) {
@@ -181,7 +181,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 
 		fillListData();
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnNew(Event event) {
@@ -211,7 +211,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 
 		doPrintResults(this.generateLetterService.getPrintLetters(getWorkFlowRoles()));
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onGenerateLetterItemDoubleClicked(Event event) {
@@ -240,7 +240,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doShowDialogPage(GenerateLetter gl) {
@@ -263,8 +263,6 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	public void fillListData() {
 
 		List<GenerateLetter> letters = this.generateLetterService.getResult(getSearchFilters());
-
-		// List<GenerateLetter> letters = this.generateLetterService.getGenerateLetters(getWorkFlowRoles());
 
 		this.lbGenerateLetter.setItemRenderer(new GenerateLetterModelItemRenderer());
 
@@ -340,30 +338,29 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	}
 
 	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
-			throws InterruptedException {
-		logger.debug("Entering");
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) {
+		logger.debug(Literal.ENTERING);
 
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
 		customer = (Customer) nCustomer;
 		addFilter(customer);
 
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void addFilter(Customer customer) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		if (customer != null && customer.getCustID() != 0) {
 			this.custId = customer.getCustID();
@@ -374,7 +371,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 			this.custCIF.setValue("");
 		}
 
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public Customer fetchCustomerDataByCIF() {

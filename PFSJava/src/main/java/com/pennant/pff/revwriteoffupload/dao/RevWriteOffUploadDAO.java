@@ -15,7 +15,7 @@ public interface RevWriteOffUploadDAO {
 
 	String getSqlQuery();
 
-	long saveLog(RevWriteOffUploadDetail detail, FileUploadHeader header);
+	void saveLog(RevWriteOffUploadDetail detail, FileUploadHeader header);
 
 	boolean isInProgress(String finReference, long headerID);
 
