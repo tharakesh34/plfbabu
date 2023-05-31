@@ -245,9 +245,7 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 
 		String rcdMaintainSts = feeWaiverUploadHeaderService.getFinanceMainByRcdMaintenance(detail.getReferenceID());
 
-		if (StringUtils.isNotEmpty(rcdMaintainSts)
-				&& (FinServiceEvent.MANUALADVISE.equals(rcdMaintainSts) && ManualAdviceUtil
-						.isValidateCancelManualAdvise(manualAdviseDAO.getAdvises(detail.getReferenceID(), "_Temp")))) {
+		if (isRcdInMaintain(detail, rcdMaintainSts)) {
 			setFailureStatus(detail, "FWU_999", Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 			return fwh;
 		}
@@ -257,6 +255,15 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 		setSuccesStatus(detail);
 
 		return fwh;
+	}
+
+	private boolean isRcdInMaintain(BulkFeeWaiverUpload detail, String rcdMaintainSts) {
+		if (FinServiceEvent.MANUALADVISE.equals(rcdMaintainSts)) {
+			return ManualAdviceUtil
+					.isValidateCancelManualAdvise(manualAdviseDAO.getAdvises(detail.getReferenceID(), "_Temp"));
+		}
+
+		return StringUtils.isNotEmpty(rcdMaintainSts);
 	}
 
 	private FeeWaiverHeader prepareFWH(BulkFeeWaiverUpload detail, FileUploadHeader header) {
