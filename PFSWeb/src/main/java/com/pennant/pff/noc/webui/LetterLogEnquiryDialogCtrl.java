@@ -207,7 +207,9 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 
 				if ("A".equals(requestType)) {
 					requestType = "Auto";
-				} else {
+				}
+
+				if ("M".equals(requestType)) {
 					requestType = "Manual";
 				}
 

@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -43,6 +43,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceSummary;
@@ -224,7 +225,13 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	}
 
 	private void doWriteComponentsToBean(GenerateLetter geneLtr) {
+		List<FinFeeDetail> fee = geneLtr.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 		Date appDate = SysParamUtil.getAppDate();
+
+		if (CollectionUtils.isNotEmpty(fee)) {
+			geneLtr.setWaiverAmt(fee.get(0).getWaivedAmount());
+		}
+
 		geneLtr.setRequestType(LetterMode.OTC.name());
 		geneLtr.setCreatedOn(DateUtil.getSysDate());
 		geneLtr.setCreatedDate(appDate);

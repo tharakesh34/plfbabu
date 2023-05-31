@@ -108,6 +108,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.extension.FeeExtension;
+import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -207,6 +208,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private Map<String, FeeRule> feeRuleDetailsMap = null;
 	private Map<Long, List<FinFeeReceipt>> finFeeReceiptMap = new LinkedHashMap<>();
 	private Object finHeaderList = new ArrayList<>();
+	private GenerateLetter generateLetter;
 
 	private FeeDetailService feeDetailService;
 
@@ -282,6 +284,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 			if (arguments.containsKey("finHeaderList")) {
 				finHeaderList = (Object) arguments.get("finHeaderList");
+			}
+
+			if (arguments.containsKey("generateLetter")) {
+				this.generateLetter = (GenerateLetter) arguments.get("generateLetter");
 			}
 
 			if (arguments.containsKey("financeMainDialogCtrl")) {
@@ -1679,6 +1685,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 					waiverBox.setDisabled(readOnly);
 				}
+
+				if (this.generateLetter != null && this.generateLetter.getWaiverAmt() != null
+						&& this.generateLetter.getWaiverAmt().compareTo(BigDecimal.ZERO) > 0) {
+					finFeeDetail.setWaivedAmount(this.generateLetter.getWaiverAmt());
+				}
+
 				waiverBox.setId(getComponentId(FEE_UNIQUEID_WAIVEDAMOUNT, finFeeDetail));
 				waiverBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getWaivedAmount(), formatter));
 				lc = new Listcell();
@@ -2230,6 +2242,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		boolean feeSchdMthdDisable = false;
 		if (finFeeDetail.isAlwModifyFeeSchdMthd() && remFeeBox.getValue().compareTo(BigDecimal.ZERO) == 0) {
 			feeSchdMthdDisable = readOnly;
+		}
+
+		if ("GenerateLetter".equals(this.moduleDefiner)) {
+			feeSchdMthdDisable = true;
 		}
 
 		feeSchdMthdBox.setDisabled(feeSchdMthdDisable);

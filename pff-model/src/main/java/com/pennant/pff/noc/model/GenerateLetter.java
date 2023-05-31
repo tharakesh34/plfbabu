@@ -1,5 +1,6 @@
 package com.pennant.pff.noc.model;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
@@ -53,6 +54,7 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private String deliveryStatus;
 	private Date deliveryDate;
 	private Date dispatchDate;
+	private BigDecimal waiverAmt = BigDecimal.ZERO;
 
 	public GenerateLetter() {
 		super();
@@ -428,4 +430,11 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.dispatchDate = dispatchDate;
 	}
 
+	public BigDecimal getWaiverAmt() {
+		return waiverAmt;
+	}
+
+	public void setWaiverAmt(BigDecimal waiverAmt) {
+		this.waiverAmt = waiverAmt;
+	}
 }

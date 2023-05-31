@@ -659,5 +659,31 @@
 			<column name="FinBranch" type="varchar(13)" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ST#1561.48" author="Mounika.M">
+		<addColumn tableName="ADTLoan_Letter_Manual">
+			<column name="WaiverAmt" type ="decimal(18, 0)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1561.50" author="Mounika.M">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTLOAN_LETTER_MANUAL SET WAIVERAMT = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.49" author="Mounika.M" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTLOAN_LETTER_MANUAL ADD CONSTRAINT DF_AFT_WAIVERAMT DEFAULT 0 FOR WaiverAmt;
+			]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="ST#1561.49" author="Mounika.M" dbms="postgresql, oracle">
+		<addDefaultValue tableName="ADTLOAN_LETTER_MANUAL" columnName="WaiverAmt" defaultValue="0" />
+	</changeSet>
+	
 </databaseChangeLog>

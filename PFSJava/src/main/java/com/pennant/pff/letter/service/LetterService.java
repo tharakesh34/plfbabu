@@ -492,6 +492,14 @@ public class LetterService {
 
 		manualAdviseDAO.save(manualAdvise, TableType.MAIN_TAB);
 
+		finFeeDetail.setPaidAmount(remainingFee);
+		finFeeDetail.setPaidAmountOriginal(remainingFee.add(finFeeDetail.getRemainingFeeGST()));
+		finFeeDetail.setRemainingFeeOriginal(BigDecimal.ZERO);
+		finFeeDetail.setRemainingFee(BigDecimal.ZERO);
+		finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
+
+		finFeeDetailDAO.update(finFeeDetail, false, "");
+
 		letter.setAdviseID(manualAdvise.getAdviseID());
 
 		logger.debug(Literal.LEAVING);
