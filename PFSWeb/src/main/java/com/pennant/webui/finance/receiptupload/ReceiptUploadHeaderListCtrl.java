@@ -763,7 +763,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 						this.receiptUploadHeaderService.updateUploadProgress(id,
 								ReceiptUploadConstants.RECEIPT_DOWNLOADED);
 					}
-					out.close();
+
 					String zipfileName = "ReceiptUpload.zip";
 
 					byte[] tobytes = arrayOutputStream.toByteArray();

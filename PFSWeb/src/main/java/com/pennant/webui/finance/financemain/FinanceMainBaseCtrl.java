@@ -8860,8 +8860,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 										out.closeEntry();
 									}
 
-									out.close();
-
 									byte[] tobytes = arrayOutputStream.toByteArray();
 									Filedownload.save(new AMedia("Aggrements.zip", "zip", "application/*", tobytes));
 								}
