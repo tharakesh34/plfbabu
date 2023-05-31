@@ -359,11 +359,11 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 			String errorDesc = "";
 			
 			for (LPPUpload detail : details) {
-				if (detail.getReference() == null || detail.getLoanType().equals(lppUpload.getLoanType())) {
+				if (detail.getReference() == null) {
 					continue;
 				}
 
-				if (detail.getErrorDesc() != null) {
+				if (detail.getErrorDesc() != null && detail.getLoanType().equals(lppUpload.getLoanType())) {
 					if (errorDesc.length() > 0) {
 						errorDesc = errorDesc.concat(",");
 					}
