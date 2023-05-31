@@ -885,7 +885,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (StringUtils.equals(module, FinanceConstants.DEPOSIT_MAKER)
-				&& ((StringUtils.equals(recMode, ReceiptMode.CHEQUE) || StringUtils.equals(recMode, ReceiptMode.DD)))) {
+				&& (StringUtils.equals(recMode, ReceiptMode.CHEQUE) || StringUtils.equals(recMode, ReceiptMode.DD))) {
 			this.fundingAccount.setMandatoryStyle(true);
 			this.fundingAccount.setReadonly(false);
 

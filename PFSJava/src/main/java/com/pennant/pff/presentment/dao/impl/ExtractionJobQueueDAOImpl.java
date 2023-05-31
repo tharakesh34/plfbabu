@@ -131,7 +131,7 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, bJobQueue.getBatchId()), (rs, Num) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, bJobQueue.getBatchId()), (rs, rowNum) -> {
 			BatchJobQueue jobQueue = new BatchJobQueue();
 			jobQueue.setId(rs.getLong("ID"));
 			jobQueue.setResetCounterId(rs.getLong("resetCounterId"));
