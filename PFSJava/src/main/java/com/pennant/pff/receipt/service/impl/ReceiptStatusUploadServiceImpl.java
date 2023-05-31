@@ -39,6 +39,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.DisbursementConstants;
@@ -54,6 +55,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.upload.ReceiptStatusUploadError;
 import com.pennapps.core.util.ObjectUtil;
 
@@ -291,6 +293,12 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		List<ReceiptAllocationDetail> allocations = receiptAllocationDetailDAO.getAllocationsByReceiptID(receiptId,
 				"_View");
 
+		allocations.forEach(rad -> rad.setValueDate(frh.getValueDate()));
+
+		if (ReceiptPurpose.EARLYRPY.code().equals(frh.getReceiptPurpose())) {
+			frh.setPartPayAmount(frh.getReceiptAmount());
+		}
+
 		frh.setReceiptID(detail.getReceiptId());
 		frh.setReceiptModeStatus(detail.getStatusRM());
 		frh.setRealizationDate(detail.getRealizationDate());
@@ -314,7 +322,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		fd.setUserDetails(detail.getUserDetails());
 
 		long finid = fd.getFinID();
-		FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(finid);
+		FinanceMain financeMain = financeMainDAO.getFinanceMainForLMSEvent(finid);
 		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finid, "_AView", false);
 		FinanceType ft = financeTypeDAO.getFinanceTypeByFinType(financeMain.getFinType());
 		FinanceProfitDetail fpd = financeProfitDetailDAO.getFinProfitDetailsById(finid);
@@ -339,6 +347,10 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		financeDetail.setFinScheduleData(schdData);
 		financeDetail.setCustomerDetails(customerDetails);
 		fd.setFinanceDetail(financeDetail);
+
+		RepayMain repayMain = fd.getRepayMain();
+		repayMain.setEarlyPayOnSchDate(frh.getValueDate());
+		repayMain.setEarlyPayAmount(frh.getReceiptAmount());
 
 		auditHeader = getAuditHeader(fd, PennantConstants.TRAN_WF);
 		auditHeader.getAuditDetail().setModelData(fd);
