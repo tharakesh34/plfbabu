@@ -1844,10 +1844,6 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		ah.getAuditDetail().setModelData(user);
 		auditHeaderDAO.addAudit(ah);
 
-		/*
-		 * if (!user.isUsrEnabled()) { queueAssignmentDAO.executeStoredProcedure(user.getUsrID()); }
-		 */
-
 		logger.debug(Literal.LEAVING);
 		return ah;
 	}

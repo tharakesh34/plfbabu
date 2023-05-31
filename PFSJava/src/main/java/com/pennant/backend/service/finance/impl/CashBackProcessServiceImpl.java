@@ -310,9 +310,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		// GST Invoice Preparation
 		if (gstInvoiceTxnService != null && aeEvent.getLinkedTranId() > 0 && CollectionUtils.isNotEmpty(cbdList)) {
 
-			// Normal Fees invoice preparation
-			// this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), fd, cbDetail,
-			// PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, percentages);
 		}
 		return aeEvent;
 

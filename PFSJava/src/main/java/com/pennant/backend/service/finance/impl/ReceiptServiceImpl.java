@@ -3616,8 +3616,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			fsi.setAllocationType(AllocationType.AUTO);
 			fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		}
-
-		validateClosureType(schdData, fsi);
 	}
 
 	private void validateCheque(FinScheduleData schdData, String favourNumber) {
@@ -6465,6 +6463,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose && fsi.isReceiptUpload() && !"Post".equals(fsi.getReqType())) {
 			setReceiptDataForEarlySettlement(rd);
+			validateClosureType(schdData, fsi);
 		}
 
 		setFinanceData(rd);

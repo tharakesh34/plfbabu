@@ -388,9 +388,6 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 					dd.setCustDocIsVerified(rs.getBoolean("CustDocIsVerified"));
 					dd.setCustDocVerifiedBy(rs.getLong("CustDocVerifiedBy"));
 					dd.setCustDocIsAcrive(rs.getBoolean("CustDocIsAcrive"));
-					// dd.setDocExpDateIsMand(rs.getString("DocExpDateIsMand"));
-					// dd.setDocIssueDateMand(rs.getString("DocIssueDateMand"));
-					// dd.setDocIdNumMand(rs.getString("DocIdNumMand"));
 					dd.setDocIsPdfExtRequired(rs.getBoolean("DocIsPdfExtRequired"));
 					dd.setDocIsPasswordProtected(rs.getBoolean("DocIsPasswordProtected"));
 					dd.setPdfMappingRef(JdbcUtil.getLong(rs.getObject("PdfMappingRef")));
