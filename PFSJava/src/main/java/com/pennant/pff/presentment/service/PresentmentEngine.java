@@ -1027,7 +1027,11 @@ public class PresentmentEngine {
 
 		if (pd.getExcessAmountReversal() != null) {
 			excessRevarsal.addAll(pd.getExcessAmountReversal());
+		}
+
+		if (pd.getExcessMovements() != null) {
 			excessMovement.addAll(pd.getExcessMovements());
+			excessMovement.forEach(em -> em.setReceiptID(pd.getId()));
 		}
 
 		if (pd.getExcessAmount() != null) {

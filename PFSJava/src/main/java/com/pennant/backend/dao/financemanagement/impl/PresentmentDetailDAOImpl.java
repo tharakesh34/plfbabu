@@ -1119,7 +1119,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			sql.append(" Where fm.CustId = ?");
 		}
 
-		sql.append(" and pd.SchDate = ? and pd.Status = ?");
+		sql.append(" and pd.SchDate = ? and pd.AdvanceAmt > ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -1133,7 +1133,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			}
 
 			ps.setDate(index++, JdbcUtil.getDate(schData));
-			ps.setString(index, RepayConstants.PEXC_APPROV);
+			ps.setBigDecimal(index, BigDecimal.ZERO);
 		}, (rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
 

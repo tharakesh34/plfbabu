@@ -3,13 +3,13 @@ package com.pennant.pff.mandate.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
-import com.cronutils.utils.StringUtils;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.mandate.MandateUploadDAO;
 import com.pennant.backend.model.mandate.Mandate;
@@ -179,9 +179,7 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl<MandateUpload> 
 			swapMandateRequired(mu, mandate, swapMndt);
 			openMandateRequired(mu, mandate, openMndt);
 			securityMandateRequired(mu, mandate, secMndt);
-
 			break;
-
 		case SI, DAS:
 			swapMandateRequired(mu, mandate, swapMndt);
 			break;
