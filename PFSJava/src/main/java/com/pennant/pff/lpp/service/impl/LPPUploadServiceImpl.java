@@ -15,6 +15,7 @@ import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -23,6 +24,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lpp.upload.LPPUpload;
+import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
@@ -30,6 +32,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.lpp.dao.LPPUploadDAO;
 import com.pennant.pff.lpp.upload.validate.LPPUploadProcessRecord;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
@@ -47,6 +50,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 	private FinanceMainDAO financeMainDAO;
 	private FinanceMaintenanceService financeMaintenanceService;
 	private FinanceTypeDAO financeTypeDAO;
+	private MandateDAO mandateDAO;
 	private FinanceTypeService financeTypeService;
 	private LPPUploadProcessRecord lPPUploadProcessRecord;
 
@@ -182,6 +186,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 		FinODPenaltyRate pr = new FinODPenaltyRate();
 		FinanceDetail fd = new FinanceDetail();
 		FinScheduleData schdData = new FinScheduleData();
+		Mandate mandate = new Mandate();
 		AuditHeader auditHeader = null;
 
 		Long finID = financeMainDAO.getFinID(detail.getReference());
@@ -215,6 +220,12 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 		if (fm == null) {
 			setError(detail, LPPUploadError.LPP_02);
 			return;
+		}
+
+		if (InstrumentType.isSI(fm.getFinRepayMethod())) {
+			String accNum = mandateDAO.getMandateNumber(fm.getMandateID());
+			mandate.setAccNumber(accNum);
+			fd.setMandate(mandate);
 		}
 
 		LoggedInUser userDetails = detail.getUserDetails();
@@ -419,6 +430,11 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 	@Autowired
 	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
 		this.financeTypeService = financeTypeService;
+	}
+
+	@Autowired
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
 	}
 
 	@Autowired
