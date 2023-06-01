@@ -671,7 +671,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		String panNumber = rud.getPanNumber();
 
 		String cashPanLimit = SysParamUtil.getValueAsString(SMTParameterConstants.RECEIPT_CASH_PAN_LIMIT);
-		BigDecimal cashLimit = new BigDecimal(cashPanLimit);
+		BigDecimal cashLimit = PennantApplicationUtil.unFormateAmount(cashPanLimit, 2);
 		if (rud.getReceiptAmount().compareTo(cashLimit) > 0
 				&& DisbursementConstants.PAYMENT_TYPE_CASH.equals(receiptMode) && StringUtils.isEmpty(panNumber)) {
 			setError(rud, "[PANNUMBER] is Mandatory , ReceiptAmount exceeded the configured Limit i.e"
@@ -784,7 +784,12 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 
 		if (StringUtils.isNotBlank(rud.getPartnerBankCode())) {
 			PartnerBank pb = partnerBankDAO.getPartnerBankByCode(rud.getPartnerBankCode(), "");
-			int count = partnerBankDAO.getValidPartnerBank(fm.getFinType(), pbMode, pb.getPartnerBankId());
+			int count = 0;
+
+			if (pb != null) {
+				count = partnerBankDAO.getValidPartnerBank(fm.getFinType(), pbMode, pb.getPartnerBankId());
+			}
+
 			if (pb == null || count == 0) {
 				setError(rud, "[PARTNERBANKCODE] is not Valid ");
 				return;
