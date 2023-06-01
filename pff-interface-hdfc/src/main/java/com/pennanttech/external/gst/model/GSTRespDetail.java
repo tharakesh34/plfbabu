@@ -16,7 +16,7 @@ public class GSTRespDetail {
 	private BigDecimal transactionPricedCharge;
 	private String chargeInclusiveOfTax;
 	private BigDecimal taxAmount;
-	private String transactionDate;
+	private Date transactionDate;
 	private Long transactionUID;
 	private String sourceBranch;
 	private String sourceState;
@@ -229,11 +229,11 @@ public class GSTRespDetail {
 		this.taxAmount = taxAmount;
 	}
 
-	public String getTransactionDate() {
+	public Date getTransactionDate() {
 		return transactionDate;
 	}
 
-	public void setTransactionDate(String transactionDate) {
+	public void setTransactionDate(Date transactionDate) {
 		this.transactionDate = transactionDate;
 	}
 

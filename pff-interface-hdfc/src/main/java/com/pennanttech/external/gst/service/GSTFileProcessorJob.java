@@ -163,6 +163,7 @@ public class GSTFileProcessorJob extends AbstractJob
 							continue;
 						}
 
+						// Save Invoice details in to table
 						GSTInvoiceDetail invoiceDetail = getInvoiceDetail(responseBean);
 						extGSTDao.saveGSTInvoiceDetails(invoiceDetail);
 
@@ -199,8 +200,32 @@ public class GSTFileProcessorJob extends AbstractJob
 	private GSTInvoiceDetail getInvoiceDetail(GSTRespDetail respBean) {
 		GSTInvoiceDetail detail = new GSTInvoiceDetail();
 		detail.setCustomerName(respBean.getCustomerName());
-		// detail.setCustomerAddress(respBean.get);
-		return null;
+		detail.setCustomerAddress("");// Call db for customer address
+		detail.setCurrentGstin(respBean.getGstin());
+		detail.setLoanBranchAddress("");// Get from DB
+		detail.setGstin(respBean.getGstinOfBank());
+		detail.setTransactionDate(respBean.getTransactionDate());
+		detail.setInvoiceNumber(respBean.getGstInvoiceNumber());
+		detail.setChargeDescription("");// Charge desc for fee. Get from DB
+		detail.setChargeAmount(respBean.getTotalInvoiceValue());
+		detail.setCgstRate(respBean.getCgstRate());
+		detail.setCgstAmount(respBean.getCgstAmount());
+		detail.setSgstRate(respBean.getSgstRate());
+		detail.setSgstAmount(respBean.getSgstAmount());
+		detail.setIgstRate(respBean.getIgstRate());
+		detail.setIgstAmount(respBean.getIgstAmount());
+		detail.setUgstRate(respBean.getUtgstRate());
+		detail.setUgstAmount(respBean.getUtgstAmount());
+		detail.setPop("");// Source State Place of Purchase
+		detail.setPos("");// Destination State Place of Service
+		detail.setCin("L65920MH1994PC08618");// HardCoded
+		detail.setPan("AAACH27020H");// HardCoded
+		detail.setSac(respBean.getSac());
+		detail.setWebsiteAddress("www.hdfcbank.com");// HardCoded
+		detail.setEmailId("loansupport@hdfcbank.com");// HardCoded
+		detail.setRegBankAddress("");// Registered address of FI/Bank
+		detail.setDisclaimer("");// HardCoded
+		return detail;
 	}
 
 	private GSTRespDetail convertRecordToBean(GSTCompDetail detail) {
@@ -226,7 +251,7 @@ public class GSTFileProcessorJob extends AbstractJob
 		responseBean.setTransactionPricedCharge(ParseUtil.getBigDecimalItem(lineDataStrings, 10));
 		responseBean.setChargeInclusiveOfTax(ParseUtil.getItem(lineDataStrings, 11));
 		responseBean.setTaxAmount(ParseUtil.getBigDecimalItem(lineDataStrings, 12));
-		responseBean.setTransactionDate(ParseUtil.getItem(lineDataStrings, 13));
+		responseBean.setTransactionDate(ParseUtil.getDateItem(lineDataStrings, 13));
 		responseBean.setTransactionUID(ParseUtil.getLongItem(lineDataStrings, 14));
 		responseBean.setSourceBranch(ParseUtil.getItem(lineDataStrings, 15));
 		responseBean.setSourceState(ParseUtil.getItem(lineDataStrings, 16));
