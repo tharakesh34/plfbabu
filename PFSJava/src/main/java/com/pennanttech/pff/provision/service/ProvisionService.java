@@ -43,4 +43,8 @@ public interface ProvisionService {
 	void executeProvisionRule(ProvisionRuleData provisionData, Provision p);
 
 	boolean isRecordExists(long finID);
+
+	boolean isAssetClassCodeValid(long finID, String assetClassCode);
+
+	Provision getAssetClassSetIDByCode(String manualAssetClassCode, String effNpaClassCode);
 }

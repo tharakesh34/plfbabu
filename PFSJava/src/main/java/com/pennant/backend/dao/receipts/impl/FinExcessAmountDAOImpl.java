@@ -654,7 +654,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		logger.debug(Literal.SQL + sql.toString());
 
 		logger.debug(Literal.SQL + sql.toString());
-		return this.jdbcOperations.update(sql.toString(), ps -> {
+		return this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
 			ps.setBigDecimal(index++, amount);
@@ -786,7 +786,12 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		ExcessAmountRowMapper rowMapper = new ExcessAmountRowMapper();
 
-		return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, excessID);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, excessID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 	@Override

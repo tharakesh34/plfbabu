@@ -110,6 +110,7 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 		mp.setOverrideProvision(PennantConstants.YES.equals(detail.getOverrideProvision()));
 		mp.setManProvsnPer(detail.getProvisionPercentage());
 		mp.setFinID(detail.getReferenceID());
+		mp.setManualProvision(true);
 
 		TransactionStatus txStatus = getTransactionStatus();
 		AuditHeader auditHeader;
@@ -266,6 +267,12 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 		String assetClassCode = detail.getAssetClassCode();
 		String subClassCode = detail.getAssetSubClassCode();
 
+		boolean isAssetClassCodeExists = provisionService.isAssetClassCodeValid(detail.getReferenceID(),
+				assetClassCode);
+		if (isAssetClassCodeExists) {
+			setError(detail, ProvisionUploadError.PROVSN_08);
+			return;
+		}
 		if (StringUtils.isNotBlank(assetClassCode)) {
 			Long assetClassId = provisionUploadDAO.getAssetClassId(assetClassCode);
 
@@ -277,7 +284,7 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 			detail.setAssetClassId(assetClassId);
 		}
 
-		if (StringUtils.isNotBlank(subClassCode)) {
+		if (StringUtils.isNotBlank(subClassCode) && StringUtils.isNotBlank(assetClassCode)) {
 
 			Long assetSubClassId = provisionUploadDAO.getAssetSubClassId(detail.getAssetClassId(), subClassCode);
 

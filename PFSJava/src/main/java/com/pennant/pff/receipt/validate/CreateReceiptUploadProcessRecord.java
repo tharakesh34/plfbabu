@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +37,7 @@ import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
@@ -55,6 +58,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
@@ -212,7 +216,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 				case 24:
 					String bounceDate = rowCell.toString();
 					if (bounceDate != null) {
-						cru.setBounceDate(DateUtil.getDate(bounceDate));
+						cru.setBounceDate(DateUtil.parse(bounceDate, DateFormat.LONG_DATE.getPattern()));
 					}
 					break;
 				case 25:
@@ -275,7 +279,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 						try {
 							str = new BigDecimal(strAmount);
 						} catch (NumberFormatException e) {
-							throw new AppException("Invalid amount");
+							throw new AppException("Invalid Amount");
 						}
 
 						if (str.compareTo(BigDecimal.ZERO) > 0) {
@@ -329,7 +333,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		prepareKeys(rud);
 
 		String reference = rud.getReference();
-		FinanceMain fm = financeMainDAO.getFinanceDetailsForService1(reference, "", false);
+		FinanceMain fm = financeMainDAO.getFinanceMain(reference, TableType.MAIN_TAB);
 
 		if (fm == null) {
 			setError(rud, "NO DATA FOUND WITH  SPECIFIED REFERENCE");
@@ -358,11 +362,10 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			}
 		}
 
-		if (FinanceConstants.EARLYSETTLEMENT.equals(purpose)) {
-			if (finAdvancePaymentsDAO.getStatusCountByFinRefrence(rud.getReferenceID()) > 0) {
-				setError(rud, "90508", rud.getReference());
-				return;
-			}
+		if (FinanceConstants.EARLYSETTLEMENT.equals(purpose)
+				&& finAdvancePaymentsDAO.getStatusCountByFinRefrence(rud.getReferenceID()) > 0) {
+			setError(rud, "90508", rud.getReference());
+			return;
 		}
 
 		if (!"SP".equals(purpose) && !"EP".equals(purpose) && !"ES".equals(purpose)) {
@@ -404,7 +407,6 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 
 		try {
 			BigDecimal precisionAmount = rud.getReceiptAmount();
-			// precisionAmount = precisionAmount.multiply(BigDecimal.valueOf(100));
 			BigDecimal actualAmount = precisionAmount;
 
 			precisionAmount = precisionAmount.setScale(0, RoundingMode.HALF_DOWN);
@@ -445,25 +447,17 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			return;
 		}
 
-		if (StringUtils.isNotBlank(rud.getRemarks())) {
-			if (rud.getRemarks().length() > 100) {
-				setError(rud, "[REMARKS] with length more than 100 characters");
-				return;
-			}
+		if (StringUtils.isNotBlank(rud.getRemarks()) && rud.getRemarks().length() > 100) {
+			setError(rud, "[REMARKS] with length more than 100 characters");
+			return;
 		}
 
 		long receiptid = rud.getReceiptID();
-		if (!(receiptid == 0) && !(receiptid == Long.MIN_VALUE)) {
-			if (rud.getRemarks().length() > 50) {
-				setError(rud, "[RECEIPTNUMBER] with length more than 50 characters");
-				return;
-			}
+		if (((receiptid != 0) && (receiptid != Long.MIN_VALUE)) && Long.toString(receiptid).length() > 50) {
+			setError(rud, "[RECEIPTNUMBER] with length more than 50 characters");
+			return;
 		}
 
-		/*
-		 * if (DateUtil.compare(rud.getReceivedDate(), rud.getValueDate()) < 0) { setError(rud,
-		 * "[RECEIVEDDATE] should be greater than or equal to [VALUEDATE]."); return; }
-		 */
 		String receiptMode = rud.getReceiptMode();
 
 		if (StringUtils.isBlank(receiptMode)) {
@@ -497,6 +491,11 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			if (!ReceiptMode.NEFT.equals(subReceiptMode) && !ReceiptMode.RTGS.equals(subReceiptMode)
 					&& !ReceiptMode.IMPS.equals(subReceiptMode) && !"FT".equals(subReceiptMode)) {
 				setError(rud, "Values other than IMPS/RTGS/NEFT/FT in [RECEIPTMODE] ");
+				return;
+			}
+
+			if (StringUtils.isBlank(rud.getTransactionRef())) {
+				setError(rud, "[TRANSCATIONREF] is Mandatory For ONLINE Mode");
 				return;
 			}
 		}
@@ -537,8 +536,18 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 				return;
 			}
 
-			if (!(ClosureType.isClosure(closureType) || ClosureType.isCancel(closureType))) {
-				setError(rud, "Values other than CANCEL/CLOSURE in [CLOSURETYPE] ");
+			if (ClosureType.getType(closureType) == null) {
+				setError(rud, "Values other than Closure/Fore-Closure/Cancel/Repossession/Top Up in [CLOSURETYPE] ");
+				return;
+			}
+
+			if (fm.getMaturityDate().compareTo(appDate) <= 0) {
+				if (ClosureType.isForeClosure(closureType) || ClosureType.isCancel(closureType)) {
+					setError(rud, "Values other than Closure/Repossession/Top Up in [CLOSURETYPE] ");
+					return;
+				}
+			} else if (ClosureType.isClosure(closureType)) {
+				setError(rud, "Values other than Fore-Closure/Cancel/Repossession/Top Up in [CLOSURETYPE] ");
 				return;
 			}
 		}
@@ -549,41 +558,23 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			return;
 		}
 
-		/*
-		 * if (rud.getFundingAc().length() > 8) { setError(rud, "[FUNDINGAC] with length more than 8 characters");
-		 * return; }
-		 */
-		if (StringUtils.isNotBlank(rud.getPaymentRef())) {
-			if (rud.getPaymentRef().length() > 50) {
-				setError(rud, "[PAYMENTREF] with length more than 50 characters");
-				return;
-			}
-		}
-
-		String favourNumber = rud.getTransactionRef();
-		if (StringUtils.isBlank(favourNumber)) {
-			setError(rud, "[FAVOURNUMBER] is Mandatory");
+		if (StringUtils.isNotBlank(rud.getPaymentRef()) && rud.getPaymentRef().length() > 50) {
+			setError(rud, "[PAYMENTREF] with length more than 50 characters");
 			return;
 		}
 
+		String favourNumber = rud.getTransactionRef();
 		String bankcode = rud.getBankCode();
 
 		if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
 			if (favourNumber.length() > 6) {
-				setError(rud, "[FAVOURNUMBER] with length more than 6");
+				setError(rud, "[TRANCATIONNUMBER] with length more than 6");
 				return;
 			}
 
-			if (StringUtils.isBlank(rud.getChequeNumber())) {
-				setError(rud, "[CHEQUEACNO] is Mandatory");
+			if (StringUtils.isNotBlank(rud.getChequeAccountNumber()) && rud.getChequeAccountNumber().length() > 50) {
+				setError(rud, "[CHEQUEACNO] with length more than 50");
 				return;
-			}
-
-			if (StringUtils.isNotBlank(rud.getChequeNumber())) {
-				if (rud.getChequeNumber().length() > 50) {
-					setError(rud, "[CHEQUEACNO] with length more than 50");
-					return;
-				}
 			}
 
 			if (StringUtils.isBlank(bankcode)) {
@@ -598,11 +589,10 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			}
 		}
 
-		if (!ReceiptMode.CHEQUE.equals(receiptMode) && !ReceiptMode.DD.equals(receiptMode)) {
-			if (rud.getTransactionRef().length() > 50) {
-				setError(rud, "[TRANSACTIONREF] with length more than 50");
-				return;
-			}
+		if (!ReceiptMode.CHEQUE.equals(receiptMode) && !ReceiptMode.DD.equals(receiptMode)
+				&& rud.getTransactionRef().length() > 50) {
+			setError(rud, "[TRANSACTIONREF] with length more than 50");
+			return;
 		}
 
 		String modeStatus = rud.getReceiptModeStatus();
@@ -624,32 +614,19 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			return;
 		}
 
-		if (RepayConstants.PAYSTATUS_REALIZED.equals(modeStatus)
+		if (RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus)
 				|| RepayConstants.PAYSTATUS_DEPOSITED.equals(modeStatus)) {
-			if (RepayConstants.PAYSTATUS_CANCEL.equals(modeStatus)
-					|| RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus)) {
-				setError(rud, "[STATUS] 'B' Or 'C' is allowed only when RECEIPTMODE is 'CHEQUE' or 'DD' ");
+			if (!DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(receiptMode)
+					&& !DisbursementConstants.PAYMENT_TYPE_DD.equals(receiptMode)) {
+				setError(rud, "[STATUS] 'B' Or 'D' is allowed only when RECEIPTMODE is 'CHEQUE' or 'DD' ");
 				return;
 			}
 		}
 
-		if (StringUtils.isNotBlank(rud.getExternalRef())) {
-			if (rud.getExternalRef().length() > 50) {
-				setError(rud, "[EXTERNALREF] with length more than 1 ");
-				return;
-			}
+		if (StringUtils.isNotBlank(rud.getExternalRef()) && rud.getExternalRef().length() > 50) {
+			setError(rud, "[EXTERNALREF] with length more than 1 ");
+			return;
 		}
-
-		/*
-		 * String strCollectionAgentId = rud.getStrCollectionAgentId(); if (StringUtils.isNumeric(strCollectionAgentId))
-		 * { rud.setCollectionAgentId(Long.parseLong(strCollectionAgentId)); } else { setError(rud,
-		 * "Non numeric value in [COLLECTIONAGENT] "); return; }
-		 */
-
-		/*
-		 * String strBckdtdWthOldDues = rud.getStrBckdtdWthOldDues(); if (StringUtils.isBlank(strBckdtdWthOldDues)) {
-		 * strBckdtdWthOldDues = "0"; }
-		 */
 
 		Date depositDate = rud.getDepositDate();
 		Date realizedDate = rud.getRealizationDate();
@@ -667,19 +644,18 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 				return;
 			}
 
-			if (RepayConstants.PAYSTATUS_REALIZED.equals(modeStatus)
+			if ((RepayConstants.PAYSTATUS_REALIZED.equals(modeStatus)
 					|| RepayConstants.PAYSTATUS_CANCEL.equals(modeStatus)
-					|| RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus)) {
-				if (realizedDate == null) {
-					setError(rud, "[REALIZATIONDATE] is Mandatory incase of 'CHEQUE' or 'DD' ");
-					return;
-				}
+					|| RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus)) && realizedDate == null) {
+				setError(rud, "[REALIZATIONDATE] is Mandatory incase of 'CHEQUE' or 'DD' ");
+				return;
 			}
 
 			if (DateUtil.compare(realizedDate, depositDate) < 0) {
 				setError(rud, "[REALIZATIONDATE]  Should  be greater than [DEPOSITDATE] ");
 				return;
 			}
+
 		}
 
 		String entityCode = financeMainDAO.getEntityCodeByRef(reference);
@@ -693,7 +669,26 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		}
 
 		String panNumber = rud.getPanNumber();
+
+		String cashPanLimit = SysParamUtil.getValueAsString(SMTParameterConstants.RECEIPT_CASH_PAN_LIMIT);
+		BigDecimal cashLimit = PennantApplicationUtil.unFormateAmount(cashPanLimit, 2);
+		if (rud.getReceiptAmount().compareTo(cashLimit) > 0
+				&& DisbursementConstants.PAYMENT_TYPE_CASH.equals(receiptMode) && StringUtils.isEmpty(panNumber)) {
+			setError(rud, "[PANNUMBER] is Mandatory , ReceiptAmount exceeded the configured Limit i.e"
+					.concat(String.valueOf(cashLimit)));
+			return;
+		}
+
 		if (StringUtils.isNotEmpty(panNumber)) {
+			Pattern pattern = Pattern
+					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_PANNUMBER));
+			Matcher matcher = pattern.matcher(panNumber);
+			if (!matcher.matches()) {
+				setError(rud, "[PANNUMBER] invalid format ".concat(String.valueOf(panNumber))
+						+ " Format Should be CCCCCNNNNC ");
+				return;
+			}
+
 			if (MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN)) {
 				DocVerificationHeader docHeader = new DocVerificationHeader();
 				docHeader.setDocNumber(panNumber);
@@ -710,11 +705,9 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 
 		Date bounceDate = rud.getBounceDate();
 
-		if (!RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus)) {
-			if (bounceDate != null) {
-				setError(rud, "[BOUNCEDATE] is Mandatory only when STATUS is 'B' ");
-				return;
-			}
+		if (!RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus) && bounceDate != null) {
+			setError(rud, "[BOUNCEDATE] is Mandatory only when STATUS is 'B' ");
+			return;
 		}
 
 		if (RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus)) {
@@ -742,21 +735,17 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 				return;
 			}
 
-			if (RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus)) {
-
-				if (bounceReasonDAO.getBounceCodeCount(bReason) == 0) {
-					setError(rud, "[BOUNCE/CANCEl REASON] Should be Valid ");
-					return;
-				}
+			if (RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus)
+					&& bounceReasonDAO.getBounceCodeCount(bReason) == 0) {
+				setError(rud, "[BOUNCE/CANCEl REASON] Should be Valid ");
+				return;
 
 			}
 
-			if (RepayConstants.PAYSTATUS_CANCEL.equals(modeStatus)) {
-
-				if (rejectDetailDAO.getRejectCodeCount(bReason) == 0) {
-					setError(rud, "[BOUNCE/CANCEl REASON] Should be Valid ");
-					return;
-				}
+			if (RepayConstants.PAYSTATUS_CANCEL.equals(modeStatus)
+					&& rejectDetailDAO.getRejectCodeCount(bReason) == 0) {
+				setError(rud, "[BOUNCE/CANCEl REASON] Should be Valid ");
+				return;
 
 			}
 
@@ -767,15 +756,13 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			}
 		}
 
-		if (StringUtils.isNotBlank(bCRemarks)) {
-			if (bCRemarks.length() > 50) {
-				setError(rud, "[BOUNCE/CANCEl REMARKS] Should not be greater than 50 Chnaracters ");
-				return;
-			}
+		if (StringUtils.isNotBlank(bCRemarks) && bCRemarks.length() > 50) {
+			setError(rud, "[BOUNCE/CANCEl REMARKS] Should not be greater than 50 Chnaracters ");
+			return;
 		}
 
-		if (StringUtils.isBlank(rud.getPartnerBankCode())) {
-			List<FinTypePartnerBank> ftb = partnerBankDAO.getpartnerbankCode(fm.getFinType(), receiptMode);
+		if (!ReceiptMode.CASH.equals(receiptMode) && StringUtils.isBlank(rud.getPartnerBankCode())) {
+			List<FinTypePartnerBank> ftb = partnerBankDAO.getpartnerbankCode(fm.getFinType(), subReceiptMode);
 
 			if (ftb.size() > 1) {
 				setError(rud, "[PARTNERBANKCODE] is mandatory ");
@@ -785,15 +772,32 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			for (FinTypePartnerBank ftpb : ftb) {
 				String partnerbankCode = partnerBankDAO.getPartnerBankCodeById(ftpb.getPartnerBankID());
 				rud.setPartnerBankCode(partnerbankCode);
-				return;
 			}
 
 		}
 
+		String pbMode = receiptMode;
+
+		if (ReceiptMode.ONLINE.equals(pbMode)) {
+			pbMode = subReceiptMode;
+		}
+
+		if (ReceiptMode.CASH.equals(receiptMode)) {
+			if (StringUtils.isNotBlank(rud.getPartnerBankCode())) {
+				setError(rud, "[PARTNERBANKCODE] is not allowed for CASH payment");
+				return;
+			}
+		}
+
 		if (StringUtils.isNotBlank(rud.getPartnerBankCode())) {
 			PartnerBank pb = partnerBankDAO.getPartnerBankByCode(rud.getPartnerBankCode(), "");
-			int partnerbankid = partnerBankDAO.getValidPartnerBank(fm.getFinType(), receiptMode, pb.getPartnerBankId());
-			if (pb == null || partnerbankid == 0) {
+			int count = 0;
+
+			if (pb != null) {
+				count = partnerBankDAO.getValidPartnerBank(fm.getFinType(), pbMode, pb.getPartnerBankId());
+			}
+
+			if (pb == null || count == 0) {
 				setError(rud, "[PARTNERBANKCODE] is not Valid ");
 				return;
 			}
@@ -869,7 +873,6 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		if (DisbursementConstants.PAYMENT_TYPE_ONLINE.equalsIgnoreCase(receiptMode)
 				&& this.finReceiptHeaderDAO.isOnlineExists(rud)) {
 			setError(rud, "90273", "with combination REFERENCE/ReceiptMode/BankCode/FavourNumber:" + txnKey);
-			return;
 		}
 	}
 
@@ -932,7 +935,6 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 
 	public void setError(CreateReceiptUpload rud, String message) {
 		setError(rud, "RU0040", message);
-		return;
 	}
 
 	public void setError(CreateReceiptUpload rud, String code, String message) {
@@ -958,11 +960,9 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		}
 
 		String referenceCode = uad.getCode();
-		if (StringUtils.isNotBlank(referenceCode)) {
-			if (referenceCode.length() > 8) {
-				setError(uad, "Allocation Sheet: [REFERENCECODE] with lenght more than 8 characters ");
-				return;
-			}
+		if (StringUtils.isNotBlank(referenceCode) && referenceCode.length() > 8) {
+			setError(uad, "Allocation Sheet: [REFERENCECODE] with lenght more than 8 characters ");
+			return;
 		}
 
 		try {
@@ -983,12 +983,10 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 
 			if (precisionAmount.compareTo(BigDecimal.ZERO) < 0) {
 				setError(uad, "Allocation Sheet: [PAIDAMOUNT] with value <0 ");
-				return;
 			}
 		} catch (Exception e) {
 			uad.setPaidAmount(BigDecimal.ZERO);
 			setError(uad, "Allocation Sheet: [PAIDAMOUNT] ");
-			return;
 		}
 	}
 

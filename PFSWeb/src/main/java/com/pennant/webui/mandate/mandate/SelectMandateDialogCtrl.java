@@ -209,7 +209,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		Filter filters[] = new Filter[1];
+		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
 		this.finReference.setFilters(filters);
 

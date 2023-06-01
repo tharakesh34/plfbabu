@@ -183,9 +183,7 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise> i
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			this.jdbcOperations.update(sql.toString(), ps -> {
-				ps.setLong(1, uploadId);
-			});
+			this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, uploadId));
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

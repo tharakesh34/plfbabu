@@ -16,26 +16,26 @@
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
 							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								autodisable="btnDownload,btnClose"
 								sclass="z-toolbarbutton" />
 							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								autodisable="btnDownload,btnClose"
 								sclass="z-toolbarbutton" />
 							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								autodisable="btnDownload,btnClose"
 								sclass="z-toolbarbutton" />
 							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								autodisable="btnDownload,btnClose"
 								sclass="z-toolbarbutton" />
 							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" visible="false"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 								sclass="z-toolbarbutton" />
 							<button id="btnPrint" label="${c:l('label_Print')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								autodisable="btnDownload,btnClose"
 								tooltiptext="${c:l('btnPrint.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
 							<button id="btnDownload" label="${c:l('label_DisbursementList_btndownload.value')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								autodisable="btnDownload,btnClose"
 								tooltiptext="${c:l('btnPrint.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
 						</toolbar>
 
@@ -49,11 +49,11 @@
 						<toolbar align="end" sclass="toolbar-end">
 							<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								autodisable="btnDownload,btnClose"
 								sclass="z-toolbarbutton" />
 							<button id="btnClose" label="${c:l('btnClose.label')}"
 								tooltiptext="${c:l('btnClose.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								autodisable="btnDownload,btnClose"
 								sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
@@ -81,7 +81,7 @@
 											<label value="${c:l('label_GenerateLetterDialog_Finreference')}" />
 											<hbox>
 												<space spacing="2px" />
-												<textbox id="finReference" maxlength="8" width="120px" readonly="true" />
+												<textbox id="finReference" width="120px" readonly="true" />
 											</hbox>
 											<label value="${c:l('label_GenerateLetterDialog_CustomerCif')}" />
 											<hbox>
@@ -105,7 +105,7 @@
 											<label value="${c:l('label_GenerateLetterDialog_ActiveStatus')}" />
 											<hbox>
 												<space spacing="2px" />
-												<textbox id="finStatus" width="170px" visible="true" />
+												<textbox id="finStatus" width="170px" visible="true" readonly="true"/>
 												<textbox id="finStatusReason" readonly="true" width="170px" visible="true"
 													style="border:none; background-color:white;" />
 											</hbox>
@@ -124,19 +124,19 @@
 											<label value="${c:l('label_GenerateLetterDialog_Branch')}" />
 											<hbox>
 												<space spacing="2px" />
-												<extendedcombobox id="branch" maxlength="8" width="200px" readonly="true" />
+												<extendedcombobox id="branch" maxlength="8" width="200px" readonly="true" removeSpace = "true"/>
 											</hbox>
 										</row>
 										<row>
 											<label value="${c:l('label_GenerateLetterDialog_LoanAmount')}" />
 											<hbox>
 												<space spacing="2px" />
-												<currencyBox id="finAmount" width="180px" readonly="true" />
+												<currencyBox id="finAmount" width="180px" readonly="true" removeSpace = "true"/>
 											</hbox>
-											<label value="${c:l('label_GenerateLetterDialog_ClosureDate')}" />
+											<label id = "generateLetterDialogClosureDate" value="${c:l('label_GenerateLetterDialog_ClosureDate')}" />
 											<hbox>
 												<space spacing="2px" />
-												<datebox id="finClosureDate" maxlength="8" width="200px" readonly="true" />
+												<datebox id="finClosureDate" maxlength="50" width="200px" readonly="true" />
 											</hbox>
 										</row>
 										<row>
@@ -148,7 +148,7 @@
 											<label value="${c:l('label_GenerateLetterDialog_ClosureType')}" />
 											<hbox>
 												<space spacing="2px" />
-												<textbox id="closureType" maxlength="8" width="200px" readonly="true" />
+												<textbox id="closureType" maxlength="50" width="200px" readonly="true" />
 											</hbox>
 										</row>
 										<row>
@@ -160,7 +160,7 @@
 											<label value="${c:l('label_GenerateLetterDialog_ClosureReason')}" />
 											<hbox>
 												<space spacing="2px" />
-												<textbox id="closureReason" maxlength="8" width="200px" readonly="true" />
+												<textbox id="closureReason" maxlength="50" width="200px" readonly="true" />
 											</hbox>
 										</row>
 										</rows>

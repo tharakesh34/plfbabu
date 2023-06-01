@@ -120,4 +120,39 @@ public class BranchChangeUploadDAOImpl extends SequenceDao<BranchChangeUpload> i
 		return sql.toString();
 	}
 
+	@Override
+	public boolean isInSettlement(long finID, String type) {
+
+		StringBuilder sql = new StringBuilder("Select count(FinID) From Fin_Settlement_Header");
+		sql.append(type);
+		sql.append(" Where FinID = ?");
+
+		logger.debug(sql.toString());
+
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
+	}
+
+	@Override
+	public boolean isInlinkingDelinking(long finID, String type) {
+
+		StringBuilder sql = new StringBuilder("Select count(FinID) From LinkedFinances");
+		sql.append(type);
+		sql.append(" Where FinID = ?");
+
+		logger.debug(sql.toString());
+
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
+	}
+
+	@Override
+	public boolean getReceiptQueueList(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Reference From FinReceiptHeader_Temp fr");
+		sql.append(" Inner Join FinanceMain fm on fm.Finreference = fr.Reference");
+		sql.append(" Where fm.FinID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
+	}
 }

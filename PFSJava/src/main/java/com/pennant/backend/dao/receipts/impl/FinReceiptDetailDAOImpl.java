@@ -603,9 +603,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
-				return rs.getString("Account_Type");
-			}, receiptSource);
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> rs.getString("Account_Type"), receiptSource);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

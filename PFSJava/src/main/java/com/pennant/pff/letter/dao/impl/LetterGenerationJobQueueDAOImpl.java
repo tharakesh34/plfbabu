@@ -40,12 +40,13 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 	public int prepareQueue(BatchJobQueue jobQueue) {
 		StringBuilder sql = new StringBuilder("Insert into LETTER_GENERATION_QUEUE (Id, LetterID)");
 		sql.append(" Select row_number() over(order by ID) ID, ID as LetterID");
-		sql.append(" From Letter_Generation_Stage Where Generated = ?");
+		sql.append(" From Loan_Letters_Stage Where Generated = ? and RequestType = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.update(sql.toString(), ps -> {
 			ps.setInt(1, 0);
+			ps.setString(2, "A");
 		});
 	}
 
@@ -55,9 +56,7 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.update(sql, ps -> {
-			ps.setInt(1, EodConstants.PROGRESS_SUCCESS);
-		});
+		this.jdbcOperations.update(sql, ps -> ps.setInt(1, EodConstants.PROGRESS_SUCCESS));
 
 		sql = "Update LETTER_GENERATION_QUEUE Set Progress = ? Where Progress = ?";
 
@@ -172,7 +171,7 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql.toString(), (rs, Num) -> {
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
 			BatchJobQueue jobQueue = new BatchJobQueue();
 			jobQueue.setId(rs.getLong("ID"));
 			jobQueue.setResetCounterId(rs.getLong("ResetCounterId"));

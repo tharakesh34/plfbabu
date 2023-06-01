@@ -10,8 +10,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -128,8 +126,6 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
 public class CustomerWebServiceImpl extends AbstractController implements CustomerRESTService, CustomerSOAPService {
-	private static final Logger logger = LogManager.getLogger(CustomerWebServiceImpl.class);
-
 	private CustomerController customerController;
 	private CustomerDetailsController customerDetailsController;
 	private ValidationUtility validationUtility;
@@ -166,21 +162,26 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	/**
 	 * Method for create customer in PLF system.
 	 * 
-	 * @param customerDetails
+	 * @param cd
 	 */
 	@Override
-	public CustomerDetails createCustomer(CustomerDetails customerDetails) throws ServiceException {
+	public CustomerDetails createCustomer(CustomerDetails cd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
-		// for logging purpose
-		String[] logFields = getCustomerLogDetails(customerDetails);
-		APIErrorHandlerService.logKeyFields(logFields);
-		// bean validations
-		validationUtility.validate(customerDetails, SaveValidationGroup.class);
-		doBasicMandatoryValidations(customerDetails.getCustomer());
 
-		AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
+		if (cd == null) {
+			return null;
+		}
+
+		String[] logFields = getCustomerLogDetails(cd);
+		APIErrorHandlerService.logKeyFields(logFields);
+
+		validationUtility.validate(cd, SaveValidationGroup.class);
+
+		doBasicMandatoryValidations(cd.getCustomer());
+
+		AuditHeader auditHeader = getAuditHeader(cd, PennantConstants.TRAN_WF);
 		// set empty to null
-		setDefaults(customerDetails);
+		setDefaults(cd);
 		// validate customer details as per the API specification
 		AuditDetail auditDetail = customerDetailsService.doCustomerValidations(auditHeader);
 
@@ -192,16 +193,15 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 				response = new CustomerDetails();
 				doEmptyResponseObject(response);
-				response.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				response.setReturnStatus(getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				return response;
 			}
 		}
 
 		// call dedup service for customer duplication
-		if (customerDetails.isDedupReq()) {
+		if (cd.isDedupReq()) {
 			List<CustomerDedup> dedupList = new ArrayList<>(1);
-			CustomerDedup customerDedup = doSetCustomerDedup(customerDetails);
+			CustomerDedup customerDedup = doSetCustomerDedup(cd);
 			List<DedupParm> dedupParmList = dedupParmDAO.getDedupParmByModule(FinanceConstants.DEDUP_CUSTOMER,
 					customerDedup.getCustCtgCode(), "");
 			// TO Check duplicate customer in Local database
@@ -217,17 +217,17 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[1];
 				valueParm[0] = "dedup";
 				doEmptyResponseObject(response);
-				response.setDedupReq(customerDetails.isDedupReq());
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90343", valueParm));
+				response.setDedupReq(cd.isDedupReq());
+				response.setReturnStatus(getFailedStatus("90343", valueParm));
 				response.setCustomerDedupList(dedupList);
 				return response;
 			}
 		}
 
 		// call dedup service for balck list customer
-		if (customerDetails.isBlackListReq()) {
+		if (cd.isBlackListReq()) {
 			List<BlackListCustomers> blackList = new ArrayList<>(1);
-			BlackListCustomers balckListData = doSetBlackListCustomerData(customerDetails);
+			BlackListCustomers balckListData = doSetBlackListCustomerData(cd);
 			List<DedupParm> dedupParmList = dedupParmDAO.getDedupParmByModule(FinanceConstants.DEDUP_BLACKLIST,
 					balckListData.getCustCtgCode(), "");
 			// TO Check black List customer in Local database
@@ -243,16 +243,16 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[1];
 				valueParm[0] = "blackList";
 				doEmptyResponseObject(response);
-				response.setBlackListReq(customerDetails.isBlackListReq());
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90343", valueParm));
+				response.setBlackListReq(cd.isBlackListReq());
+				response.setReturnStatus(getFailedStatus("90343", valueParm));
 				response.setBalckListCustomers(blackList);
 				return response;
 			}
 		}
 		// call create customer method in case of no errors
-		response = customerController.createCustomer(customerDetails);
+		response = customerController.createCustomer(cd);
 		// for logging purpose
-		APIErrorHandlerService.logReference(response.getCustCIF());
+		logReference(response.getCustCIF());
 		logger.debug(Literal.LEAVING);
 		return response;
 	}
@@ -260,45 +260,46 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	private BlackListCustomers doSetBlackListCustomerData(CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
 		Customer customer = customerDetails.getCustomer();
-		if (customer != null) {
-			BlackListCustomers blackListCustomer = new BlackListCustomers();
-			String mobileNumber = "";
 
-			List<CustomerPhoneNumber> phoneNumberList = customerDetails.getCustomerPhoneNumList();
-			if (phoneNumberList != null && !phoneNumberList.isEmpty()) {
-				if (phoneNumberList.size() > 1) {
-					Collections.sort(phoneNumberList, new Comparator<CustomerPhoneNumber>() {
-						@Override
-						public int compare(CustomerPhoneNumber detail1, CustomerPhoneNumber detail2) {
-							return detail2.getPhoneTypePriority() - detail1.getPhoneTypePriority();
-						}
-					});
-				}
-				CustomerPhoneNumber custPhone = phoneNumberList.get(0);
-				mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
-						custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
-			}
-			blackListCustomer.setCustCIF(customer.getCustCIF());
-			blackListCustomer.setCustShrtName(customer.getCustShrtName());
-			blackListCustomer.setCustFName(customer.getCustFName());
-			blackListCustomer.setCustLName(customer.getCustLName());
-			blackListCustomer.setCustCRCPR(customer.getCustCRCPR());
-			blackListCustomer.setCustPassportNo(customer.getCustPassportNo());
-			blackListCustomer.setMobileNumber(mobileNumber);
-			blackListCustomer.setCustNationality(customer.getCustNationality());
-			blackListCustomer.setCustDOB(customer.getCustDOB());
-			blackListCustomer.setCustCtgCode(customer.getCustCtgCode());
-
-			blackListCustomer.setLikeCustFName(
-					blackListCustomer.getCustFName() != null ? "%" + blackListCustomer.getCustFName() + "%" : "");
-			blackListCustomer.setLikeCustLName(
-					blackListCustomer.getCustLName() != null ? "%" + blackListCustomer.getCustLName() + "%" : "");
-
-			logger.debug(Literal.LEAVING);
-			return blackListCustomer;
-		} else {
+		if (customer == null) {
 			return null;
 		}
+
+		BlackListCustomers blackListCustomer = new BlackListCustomers();
+		String mobileNumber = "";
+
+		List<CustomerPhoneNumber> phoneNumberList = customerDetails.getCustomerPhoneNumList();
+		if (phoneNumberList != null && !phoneNumberList.isEmpty()) {
+			if (phoneNumberList.size() > 1) {
+				Collections.sort(phoneNumberList, new Comparator<CustomerPhoneNumber>() {
+					@Override
+					public int compare(CustomerPhoneNumber detail1, CustomerPhoneNumber detail2) {
+						return detail2.getPhoneTypePriority() - detail1.getPhoneTypePriority();
+					}
+				});
+			}
+			CustomerPhoneNumber custPhone = phoneNumberList.get(0);
+			mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
+					custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+		}
+		blackListCustomer.setCustCIF(customer.getCustCIF());
+		blackListCustomer.setCustShrtName(customer.getCustShrtName());
+		blackListCustomer.setCustFName(customer.getCustFName());
+		blackListCustomer.setCustLName(customer.getCustLName());
+		blackListCustomer.setCustCRCPR(customer.getCustCRCPR());
+		blackListCustomer.setCustPassportNo(customer.getCustPassportNo());
+		blackListCustomer.setMobileNumber(mobileNumber);
+		blackListCustomer.setCustNationality(customer.getCustNationality());
+		blackListCustomer.setCustDOB(customer.getCustDOB());
+		blackListCustomer.setCustCtgCode(customer.getCustCtgCode());
+
+		blackListCustomer.setLikeCustFName(
+				blackListCustomer.getCustFName() != null ? "%" + blackListCustomer.getCustFName() + "%" : "");
+		blackListCustomer.setLikeCustLName(
+				blackListCustomer.getCustLName() != null ? "%" + blackListCustomer.getCustLName() + "%" : "");
+
+		logger.debug(Literal.LEAVING);
+		return blackListCustomer;
 	}
 
 	/**
@@ -337,37 +338,32 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for update customer in PLF system.
-	 * 
-	 * @param customerDetails
-	 */
 	@Override
-	public WSReturnStatus updateCustomer(CustomerDetails customerDetails) throws ServiceException {
+	public WSReturnStatus updateCustomer(CustomerDetails cd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 		// for logging purpose
-		String[] logFields = getCustomerLogDetails(customerDetails);
+		String[] logFields = getCustomerLogDetails(cd);
 		APIErrorHandlerService.logKeyFields(logFields);
 		// bean validations
-		validationUtility.validate(customerDetails, UpdateValidationGroup.class);
-		doBasicMandatoryValidations(customerDetails.getCustomer());
+		validationUtility.validate(cd, UpdateValidationGroup.class);
+		doBasicMandatoryValidations(cd.getCustomer());
 		// set empty to null
-		setDefaults(customerDetails);
+		setDefaults(cd);
 		WSReturnStatus status = null;
 		// customer validations
-		status = validateCustomerCIF(customerDetails.getCustCIF());
+		status = validateCustomerCIF(cd.getCustCIF());
 		if (status != null) {
 			return status;
 		}
 		// customer catageory validations
-		status = validateCustomerCatageory(customerDetails);
+		status = validateCustomerCatageory(cd);
 		if (status != null) {
 			return status;
 		}
 
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerDetails.getCustCIF());
-		AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
+		logReference(cd.getCustCIF());
+		AuditHeader auditHeader = getAuditHeader(cd, PennantConstants.TRAN_WF);
 
 		AuditDetail auditDetail = customerDetailsService.doCustomerValidations(auditHeader);
 
@@ -376,12 +372,12 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
 		// call update customer if there is no errors
-		WSReturnStatus returnStatus = customerController.updateCustomer(customerDetails);
+		WSReturnStatus returnStatus = customerController.updateCustomer(cd);
 
 		logger.debug(Literal.LEAVING);
 		return returnStatus;
@@ -402,7 +398,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custCIF);
+		logReference(custCIF);
 		CustomerDetails response = null;
 
 		// validate Customer with given CustCIF
@@ -414,7 +410,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			doEmptyResponseObject(response);
 			String[] valueParm = new String[1];
 			valueParm[0] = custCIF;
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+			response.setReturnStatus(getFailedStatus("90101", valueParm));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -435,7 +431,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custCIF);
+		logReference(custCIF);
 		WSReturnStatus response = null;
 		// validate Customer with given CustCIF
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -443,10 +439,9 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			// call delete customer service
 			response = customerController.deleteCustomerById(customer.getCustID());
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[1];
 			valueParm[0] = custCIF;
-			return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+			return getFailedStatus("90101", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -469,7 +464,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custCIF);
+		logReference(custCIF);
 		CustomerDetails response = null;
 
 		// validate Customer with given CustCIF
@@ -481,7 +476,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			// doEmptyResponseObject(response);
 			String[] valueParm = new String[1];
 			valueParm[0] = custCIF;
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+			response.setReturnStatus(getFailedStatus("90101", valueParm));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -513,18 +508,18 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerDetails.getCustCIF();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			}
 			if (!StringUtils.equals(customerDetails.getCustCtgCode(), customer.getCustCtgCode())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = customerDetails.getCustCtgCode();
 				valueParm[1] = customerDetails.getCustCIF();
-				return APIErrorHandlerService.getFailedStatus("90599", valueParm);
+				return getFailedStatus("90599", valueParm);
 			}
 		}
 
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerDetails.getCustCIF());
+		logReference(customerDetails.getCustCIF());
 		customerDetails.getCustomer().setCustID(customer.getCustID());
 		customerDetails.getCustomer().setCustCtgCode(customer.getCustCtgCode());
 		AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
@@ -536,7 +531,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -566,7 +561,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			String[] valueParm = new String[1];
 			valueParm[0] = "employment";
 			EmploymentDetail custEmploymentDetail = new EmploymentDetail();
-			custEmploymentDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			custEmploymentDetail.setReturnStatus(getFailedStatus("90502", valueParm));
 			return custEmploymentDetail;
 		}
 		Customer customerDetails = null;
@@ -576,12 +571,12 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[1];
 				valueParm[0] = employmentDetail.getCif();
 				EmploymentDetail customerEmpDetail = new EmploymentDetail();
-				customerEmpDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				customerEmpDetail.setReturnStatus(getFailedStatus("90101", valueParm));
 				return customerEmpDetail;
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(employmentDetail.getCif());
+		logReference(employmentDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(employmentDetail.getCustomerEmploymentDetail(),
 				PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
@@ -594,8 +589,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 				response = new EmploymentDetail();
-				response.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				response.setReturnStatus(getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				return response;
 			}
 		}
@@ -623,7 +617,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custCIF);
+		logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -654,7 +648,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (employmentDetail.getCustomerEmploymentDetail() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "employment";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 		// customer validations
 		Customer customer = null;
@@ -663,11 +657,11 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = employmentDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(employmentDetail.getCif());
+		logReference(employmentDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(employmentDetail.getCustomerEmploymentDetail(),
 				PennantConstants.TRAN_WF);
 
@@ -680,7 +674,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -699,7 +693,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[2];
 				valueParm[0] = String.valueOf(employmentDetail.getCustomerEmploymentDetail().getCustEmpId());
 				valueParm[1] = employmentDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90104", valueParm);
+				return getFailedStatus("90104", valueParm);
 			}
 
 		} else {
@@ -707,7 +701,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			String[] valueParm = new String[2];
 			valueParm[0] = String.valueOf(employmentDetail.getCustomerEmploymentDetail().getCustEmpId());
 			valueParm[1] = employmentDetail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90104", valueParm);
+			return getFailedStatus("90104", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -735,13 +729,13 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = employmentDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			} else {
 				customerEmploymentDetail = new CustomerEmploymentDetail();
 				customerEmploymentDetail.setCustID(customer.getCustID());
 				customerEmploymentDetail.setCustEmpId(employmentDetail.getEmployementId());
 				// for logging purpose
-				APIErrorHandlerService.logReference(employmentDetail.getCif());
+				logReference(employmentDetail.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -759,14 +753,14 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[2];
 				valueParm[0] = String.valueOf(employmentDetail.getCustomerEmploymentDetail().getCustEmpId());
 				valueParm[1] = employmentDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90104", valueParm);
+				return getFailedStatus("90104", valueParm);
 			}
 		} else {
 			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = String.valueOf(employmentDetail.getEmployementId());
 			valueParm[1] = employmentDetail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90104", valueParm);
+			return getFailedStatus("90104", valueParm);
 		}
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -783,7 +777,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customerDirectorDetail.getDirectorDetail() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "directorDetail";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			response.setReturnStatus(getFailedStatus("90502", valueParm));
 			return customerDirectorDetail;
 		}
 		Customer customerDetails = null;
@@ -792,20 +786,20 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customerDetails == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = cif;
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				response.setReturnStatus(getFailedStatus("90101", valueParm));
 				return response;
 			}
 			if (StringUtils.equals(customerDetails.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "director details";
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_CORP + "," + PennantConstants.PFF_CUSTCTG_SME;
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90124", valueParm));
+				response.setReturnStatus(getFailedStatus("90124", valueParm));
 				return response;
 			}
 
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerDirectorDetail.getCif());
+		logReference(customerDirectorDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerDirectorDetail.getDirectorDetail(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
 		AuditDetail auditDetail = directorDetailService.doValidations(customerDirectorDetail.getDirectorDetail(),
@@ -817,8 +811,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 
-				response.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				response.setReturnStatus(getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				return response;
 			}
 		}
@@ -839,7 +832,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custCIF);
+		logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		response.setCustomer(null);
 		// validation
@@ -853,7 +846,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[2];
 				valueParm[0] = "director details";
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_CORP + "," + PennantConstants.PFF_CUSTCTG_SME;
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90124", valueParm));
+				response.setReturnStatus(getFailedStatus("90124", valueParm));
 				return response;
 			}
 			response = customerController.getCustomerDirectorDetails(custCIF, customer.getCustID());
@@ -872,7 +865,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customerDirectorDetail.getDirectorDetail() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "DirectorDetail";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 		// customer validations
 		Customer customer = null;
@@ -881,18 +874,18 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerDirectorDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			}
 			if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "director details";
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_CORP + "," + PennantConstants.PFF_CUSTCTG_SME;
-				return APIErrorHandlerService.getFailedStatus("90124", valueParm);
+				return getFailedStatus("90124", valueParm);
 			}
 		}
 
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerDirectorDetail.getCif());
+		logReference(customerDirectorDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerDirectorDetail.getDirectorDetail(), PennantConstants.TRAN_WF);
 
 		// validate customer details as per the API specification AuditDetail
@@ -904,7 +897,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -922,14 +915,14 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[2];
 				valueParm[0] = "DirectorId  "
 						+ String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
-				return APIErrorHandlerService.getFailedStatus("90266", valueParm);
+				return getFailedStatus("90266", valueParm);
 			}
 
 		} else {
 			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = "DirectorId  " + String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
-			return APIErrorHandlerService.getFailedStatus("90266", valueParm);
+			return getFailedStatus("90266", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -937,66 +930,64 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	}
 
 	@Override
-	public WSReturnStatus deleteCustomerDirectorDetail(CustomerDirectorDetail customerDirectorDetail)
-			throws ServiceException {
-		DirectorDetail directorDetail = new DirectorDetail();
+	public WSReturnStatus deleteCustomerDirectorDetail(CustomerDirectorDetail cdd) throws ServiceException {
+		DirectorDetail dd = new DirectorDetail();
+
 		Customer customer = null;
-		// bean validations
-		validationUtility.validate(customerDirectorDetail, DeleteValidationGroup.class);
+
+		validationUtility.validate(cdd, DeleteValidationGroup.class);
 
 		// customer validations
-		if (StringUtils.isBlank(customerDirectorDetail.getCif())) {
+		if (StringUtils.isBlank(cdd.getCif())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "cif";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
-		if (customerDirectorDetail.getDirectorId() <= 0) {
+		if (cdd.getDirectorId() <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "directorId";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
-		if (StringUtils.isNotBlank(customerDirectorDetail.getCif())) {
-			customer = customerDetailsService.getCustomerByCIF(customerDirectorDetail.getCif());
+		if (StringUtils.isNotBlank(cdd.getCif())) {
+			customer = customerDetailsService.getCustomerByCIF(cdd.getCif());
 			if (customer == null) {
 				String[] valueParm = new String[1];
-				valueParm[0] = customerDirectorDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				valueParm[0] = cdd.getCif();
+				return getFailedStatus("90101", valueParm);
 			} else {
 
 				if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "director details";
 					valueParm[1] = PennantConstants.PFF_CUSTCTG_CORP + "," + PennantConstants.PFF_CUSTCTG_SME;
-					return APIErrorHandlerService.getFailedStatus("90124", valueParm);
+					return getFailedStatus("90124", valueParm);
 
 				}
 
-				directorDetail.setCustID(customer.getCustID());
-				directorDetail.setDirectorId((customerDirectorDetail.getDirectorId()));
+				dd.setCustID(customer.getCustID());
+				dd.setDirectorId((cdd.getDirectorId()));
 				// for logging purpose
-				APIErrorHandlerService.logReference(customerDirectorDetail.getCif());
+				logReference(cdd.getCif());
 			}
 		}
 		WSReturnStatus response = new WSReturnStatus();
 		// validate Customer with given DirectorId
 		DirectorDetail directorDetailById = directorDetailService
-				.getApprovedDirectorDetailByDirectorId(customerDirectorDetail.getDirectorId(), customer.getCustID());
+				.getApprovedDirectorDetailByDirectorId(cdd.getDirectorId(), customer.getCustID());
 
 		if (directorDetailById != null) {
 			// call delete customer service
-			if (directorDetail.getCustID() == (customer.getCustID())) {
+			if (dd.getCustID() == (customer.getCustID())) {
 				response = customerController.deleteCustomerDirectorDetail(directorDetailById);
 			} else {
 				String[] valueParm = new String[1];
-				valueParm[0] = "DirectorId "
-						+ String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
-				return APIErrorHandlerService.getFailedStatus("90266", valueParm);
+				valueParm[0] = "DirectorId " + String.valueOf(cdd.getDirectorDetail().getDirectorId());
+				return getFailedStatus("90266", valueParm);
 			}
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
-			valueParm[0] = "DirectorId " + customerDirectorDetail.getDirectorId();
-			return APIErrorHandlerService.getFailedStatus("90266", valueParm);
+			valueParm[0] = "DirectorId " + cdd.getDirectorId();
+			return getFailedStatus("90266", valueParm);
 		}
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -1017,7 +1008,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (custPhoneNumber.getCustomerPhoneNumber() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "phone";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 		Customer customer = null;
 		if (StringUtils.isNotBlank(custPhoneNumber.getCif())) {
@@ -1025,12 +1016,12 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custPhoneNumber.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custPhoneNumber.getCif());
+		logReference(custPhoneNumber.getCif());
 		custPhoneNumber.getCustomerPhoneNumber().setPhoneCustID(customer.getCustID());
 		AuditHeader auditHeader = getAuditHeader(custPhoneNumber.getCustomerPhoneNumber(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
@@ -1042,7 +1033,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 
 			}
 		}
@@ -1069,7 +1060,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customerPhoneNumber.getCustomerPhoneNumber() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "phone";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 		// customer validations
 		Customer customer = null;
@@ -1078,11 +1069,11 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerPhoneNumber.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerPhoneNumber.getCif());
+		logReference(customerPhoneNumber.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerPhoneNumber.getCustomerPhoneNumber(),
 				PennantConstants.TRAN_WF);
 		customerPhoneNumber.getCustomerPhoneNumber().setPhoneCustID(customer.getCustID());
@@ -1095,7 +1086,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 		// validate Customer with given CustCIF
@@ -1108,11 +1099,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			returnStatus = customerDetailsController.updateCustomerPhoneNumber(
 					customerPhoneNumber.getCustomerPhoneNumber(), customerPhoneNumber.getCif());
 		} else {
-			returnStatus = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = customerPhoneNumber.getCustomerPhoneNumber().getPhoneTypeCode();
 			valueParm[1] = customerPhoneNumber.getCif();
-			return APIErrorHandlerService.getFailedStatus("90106", valueParm);
+			return getFailedStatus("90106", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1132,7 +1122,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custCIF);
+		logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -1168,13 +1158,13 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custPhoneNumber.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			} else {
 				customerPhoneNumber = new CustomerPhoneNumber();
 				customerPhoneNumber.setPhoneCustID(customer.getCustID());
 				customerPhoneNumber.setPhoneTypeCode(custPhoneNumber.getPhoneTypeCode());
 				// for logging purpose
-				APIErrorHandlerService.logReference(custPhoneNumber.getCif());
+				logReference(custPhoneNumber.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -1188,16 +1178,15 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[2];
 				valueParm[0] = "cannot delete";
 				valueParm[1] = "Phone";
-				return APIErrorHandlerService.getFailedStatus("90270", valueParm);
+				return getFailedStatus("90270", valueParm);
 			}
 			// call delete customer service
 			response = customerDetailsController.deleteCustomerPhoneNumber(customerPhoneNumber);
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = custPhoneNumber.getCif();
 			valueParm[1] = custPhoneNumber.getPhoneTypeCode();
-			return APIErrorHandlerService.getFailedStatus("90106", valueParm);
+			return getFailedStatus("90106", valueParm);
 		}
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -1217,7 +1206,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (custAddress.getCustomerAddres() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "address";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 		Customer customer = null;
 		if (StringUtils.isNotBlank(custAddress.getCif())) {
@@ -1225,12 +1214,12 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custAddress.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custAddress.getCif());
+		logReference(custAddress.getCif());
 		custAddress.getCustomerAddres().setCustID(customer.getCustID());
 		AuditHeader auditHeader = getAuditHeader(custAddress.getCustomerAddres(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
@@ -1242,7 +1231,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 
 			}
 		}
@@ -1269,7 +1258,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (custAddress.getCustomerAddres() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "address";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 		// customer validations
 		Customer customer = null;
@@ -1278,11 +1267,11 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custAddress.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custAddress.getCif());
+		logReference(custAddress.getCif());
 		custAddress.getCustomerAddres().setCustID(customer.getCustID());
 		AuditHeader auditHeader = getAuditHeader(custAddress.getCustomerAddres(), PennantConstants.TRAN_WF);
 		AuditDetail auditDetail = customerAddresService.doValidations(custAddress.getCustomerAddres(),
@@ -1292,7 +1281,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -1305,11 +1294,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			returnStatus = customerDetailsController.updateCustomerAddress(custAddress.getCustomerAddres(),
 					custAddress.getCif());
 		} else {
-			returnStatus = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = custAddress.getCustomerAddres().getCustAddrType();
 			valueParm[1] = custAddress.getCif();
-			return APIErrorHandlerService.getFailedStatus("90109", valueParm);
+			return getFailedStatus("90109", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1330,7 +1318,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custCIF);
+		logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -1367,13 +1355,13 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custAddress.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			} else {
 				customerAddres = new CustomerAddres();
 				customerAddres.setCustID(customer.getCustID());
 				customerAddres.setCustAddrType(custAddress.getAddrType());
 				// for logging purpose
-				APIErrorHandlerService.logReference(custAddress.getCif());
+				logReference(custAddress.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -1386,16 +1374,15 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[2];
 				valueParm[0] = "cannot delete";
 				valueParm[1] = "Address";
-				return APIErrorHandlerService.getFailedStatus("90270", valueParm);
+				return getFailedStatus("90270", valueParm);
 			}
 			// call delete customer service
 			response = customerDetailsController.deleteCustomerAddress(customerAddres);
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = custAddress.getCif();
 			valueParm[1] = custAddress.getAddrType();
-			return APIErrorHandlerService.getFailedStatus("90109", valueParm);
+			return getFailedStatus("90109", valueParm);
 		}
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -1415,7 +1402,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (custEMail.getCustomerEMail() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "email";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 		Customer customer = null;
 		if (StringUtils.isNotBlank(custEMail.getCif())) {
@@ -1423,12 +1410,12 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custEMail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custEMail.getCif());
+		logReference(custEMail.getCif());
 		custEMail.getCustomerEMail().setCustID(customer.getCustID());
 		AuditHeader auditHeader = getAuditHeader(custEMail.getCustomerEMail(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
@@ -1440,7 +1427,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 		// call add Customer Employment method in case of no errors
@@ -1466,7 +1453,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (custEMail.getCustomerEMail() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "email";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 		// customer validations
 		Customer customer = null;
@@ -1475,11 +1462,11 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custEMail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custEMail.getCif());
+		logReference(custEMail.getCif());
 		custEMail.getCustomerEMail().setCustID(customer.getCustID());
 		AuditHeader auditHeader = getAuditHeader(custEMail.getCustomerEMail(), PennantConstants.TRAN_WF);
 		AuditDetail auditDetail = customerEMailService.doValidations(custEMail.getCustomerEMail(),
@@ -1489,7 +1476,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -1502,11 +1489,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			returnStatus = customerDetailsController.updateCustomerEmail(custEMail.getCustomerEMail(),
 					custEMail.getCif());
 		} else {
-			returnStatus = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = custEMail.getCustomerEMail().getCustEMailTypeCode();
 			valueParm[1] = custEMail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90111", valueParm);
+			return getFailedStatus("90111", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1527,7 +1513,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custCIF);
+		logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -1565,13 +1551,13 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custEMail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			} else {
 				customerEMaial = new CustomerEMail();
 				customerEMaial.setCustID(customer.getCustID());
 				customerEMaial.setCustEMailTypeCode(custEMail.getCustEMailTypeCode());
 				// for logging purpose
-				APIErrorHandlerService.logReference(custEMail.getCif());
+				logReference(custEMail.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -1582,11 +1568,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			// call delete customer service
 			response = customerDetailsController.deleteCustomerEmail(customerEMaial);
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = custEMail.getCif();
 			valueParm[1] = custEMail.getCustEMailTypeCode();
-			return APIErrorHandlerService.getFailedStatus("90111", valueParm);
+			return getFailedStatus("90111", valueParm);
 		}
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -1607,14 +1592,14 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customerIncomeDetail.getCustomerIncome() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "customerIncome";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 
 		if (!ImplementationConstants.ALLOW_CUSTOMER_INCOMES) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Customerincome";
 			valueParm[1] = customerIncomeDetail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90599", valueParm);
+			return getFailedStatus("90599", valueParm);
 		}
 
 		Customer customer = null;
@@ -1623,12 +1608,12 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerIncomeDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerIncomeDetail.getCif());
+		logReference(customerIncomeDetail.getCif());
 
 		boolean corpFinReq = SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_CORP_FINANCE_TAB_REQ);
 
@@ -1636,7 +1621,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			String[] valueParm = new String[2];
 			valueParm[0] = "Customerincome";
 			valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
-			return APIErrorHandlerService.getFailedStatus("90124", valueParm);
+			return getFailedStatus("90124", valueParm);
 		}
 
 		AuditHeader auditHeader = getAuditHeader(customerIncomeDetail.getCustomerIncome(), PennantConstants.TRAN_WF);
@@ -1648,7 +1633,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 		WSReturnStatus returnStatus = customerDetailsController
@@ -1673,14 +1658,14 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customerIncomeDetail.getCustomerIncome() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "customerIncome";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 
 		if (!ImplementationConstants.ALLOW_CUSTOMER_INCOMES) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Customerincome";
 			valueParm[1] = customerIncomeDetail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90599", valueParm);
+			return getFailedStatus("90599", valueParm);
 		}
 
 		// customer validations
@@ -1690,20 +1675,20 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerIncomeDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			} else {
 				customerIncomeDetail.getCustomerIncome().setCustId(customer.getCustID());
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerIncomeDetail.getCif());
+		logReference(customerIncomeDetail.getCif());
 
 		boolean corpFinReq = SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_CORP_FINANCE_TAB_REQ);
 		if (!corpFinReq && PennantConstants.PFF_CUSTCTG_CORP.equals(customer.getCustCtgCode())) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Customerincome";
 			valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
-			return APIErrorHandlerService.getFailedStatus("90124", valueParm);
+			return getFailedStatus("90124", valueParm);
 		}
 
 		AuditHeader auditHeader = getAuditHeader(customerIncomeDetail.getCustomerIncome(), PennantConstants.TRAN_WF);
@@ -1713,7 +1698,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 		// validate Customer with given CustCIF
@@ -1727,10 +1712,9 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			returnStatus = customerDetailsController.updateCustomerIncome(customerIncomeDetail.getCustomerIncome(),
 					customerIncomeDetail.getCif());
 		} else {
-			returnStatus = new WSReturnStatus();
 			String[] valueParm = new String[1];
 			valueParm[0] = customerIncomeDetail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90112", valueParm);
+			return getFailedStatus("90112", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1751,7 +1735,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custCIF);
+		logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -1786,7 +1770,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerIncomeDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			} else {
 				customerIncome = new CustomerIncome();
 				customerIncome.setCustId(customer.getCustID());
@@ -1796,7 +1780,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				customerIncome.setLinkId(customerIncomeDAO.getLinkId(customer.getCustID()));
 
 				// for logging purpose
-				APIErrorHandlerService.logReference(customerIncomeDetail.getCif());
+				logReference(customerIncomeDetail.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -1806,10 +1790,9 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			// call delete customer service
 			response = customerDetailsController.deleteCustomerIncome(customerIncome);
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[1];
 			valueParm[0] = customerIncomeDetail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90112", valueParm);
+			return getFailedStatus("90112", valueParm);
 		}
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -1832,7 +1815,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			String[] valueParm = new String[1];
 			valueParm[0] = "customerBankInfo";
 			CustomerBankInfoDetail aCustomerBankInfoDetail = new CustomerBankInfoDetail();
-			aCustomerBankInfoDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			aCustomerBankInfoDetail.setReturnStatus(getFailedStatus("90502", valueParm));
 			return aCustomerBankInfoDetail;
 		}
 		if (StringUtils.isNotBlank(customerBankInfoDetail.getCif())) {
@@ -1841,12 +1824,12 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[1];
 				valueParm[0] = customerBankInfoDetail.getCif();
 				CustomerBankInfoDetail custBankInfoDetail = new CustomerBankInfoDetail();
-				custBankInfoDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				custBankInfoDetail.setReturnStatus(getFailedStatus("90101", valueParm));
 				return custBankInfoDetail;
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerBankInfoDetail.getCif());
+		logReference(customerBankInfoDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerBankInfoDetail.getCustomerBankInfo(),
 				PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
@@ -1860,8 +1843,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 				response = new CustomerBankInfoDetail();
-				response.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				response.setReturnStatus(getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				return response;
 			}
 		}
@@ -1890,7 +1872,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customerBankInfoDetail.getCustomerBankInfo() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "customerBankInfo";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 		// customer validations
 		Customer customer = null;
@@ -1899,11 +1881,11 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerBankInfoDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerBankInfoDetail.getCif());
+		logReference(customerBankInfoDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerBankInfoDetail.getCustomerBankInfo(),
 				PennantConstants.TRAN_WF);
 
@@ -1916,7 +1898,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -1929,11 +1911,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			response = customerDetailsController.updateCustomerBankingInformation(
 					customerBankInfoDetail.getCustomerBankInfo(), customerBankInfoDetail.getCif());
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = String.valueOf(customerBankInfoDetail.getCustomerBankInfo().getBankId());
 			valueParm[1] = customerBankInfoDetail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
+			return getFailedStatus("90116", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1954,7 +1935,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custCIF);
+		logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -1990,13 +1971,13 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customerDetails == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = cbid.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			} else {
 				customerBankInfo = new CustomerBankInfo();
 				customerBankInfo.setCustID(customerDetails.getCustID());
 				customerBankInfo.setBankId(cbid.getBankId());
 				// for logging purpose
-				APIErrorHandlerService.logReference(cbid.getCif());
+				logReference(cbid.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -2005,11 +1986,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (custBankInfo != null) {
 			response = customerDetailsController.deleteCustomerBankingInformation(custBankInfo);
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = String.valueOf(cbid.getBankId());
 			valueParm[1] = cbid.getCif();
-			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
+			return getFailedStatus("90116", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -2032,7 +2012,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			String[] valueParm = new String[1];
 			valueParm[0] = "customerGstInfo";
 			CustomerGstInfoDetail aCustomerGstInfoDetail = new CustomerGstInfoDetail();
-			aCustomerGstInfoDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			aCustomerGstInfoDetail.setReturnStatus(getFailedStatus("90502", valueParm));
 			return aCustomerGstInfoDetail;
 		}
 		if (StringUtils.isNotBlank(customerGstInfoDetail.getCif())) {
@@ -2041,12 +2021,12 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[1];
 				valueParm[0] = customerGstInfoDetail.getCif();
 				CustomerGstInfoDetail customerGstInfoDetails = new CustomerGstInfoDetail();
-				customerGstInfoDetails.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				customerGstInfoDetails.setReturnStatus(getFailedStatus("90101", valueParm));
 				return customerGstInfoDetail;
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerGstInfoDetail.getCif());
+		logReference(customerGstInfoDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerGstInfoDetail.getCustomerGST(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
 		AuditDetail auditDetail = customerGstService.doValidations(customerGstInfoDetail.getCustomerGST(),
@@ -2059,8 +2039,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 				response = new CustomerGstInfoDetail();
-				response.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				response.setReturnStatus(getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				return response;
 			}
 		}
@@ -2089,7 +2068,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customerGstInfoDetail.getCustomerGST() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "customerBankInfo";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 		// customer validations
 		Customer customer = null;
@@ -2098,11 +2077,11 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerGstInfoDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerGstInfoDetail.getCif());
+		logReference(customerGstInfoDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerGstInfoDetail.getCustomerGST(), PennantConstants.TRAN_WF);
 
 		// validate customer details as per the API specification
@@ -2114,7 +2093,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -2128,11 +2107,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			response = customerDetailsController.updateCustomerGstInformation(customerGstInfoDetail.getCustomerGST(),
 					customerGstInfoDetail.getCif());
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = String.valueOf(customerGstInfoDetail.getCustomerGST().getCustId());
 			valueParm[1] = customerGstInfoDetail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
+			return getFailedStatus("90116", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -2153,7 +2131,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custCIF);
+		logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -2190,13 +2168,13 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customerDetails == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerGstInfoDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			} else {
 				customerGST = new CustomerGST();
 				customerGST.setCustId(customerDetails.getCustID());
 				customerGST.setId(customerGstInfoDetail.getId());
 				// for logging purpose
-				APIErrorHandlerService.logReference(customerGstInfoDetail.getCif());
+				logReference(customerGstInfoDetail.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -2207,11 +2185,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			// call delete customer service
 			response = customerDetailsController.deleteCustomerGSTInformation(customeGST);
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = String.valueOf(customerGstInfoDetail.getId());
 			valueParm[1] = customerGstInfoDetail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
+			return getFailedStatus("90116", valueParm);
 		}
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -2232,7 +2209,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			String[] valueParm = new String[1];
 			valueParm[0] = "customer CardSalesInfo";
 			CustomerCardSaleInfoDetails acustCardSalesInfoDetail = new CustomerCardSaleInfoDetails();
-			acustCardSalesInfoDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			acustCardSalesInfoDetail.setReturnStatus(getFailedStatus("90502", valueParm));
 			return acustCardSalesInfoDetail;
 		}
 		if (StringUtils.isNotBlank(customerCardSaleInfoDetails.getCif())) {
@@ -2241,12 +2218,12 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[1];
 				valueParm[0] = customerCardSaleInfoDetails.getCif();
 				CustomerGstInfoDetail customerGstInfoDetails = new CustomerGstInfoDetail();
-				customerGstInfoDetails.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				customerGstInfoDetails.setReturnStatus(getFailedStatus("90101", valueParm));
 				return customerCardSaleInfoDetails;
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerCardSaleInfoDetails.getCif());
+		logReference(customerCardSaleInfoDetails.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerCardSaleInfoDetails.getCustCardSales(),
 				PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
@@ -2260,8 +2237,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 				response = new CustomerCardSaleInfoDetails();
-				response.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				response.setReturnStatus(getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				return response;
 			}
 		}
@@ -2287,7 +2263,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custCIF);
+		logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -2319,7 +2295,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customerCardSaleInfoDetails.getCustCardSales() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "customerCardSalesInfo";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 		// customer validations
 		Customer customer = null;
@@ -2328,11 +2304,11 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerCardSaleInfoDetails.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerCardSaleInfoDetails.getCif());
+		logReference(customerCardSaleInfoDetails.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerCardSaleInfoDetails.getCustCardSales(),
 				PennantConstants.TRAN_WF);
 
@@ -2345,7 +2321,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -2359,11 +2335,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			response = customerDetailsController.updateCardSalestInformation(
 					customerCardSaleInfoDetails.getCustCardSales(), customerCardSaleInfoDetails.getCif());
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = String.valueOf(customerCardSaleInfoDetails.getCustCardSales().getCustID());
 			valueParm[1] = customerCardSaleInfoDetails.getCif();
-			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
+			return getFailedStatus("90116", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -2391,13 +2366,13 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customerDetails == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerCardSaleInfoDetails.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			} else {
 				custCardSales = new CustCardSales();
 				custCardSales.setCustID(customerDetails.getCustID());
 				custCardSales.setId(customerCardSaleInfoDetails.getId());
 				// for logging purpose
-				APIErrorHandlerService.logReference(customerCardSaleInfoDetails.getCif());
+				logReference(customerCardSaleInfoDetails.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -2410,11 +2385,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			// call delete customer service
 			response = customerDetailsController.deleteCardSaleInformation(custCardSalesInfo);
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = String.valueOf(customerCardSaleInfoDetails.getId());
 			valueParm[1] = customerCardSaleInfoDetails.getCif();
-			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
+			return getFailedStatus("90116", valueParm);
 		}
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -2438,7 +2412,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			String[] valueParm = new String[1];
 			valueParm[0] = "accountBehaviour";
 			CustomerChequeInfoDetail custChequeInfoDetail = new CustomerChequeInfoDetail();
-			custChequeInfoDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			custChequeInfoDetail.setReturnStatus(getFailedStatus("90502", valueParm));
 			return custChequeInfoDetail;
 		}
 		if (StringUtils.isNotBlank(customerChequeInfoDetail.getCif())) {
@@ -2447,12 +2421,12 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[1];
 				valueParm[0] = customerChequeInfoDetail.getCif();
 				CustomerChequeInfoDetail custChequeInfoDetail = new CustomerChequeInfoDetail();
-				custChequeInfoDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				custChequeInfoDetail.setReturnStatus(getFailedStatus("90101", valueParm));
 				return custChequeInfoDetail;
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerChequeInfoDetail.getCif());
+		logReference(customerChequeInfoDetail.getCif());
 		// call add Customer Employment method in case of no errors
 		CustomerChequeInfoDetail response = customerDetailsController.addCustomerAccountBehaviour(
 				customerChequeInfoDetail.getCustomerChequeInfo(), customerChequeInfoDetail.getCif());
@@ -2475,7 +2449,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customerChequeInfoDetail.getCustomerChequeInfo() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "accountBehaviour";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 		// customer validations
 		Customer customer = null;
@@ -2484,11 +2458,11 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerChequeInfoDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerChequeInfoDetail.getCif());
+		logReference(customerChequeInfoDetail.getCif());
 		WSReturnStatus response = null;
 		// validate Customer with given CustCIF
 		CustomerChequeInfo customerChequeInfo = customerChequeInfoDAO.getCustomerChequeInfoById(customer.getCustID(),
@@ -2502,7 +2476,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			String[] valueParm = new String[2];
 			valueParm[0] = String.valueOf(customerChequeInfoDetail.getCustomerChequeInfo().getChequeSeq());
 			valueParm[1] = customerChequeInfoDetail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90117", valueParm);
+			return getFailedStatus("90117", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -2522,7 +2496,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custCIF);
+		logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -2558,13 +2532,13 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customerDetails == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerChequeInfoDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			} else {
 				customerChequeInfo = new CustomerChequeInfo();
 				customerChequeInfo.setCustID(customerDetails.getCustID());
 				customerChequeInfo.setChequeSeq(customerChequeInfoDetail.getChequeSeq());
 				// for logging purpose
-				APIErrorHandlerService.logReference(customerChequeInfoDetail.getCif());
+				logReference(customerChequeInfoDetail.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -2575,11 +2549,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			// call delete customer service
 			response = customerDetailsController.deleteCustomerAccountBehaviour(customerChequeInfo);
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = String.valueOf(customerChequeInfoDetail.getChequeSeq());
 			valueParm[1] = customerChequeInfoDetail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90117", valueParm);
+			return getFailedStatus("90117", valueParm);
 		}
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -2602,7 +2575,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			String[] valueParm = new String[1];
 			valueParm[0] = "customerExtLiability";
 			CustomerExtLiabilityDetail aCustomerExtLiabilityDetail = new CustomerExtLiabilityDetail();
-			aCustomerExtLiabilityDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			aCustomerExtLiabilityDetail.setReturnStatus(getFailedStatus("90502", valueParm));
 			return aCustomerExtLiabilityDetail;
 		}
 		if (StringUtils.isNotBlank(customerLiability.getCif())) {
@@ -2611,12 +2584,12 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[1];
 				valueParm[0] = customerLiability.getCif();
 				CustomerExtLiabilityDetail custExtLiabilityDetail = new CustomerExtLiabilityDetail();
-				custExtLiabilityDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				custExtLiabilityDetail.setReturnStatus(getFailedStatus("90101", valueParm));
 				return custExtLiabilityDetail;
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerLiability.getCif());
+		logReference(customerLiability.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerLiability.getExternalLiability(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
 		CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
@@ -2629,8 +2602,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 				response = new CustomerExtLiabilityDetail();
-				response.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				response.setReturnStatus(getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				return response;
 			}
 		}
@@ -2659,7 +2631,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customerExtLiabilityDetail.getExternalLiability() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "customerExtLiability";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 		// customer validations
 		Customer customer = null;
@@ -2668,11 +2640,11 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerExtLiabilityDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerExtLiabilityDetail.getCif());
+		logReference(customerExtLiabilityDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerExtLiabilityDetail.getExternalLiability(),
 				PennantConstants.TRAN_WF);
 
@@ -2685,7 +2657,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -2705,11 +2677,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			response = customerDetailsController.updateCustomerExternalLiability(
 					customerExtLiabilityDetail.getExternalLiability(), customerExtLiabilityDetail.getCif());
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = String.valueOf(customerExtLiabilityDetail.getExternalLiability().getSeqNo());
 			valueParm[1] = customerExtLiabilityDetail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90118", valueParm);
+			return getFailedStatus("90118", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -2730,7 +2701,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custCIF);
+		logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -2766,13 +2737,13 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customerDetails == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerExtLiabilityDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			} else {
 				customerExtLiability = new CustomerExtLiability();
 				customerExtLiability.setCustId(customerDetails.getCustID());
 				customerExtLiability.setSeqNo(customerExtLiabilityDetail.getLiabilitySeq());
 				// for logging purpose
-				APIErrorHandlerService.logReference(customerExtLiabilityDetail.getCif());
+				logReference(customerExtLiabilityDetail.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -2791,11 +2762,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			// call delete customer service
 			response = customerDetailsController.deleteCustomerExternalLiability(liability);
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = String.valueOf(customerExtLiabilityDetail.getLiabilitySeq());
 			valueParm[1] = customerExtLiabilityDetail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90118", valueParm);
+			return getFailedStatus("90118", valueParm);
 		}
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -2815,7 +2785,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customerDocumentDetail.getCustomerDocument() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "document";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 		Customer customer = null;
 		if (StringUtils.isNotBlank(customerDocumentDetail.getCif())) {
@@ -2823,12 +2793,12 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerDocumentDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerDocumentDetail.getCif());
+		logReference(customerDocumentDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerDocumentDetail.getCustomerDocument(),
 				PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
@@ -2840,7 +2810,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 		// call add Customer Employment method in case of no errors
@@ -2867,7 +2837,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customerDocumentDetail.getCustomerDocument() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "document";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		}
 		// customer validations
 		Customer customer = null;
@@ -2876,11 +2846,11 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerDocumentDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			}
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(customerDocumentDetail.getCif());
+		logReference(customerDocumentDetail.getCif());
 		AuditHeader auditHeader = getAuditHeader(customerDocumentDetail.getCustomerDocument(),
 				PennantConstants.TRAN_WF);
 		AuditDetail auditDetail = customerDocumentService
@@ -2890,7 +2860,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
 		}
 
@@ -2904,11 +2874,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			returnStatus = customerDetailsController.updateCustomerDocument(
 					customerDocumentDetail.getCustomerDocument(), customerDocumentDetail.getCif());
 		} else {
-			returnStatus = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = customerDocumentDetail.getCustomerDocument().getCustDocCategory();
 			valueParm[1] = customerDocumentDetail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90119", valueParm);
+			return getFailedStatus("90119", valueParm);
 		}
 		logger.debug(Literal.LEAVING);
 		return returnStatus;
@@ -2928,7 +2897,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 		// for logging purpose
-		APIErrorHandlerService.logReference(custCIF);
+		logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -2966,13 +2935,13 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerDocumentDetail.getCif();
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			} else {
 				customerDocument = new CustomerDocument();
 				customerDocument.setCustID(customer.getCustID());
 				customerDocument.setCustDocCategory(customerDocumentDetail.getCustDocCategory());
 				// for logging purpose
-				APIErrorHandlerService.logReference(customerDocumentDetail.getCif());
+				logReference(customerDocumentDetail.getCif());
 			}
 		}
 		WSReturnStatus response = null;
@@ -2983,11 +2952,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			// call delete customer service
 			response = customerDetailsController.deleteCustomerDocument(customerDocument);
 		} else {
-			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
 			valueParm[0] = customerDocumentDetail.getCustDocCategory();
 			valueParm[1] = customerDocumentDetail.getCif();
-			return APIErrorHandlerService.getFailedStatus("90119", valueParm);
+			return getFailedStatus("90119", valueParm);
 		}
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -3017,8 +2985,6 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (mailIdList != null && !mailIdList.isEmpty()) {
 			if (mailIdList.size() > 1) {
-				// mailIdList.sort((m1, m2) -> m2.getCustEMailPriority() -
-				// m1.getCustEMailPriority());
 				Collections.sort(mailIdList, new Comparator<CustomerEMail>() {
 					@Override
 					public int compare(CustomerEMail detail1, CustomerEMail detail2) {
@@ -3074,7 +3040,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				agrData = new AgreementData();
 				String[] valueParm = new String[1];
 				valueParm[0] = "CIF";
-				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				agrData.setReturnStatus(getFailedStatus("90502", valueParm));
 				return agrData;
 			}
 
@@ -3082,17 +3048,17 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				agrData = new AgreementData();
 				String[] valueParm = new String[1];
 				valueParm[0] = "AgreementType";
-				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				agrData.setReturnStatus(getFailedStatus("90502", valueParm));
 				return agrData;
 			}
 			// for logging purpose
-			APIErrorHandlerService.logReference(agrRequest.getCif());
+			logReference(agrRequest.getCif());
 			if (!StringUtils.equals(agrRequest.getAgreementType(), APIConstants.CUST_AGR_NAME)) {
 				agrData = new AgreementData();
 				String[] valueParm = new String[2];
 				valueParm[0] = APIConstants.CUST_AGR_NAME;
 				valueParm[1] = "AgreementType";
-				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90298", valueParm));
+				agrData.setReturnStatus(getFailedStatus("90298", valueParm));
 				return agrData;
 			}
 			// validate Customer with given CustCIF
@@ -3103,12 +3069,12 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				agrData = new AgreementData();
 				String[] valueParm = new String[1];
 				valueParm[0] = agrRequest.getCif();
-				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				agrData.setReturnStatus(getFailedStatus("90101", valueParm));
 			}
 		} catch (Exception e) {
 			APIErrorHandlerService.logUnhandledException(e);
 			agrData = new AgreementData();
-			agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			agrData.setReturnStatus(getFailedStatus());
 		}
 		logger.debug(Literal.LEAVING);
 
@@ -3153,14 +3119,14 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (StringUtils.isBlank(finCreditReviewDetailsData.getCif())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Cif";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return getFailedStatus("90502", valueParm);
 		} else {
 			customer = customerDetailsService.getCustomerByCIF(finCreditReviewDetailsData.getCif());
 
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finCreditReviewDetailsData.getCif();
-				APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				getFailedStatus("90101", valueParm);
 			}
 		}
 		for (FinCreditReviewDetails detail : finCreditReviewDetailsData.getFinCreditReviewDetails()) {
@@ -3174,37 +3140,37 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (StringUtils.isBlank(detail.getAuditYear())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Audit Year";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				return getFailedStatus("90502", valueParm);
 			}
 			if (StringUtils.isBlank(detail.getBankName())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Bank Name";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				return getFailedStatus("90502", valueParm);
 			}
 			if (StringUtils.isBlank(detail.getAuditors())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Auditors";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				return getFailedStatus("90502", valueParm);
 			}
 			if (StringUtils.isBlank(detail.getLocation())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Location";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				return getFailedStatus("90502", valueParm);
 			}
 			if (StringUtils.isBlank(String.valueOf(detail.getAuditedDate()))) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Audited Date";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				return getFailedStatus("90502", valueParm);
 			}
 			if (StringUtils.isBlank(String.valueOf(detail.isQualified()))) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Qualified";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				return getFailedStatus("90502", valueParm);
 			}
 			if (StringUtils.isBlank(detail.getAuditType())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "AuditType";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				return getFailedStatus("90502", valueParm);
 			} else if (!StringUtils.equals(detail.getAuditType(), FacilityConstants.CREDITREVIEW_AUDITED)
 					&& !StringUtils.equals(detail.getAuditType(), FacilityConstants.CREDITREVIEW_UNAUDITED)
 					&& !StringUtils.equals(detail.getAuditType(), FacilityConstants.CREDITREVIEW_MNGRACNTS)) {
@@ -3212,34 +3178,34 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				valueParm[0] = "AuditType";
 				valueParm[1] = FacilityConstants.CREDITREVIEW_AUDITED + "," + FacilityConstants.CREDITREVIEW_UNAUDITED
 						+ "," + FacilityConstants.CREDITREVIEW_MNGRACNTS;
-				return APIErrorHandlerService.getFailedStatus("90281", valueParm);
+				return getFailedStatus("90281", valueParm);
 
 			}
 			for (FinCreditReviewSummary summaryDetail : detail.getCreditReviewSummaryEntries()) {
 				if (StringUtils.isBlank(String.valueOf(summaryDetail.getSubCategoryCode()))) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "SubCategory Code";
-					return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+					return getFailedStatus("90502", valueParm);
 				} else {
 					FinCreditRevSubCategory finCreditRevSubCategory = finCreditRevSubCategoryDAO
 							.getFinCreditRevSubCategoryById(summaryDetail.getSubCategoryCode(), "");
 					if (finCreditRevSubCategory == null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "SubCategory Code " + summaryDetail.getSubCategoryCode();
-						return APIErrorHandlerService.getFailedStatus("90501", valueParm);
+						return getFailedStatus("90501", valueParm);
 					}
 					if (finCreditRevSubCategory != null
 							&& StringUtils.endsWithIgnoreCase(finCreditRevSubCategory.getSubCategoryItemType(),
 									FacilityConstants.CREDITREVIEW_CALCULATED_FIELD)) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "SubCategory Code " + summaryDetail.getSubCategoryCode();
-						return APIErrorHandlerService.getFailedStatus("90501", valueParm);
+						return getFailedStatus("90501", valueParm);
 					}
 				}
 				if (StringUtils.isBlank(String.valueOf(summaryDetail.getItemValue()))) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "Item Value";
-					return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+					return getFailedStatus("90502", valueParm);
 				}
 			}
 
@@ -3268,14 +3234,14 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			String[] valueParm = new String[2];
 			valueParm[0] = "Request";
 			valueParm[1] = " two fields";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30507", valueParm));
+			response.setReturnStatus(getFailedStatus("30507", valueParm));
 			return response;
 		} else {
 			if (dedupList.size() < 2) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Request";
 				valueParm[1] = " two fields";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30507", valueParm));
+				response.setReturnStatus(getFailedStatus("30507", valueParm));
 				return response;
 			}
 		}
@@ -3290,7 +3256,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (StringUtils.isBlank(custCtgCode)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "CategoryCode";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			response.setReturnStatus(getFailedStatus("90502", valueParm));
 			return response;
 		} else {
 
@@ -3312,13 +3278,13 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (StringUtils.isBlank(feild.getName())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "name";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				response.setReturnStatus(getFailedStatus("90502", valueParm));
 				return response;
 			}
 			if (StringUtils.isBlank(String.valueOf(feild.getValue()))) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "value";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				response.setReturnStatus(getFailedStatus("90502", valueParm));
 				return response;
 			}
 
@@ -3362,7 +3328,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 							String[] valueParm = new String[2];
 							valueParm[0] = feild.getName();
 							valueParm[1] = "Date";
-							response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41002", valueParm));
+							response.setReturnStatus(getFailedStatus("41002", valueParm));
 							return response;
 						}
 					}
@@ -3383,7 +3349,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (!fieldFound) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "field name";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41002", valueParm));
+				response.setReturnStatus(getFailedStatus("41002", valueParm));
 				return response;
 			}
 
@@ -3412,10 +3378,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 		if (CollectionUtils.isNotEmpty(resDedupList)) {
 			response.setDedupList(resDedupList);
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			response.setReturnStatus(getSuccessStatus());
 
 		} else {
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			response.setReturnStatus(getSuccessStatus());
 		}
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -3441,14 +3407,14 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			String[] valueParm = new String[2];
 			valueParm[0] = "Request";
 			valueParm[1] = " two fields";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30507", valueParm));
+			response.setReturnStatus(getFailedStatus("30507", valueParm));
 			return response;
 		} else {
 			if (dedupList.size() < 2) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Request";
 				valueParm[1] = " two fields";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30507", valueParm));
+				response.setReturnStatus(getFailedStatus("30507", valueParm));
 				return response;
 			}
 		}
@@ -3463,7 +3429,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (StringUtils.isBlank(custCtgCode)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "CategoryCode";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			response.setReturnStatus(getFailedStatus("90502", valueParm));
 			return response;
 		} else {
 
@@ -3486,13 +3452,13 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (StringUtils.isBlank(feild.getName())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "name";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				response.setReturnStatus(getFailedStatus("90502", valueParm));
 				return response;
 			}
 			if (StringUtils.isBlank(String.valueOf(feild.getValue()))) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "value";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				response.setReturnStatus(getFailedStatus("90502", valueParm));
 				return response;
 			}
 			boolean fieldFound = false;
@@ -3522,7 +3488,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 							String[] valueParm = new String[2];
 							valueParm[0] = feild.getName();
 							valueParm[1] = "Date";
-							response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41002", valueParm));
+							response.setReturnStatus(getFailedStatus("41002", valueParm));
 							return response;
 
 						}
@@ -3555,7 +3521,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (!fieldFound) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "field name";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41002", valueParm));
+				response.setReturnStatus(getFailedStatus("41002", valueParm));
 				return response;
 			}
 
@@ -3590,10 +3556,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 		if (CollectionUtils.isNotEmpty(negativeList)) {
 			response.setBlackList(negativeList);
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			response.setReturnStatus(getSuccessStatus());
 
 		} else {
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			response.setReturnStatus(getSuccessStatus());
 		}
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -3617,7 +3583,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (StringUtils.isBlank(srmCustRequest.getSource())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Source";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			response.setReturnStatus(getFailedStatus("90502", valueParm));
 			customerDetailsList.add(response);
 			return customerDetailsList;
 		}
@@ -3626,7 +3592,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			String[] valueParm = new String[2];
 			valueParm[0] = "SOURCE";
 			valueParm[1] = "SRM or COB";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90337", valueParm));
+			response.setReturnStatus(getFailedStatus("90337", valueParm));
 			customerDetailsList.add(response);
 			return customerDetailsList;
 		}
@@ -3638,7 +3604,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 					&& StringUtils.isBlank(srmCustRequest.getCustShrtName()) && srmCustRequest.getCustDOB() == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Any one field value";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				response.setReturnStatus(getFailedStatus("90502", valueParm));
 				customerDetailsList.add(response);
 				return customerDetailsList;
 			}
@@ -3648,7 +3614,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (StringUtils.isBlank(srmCustRequest.getCustCRCPR())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "panNumber";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				response.setReturnStatus(getFailedStatus("90502", valueParm));
 				customerDetailsList.add(response);
 				return customerDetailsList;
 			}
@@ -3681,7 +3647,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		} else {
 			String[] valueParm = new String[1];
 			valueParm[0] = "given request";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
+			response.setReturnStatus(getFailedStatus("90266", valueParm));
 			customerDetailsList.add(response);
 			return customerDetailsList;
 		}
@@ -3718,7 +3684,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 					response.setBlocklimit(headerDetail.isBlocklimit());
 
 				}
-				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				response.setReturnStatus(getSuccessStatus());
 			}
 			logger.debug(Literal.LEAVING);
 			return response;
@@ -3726,7 +3692,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			String[] valueParm = new String[1];
 			valueParm[0] = "coreBank";
 			response = new CustValidationResponse();
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
+			response.setReturnStatus(getFailedStatus("90266", valueParm));
 			return response;
 		}
 
@@ -3748,20 +3714,20 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (CollectionUtils.isEmpty(customerExtendedFieldDetails.getExtendedDetails())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "extendedDetails";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			response.setReturnStatus(getFailedStatus("90502", valueParm));
 			return response;
 		}
 		if (StringUtils.isBlank(customerExtendedFieldDetails.getCif())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "cif";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			response.setReturnStatus(getFailedStatus("90502", valueParm));
 			return response;
 		} else {
 			customerDetails = customerDetailsService.getCustomerByCIF(customerExtendedFieldDetails.getCif());
 			if (customerDetails == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerExtendedFieldDetails.getCif();
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				response.setReturnStatus(getFailedStatus("90101", valueParm));
 				return response;
 			}
 		}
@@ -3787,9 +3753,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	private CustomerExtendedFieldDetails getErrorMessage(CustomerExtendedFieldDetails customerExtendedFieldDetails) {
 		for (ErrorDetail erroDetail : customerExtendedFieldDetails.getErrorDetails()) {
 			CustomerExtendedFieldDetails response = new CustomerExtendedFieldDetails();
-			// doEmptyResponseObject(response);
-			response.setReturnStatus(
-					APIErrorHandlerService.getFailedStatus(erroDetail.getCode(), erroDetail.getError()));
+			response.setReturnStatus(getFailedStatus(erroDetail.getCode(), erroDetail.getError()));
 			return response;
 		}
 		return new CustomerExtendedFieldDetails();
@@ -3806,7 +3770,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDetails.getBefImage(), aCustomerDetails);
 		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()),
 				String.valueOf(aCustomerDetails.getCustID()), null, null, auditDetail,
-				aCustomerDetails.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				aCustomerDetails.getUserDetails(), new HashMap<>());
 	}
 
 	/**
@@ -3821,7 +3785,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				aCustomerPhoneNumber);
 		return new AuditHeader(String.valueOf(aCustomerPhoneNumber.getPhoneCustID()),
 				String.valueOf(aCustomerPhoneNumber.getPhoneCustID()), null, null, auditDetail,
-				aCustomerPhoneNumber.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				aCustomerPhoneNumber.getUserDetails(), new HashMap<>());
 	}
 
 	/**
@@ -3836,7 +3800,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				aCustomerEmploymentDetail);
 		return new AuditHeader(String.valueOf(aCustomerEmploymentDetail.getCustID()),
 				String.valueOf(aCustomerEmploymentDetail.getCustID()), null, null, auditDetail,
-				aCustomerEmploymentDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				aCustomerEmploymentDetail.getUserDetails(), new HashMap<>());
 	}
 
 	/**
@@ -3849,7 +3813,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	private AuditHeader getAuditHeader(CustomerAddres aCustomerAddres, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerAddres.getBefImage(), aCustomerAddres);
 		return new AuditHeader(String.valueOf(aCustomerAddres.getCustID()), String.valueOf(aCustomerAddres.getCustID()),
-				null, null, auditDetail, aCustomerAddres.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				null, null, auditDetail, aCustomerAddres.getUserDetails(), new HashMap<>());
 	}
 
 	/**
@@ -3862,7 +3826,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	private AuditHeader getAuditHeader(CustomerEMail aCustomerEMail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerEMail.getBefImage(), aCustomerEMail);
 		return new AuditHeader(String.valueOf(aCustomerEMail.getCustID()), String.valueOf(aCustomerEMail.getCustID()),
-				null, null, auditDetail, aCustomerEMail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				null, null, auditDetail, aCustomerEMail.getUserDetails(), new HashMap<>());
 	}
 
 	/**
@@ -3875,7 +3839,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	private AuditHeader getAuditHeader(CustomerIncome aCustomerIncome, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerIncome.getBefImage(), aCustomerIncome);
 		return new AuditHeader(String.valueOf(aCustomerIncome.getCustId()), String.valueOf(aCustomerIncome.getCustId()),
-				null, null, auditDetail, aCustomerIncome.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				null, null, auditDetail, aCustomerIncome.getUserDetails(), new HashMap<>());
 	}
 
 	/**
@@ -3889,7 +3853,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerBankInfo.getBefImage(), aCustomerBankInfo);
 		return new AuditHeader(String.valueOf(aCustomerBankInfo.getCustID()),
 				String.valueOf(aCustomerBankInfo.getCustID()), null, null, auditDetail,
-				aCustomerBankInfo.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				aCustomerBankInfo.getUserDetails(), new HashMap<>());
 	}
 
 	/**
@@ -3902,7 +3866,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	private AuditHeader getAuditHeader(CustCardSales aCustCardSales, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustCardSales.getBefImage(), aCustCardSales);
 		return new AuditHeader(String.valueOf(aCustCardSales.getCustID()), String.valueOf(aCustCardSales.getCustID()),
-				null, null, auditDetail, aCustCardSales.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				null, null, auditDetail, aCustCardSales.getUserDetails(), new HashMap<>());
 	}
 
 	/**
@@ -3915,7 +3879,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	private AuditHeader getAuditHeader(CustomerGST aCustomerGST, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerGST.getBefImage(), aCustomerGST);
 		return new AuditHeader(String.valueOf(aCustomerGST.getCustId()), String.valueOf(aCustomerGST.getCustId()), null,
-				null, auditDetail, aCustomerGST.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				null, auditDetail, aCustomerGST.getUserDetails(), new HashMap<>());
 	}
 
 	/**
@@ -3929,7 +3893,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, externalLiability.getBefImage(), externalLiability);
 		return new AuditHeader(String.valueOf(externalLiability.getCustId()),
 				String.valueOf(externalLiability.getCustId()), null, null, auditDetail,
-				externalLiability.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				externalLiability.getUserDetails(), new HashMap<>());
 	}
 
 	/**
@@ -3943,7 +3907,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDocument.getBefImage(), aCustomerDocument);
 		return new AuditHeader(String.valueOf(aCustomerDocument.getCustID()),
 				String.valueOf(aCustomerDocument.getCustID()), null, null, auditDetail,
-				aCustomerDocument.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				aCustomerDocument.getUserDetails(), new HashMap<>());
 	}
 
 	/**
@@ -3955,7 +3919,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	private AuditHeader getAuditHeader(DirectorDetail directorDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, directorDetail.getBefImage(), directorDetail);
 		return new AuditHeader(String.valueOf(directorDetail.getCustID()), String.valueOf(directorDetail.getCustID()),
-				null, null, auditDetail, directorDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				null, null, auditDetail, directorDetail.getUserDetails(), new HashMap<>());
 	}
 
 	/**
@@ -3968,14 +3932,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	public WSReturnStatus getErrorDetails(String errorCode, String[] valueParm) {
 		logger.debug(Literal.ENTERING);
 
-		WSReturnStatus response = new WSReturnStatus();
-		response = APIErrorHandlerService.getFailedStatus(errorCode, valueParm);
+		WSReturnStatus response = getFailedStatus(errorCode, valueParm);
 
-		// set default error code and description in case of Error code does not
-		// exists.
 		if (StringUtils.isBlank(response.getReturnCode())) {
-			response = APIErrorHandlerService.getFailedStatus(APIConstants.RES_FAILED_CODE,
-					APIConstants.RES_FAILED_DESC);
+			response = getFailedStatus(APIConstants.RES_FAILED_CODE, APIConstants.RES_FAILED_DESC);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -4008,7 +3968,6 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	 */
 	private String[] getCustomerLogDetails(CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
-		// for logging purpose
 		String[] logFields = null;
 		if (customerDetails != null) {
 			logFields = new String[3];
@@ -4038,14 +3997,14 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			if (mainCount == 0) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custCIF;
-				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+				return getFailedStatus("90101", valueParm);
 			}
 
 			int tempCount = customerDetailsService.getCustomerCountByCIF(custCIF, "_Temp");
 			if (tempCount > 0) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custCIF;
-				return APIErrorHandlerService.getFailedStatus("90248", valueParm);
+				return getFailedStatus("90248", valueParm);
 			}
 		}
 		return returnStatus;
@@ -4067,7 +4026,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[2];
 				valueParm[0] = "categoryCode";
 				valueParm[1] = "update Customer";
-				return APIErrorHandlerService.getFailedStatus("90329", valueParm);
+				return getFailedStatus("90329", valueParm);
 			}
 		}
 		return returnStatus;

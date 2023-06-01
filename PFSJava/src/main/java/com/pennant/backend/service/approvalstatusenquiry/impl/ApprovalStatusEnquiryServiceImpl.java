@@ -128,9 +128,7 @@ public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquirySe
 
 		List<String> finReferences = new ArrayList<>();
 
-		existingLoans.forEach(el -> {
-			finReferences.add(el.getFinReference());
-		});
+		existingLoans.forEach(el -> finReferences.add(el.getFinReference()));
 
 		if (CollectionUtils.isEmpty(finReferences)) {
 			return existingLoans;

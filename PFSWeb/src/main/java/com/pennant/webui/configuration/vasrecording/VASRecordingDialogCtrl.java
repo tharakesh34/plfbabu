@@ -1411,13 +1411,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aVASConfiguration
-	 * @throws InterruptedException
-	 * @throws ParseException
 	 * @throws ScriptException
-	 * 
 	 */
-	public void doWriteBeanToComponents(VASRecording aVASRecording)
-			throws ParseException, InterruptedException, ScriptException {
+	public void doWriteBeanToComponents(VASRecording aVASRecording) throws ScriptException {
 		logger.debug(Literal.ENTERING);
 
 		vASConfiguration = aVASRecording.getVasConfiguration();

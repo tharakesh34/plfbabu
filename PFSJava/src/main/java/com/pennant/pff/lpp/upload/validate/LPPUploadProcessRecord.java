@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lpp.upload.LPPUpload;
 import com.pennant.backend.util.FinanceConstants;
@@ -38,6 +39,7 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 
 	private LPPUploadDAO lppUploadDAO;
 	private FinanceMainDAO financeMainDAO;
+	private FinanceTypeDAO financeTypeDAO;
 
 	@Autowired
 	private UploadService lPPUploadService;
@@ -144,12 +146,24 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 
 			lppUploadDAO.save(lpp);
 
+			if (StringUtils.isNotBlank(lpp.getLoanType())
+					&& lppUploadDAO.isDuplicatetFinType(lpp.getLoanType(), header.getId())) {
+				setError(lpp, LPPUploadError.LPP_29);
+			}
+
+			if (lpp.getProgress() != EodConstants.PROGRESS_FAILED) {
+				setSuccesStatus(lpp);
+			}
+
 			if (PennantConstants.YES.equals(lpp.getApplyToExistingLoans())) {
-				int processrecordcount = lppUploadDAO.saveByFinType(lpp);
-				header.setTotalRecords(header.getTotalRecords() + processrecordcount);
+				int totalRecords = lppUploadDAO.saveByFinType(lpp);
+				header.setTotalRecords(header.getTotalRecords() + totalRecords);
+				lppUploadDAO.updateTotals(header.getId(), header.getTotalRecords());
 			}
 
 			if (lpp.getProgress() == EodConstants.PROGRESS_FAILED) {
+				lpp.setStatus("F");
+				record.addValue("STATUS", lpp.getStatus());
 				record.addValue("ERRORCODE", lpp.getErrorCode());
 				record.addValue("ERRORDESC", lpp.getErrorDesc());
 
@@ -248,6 +262,18 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 				return;
 			}
 		}
+
+		boolean applyToExistingLoans = PennantConstants.YES.equals(detail.getApplyToExistingLoans());
+		if (StringUtils.isNotBlank(detail.getLoanType())
+				&& !(PennantConstants.NO.equals(detail.getApplyToExistingLoans()) || applyToExistingLoans)) {
+			setError(detail, LPPUploadError.LPP_14);
+			return;
+		}
+
+		if (financeTypeDAO.getFinTypeCount(detail.getLoanType(), "_Temp") > 0) {
+			setError(detail, LPPUploadError.LPP_28);
+			return;
+		}
 	}
 
 	private void validateApplyOverDue(LPPUpload detail) {
@@ -295,7 +321,7 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 			return;
 		}
 
-		if (includeGraceDays && (detail.getGraceDays() < 0 || detail.getGraceDays() > 999)) {
+		if (detail.getGraceDays() < 0 || detail.getGraceDays() > 999) {
 			setError(detail, LPPUploadError.LPP_15);
 			return;
 		}
@@ -428,4 +454,10 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
+
+	@Autowired
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
 }

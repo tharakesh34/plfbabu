@@ -1580,7 +1580,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		// Status Updation
 		repaymentPostingsUtil.updateStatus(fm, valueDate, schdData.getFinanceScheduleDetails(), pftDetail,
-				finEodEvent.getFinODDetails(), null);
+				finEodEvent.getFinODDetails(), rch);
 
 		// Overdue Details Updation after Recalculation with Current
 		// Data
@@ -3054,7 +3054,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				&& !financeMainDAO.isFinReferenceExists(rch.getReference(), "_Temp", false)) {
 			ad.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60209", null)));
 		}
-
+		
+		if (rch.getReceiptID() == 0) {
+			return ad;
+		}
+		
 		if (isExcessUtilized(rch.getReceiptID())) {
 			ad.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60219", "", null)));
 		}

@@ -9,7 +9,6 @@
 			<borderlayout id="blGenLetterEnquiry">
 				<center border="none" autoscroll="false">
 				<groupbox style="border:none;">
-						<div style="border:none;">
 						<div style="border:none;" height="100%">
 			            	<groupbox style="border:none;">
 									<groupbox id="gb_finBasicDetails">
@@ -65,11 +64,9 @@
 									 </groupbox>
 								</groupbox>
 								</div>
-								<div style="border:none;" height="100%">
-								<groupbox>
-									<listbox id="listBoxLetterLog" multiple="true" style="border:none,overflow:scroll" width="100%"
-									span="true" emptyMessage="${c:l('listbox.emptyMessage')}" height="150px">
-											<listhead sizable="true">
+								<listbox id="listBoxLetterLog" multiple="true" style="white-space:nowrap;margin-top:15px;" width="100%"
+									span="true" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true" height="100%">
+										<listhead sizable="true">
 												<listheader width="60px" id="listheaderletterTypeDialogButton" />
 												<listheader label="${c:l('IssueDateHeader.label')}" sort="false" hflex="min" />
 												<listheader label="${c:l('Mode.label')}"
@@ -90,12 +87,9 @@
 													sort="none" hflex="min" style="text-align:center;" />
 												<listheader label="${c:l('FileName.label')}"
 													sort="none" hflex="min" style="text-align:center;" />
-										</listhead>
-									</listbox>
-								</groupbox>
-								</div>
-					    </div>
-						</groupbox>
+									</listhead>
+							</listbox>
+				</groupbox>
 			</center>
 		</borderlayout>
 	</window>

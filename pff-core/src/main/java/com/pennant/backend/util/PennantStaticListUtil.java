@@ -1334,6 +1334,7 @@ public class PennantStaticListUtil {
 			}
 
 			enquiryTypes.add(new ValueLabel("FINSUM", Labels.getLabel("label_FinancialSummary")));
+			enquiryTypes.add(new ValueLabel("LTRENQ", Labels.getLabel("label_LetterLogEnquiry.value")));
 		}
 		return enquiryTypes;
 	}
@@ -3891,8 +3892,8 @@ public class PennantStaticListUtil {
 		return queryModuleStatusList;
 	}
 
-	public void OverideBranchTypeList(List<ValueLabel> branchType) {
-		this.branchType = branchType;
+	public void OverideBranchTypeList(List<ValueLabel> valueLabels) {
+		branchType = valueLabels;
 	}
 
 	private static List<ValueLabel> documentTypesList;

@@ -408,6 +408,13 @@ public class FinanceDataValidation {
 			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90188", null)));
 		}
 
+		if (fm.getDesiredProfit().compareTo(BigDecimal.ZERO) < 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "DesiredProfit:"
+					.concat(PennantApplicationUtil.amountFormate(fm.getDesiredProfit(), ccyFormat));
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP008", valueParm)));
+		}
+
 		finODPenaltyRateValidation(schdData);
 
 		finOCRValidation(fd);
@@ -1447,6 +1454,23 @@ public class FinanceDataValidation {
 				if (FinanceConstants.ODCALON_INST.equals(odChargeCalOn)) {
 					String[] valueParm = new String[2];
 					valueParm[0] = " odChargeCalOn INST is allowed only when odChargeType is P or M ";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90505", valueParm)));
+				}
+			}
+
+			if (!FinanceUtil.isMinimunODCChargeReq(odChargeType)) {
+				BigDecimal oDminamount = odPenalRate.getOdMinAmount();
+				if (oDminamount.compareTo(BigDecimal.ZERO) < 0 || oDminamount.compareTo(BigDecimal.ZERO) > 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "ODMinAmount is allowed only when odChargeType is P or M";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90505", valueParm)));
+				}
+			}
+
+			if (FinanceUtil.isMinimunODCChargeReq(odChargeType)) {
+				if (odPenalRate.getOdMinAmount().compareTo(BigDecimal.ZERO) < 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = " Negative Values are not allowed for ODMinAmount ";
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90505", valueParm)));
 				}
 			}
@@ -4435,7 +4459,7 @@ public class FinanceDataValidation {
 			return;
 		}
 
-		if (!(finType.getPlanEMIHLockPeriod() >= fm.getPlanEMIHLockPeriod())) {
+		if (finType.getPlanEMIHLockPeriod() < fm.getPlanEMIHLockPeriod()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "PlanEMIHLockPeriod";
 			valueParm[1] = String.valueOf(finType.getPlanEMIHLockPeriod());
@@ -8427,7 +8451,7 @@ public class FinanceDataValidation {
 		validateBigDecimal(fm.getRpyMaxRate(), "RpyMaxRate", errors);
 		validateBigDecimal(fm.getFinAssetValue(), "FinAssetValue", errors);
 
-		ServiceExceptionDetails exceptions[] = new ServiceExceptionDetails[errors.size()];
+		ServiceExceptionDetails[] exceptions = new ServiceExceptionDetails[errors.size()];
 
 		int errorCount = 0;
 		for (ErrorDetail error : errors) {

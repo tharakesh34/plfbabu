@@ -103,7 +103,7 @@ import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.RepaymentCancellationService;
-import com.pennant.backend.service.finance.validation.FinanceCancelValidator;
+import com.pennant.backend.service.finance.impl.ManualAdviceUtil;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.FinanceConstants;
@@ -113,7 +113,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.pff.fincancelupload.exception.FinCancelUploadError;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.model.FinanceMainSelectItemRenderer;
@@ -240,7 +239,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient ReceiptUploadDetailDAO receiptUploadDetailDAO;
 	private transient FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private transient ExtendedFieldMaintenanceService extendedFieldMaintenanceService;
-	private FinanceCancelValidator financeCancelValidator;
 
 	/**
 	 * Default constructor
@@ -1118,16 +1116,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else if (moduleDefiner.equals(FinServiceEvent.CANCELRPY)) {
 			// whereClause.append(" OR (FinIsActive = 0 AND ClosingStatus = 'M') ");
 		} else if (moduleDefiner.equals(FinServiceEvent.CANCELFIN)) {
-			backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_CANFIN_BACK_DATE");
-			backValueDate = DateUtil.addDays(appDate, backValueDays);
-			String backValDate = DateUtil.formatToFullDate(backValueDate);
 
 			// whereClause.append(" AND MigratedFinance = 0 ");
-			whereClause.append(" AND (");
 			if (!ImplementationConstants.ALLOW_CANCEL_LOAN_AFTER_PAYMENTS) {
-				whereClause.append(" FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND ");
+				whereClause.append(" AND ( FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate ) ");
 			}
-			whereClause.append(" FinStartDate >= '" + backValDate + "')");
+
 			whereClause.append(" AND AllowCancelFin = 1");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 			whereClause.append(" AND RcdMaintainSts = 'CancelFinance' AND FinIsActive = 1 ");
@@ -2195,14 +2189,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		String maintainSts = StringUtils.trimToEmpty(schdData.getFinanceMain().getRcdMaintainSts());
 
 		schdData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
-		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
 		fm.setFinSourceID(RequestSource.UI.name());
-		FinCancelUploadError error = financeCancelValidator.validLoan(schdData.getFinanceMain(), schedules);
-
-		if (error != null) {
-			MessageUtil.showError(financeCancelValidator.getOverrideDescription(error, schdData.getFinanceMain()));
-			return;
-		}
 
 		if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
 			String[] errParm = new String[1];
@@ -2969,8 +2956,11 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 		if (StringUtils.isNotEmpty(rcdMaintainSts) && !moduleDefiner.equals(rcdMaintainSts)
-				&& (FinServiceEvent.MANUALADVISE.equals(rcdMaintainSts) ? isValidateCancelManualAdvise(finID) : true)) {
-			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+				&& (FinServiceEvent.MANUALADVISE.equals(rcdMaintainSts)
+						? ManualAdviceUtil
+								.isValidateCancelManualAdvise(manualAdviseService.getCancelledManualAdvise(finID))
+						: true)) {
+			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_".concat(rcdMaintainSts)));
 			return;
 		}
 
@@ -3065,11 +3055,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	private boolean isValidateCancelManualAdvise(long finID) {
-		List<ManualAdvise> list = manualAdviseService.getCancelledManualAdvise(finID);
-		return list.stream().anyMatch(m -> m.getStatus() == null) ? true : false;
 	}
 
 	private void openLinkDelinkMaintenanceDialog(Listitem item) {
@@ -4195,8 +4180,4 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.manualAdviseService = manualAdviseService;
 	}
 
-	@Autowired
-	public void setFinanceCancelValidator(FinanceCancelValidator financeCancelValidator) {
-		this.financeCancelValidator = financeCancelValidator;
-	}
 }

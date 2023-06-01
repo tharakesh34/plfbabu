@@ -45,7 +45,7 @@ public enum WaiverReasons {
 
 	public static WaiverReasons getType(String key) {
 		for (WaiverReasons type : values()) {
-			if (type.getKey() == key) {
+			if (type.getKey().equals(key)) {
 				return type;
 			}
 		}

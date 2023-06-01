@@ -328,7 +328,7 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 	 * @return
 	 */
 	@Override
-	public List<CustomerPhoneNumber> getCustomerPhoneNumberById(long id, String type) {
+	public List<CustomerPhoneNumber> getCustPhoneNumberById(long id, String type) {
 		logger.debug("Entering");
 		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
 		customerPhoneNumber.setPhoneCustID(id);

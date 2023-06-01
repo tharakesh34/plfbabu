@@ -3,6 +3,8 @@ package com.pennanttech.pff.receipt.constants;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.pennant.backend.util.DisbursementConstants;
 
 public class ReceiptMode {
@@ -37,6 +39,7 @@ public class ReceiptMode {
 	public static final String CASHCLT = "CASHCLT";
 	public static final String DSF = "DSF";
 	public static final String TEXCESS = "T";
+	public static final String SETTLEMENT = "S";
 
 	public static final String BBPS = "BBPS";
 	public static final String RTRNGDS = "RTRNGDS";
@@ -187,5 +190,15 @@ public class ReceiptMode {
 		}
 
 		return subReceiptModes;
+	}
+
+	public static boolean isReceiptFromBank(String paymentType) {
+		return StringUtils.isNotEmpty(StringUtils.trimToEmpty(paymentType)) && !"#".equals(paymentType)
+				&& !ReceiptMode.EMIINADV.equals(paymentType) && !ReceiptMode.EXCESS.equals(paymentType)
+				&& !ReceiptMode.TEXCESS.equals(paymentType) && !ReceiptMode.PAYABLE.equals(paymentType)
+				&& !ReceiptMode.ADVINT.equals(paymentType) && !ReceiptMode.ADVEMI.equals(paymentType)
+				&& !ReceiptMode.CASHCLT.equals(paymentType) && !ReceiptMode.DSF.equals(paymentType)
+				&& !ReceiptMode.SETTLEMENT.equals(paymentType);
+
 	}
 }

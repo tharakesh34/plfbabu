@@ -19,7 +19,7 @@
 							<!-- SEARCH AREA -->
 							<toolbar align="center" sclass="toolbar-center">
 								<label id="label_title" value="${c:l('window_GenerateLetter.title')}"
-									sclass="label-heading" />
+									sclass="label-heading" style="white-space:nowrap"/>
 							</toolbar>
 							<!-- <toolbar align="center" sclass="toolbar-center"> <label  sclass="label-heading" /> </toolbar> -->
 							<toolbar align="end" sclass="toolbar-end">

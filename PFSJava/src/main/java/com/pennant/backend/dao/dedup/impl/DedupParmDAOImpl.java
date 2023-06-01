@@ -77,9 +77,8 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
-				return getTypeRowMapper(rs);
-			}, id, querySubCode, queryModule);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> getTypeRowMapper(rs), id, querySubCode,
+					queryModule);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}
@@ -138,9 +137,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			ps.setString(1, queryModule);
 			ps.setString(2, querySubCode);
-		}, (rs, i) -> {
-			return getTypeRowMapper(rs);
-		});
+		}, (rs, i) -> getTypeRowMapper(rs));
 	}
 
 	/**
@@ -172,9 +169,8 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-				ps.setString(1, dedupParm.getQueryCode());
-			});
+			int recordCount = this.jdbcOperations.update(sql.toString(),
+					ps -> ps.setString(1, dedupParm.getQueryCode()));
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -381,11 +377,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 
 		logger.trace(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, moduleType);
-		}, (rs, i) -> {
-			return rs.getString(1);
-		});
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setString(1, moduleType), (rs, i) -> rs.getString(1));
 	}
 
 	@Override

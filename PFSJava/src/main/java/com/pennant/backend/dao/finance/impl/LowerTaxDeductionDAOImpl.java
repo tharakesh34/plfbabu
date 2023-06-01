@@ -152,9 +152,7 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcOperations.update(sql.toString(), ps -> {
-				ps.setLong(1, ltd.getFinID());
-			});
+			jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, ltd.getFinID()));
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

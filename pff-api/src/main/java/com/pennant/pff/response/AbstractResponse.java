@@ -9,7 +9,6 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
-import com.pennant.backend.model.GraceDetails.GraceDetails;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customerdata.CustomerData;
 import com.pennant.backend.model.customermasters.Customer;
@@ -19,6 +18,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
+import com.pennant.backend.model.gracedetails.GraceDetails;
 import com.pennant.backend.model.loanbranch.LoanBranch;
 import com.pennant.backend.model.loandetail.LoanDetail;
 import com.pennant.backend.model.loanschedules.LoanSchedules;

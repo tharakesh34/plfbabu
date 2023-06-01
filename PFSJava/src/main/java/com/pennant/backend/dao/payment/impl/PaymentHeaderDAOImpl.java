@@ -332,9 +332,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		List<ManualAdvise> list = jdbcOperations.query(sql.toString(), ps -> {
 			ps.setLong(1, finID);
 			ps.setInt(2, 2);
-		}, (rs, i) -> {
-			return getRowMapper(rs);
-		});
+		}, (rs, i) -> getRowMapper(rs));
 
 		return list.stream().sorted((l1, l2) -> l1.getValueDate().compareTo(l2.getValueDate()))
 				.collect(Collectors.toList());
@@ -351,9 +349,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 			ps.setLong(1, finID);
 			ps.setInt(2, 2);
 			ps.setInt(3, 0);
-		}, (rs, i) -> {
-			return getRowMapper(rs);
-		});
+		}, (rs, i) -> getRowMapper(rs));
 
 		return list.stream().sorted((l1, l2) -> l1.getValueDate().compareTo(l2.getValueDate()))
 				.collect(Collectors.toList());
@@ -424,19 +420,19 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.query(sql.toString(), ps -> {
-				ps.setLong(1, finId);
-			}, new ResultSetExtractor<Map<Long, BigDecimal>>() {
+			return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finId),
+					new ResultSetExtractor<Map<Long, BigDecimal>>() {
 
-				@Override
-				public Map<Long, BigDecimal> extractData(ResultSet rs) throws SQLException, DataAccessException {
-					Map<Long, BigDecimal> rcMap = new HashMap<>();
-					while (rs.next()) {
-						rcMap.put(rs.getLong("PAYAGAINSTID"), rs.getBigDecimal("AMOUNT"));
-					}
-					return rcMap;
-				}
-			});
+						@Override
+						public Map<Long, BigDecimal> extractData(ResultSet rs)
+								throws SQLException, DataAccessException {
+							Map<Long, BigDecimal> rcMap = new HashMap<>();
+							while (rs.next()) {
+								rcMap.put(rs.getLong("PAYAGAINSTID"), rs.getBigDecimal("AMOUNT"));
+							}
+							return rcMap;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("No advises are inprogress for the finId >> " + finId);
 		}
@@ -521,10 +517,8 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-				return rs.getLong(1);
-			}, receiptId, RepayConstants.PAYSTATUS_BOUNCE, RepayConstants.PAYSTATUS_CANCEL,
-					KnockOffType.CROSS_LOAN.code());
+			return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> rs.getLong(1), receiptId,
+					RepayConstants.PAYSTATUS_BOUNCE, RepayConstants.PAYSTATUS_CANCEL, KnockOffType.CROSS_LOAN.code());
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -537,7 +531,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), paymentId);
+		return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> rs.getInt(1), paymentId);
 	}
 
 	@Override
@@ -558,8 +552,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), paymentId,
-				finReference);
+		return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> rs.getInt(1), paymentId, finReference);
 	}
 
 	@Override

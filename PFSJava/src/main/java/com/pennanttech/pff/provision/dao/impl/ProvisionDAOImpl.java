@@ -552,7 +552,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(" Inner Join Asset_Class_Codes acc on acc.ID = acsd.ClassId");
 		sql.append(" Inner Join Asset_Class_Setup_Details eacsd on eacsd.ID = lp.EffNpaClassId");
 		sql.append(" Inner Join Asset_Class_Codes eacc on eacc.ID = eacsd.ClassId");
-		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.AssetClassId = eacsd.SubClassId");
+		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.ID = eacsd.SubClassId");
 		sql.append(" Where lp.FinID = ?");
 		sql.append(" Union All");
 		sql.append("  Select lp.Id,c.CustID, c.CustCIF, c.CustShrtName");
@@ -582,7 +582,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(" Inner Join Asset_Class_Codes acc on acc.ID = acsd.Classid");
 		sql.append(" Inner Join Asset_Class_Setup_Details eacsd on eacsd.ID = lp.EffNpaClassId");
 		sql.append(" Inner Join Asset_Class_Codes eacc on eacc.ID = eacsd.ClassId");
-		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.AssetClassId = eacsd.SubClassId");
+		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.ID = eacsd.SubClassId");
 		sql.append(" Where lp.FinID = ? and Not Exists (Select 1 From Loan_Provisions_Temp Where ID = lp.ID)");
 		sql.append(") T ");
 
@@ -636,7 +636,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 				p.setManualAssetClassID(JdbcUtil.getLong(rs.getObject("ManualAssetClassID")));
 				p.setManualAssetSubClassID(JdbcUtil.getLong(rs.getObject("ManualAssetSubClassID")));
 				p.setEffectiveAssetClassID(JdbcUtil.getLong(rs.getObject("EffectiveAssetClassID")));
-				p.setEffectiveAssetSubClassID(JdbcUtil.getLong(rs.getObject("EffectiveAssetSubClassID")));
+				p.setEffectiveAssetSubClassID(rs.getLong("EffectiveAssetSubClassID"));
 				p.setNewRegProvisionAmt(rs.getBigDecimal("NewRegProvisionAmt"));
 				p.setNewRegProvisionPer(rs.getBigDecimal("NewRegProvisionPer"));
 				p.setNewIntProvisionAmt(rs.getBigDecimal("NewIntProvisionAmt"));
@@ -800,7 +800,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
 			AssetClassCode asc = new AssetClassCode();
 
 			asc.setId(rs.getLong("Id"));
@@ -956,6 +956,33 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+	}
+
+	@Override
+	public Provision getAssetClassSetIDByCode(String code, String effNpaClassCode) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select acc.Id , ascc.ID ManualAssetSubClassId, acc.Code ManualAssetClassCode");
+		sql.append(", ascc.Code ManualAssetSubClassCode");
+		sql.append(" From Asset_Class_Codes acc");
+		sql.append(" Inner Join  Asset_Sub_Class_Codes ascc on ascc.AssetClassID = acc.ID");
+		sql.append(" Where acc.Code = ?  and ascc.Code = ?");
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				Provision item = new Provision();
+				item.setManualAssetClassID(JdbcUtil.getLong(rs.getObject("Id")));
+				item.setManualAssetSubClassID(JdbcUtil.getLong(rs.getObject("ManualAssetSubClassId")));
+				item.setManualAssetClassCode(rs.getString("ManualAssetClassCode"));
+				item.setManualAssetSubClassCode(rs.getString("ManualAssetSubClassCode"));
+
+				return item;
+			}, code, effNpaClassCode);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+
+		return null;
 	}
 
 }

@@ -75,9 +75,7 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.update(sql, ps -> {
-			ps.setInt(1, EodConstants.PROGRESS_SUCCESS);
-		});
+		this.jdbcOperations.update(sql, ps -> ps.setInt(1, EodConstants.PROGRESS_SUCCESS));
 
 		sql = "Update Eod_Customer_Queue Set Progress = ? Where Progress = ?";
 

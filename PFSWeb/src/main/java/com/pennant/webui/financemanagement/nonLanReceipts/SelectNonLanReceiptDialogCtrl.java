@@ -361,8 +361,6 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		} else {
 			BounceReason bounceReason = (BounceReason) dataObject;
 			if (bounceReason != null) {
-				Map<String, Object> executeMap = bounceReason.getDeclaredFieldValues();
-
 				rule = getRuleService().getRuleById(bounceReason.getRuleID(), "");
 			}
 		}

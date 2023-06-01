@@ -25,6 +25,7 @@ import com.pennant.pff.cheques.upload.job.ChequeUploadJob;
 import com.pennant.pff.customer.upload.job.KycDetailUploadJob;
 import com.pennant.pff.excess.upload.job.ExcessTransferUploadJob;
 import com.pennant.pff.extension.MandateExtension;
+import com.pennant.pff.holdmarking.upload.job.HoldMarkingUploadJob;
 import com.pennant.pff.holdrefund.upload.job.HoldRefundJob;
 import com.pennant.pff.hostglmapping.upload.job.HostGLMappingUploadJob;
 import com.pennant.pff.lien.upload.job.LienUploadJob;
@@ -125,6 +126,7 @@ public class PFFJobScheduler extends JobScheduler {
 	private UploadService blockAutoGenLetterUploadService;
 	private UploadService loanClosureUploadService;
 	private UploadService provisionUploadService;
+	private UploadService holdMarkingUploadService;
 
 	@Autowired(required = false)
 	private JobSchedulerExtension jobSchedulerExtension;
@@ -554,6 +556,11 @@ public class PFFJobScheduler extends JobScheduler {
 		args.put("lPPLoanTypeUploadService", lPPUploadService);
 		jobData = new JobData("LPP_LOAN_TYPE_JOB", LPPLoanTypeUploadJob.class, args);
 		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("holdMarkingUploadService", holdMarkingUploadService);
+		jobData = new JobData("HOLD_MARKING_JOB", HoldMarkingUploadJob.class, args);
+		jobDataList.add(jobData);
 		/**
 		 * For client specific jobs
 		 */
@@ -828,5 +835,10 @@ public class PFFJobScheduler extends JobScheduler {
 	@Autowired
 	public void setProvisionUploadService(UploadService provisionUploadService) {
 		this.provisionUploadService = provisionUploadService;
+	}
+
+	@Autowired
+	public void setHoldMarkingUploadService(UploadService holdMarkingUploadService) {
+		this.holdMarkingUploadService = holdMarkingUploadService;
 	}
 }

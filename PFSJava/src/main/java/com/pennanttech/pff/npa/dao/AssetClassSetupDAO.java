@@ -32,4 +32,6 @@ public interface AssetClassSetupDAO extends BasicCrudDao<AssetClassSetupHeader> 
 	void softDelete(long id, TableType tableType);
 
 	boolean checkDependency(long assetClassSetupId);
+
+	List<String> getAssetClassSetCodes(long finID);
 }

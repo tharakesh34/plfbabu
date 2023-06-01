@@ -749,7 +749,6 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		}, rs -> {
 			service.processPDCPresentment(ph, rs);
 		});
-
 	}
 
 	@Override
@@ -973,9 +972,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.SQL + sql);
 
-		jdbcOperations.update(sql, ps -> {
-			ps.setLong(1, presentmentId);
-		});
+		jdbcOperations.update(sql, ps -> ps.setLong(1, presentmentId));
 	}
 
 	@Override
@@ -985,9 +982,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			jdbcOperations.update(sql, ps -> {
-				ps.setLong(1, id);
-			});
+			jdbcOperations.update(sql, ps -> ps.setLong(1, id));
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -1124,7 +1119,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			sql.append(" Where fm.CustId = ?");
 		}
 
-		sql.append(" and pd.SchDate = ? and pd.Status = ?");
+		sql.append(" and pd.SchDate = ? and pd.AdvanceAmt > ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -1138,7 +1133,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			}
 
 			ps.setDate(index++, JdbcUtil.getDate(schData));
-			ps.setString(index, RepayConstants.PEXC_APPROV);
+			ps.setBigDecimal(index, BigDecimal.ZERO);
 		}, (rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
 
@@ -1905,9 +1900,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return jdbcOperations.update(sql.toString(), ps -> {
-			ps.setLong(1, headerId);
-		});
+		return jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, headerId));
 	}
 
 	@Override
@@ -1970,9 +1963,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public void deleteByHeaderId(long headerId) {
 		String sql = "DELETE FROM Presentment_FileImport WHERE HEADER_ID = ?";
 		logger.debug(Literal.SQL + sql);
-		this.jdbcOperations.update(sql, ps -> {
-			ps.setLong(1, headerId);
-		});
+		this.jdbcOperations.update(sql, ps -> ps.setLong(1, headerId));
 	}
 
 	@Override
@@ -1986,10 +1977,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setLong(index, headerId);
-		}, (rs, rowNum) -> {
-			return rs.getString("Presentment_Reference");
-		});
-
+		}, (rs, rowNum) -> rs.getString("Presentment_Reference"));
 	}
 
 	@Override
@@ -1998,9 +1986,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql, ps -> {
-			ps.setLong(1, finID);
-		}, (rs, i) -> {
+		return this.jdbcOperations.query(sql, ps -> ps.setLong(1, finID), (rs, i) -> {
 			PresentmentDetail pd = new PresentmentDetail();
 
 			pd.setStatus(rs.getString("Status"));
@@ -2132,9 +2118,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		return jdbcOperations.query(sql, ps -> {
 			ps.setLong(1, id);
 			ps.setInt(2, RepayConstants.PEXC_MANUAL_EXCLUDE);
-		}, (rs, i) -> {
-			return JdbcUtil.getLong(rs.getObject(1));
-		});
+		}, (rs, i) -> JdbcUtil.getLong(rs.getObject(1)));
 	}
 
 	@Override

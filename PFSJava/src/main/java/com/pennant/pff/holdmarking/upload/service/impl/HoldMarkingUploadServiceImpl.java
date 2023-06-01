@@ -1,8 +1,10 @@
 package com.pennant.pff.holdmarking.upload.service.impl;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -86,13 +88,29 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 			return;
 		}
 
-		validateType(detail, type);
+		BigDecimal amount = detail.getAmount();
+		BigDecimal holdBalance = holdMarkingHeaderDAO.getHoldBalance(finID, detail.getAccountNumber());
 
-		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
+		if (amount.compareTo(BigDecimal.ZERO) < 0) {
+			setError(detail, HoldMarkingUploadError.HM_06);
 			return;
 		}
 
-		setSuccesStatus(detail);
+		if (amount == BigDecimal.ZERO) {
+			setError(detail, HoldMarkingUploadError.HM_07);
+			return;
+		}
+
+		if (PennantConstants.REMOVE_HOLD_MARKING.equals(type) && holdBalance.compareTo(amount) < 0) {
+			setError(detail, HoldMarkingUploadError.HM_08);
+			return;
+		}
+
+		validateType(detail, type);
+
+		if (detail.getProgress() != EodConstants.PROGRESS_FAILED) {
+			setSuccesStatus(detail);
+		}
 	}
 
 	@Override
@@ -123,8 +141,8 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 						setSuccesStatus(detail);
 
 						try {
-							process(detail);
 							processHoldMarking(detail);
+							setSuccesStatus(detail);
 						} catch (Exception e) {
 							setFailureStatus(detail, e.getMessage());
 						}
@@ -179,7 +197,7 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.HOLD_MARKING.name(), this, "HoldMarkingUpload");
+		uploadProcess(UploadTypes.HOLD_MARKING.name(), this, "HoldMarkingUploadHeader");
 	}
 
 	@Override
@@ -189,7 +207,7 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 		HoldMarkingUpload holdMarking = (HoldMarkingUpload) ObjectUtil.valueAsObject(paramSource,
 				HoldMarkingUpload.class);
 
-		holdMarking.setReference(ObjectUtil.valueAsString(paramSource.getValue("Reference")));
+		holdMarking.setReference(ObjectUtil.valueAsString(paramSource.getValue("reference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
@@ -200,37 +218,19 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 
 		doValidate(header, holdMarking);
 
+		header.getUploadDetails().add(holdMarking);
+
 		updateProcess(header, holdMarking, paramSource);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void process(HoldMarkingUpload detail) {
-		int count = holdMarkingUploadDAO.getReference(detail.getReference(), detail.getAccountNumber(),
-				EodConstants.PROGRESS_SUCCESS);
-
-		TransactionStatus txnStatus = getTransactionStatus();
-		try {
-			if (count > 0) {
-				holdMarkingUploadDAO.delete(detail.getReference(), detail.getAccountNumber(),
-						EodConstants.PROGRESS_SUCCESS);
-			}
-
-			holdMarkingUploadDAO.save(detail);
-
-			setSuccesStatus(detail);
-			transactionManager.commit(txnStatus);
-		} catch (Exception e) {
-			if (txnStatus != null) {
-				transactionManager.rollback(txnStatus);
-			}
-
-			setFailureStatus(detail, e.getMessage());
-		}
-	}
-
 	private void processHoldMarking(HoldMarkingUpload detail) {
 		int count = 0;
+
+		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+		Date appDate = SysParamUtil.getAppDate();
+		long userId = 1000;
 
 		if (PennantConstants.HOLD_MARKING.equals(detail.getType())) {
 			HoldMarkingHeader hmh = new HoldMarkingHeader();
@@ -249,65 +249,106 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 			hmd.setFinID(detail.getReferenceID());
 			hmd.setHoldType(detail.getType());
 			hmd.setMarking(PennantConstants.MANUAL_ASSIGNMENT);
-			hmd.setMovementDate(detail.getAppDate());
+			hmd.setMovementDate(appDate);
 			hmd.setStatus(InsuranceConstants.PENDING);
 			hmd.setAmount(detail.getAmount());
 			hmd.setLogID(++count);
 			hmd.setHoldReleaseReason(detail.getRemarks());
+			hmd.setCreatedBy(userId);
+			hmd.setCreatedOn(currentTime);
+			hmd.setLastMntBy(userId);
+			hmd.setLastMntOn(currentTime);
+			hmd.setApprovedOn(currentTime);
+			hmd.setApprovedBy(userId);
 
 			holdMarkingDetailDAO.saveDetail(hmd);
+
+			Map<String, String> map = new HashMap<>();
+			if (hmd != null) {
+				map.put("Hold ID", String.valueOf(hmd.getHoldID()));
+				detail.setExtendedFields(map);
+			}
+
 		} else {
 			List<HoldMarkingHeader> list = holdMarkingHeaderDAO.getHoldByFinId(detail.getReferenceID(),
 					detail.getAccountNumber());
 
+			if (list.isEmpty()) {
+				logger.debug(Literal.LEAVING);
+				return;
+			}
+
 			if (CollectionUtils.isNotEmpty(list)) {
-				list = list.stream().sorted((l1, l2) -> Long.compare(l2.getHoldID(), l1.getHoldID()))
+				list = list.stream().sorted((l1, l2) -> Long.compare(l1.getHoldID(), l2.getHoldID()))
 						.collect(Collectors.toList());
 			}
 
+			HoldMarkingDetail hmd = new HoldMarkingDetail();
+			BigDecimal detailAmount = detail.getAmount();
+
 			for (HoldMarkingHeader headerList : list) {
+				if (detailAmount.compareTo(BigDecimal.ZERO) > 0) {
 
-				if (detail.getAmount().compareTo(BigDecimal.ZERO) > 0) {
-
-					if (detail.getAmount().compareTo(headerList.getBalance()) > 0) {
+					if (detailAmount.compareTo(headerList.getBalance()) > 0) {
 						headerList.setBalance(BigDecimal.ZERO);
-						headerList.setReleaseAmount(headerList.getBalance());
+						headerList.setReleaseAmount(headerList.getHoldAmount());
+
+						detailAmount = detailAmount.subtract(headerList.getHoldAmount());
+						hmd.setAmount(headerList.getHoldAmount());
+						hmd.setiD(headerList.getId());
+						hmd.setHoldID(headerList.getHoldID());
+						updateMovementDetails(detail, hmd, list);
 					} else {
-						headerList.setBalance(headerList.getBalance().subtract(detail.getAmount()));
-						headerList.setReleaseAmount(headerList.getReleaseAmount().add(detail.getAmount()));
+						headerList.setBalance(headerList.getBalance().subtract(detailAmount));
+						headerList.setReleaseAmount(headerList.getReleaseAmount().add(detailAmount));
+
+						hmd.setAmount(headerList.getReleaseAmount());
+						hmd.setiD(headerList.getId());
+						hmd.setHoldID(headerList.getHoldID());
+						updateMovementDetails(detail, hmd, list);
+						detailAmount = BigDecimal.ZERO;
 					}
-
-					detail.getAmount().subtract(headerList.getHoldAmount());
-
 					holdMarkingHeaderDAO.updateHeader(headerList);
 				}
-				detail.getAmount().subtract(headerList.getReleaseAmount());
 			}
-
-			HoldMarkingHeader hmh = new HoldMarkingHeader();
-
-			if (CollectionUtils.isNotEmpty(list)) {
-				hmh = list.stream().sorted((l1, l2) -> Long.compare(l2.getHoldID(), l1.getHoldID()))
-						.collect(Collectors.toList()).get(0);
-			}
-
-			count = holdMarkingDetailDAO.getCountId(hmh.getHoldID());
-
-			HoldMarkingDetail hmd = new HoldMarkingDetail();
-			hmd.setHoldID(hmh.getHoldID());
-			hmd.setHeaderID(hmh.getId());
-			hmd.setFinReference(detail.getReference());
-			hmd.setFinID(detail.getReferenceID());
-			hmd.setHoldType(detail.getType());
-			hmd.setMarking(PennantConstants.MANUAL_ASSIGNMENT);
-			hmd.setMovementDate(detail.getAppDate());
-			hmd.setStatus(InsuranceConstants.PENDING);
-			hmd.setAmount(detail.getAmount());
-			hmd.setLogID(++count);
-			hmd.setHoldReleaseReason(detail.getRemarks());
-
-			holdMarkingDetailDAO.saveDetail(hmd);
 		}
+	}
+
+	private void updateMovementDetails(HoldMarkingUpload detail, HoldMarkingDetail hmd, List<HoldMarkingHeader> list) {
+		int count;
+
+		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+		Date appDate = SysParamUtil.getAppDate();
+		long userId = 1000;
+
+		HoldMarkingHeader hmh = new HoldMarkingHeader();
+
+		if (CollectionUtils.isNotEmpty(list)) {
+			hmh = list.stream().sorted((l1, l2) -> Long.compare(l1.getHoldID(), l2.getHoldID()))
+					.collect(Collectors.toList()).get(0);
+		}
+
+		count = holdMarkingDetailDAO.getCountId(hmh.getHoldID());
+
+		hmd.setHoldID(hmd.getHoldID());
+		hmd.setHeaderID(hmd.getiD());
+		hmd.setFinReference(detail.getReference());
+		hmd.setFinID(detail.getReferenceID());
+		hmd.setHoldType(detail.getType());
+		hmd.setMarking(PennantConstants.MANUAL_ASSIGNMENT);
+		hmd.setMovementDate(appDate);
+		hmd.setStatus(InsuranceConstants.PENDING);
+		hmd.setAmount(hmd.getAmount());
+		hmd.setLogID(++count);
+		hmd.setHoldReleaseReason(detail.getRemarks());
+		hmd.setCreatedBy(userId);
+		hmd.setCreatedOn(currentTime);
+		hmd.setLastMntBy(userId);
+		hmd.setLastMntOn(currentTime);
+		hmd.setApprovedOn(currentTime);
+		hmd.setApprovedBy(userId);
+
+		holdMarkingDetailDAO.saveDetail(hmd);
 	}
 
 	private void validateType(HoldMarkingUpload detail, String type) {
@@ -316,7 +357,8 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 			return;
 		}
 
-		if (holdMarkingUploadDAO.isValidateAction(detail.getReferenceID(), type, detail.getHeaderId())) {
+		if (PennantConstants.REMOVE_HOLD_MARKING.equals(type)
+				&& !(holdMarkingUploadDAO.isValidateType(detail.getReferenceID(), detail.getAccountNumber()))) {
 			setError(detail, HoldMarkingUploadError.HM_03);
 			return;
 		}

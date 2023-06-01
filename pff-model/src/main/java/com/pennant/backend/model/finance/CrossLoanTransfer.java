@@ -45,6 +45,7 @@ public class CrossLoanTransfer extends AbstractWorkflowEntity {
 	private CrossLoanTransfer befImage;
 	private LoggedInUser userDetails;
 	private Date valueDate;
+	private Date excessValueDate;
 	private String source;
 	private String excessType;
 	private long createdBy;
@@ -52,6 +53,7 @@ public class CrossLoanTransfer extends AbstractWorkflowEntity {
 	private long approvedBy;
 	private Timestamp approvedOn;
 	private List<ManualAdvise> manualAdvisesList = new ArrayList<>();
+	private Date postDate;
 
 	public CrossLoanTransfer() {
 		super();
@@ -72,6 +74,8 @@ public class CrossLoanTransfer extends AbstractWorkflowEntity {
 		excludeFields.add("moduleType");
 		excludeFields.add("process");
 		excludeFields.add("valueDate");
+		excludeFields.add("excessValueDate");
+		excludeFields.add("postDate");
 
 		return excludeFields;
 	}
@@ -328,6 +332,14 @@ public class CrossLoanTransfer extends AbstractWorkflowEntity {
 		this.valueDate = valueDate;
 	}
 
+	public Date getExcessValueDate() {
+		return excessValueDate;
+	}
+
+	public void setExcessValueDate(Date excessValueDate) {
+		this.excessValueDate = excessValueDate;
+	}
+
 	public String getSource() {
 		return source;
 	}
@@ -382,6 +394,14 @@ public class CrossLoanTransfer extends AbstractWorkflowEntity {
 
 	public void setManualAdvisesList(List<ManualAdvise> manualAdvisesList) {
 		this.manualAdvisesList = manualAdvisesList;
+	}
+
+	public Date getPostDate() {
+		return postDate;
+	}
+
+	public void setPostDate(Date postDate) {
+		this.postDate = postDate;
 	}
 
 }

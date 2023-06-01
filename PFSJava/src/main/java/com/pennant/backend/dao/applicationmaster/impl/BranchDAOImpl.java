@@ -455,9 +455,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setLong(index++, JdbcUtil.getLong(clusterId));
-		}, (rs, rowNum) -> {
-			return rs.getString("BranchCode");
-		});
+		}, (rs, rowNum) -> rs.getString("BranchCode"));
 	}
 
 }

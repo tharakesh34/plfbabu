@@ -112,9 +112,7 @@ public class LegalExpensesDAOImpl extends SequenceDao<LegalExpenses> implements 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-				ps.setString(1, le.getExpReference());
-			});
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> ps.setString(1, le.getExpReference()));
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();

@@ -11,40 +11,6 @@ import com.pennanttech.pennapps.core.AppException;
 public class BatchUtil {
 	public static DataEngineStatus EXECUTING = null;
 
-	public static void setExecution(ChunkContext context, DataEngineStatus status) {
-		StepContext stepContext = context.getStepContext();
-		StepExecution stepExecution = stepContext.getStepExecution();
-
-		status.setReference(stepExecution.getStepName());
-		status.setTotalRecords(status.getTotalRecords());
-		status.setProcessedRecords(status.getProcessedRecords());
-		status.setStartTime(stepExecution.getStartTime());
-		status.setEndTime(stepExecution.getEndTime());
-
-		String exitCode = stepExecution.getExitStatus().getExitCode();
-		status.setStatus(exitCode.substring(0, 1));
-
-		stepExecution.getExecutionContext().put("STATUS", status);
-
-		if (EXECUTING == null) {
-			EXECUTING = new DataEngineStatus();
-		}
-
-		if ("F".equals(status.getStatus())) {
-			throw new AppException(status.getRemarks());
-		}
-
-		while ("I".equals(status.getStatus()) || "".equals(status.getStatus())) {
-			if ("F".equals(status.getStatus())) {
-				throw new AppException(status.getRemarks());
-			}
-		}
-
-		if ("S".equals(status.getStatus())) {
-			status.setStatus(com.pennanttech.dataengine.constants.ExecutionStatus.C.name());
-		}
-	}
-
 	public static DataEngineStatus getRunningStatus(StepExecution stepExecution) {
 		DataEngineStatus executionStatus = null;
 		ExitStatus exitStatus = stepExecution.getExitStatus();

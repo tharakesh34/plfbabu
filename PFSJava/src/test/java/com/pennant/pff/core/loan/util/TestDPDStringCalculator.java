@@ -22,7 +22,7 @@ public class TestDPDStringCalculator {
 	private static final String LABEL_RESOURCE_SUFFIX = "label.properties";
 
 	@BeforeTest
-	public void initilize() {
+	public void initilize() throws IOException {
 		App.CODE = "PFF";
 		App.HOME_PATH = "D:\\Pennant\\CORE\\HDFC\\BASE";
 
@@ -438,6 +438,45 @@ public class TestDPDStringCalculator {
 		Assert.assertEquals(null, DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
 	}
 
+	@Test
+	public void monthlyDaily() {
+		String curDPDStr = null;
+		FinanceMain fm = new FinanceMain();
+		fm.setDueBucket(1);
+		fm.setRepayFrq("D0000");
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2020, 02, 01));
+		fm.setMaturityDate(DateUtil.getDate(2020, 03, 01));
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2020, 01, 25)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 26)));// 1st Inst
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 27)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 28)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 29)));
+
+		Assert.assertEquals(null, DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
+	}
+
+	@Test
+	public void monthlyMonthly() {
+		String curDPDStr = null;
+		FinanceMain fm = new FinanceMain();
+		fm.setDueBucket(2);
+		fm.setRepayFrq("M0005");
+		fm.setMaturityDate(DateUtil.getDate(2021, 06, 05));
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2021, 02, 01));
+
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2021, 02, 05)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2021, 03, 05)));// 1st Inst
+		schedules.add(getSchedule(DateUtil.getDate(2021, 04, 05)));
+		schedules.add(getSchedule(DateUtil.getDate(2021, 05, 05)));
+		schedules.add(getSchedule(DateUtil.getDate(2021, 06, 05)));
+
+		Assert.assertEquals("2", DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
+	}
+
 	private FinanceScheduleDetail getSchedule(Date schdDate) {
 		FinanceScheduleDetail fsd = new FinanceScheduleDetail();
 		fsd.setSchDate(schdDate);
@@ -452,14 +491,29 @@ public class TestDPDStringCalculator {
 		return fsd;
 	}
 
-	private Resource[] getResources(String labelResourcePrefix) {
+	private Resource[] getResources(String labelResourcePrefix) throws IOException {
 		ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-		try {
-			return resolver.getResources("classpath*:*".concat(labelResourcePrefix));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+
+		return resolver.getResources("classpath*:*".concat(labelResourcePrefix));
+	}
+
+	@Test
+	public void Monthlyprocess() {
+		String curDPDStr = null;
+		FinanceMain fm = new FinanceMain();
+		fm.setDueBucket(1);
+		fm.setRepayFrq("D0000");
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2020, 02, 01));
+		fm.setMaturityDate(DateUtil.getDate(2020, 03, 01));
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2020, 01, 25)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 26)));// 1st Inst
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 27)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 28)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 29)));
+
+		Assert.assertEquals(null, DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
 	}
 
 }

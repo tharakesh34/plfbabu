@@ -327,7 +327,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 				continue;
 			}
 
-			JVPosting upload = (JVPosting) auditHeader.getModelData();
+			JVPosting upload = (JVPosting) auditHeader.getAuditDetail().getModelData();
 
 			if (auditHeader.getErrorMessage() != null) {
 				ErrorDetail ed = auditHeader.getErrorMessage().get(0);

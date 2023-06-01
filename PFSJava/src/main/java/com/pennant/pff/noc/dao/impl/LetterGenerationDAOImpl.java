@@ -232,7 +232,7 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 	public List<ReceiptAllocationDetail> getPrinAndPftWaiver(String finReference) {
 		long id = getEarltSettleReceipt(finReference);
 		if (id == 0) {
-			return null;
+			return new ArrayList<>();
 		}
 
 		String sql = "Select WaivedAmount,AllocationType From  ReceiptAllocationDetail Where ReceiptId = ? and AllocationType in (?, ?, ?, ?)";
@@ -264,25 +264,39 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 
 	public List<GenerateLetter> getLetterInfo(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, GeneratedBy, TrackingID, Status, Remarks");
-		sql.append(" From Letter_Generation gl");
-		sql.append(" Inner Join Templates c on c.TemplateID = gl.EmailTemplate");
+		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, LetterType");
+		sql.append(", GeneratedBy, ll.ApprovedBy, ll.ApprovedOn");
+		sql.append(", Status, Remarks, EmailID, FileName");
+		sql.append(", CourierAgency, DispatchDate, DeliveryDate, DeliveryStatus");
+		sql.append(", su.UsrLogin ApproverName");
+		sql.append(" From Loan_Letters ll");
+		sql.append(" Left Join SecUsers su on su.UsrId = ll.ApprovedBy");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-			GenerateLetter fm = new GenerateLetter();
+			GenerateLetter letter = new GenerateLetter();
 
-			fm.setGeneratedDate(rs.getDate("GeneratedDate"));
-			fm.setModeofTransfer(rs.getString("ModeOfTransfer"));
-			fm.setRequestType(rs.getString("RequestType"));
-			fm.setGeneratedBy(rs.getLong("GeneratedBy"));
-			fm.setTrackingID(rs.getLong("TrackingID"));
-			fm.setStatus(rs.getString("Status"));
-			fm.setRemarks(rs.getString("Remarks"));
+			letter.setGeneratedBy(JdbcUtil.getLong(rs.getObject("GeneratedBy")));
+			letter.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
+			letter.setGeneratedDate(rs.getDate("GeneratedDate"));
+			letter.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+			letter.setModeofTransfer(rs.getString("ModeOfTransfer"));
+			letter.setRequestType(rs.getString("RequestType"));
+			letter.setLetterType(rs.getString("LetterType"));
+			letter.setStatus(rs.getString("Status"));
+			letter.setRemarks(rs.getString("Remarks"));
+			letter.setEmailID(rs.getString("EmailID"));
+			letter.setFileName(rs.getString("FileName"));
+			letter.setCourierAgency(rs.getString("CourierAgency"));
+			letter.setDispatchDate(rs.getDate("DispatchDate"));
+			letter.setDeliveryDate(rs.getDate("DeliveryDate"));
+			letter.setDeliveryStatus(rs.getString("DeliveryStatus"));
+			letter.setApproverName(rs.getString("ApproverName"));
 
-			return fm;
-		}, finID, 1);
+			return letter;
+		}, finID);
 	}
 
 	@Override
@@ -291,7 +305,7 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 			gl.setId(getNextValue("SEQ_Letter_Generate_Manual"));
 		}
 
-		StringBuilder sql = new StringBuilder("Insert Into Letter_Generate_Manual");
+		StringBuilder sql = new StringBuilder("Insert Into LOAN_LETTER_MANUAL ");
 		sql.append(type.getSuffix());
 		sql.append("(LetterType, FinID");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy");
@@ -380,5 +394,51 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
+	}
+
+	@Override
+	public List<GenerateLetter> getLoanLetterInfo(long finID, String letterType) {
+		String sql = "Select DeliveryStatus From LOAN_LETTERS Where FinID = ? and LetterType = ? and Generated = ? order by ID Desc";
+
+		logger.debug(Literal.SQL + sql);
+
+		return jdbcOperations.query(sql, (rs, rowNum) -> {
+			GenerateLetter fm = new GenerateLetter();
+
+			fm.setDeliveryStatus(rs.getString("DeliveryStatus"));
+
+			return fm;
+		}, finID, letterType, 1);
+	}
+
+	@Override
+	public long getInitiatedLoan(long finID, String letterType) {
+		return finID;
+	}
+
+	@Override
+	public boolean letterIsInQueu(long finID, String letterType) {
+		return false;
+	}
+
+	@Override
+	public void deleteAutoLetterGeneration(long finID, String letterType) {
+		//
+	}
+
+	@Override
+	public String getReasonCode(long finID) {
+		return null;
+	}
+
+	@Override
+	public String getCancelReasons(String reference) {
+		return null;
+	}
+
+	@Override
+	public void updateAutoLetterGeneration(long finID, String letterType) {
+		// TODO Auto-generated method stub
+
 	}
 }

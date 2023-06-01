@@ -1,15 +1,11 @@
 package com.pennant.pff.writeoffupload.dao.impl;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennant.eod.constants.EodConstants;
@@ -75,9 +71,7 @@ public class WriteOffUploadDAOImpl extends SequenceDao<WriteOffUploadDetail> imp
 			ps.setLong(++index, headerID);
 			ps.setInt(++index, ReceiptDetailStatus.SUCCESS.getValue());
 
-		}, (rs, roNum) -> {
-			return rs.getString(1);
-		});
+		}, (rs, roNum) -> rs.getString(1));
 	}
 
 	@Override
@@ -169,7 +163,7 @@ public class WriteOffUploadDAOImpl extends SequenceDao<WriteOffUploadDetail> imp
 	}
 
 	@Override
-	public long saveLog(WriteOffUploadDetail detail, FileUploadHeader header) {
+	public void saveLog(WriteOffUploadDetail detail, FileUploadHeader header) {
 		StringBuilder sql = new StringBuilder("Insert into WRITE_OFF_UPLOAD_LOG");
 		sql.append(" (FinId, FinReference, Remarks, CreatedBy, CreatedOn");
 		sql.append(", ApprovedBy, ApprovedOn, ReceiptId, Event");
@@ -177,37 +171,20 @@ public class WriteOffUploadDAOImpl extends SequenceDao<WriteOffUploadDetail> imp
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		KeyHolder keyHolder = new GeneratedKeyHolder();
+		this.jdbcOperations.update(sql.toString(), ps -> {
 
-		this.jdbcOperations.update(new PreparedStatementCreator() {
+			int index = 0;
 
-			@Override
-			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-				PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
-
-				int index = 0;
-
-				ps.setObject(++index, detail.getReferenceID());
-				ps.setString(++index, detail.getReference());
-				ps.setString(++index, detail.getRemarks());
-				ps.setLong(++index, header.getCreatedBy());
-				ps.setTimestamp(++index, header.getCreatedOn());
-				ps.setLong(++index, header.getLastMntBy());
-				ps.setTimestamp(++index, header.getLastMntOn());
-				ps.setLong(++index, detail.getReceiptId());
-				ps.setString(++index, detail.getEvent());
-
-				return ps;
-			}
-		}, keyHolder);
-
-		Number key = keyHolder.getKey();
-
-		if (key == null) {
-			return 0;
-		}
-
-		return key.longValue();
+			ps.setObject(++index, detail.getReferenceID());
+			ps.setString(++index, detail.getReference());
+			ps.setString(++index, detail.getRemarks());
+			ps.setLong(++index, header.getCreatedBy());
+			ps.setTimestamp(++index, header.getCreatedOn());
+			ps.setLong(++index, header.getLastMntBy());
+			ps.setTimestamp(++index, header.getLastMntOn());
+			ps.setLong(++index, detail.getReceiptId());
+			ps.setString(++index, detail.getEvent());
+		});
 	}
 
 	@Override

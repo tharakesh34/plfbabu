@@ -215,7 +215,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 
 	// ServiceDAOs / Domain Classes
 	private transient GuarantorDetailService guarantorDetailService;
-	private transient static PagedListService pagedListService;
+	private transient PagedListService pagedListService;
 	private List<ValueLabel> listGuarantorIDType = PennantAppUtil.getIdentityType();
 	private boolean newRecord = false;
 	private boolean newGuarantor = false;
@@ -240,7 +240,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	private FinanceMain financeMain;
 	private BigDecimal totSharePerc;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
-	private boolean isEnqProcess = false;
 	private boolean finsumryGurnatorEnq = false;
 
 	/**
@@ -368,7 +367,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				this.moduleType = PennantConstants.MODULETYPE_ENQ;
 			}
 			if (arguments.containsKey("isEnqProcess")) {
-				isEnqProcess = (Boolean) arguments.get("isEnqProcess");
 				this.moduleType = PennantConstants.MODULETYPE_ENQ;
 			}
 			if (arguments.containsKey("CustomerEnq")) {
@@ -2703,10 +2701,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 
 	public GuarantorDetailListCtrl getGuarantorDetailListCtrl() {
 		return this.guarantorDetailListCtrl;
-	}
-
-	public PagedListService getPagedListService() {
-		return pagedListService;
 	}
 
 	public void setPagedListService(PagedListService pagedListService) {

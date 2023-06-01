@@ -82,6 +82,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.InvoiceDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -93,6 +94,7 @@ import com.pennant.backend.service.finance.FinChequeHeaderService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.service.finance.validation.FinanceCancelValidator;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -104,6 +106,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.fincancelupload.exception.FinCancelUploadError;
 import com.pennant.pff.holdmarking.service.HoldMarkingService;
 import com.pennant.pff.letter.service.LetterService;
 import com.pennant.pff.lien.service.LienService;
@@ -147,6 +150,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private LetterService letterService;
 
 	private HoldMarkingService holdMarkingService;
+	private FinanceCancelValidator financeCancelValidator;
 
 	public FinanceCancellationServiceImpl() {
 		super();
@@ -452,6 +456,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			serviceUID = finServInst.getInstructionUID();
 		}
 
+		fm.setOldActiveState(fm.isFinIsActive());
 		// Fetch Next Payment Details from Finance for Salaried Postings Verification
 		fm.setFinIsActive(false);
 		fm.setClosedDate(appData);
@@ -496,33 +501,45 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			List<FinReceiptDetail> receiptDetailList = new ArrayList<>();
 			for (Long receiptId : receiptIdList) {
 				receiptDetailList.addAll(finReceiptDetailDAO.getReceiptDetailForCancelReversalByID(receiptId, "_view"));
+			}
 
-				FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(receiptId);
+			if (CollectionUtils.isNotEmpty(receiptIdList)) {
+				finReceiptHeaderDAO.cancelReceipts(finReference);
+				finReceiptDetailDAO.cancelReceiptDetails(receiptIdList);
 
-				if (fea != null) {
-					for (FinReceiptDetail rd : receiptDetailList) {
-						rd.setPayAgainstID(fea.getExcessID());
+				for (Long receiptId : receiptIdList) {
+					FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(receiptId);
+					if (fea != null) {
+						fea.setAmount(BigDecimal.ZERO);
+						fea.setReservedAmt(BigDecimal.ZERO);
+						fea.setUtilisedAmt(BigDecimal.ZERO);
+						fea.setBalanceAmt(BigDecimal.ZERO);
+						finExcessAmountDAO.updateExcess(fea);
 					}
 				}
 			}
-			if (receiptIdList != null && receiptIdList.size() > 0) {
-				finReceiptHeaderDAO.cancelReceipts(finReference);
-				finReceiptDetailDAO.cancelReceiptDetails(receiptIdList);
-			}
 
 			for (FinReceiptDetail rd : receiptDetailList) {
+				String paymentType = rd.getPaymentType();
+				if (ReceiptMode.EMIINADV.equals(paymentType) || ReceiptMode.EXCESS.equals(paymentType)
+						|| ReceiptMode.TEXCESS.equals(paymentType) || ReceiptMode.PAYABLE.equals(paymentType)
+						|| ReceiptMode.ADVINT.equals(paymentType) || ReceiptMode.ADVEMI.equals(paymentType)
+						|| ReceiptMode.CASHCLT.equals(paymentType) || ReceiptMode.DSF.equals(paymentType)) {
+					continue;
+				}
+
 				FinServiceInstruction serviceInstr = createFinServInstr(finReference, rd, finID);
 
 				FinReceiptData frd = feeCalculator
 						.calculateFees(receiptService.prepareFinReceiptData(serviceInstr, fd));
 				serviceInstr.setFinFeeDetails(frd.getFinanceDetail().getFinScheduleData().getFinFeeDetailList());
 				serviceInstr.setLoanCancellation(true);
-
+				serviceInstr.setLoanCancellationType(fm.getCancelType());
 				FinanceDetail detail = receiptService.receiptTransaction(serviceInstr);
 				FinScheduleData schd = detail.getFinScheduleData();
+
 				if (CollectionUtils.isNotEmpty(schd.getErrorDetails())) {
-					ErrorDetail error = schd.getErrorDetails().get(0);
-					throw new AppException(error.getError());
+					throw new AppException(schd.getErrorDetails().get(0).getError());
 				}
 			}
 		}
@@ -649,6 +666,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			notificationService.sendNotifications(notification, fd, fm.getFinType(), fd.getDocumentDetailsList());
 		}
 
+		fd.setAppDate(appData);
 		if (ImplementationConstants.ALLOW_LIEN
 				&& FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
 			lienService.update(fd);
@@ -784,6 +802,12 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		String usrLanguage = auditHeader.getUsrLanguage();
+		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "",
+				false);
 
 		// Extended field details Validation
 		if (financeDetail.getExtendedFieldRender() != null) {
@@ -792,7 +816,15 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
+		if (!"doReject".equals(method)) {
+			FinCancelUploadError errorDetail = financeCancelValidator.validLoan(fm, schedules);
 
+			if (errorDetail != null) {
+				auditDetail.setErrorDetail(
+						new ErrorDetail("CL", FinanceCancelValidator.getOverrideDescription(errorDetail, fm), null));
+				auditDetails.add(auditDetail);
+			}
+		}
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}
@@ -1211,5 +1243,10 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	@Autowired
 	public void setLetterService(LetterService letterService) {
 		this.letterService = letterService;
+	}
+
+	@Autowired
+	public void setFinanceCancelValidator(FinanceCancelValidator financeCancelValidator) {
+		this.financeCancelValidator = financeCancelValidator;
 	}
 }

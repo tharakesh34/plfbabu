@@ -1613,6 +1613,9 @@
 			<menuItem id="menu_Item_MaturedLoanClosureEnquiry"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/SelectLoanClosureEnquiryList.zul?module=Matured"
 				rightName="menuItem_MaturedLoanClosureEnquiry" />
+			<menuItem id="menu_Item_LetterLogEnquiry"
+				zulNavigation="/WEB-INF/pages/NOC/LetterLogEnquiryList.zul"
+				rightName="menuItem_Enquiry_LetterLogEnquiry" />
 		</menu>
 		<menu id="menu_Category_Verification_Enquiry">
 			<menuItem id="menu_Item_FieldInvestigation_Enquiry"
@@ -1688,6 +1691,10 @@
 		<menu id="menu_Category_LienEnquiry">
 			<menuItem id="menu_Item_LienEnquiry" zulNavigation="/WEB-INF/pages/LienEnquiry/SelectLienEnquiry.zul" rightName="menu_Item_Lien_Enquiry"/>
 		</menu>
+		<menu id="menu_Category_HoldEnquiry">
+		<menuItem id="menu_Item_HoldEnquiry" zulNavigation="/WEB-INF/pages/HoldEnquiry/SelectHoldEnquiry.zul"
+			rightName="menu_Item_Hold_Enquiry" />
+	</menu>
 	</menu>
 
 	<menu id="menu_Category_CIBIL">
@@ -2730,6 +2737,7 @@
 		rightName="menuItem_MenuRoles" />
 
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
-		rightName="menu_Item_JobsMonitoring" />
+	rightName="menu_Item_JobsMonitoring" />
+	
 
 </ns2:XMLRootMenu>

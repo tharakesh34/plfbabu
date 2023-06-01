@@ -4067,14 +4067,14 @@ public class PennantJavaUtil {
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName" }, null, 600));
 
-		ModuleUtil.register("HoldMarkingUpload",
-				new ModuleMapping("HoldMarkingUpload", FileUploadHeader.class,
+		ModuleUtil.register("HoldMarkingUploadHeader",
+				new ModuleMapping("HoldMarkingUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("GenerateLetter",
 				new ModuleMapping("GenerateLetter", GenerateLetter.class,
-						new String[] { "LETTER_GENERATE_MANUAL", "LETTER_GENERATE_MANUAL" }, masterWF,
+						new String[] { "LOAN_LETTER_MANUAL", "LOAN_LETTER_MANUAL" }, masterWF,
 						new String[] { "Id", "FinID" }, null, 600));
 
 		registerCustomModules();

@@ -124,7 +124,6 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 
 	// Bean Setters by application Context
 	private AccountEngineExecution engineExecution;
-	private String roleCode = "";
 
 	/**
 	 * default constructor.<br>
@@ -159,10 +158,6 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 
 		if (arguments.containsKey("financeMainDialogCtrl")) {
 			this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
-		}
-
-		if (arguments.containsKey("roleCode")) {
-			this.roleCode = (String) arguments.get("roleCode");
 		}
 
 		getBorderLayoutHeight();

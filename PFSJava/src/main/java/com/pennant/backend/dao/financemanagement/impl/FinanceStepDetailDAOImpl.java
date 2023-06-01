@@ -57,9 +57,7 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		}, (rs, i) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), (rs, i) -> {
 			FinanceStepPolicyDetail spd = new FinanceStepPolicyDetail();
 
 			spd.setFinID(rs.getLong("FinID"));

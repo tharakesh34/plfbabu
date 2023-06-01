@@ -267,9 +267,7 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, categoryName);
-		}, (rs, i) -> {
+		return jdbcOperations.query(sql.toString(), ps -> ps.setString(1, categoryName), (rs, i) -> {
 			CovenantType ct = new CovenantType();
 
 			ct.setId(rs.getLong("Id"));

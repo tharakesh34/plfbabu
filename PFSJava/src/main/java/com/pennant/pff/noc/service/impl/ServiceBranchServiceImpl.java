@@ -458,6 +458,21 @@ public class ServiceBranchServiceImpl extends GenericService<ServiceBranch> impl
 			ah.setErrorDetail(new ErrorDetail("41015", valueParm));
 		}
 
+		if (CollectionUtils.isEmpty(ah.getErrorDetails()) && CollectionUtils.isNotEmpty(list)) {
+			for (ServiceBranchesLoanType sbl : list) {
+				ServiceBranchesLoanType existSbl = this.serviceBranchDAO.getServiceBranchesLoanType(sbl.getFinType(),
+						sbl.getBranch(), code);
+				if (existSbl != null) {
+					String[] valueParm = new String[3];
+					valueParm[0] = sbl.getBranch() + " Branch";
+					valueParm[1] = "-" + sbl.getFinType() + " Loan Type";
+					valueParm[2] = " already mapped against " + existSbl.getCode() + " code";
+					ah.setErrorDetail(new ErrorDetail("90203", valueParm));
+					break;
+				}
+			}
+		}
+
 		ah.setErrorDetails(ErrorUtil.getErrorDetails(ah.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);

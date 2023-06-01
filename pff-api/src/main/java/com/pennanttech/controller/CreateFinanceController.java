@@ -19,8 +19,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
@@ -214,8 +212,6 @@ import com.pennanttech.ws.model.financetype.FinanceInquiry;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class CreateFinanceController extends AbstractController {
-	private static final Logger logger = LogManager.getLogger(CreateFinanceController.class);
-
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private CustomerDetailsService customerDetailsService;
 	private FinanceDetailService financeDetailService;
@@ -766,7 +762,6 @@ public class CreateFinanceController extends AbstractController {
 			if (ch.getNoOfCheques() < number) {
 				valueParm[1] = String.valueOf(number);
 				schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
-				return;
 			}
 		}
 	}

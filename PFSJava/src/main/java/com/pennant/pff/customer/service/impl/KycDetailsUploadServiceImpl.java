@@ -18,7 +18,7 @@ import com.pennant.backend.dao.customermasters.KycDetailsUploadDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.dao.finance.JointAccountDetailDAO;
-import com.pennant.backend.model.bulkAddressUpload.CustomerKycDetail;
+import com.pennant.backend.model.bulkaddressupload.CustomerKycDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.customer.exception.CustomerDetailsUploadError;

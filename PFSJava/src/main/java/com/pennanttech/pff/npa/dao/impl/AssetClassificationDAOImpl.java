@@ -192,7 +192,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
+		return this.jdbcOperations.query(sql, ps -> {
 
 		}, (rs, Num) -> {
 			Queing queing = new Queing();
@@ -236,9 +236,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.update(sql, ps -> {
-			ps.setInt(1, EodConstants.PROGRESS_SUCCESS);
-		});
+		this.jdbcOperations.update(sql, ps -> ps.setInt(1, EodConstants.PROGRESS_SUCCESS));
 
 		sql = "Update Asset_Classification_Queue Set Progress = ? Where Progress = ?";
 
@@ -1030,11 +1028,11 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 			ps.setString(index++, as.getEffFinReference());
 			ps.setObject(index++, as.getEffFinID());
 			ps.setDate(index++, JdbcUtil.getDate(as.getClassDate()));
-			ps.setLong(index++, as.getNpaClassID());
-			ps.setLong(index++, as.getEffNpaClassID());
+			ps.setLong(index++, 0);
+			ps.setLong(index++, 0);
 
-			ps.setLong(index++, as.getEffNpaClassID());
-			ps.setLong(index, as.getNpaClassID());
+			ps.setLong(index++, 0);
+			ps.setLong(index, 0);
 		});
 	}
 

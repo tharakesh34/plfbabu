@@ -20,5 +20,5 @@ public interface LienDetailsDAO {
 
 	List<LienDetails> getLienListByLienId(Long lienId);
 
-	LienDetails getLienByHeaderId(Long id);
+	LienDetails getLienByHeaderId(Long id, String finreference);
 }

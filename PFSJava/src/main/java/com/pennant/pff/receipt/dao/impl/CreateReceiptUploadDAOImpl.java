@@ -251,9 +251,7 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 				ps.setString(index, rud.getTransactionRef());
 			}
 
-		}, (rs, roNum) -> {
-			return rs.getString(1);
-		});
+		}, (rs, roNum) -> rs.getString(1));
 	}
 
 	@Override

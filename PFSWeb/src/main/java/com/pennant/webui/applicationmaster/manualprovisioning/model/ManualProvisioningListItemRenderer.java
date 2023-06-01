@@ -8,7 +8,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.util.PennantJavaUtil;
 
@@ -17,14 +16,11 @@ public class ManualProvisioningListItemRenderer implements ListitemRenderer<Prov
 	private static final long serialVersionUID = -4554647022945989420L;
 
 	public ManualProvisioningListItemRenderer() {
-	    super();
+		super();
 	}
 
 	@Override
 	public void render(Listitem item, Provision provision, int count) {
-
-		int format = CurrencyUtil.getFormat(provision.getFinCcy());
-
 		Listcell lc;
 		lc = new Listcell(provision.getCustCIF());
 		lc.setParent(item);

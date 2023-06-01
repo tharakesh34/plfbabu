@@ -212,7 +212,7 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 						out.write(getExcelData(id));
 						out.closeEntry();
 					}
-					out.close();
+
 					String zipfileName = "ReceiptUpload.zip";
 
 					byte[] tobytes = arrayOutputStream.toByteArray();

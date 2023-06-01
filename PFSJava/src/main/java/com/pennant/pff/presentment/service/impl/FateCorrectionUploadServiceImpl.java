@@ -1,5 +1,6 @@
 package com.pennant.pff.presentment.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
-import com.ibm.icu.math.BigDecimal;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
@@ -60,17 +60,21 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 			return;
 		}
 
-		FinanceMain fm = financeMainDAO.getFinanceMain(reference, header.getEntityCode());
+		Long finID = financeMainDAO.getFinID(reference);
 
-		if (fm == null) {
+		if (finID == null) {
 			setError(detail, PresentmentError.REPRMNT514);
 			return;
 		}
 
-		if (!fm.isFinIsActive()) {
+		Long activeFinID = financeMainDAO.getActiveFinID(reference);
+
+		if (activeFinID == null) {
 			setError(detail, PresentmentError.REPRMNT515);
 			return;
 		}
+
+		FinanceMain fm = financeMainDAO.getFinanceMain(reference, header.getEntityCode());
 
 		detail.setFm(fm);
 		detail.setReferenceID(fm.getFinID());
@@ -152,6 +156,8 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 
 				TransactionStatus txStatus = getTransactionStatus();
 
+				presentmentRespUploadDAO.update(details);
+
 				try {
 					process(header);
 
@@ -167,8 +173,6 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 				} finally {
 					txStatus = null;
 				}
-
-				presentmentRespUploadDAO.update(details);
 
 				List<FileUploadHeader> headerList = new ArrayList<>();
 				headerList.add(header);

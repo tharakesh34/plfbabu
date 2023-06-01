@@ -99,7 +99,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 	private long successCount;
 	private long failedCount;
 	private int xlsxRowCount = 3;
-	private FinScheduleData finScheduleData;
 	public static boolean executing;
 
 	private CIBILService cibilService;
@@ -630,11 +629,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 			/* Written-off and Settled Status */
 			String closingstatus = StringUtils.trimToEmpty(finance.getClosingStatus());
-			int status = 0;
+
 			/* Account Status */
 			if ("W".equals(closingstatus)) {
 				cell = row.createCell(51);
-				status = 2;
 				cell.setCellValue("02");
 
 				/* Written off AmountTotal */
@@ -1423,7 +1421,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 				writeValue(builder, "09", DateUtil.format(loan.getLatestRpyDate(), DATE_FORMAT), "08");
 			}
 
-			int odDays = Integer.parseInt(getOdDays(loan.getCurODDays()));
 			BigDecimal currentBalance = getCurrentBalance(loan);
 			String closingstatus = StringUtils.trimToEmpty(loan.getClosingStatus());
 

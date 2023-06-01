@@ -3053,8 +3053,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	@Override
-	public List<Long> getByCustShrtName(String CustShrtName, TableType tableType) {
-		Object[] object = new Object[] { CustShrtName + "%" };
+	public List<Long> getByCustShrtName(String custShrtName, TableType tableType) {
+		Object[] object = new Object[] { custShrtName + "%" };
 
 		StringBuilder sql = new StringBuilder();
 		switch (tableType) {
@@ -3062,11 +3062,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			sql.append(" Select CustID From Customers Where CustShrtName like ?");
 			break;
 		case TEMP_TAB:
-			object = new Object[] { CustShrtName + "%" };
+			object = new Object[] { custShrtName + "%" };
 			sql.append(" Select CustID From Customers_Temp  Where CustShrtName like ?");
 			break;
 		case BOTH_TAB:
-			object = new Object[] { CustShrtName + "%", CustShrtName + "%" };
+			object = new Object[] { custShrtName + "%", custShrtName + "%" };
 			sql.append(" Select CustID From Customers_Temp  Where CustShrtName like ?");
 			sql.append(" Union All");
 			sql.append(" Select CustID From Customers c Where CustShrtName like ?");
@@ -3201,8 +3201,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	@Override
-	public List<Long> getByCustShrtNameAndPhoneNumber(String CustShrtName, String phoneNumber, TableType tableType) {
-		Object[] object = new Object[] { phoneNumber, CustShrtName };
+	public List<Long> getByCustShrtNameAndPhoneNumber(String custShrtName, String phoneNumber, TableType tableType) {
+		Object[] object = new Object[] { phoneNumber, custShrtName };
 
 		StringBuilder sql = new StringBuilder();
 		switch (tableType) {
@@ -3212,13 +3212,13 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			sql.append(" Where c.CustShrtName = ?");
 			break;
 		case TEMP_TAB:
-			object = new Object[] { phoneNumber, CustShrtName };
+			object = new Object[] { phoneNumber, custShrtName };
 			sql.append(" Select CustID From Customers_Temp c");
 			sql.append(" Inner Join CustomerPhoneNumbers_Temp cp on cp.PhoneCustID = c.CustID and cp.PhoneNumber = ?");
 			sql.append(" Where c.CustShrtName = ?");
 			break;
 		case BOTH_TAB:
-			object = new Object[] { phoneNumber, CustShrtName, phoneNumber, CustShrtName };
+			object = new Object[] { phoneNumber, custShrtName, phoneNumber, custShrtName };
 			sql.append(" Select CustID From Customers_Temp c");
 			sql.append(" Inner Join CustomerPhoneNumbers_Temp cp on cp.PhoneCustID = c.CustID and cp.PhoneNumber = ?");
 			sql.append(" Where c.CustShrtName = ?");

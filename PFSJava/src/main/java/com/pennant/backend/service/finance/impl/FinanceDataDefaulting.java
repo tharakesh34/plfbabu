@@ -636,26 +636,6 @@ public class FinanceDataDefaulting {
 		fm.setRoundingTarget(finType.getRoundingTarget());
 		fm.setTDSApplicable(finType.isTdsApplicable());
 
-		if (finType.isGrcAdvIntersetReq()) {
-			fm.setGrcAdvType(finType.getGrcAdvType());
-			fm.setGrcAdvTerms(finType.getGrcAdvDefaultTerms());
-		} else {
-			fm.setGrcAdvType(PennantConstants.List_Select);
-			fm.setGrcAdvTerms(0);
-		}
-
-		if (finType.isCashCollateralReq()) {
-			if (finType.isAdvIntersetReq()) {
-				fm.setAdvType(finType.getAdvType());
-				fm.setAdvTerms(finType.getAdvDefaultTerms());
-				fm.setAdvStage(finType.getAdvStage());
-			} else {
-				fm.setAdvType(PennantConstants.List_Select);
-				fm.setAdvTerms(0);
-				fm.setAdvStage(PennantConstants.List_Select);
-			}
-		}
-
 		if (StringUtils.isBlank(fm.getTdsType()) && !PennantConstants.TDS_USER_SELECTION.equals(finType.getTdsType())) {
 			fm.setTdsType(finType.getTdsType());
 		}

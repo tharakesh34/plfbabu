@@ -62,7 +62,9 @@ public enum PresentmentError {
 
 	FC_607("Clearing status should be 'B', since the previous presentment status is 'SUCCESS'"),
 
-	FC_608("Clearing status should be 'S', since the previous presentment status is 'BOUNCE'");
+	FC_608("Clearing status should be 'S', since the previous presentment status is 'BOUNCE'"),
+
+	FC_609("Clearing status should be 'B' or 'S'");
 
 	private String description;
 

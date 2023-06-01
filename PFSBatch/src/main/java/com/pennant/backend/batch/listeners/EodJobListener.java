@@ -16,6 +16,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.util.ByteArrayDataSource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -88,7 +89,7 @@ public class EodJobListener implements JobExecutionListener {
 
 		List<EODConfig> eodList = eODConfigDAO.getEODConfig();
 
-		if (eodList.size() <= 0) {
+		if (CollectionUtils.isEmpty(eodList)) {
 			logger.info("EOD Configuration is not available.");
 			return;
 		}
@@ -277,10 +278,14 @@ public class EodJobListener implements JobExecutionListener {
 			eod.setTotalLoans("0");
 
 			for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
+				DataEngineStatus status = null;
 				if (stepExecution.getStepName().startsWith("microEOD")) {
-					DataEngineStatus status = (DataEngineStatus) stepExecution.getExecutionContext()
-							.get(stepExecution.getStepName());
-					eod.setTotalLoans(String.valueOf(status.getKeyAttributes().get(EodConstants.DATA_TOTALCUSTOMER)));
+					status = (DataEngineStatus) stepExecution.getExecutionContext().get(stepExecution.getStepName());
+					if (status != null) {
+						Object totalCustomers = status.getKeyAttributes().get(EodConstants.DATA_TOTALCUSTOMER);
+						eod.setTotalLoans(String.valueOf(totalCustomers));
+					}
+
 					break;
 				}
 			}
@@ -338,7 +343,7 @@ public class EodJobListener implements JobExecutionListener {
 		this.eventPropertiesService = eventPropertiesService;
 	}
 
-	public class EODStatus implements Serializable {
+	public static class EODStatus implements Serializable {
 		private static final long serialVersionUID = 8845475181314388995L;
 
 		private String subject;

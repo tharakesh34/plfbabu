@@ -895,9 +895,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		}, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), (rs, rowNum) -> {
 			ManualAdviseMovements ma = new ManualAdviseMovements();
 
 			ma.setMovementID(rs.getLong("MovementID"));
@@ -1075,7 +1073,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" AdviseID, AdviseType, FinID, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID");
 		sql.append(", ReceiptID, PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt");
 		sql.append(", BalanceAmt, FeeTypeCode, FeeTypeDesc, DueCreation, Version, LastMntOn, LastMntBy, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PresentmentId");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PresentmentId, Status");
 		sql.append(" From ManualAdvise_Aview");
 		sql.append(" Where FinID = ? and AdviseType = ? and FeeTypeCode = ?");
 
@@ -1114,6 +1112,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ma.setRecordType(rs.getString("RecordType"));
 			ma.setWorkflowId(rs.getLong("WorkflowId"));
 			ma.setPresentmentID(JdbcUtil.getLong(rs.getObject("PresentmentId")));
+			ma.setStatus(rs.getString("Status"));
 
 			return ma;
 		}, finID, adviseType, feeTypeCode);
@@ -2214,7 +2213,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	public List<ManualAdvise> getAdviseStatus(long finID) {
 		String sql = "Select Status, ValueDate, AdviseId, FinReference From ManualAdvise Where FinID = ? and Status != ?";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			ManualAdvise ma = new ManualAdvise();

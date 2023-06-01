@@ -131,9 +131,6 @@ public class CustomerController extends GenericService<Object> {
 		CustomerDetails response = null;
 		try {
 			Customer customer = customerDetails.getCustomer();
-			/*
-			 * customer.setCustNationality("IN"); customer.setCustCOB("IN");
-			 */
 			customer.setCustSourceID(APIConstants.FINSOURCE_ID_API);
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
@@ -180,7 +177,7 @@ public class CustomerController extends GenericService<Object> {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			response = new CustomerDetails();
 			response.setCustomer(null);
@@ -205,8 +202,8 @@ public class CustomerController extends GenericService<Object> {
 		try {
 			doSetRequiredDetails(customerDetails, PROCESS_TYPE_UPDATE);
 
-			String AppCountry = (String) SysParamUtil.getValue(PennantConstants.DEFAULT_COUNTRY);
-			customerDetails.getCustomer().setCustNationality(AppCountry);
+			String appCountry = (String) SysParamUtil.getValue(PennantConstants.DEFAULT_COUNTRY);
+			customerDetails.getCustomer().setCustNationality(appCountry);
 
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
@@ -220,7 +217,7 @@ public class CustomerController extends GenericService<Object> {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Exception:" + e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
@@ -298,8 +295,8 @@ public class CustomerController extends GenericService<Object> {
 			curCustomer.setCustLng(PennantConstants.default_Language);
 		}
 		if (StringUtils.isBlank(customerDetails.getCustomer().getCustCOB())) {
-			String AppCountry = (String) SysParamUtil.getValue(PennantConstants.DEFAULT_COUNTRY);
-			curCustomer.setCustCOB(AppCountry);
+			String appCountry = (String) SysParamUtil.getValue(PennantConstants.DEFAULT_COUNTRY);
+			curCustomer.setCustCOB(appCountry);
 		}
 		if (StringUtils.equals(curCustomer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 			curCustomer.setCustShrtName(PennantApplicationUtil.getFullName(curCustomer.getCustFName(),
@@ -461,7 +458,6 @@ public class CustomerController extends GenericService<Object> {
 				if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
 					curCustomerIncome.setNewRecord(true);
 					curCustomerIncome.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					// curCustomerIncome.setMargin(BigDecimal.ZERO);
 					curCustomerIncome.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					curCustomerIncome.setVersion(1);
 
@@ -521,7 +517,6 @@ public class CustomerController extends GenericService<Object> {
 					curCustDocument.setNewRecord(true);
 					curCustDocument.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curCustDocument.setVersion(1);
-					// curCustDocument.setCustDocImage(PennantApplicationUtil.decode(curCustDocument.getCustDocImage()));
 					curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
 					if (curCustDocument.getDocRefId() == null) {
@@ -531,12 +526,6 @@ public class CustomerController extends GenericService<Object> {
 					if (StringUtils.equals(curCustDocument.getCustDocCategory(), docCategory)) {
 						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
 					}
-					/*
-					 * if(StringUtils.equals(curCustDocument.getCustDocCategory( ), "15") &&
-					 * StringUtils.equals(customerDetails.getCustomer(). getCustCtgCode(),PennantConstants.
-					 * PFF_CUSTCTG_CORP)){ customerDetails.getCustomer().setCustCRCPR(
-					 * curCustDocument.getCustDocTitle()); }
-					 */
 				} else {
 					List<CustomerDocument> prvCustomerDocumentsList = prvCustomerDetails.getCustomerDocumentsList();
 					if (prvCustomerDocumentsList != null) {
@@ -710,11 +699,9 @@ public class CustomerController extends GenericService<Object> {
 										detail.setNewRecord(false);
 										detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 										detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-										// detail.setVersion(prvCustomerExtLiability.getVersion()
-										// + 1);
 									}
 								}
-								// copy properties
+
 								BeanUtils.copyProperties(curCustomerExtLiability, prvCustomerExtLiability);
 							}
 						}
@@ -772,8 +759,6 @@ public class CustomerController extends GenericService<Object> {
 			}
 		}
 
-		// process Extended field details
-		// Get the ExtendedFieldHeader for given module and subModule
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
 				ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode(), "");
 		customerDetails.setExtendedFieldHeader(extendedFieldHeader);
@@ -820,23 +805,23 @@ public class CustomerController extends GenericService<Object> {
 			}
 			if (extendedFields != null) {
 				for (ExtendedField extendedField : extendedFields) {
-					Map<String, Object> mapValues = new HashMap<String, Object>();
+					Map<String, Object> mapValues = new HashMap<>();
 					if (extendedField.getExtendedFieldDataList() != null) {
 						for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
 							mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
 							exdFieldRender.setMapValues(mapValues);
 						}
 					} else {
-						Map<String, Object> map = new HashMap<String, Object>();
+						Map<String, Object> map = new HashMap<>();
 						exdFieldRender.setMapValues(map);
 					}
 				}
 				if (extendedFields.isEmpty()) {
-					Map<String, Object> mapValues = new HashMap<String, Object>();
+					Map<String, Object> mapValues = new HashMap<>();
 					exdFieldRender.setMapValues(mapValues);
 				}
 			} else {
-				Map<String, Object> mapValues = new HashMap<String, Object>();
+				Map<String, Object> mapValues = new HashMap<>();
 				exdFieldRender.setMapValues(mapValues);
 			}
 
@@ -894,12 +879,6 @@ public class CustomerController extends GenericService<Object> {
 		}
 	}
 
-	/**
-	 * 
-	 * @param customerDetails
-	 * @param processType
-	 * @param prvCustomerDetails
-	 */
 	private void setDirectorDetails(CustomerDetails customerDetails, String processType,
 			CustomerDetails prvCustomerDetails) {
 		List<DirectorDetail> customerDirectorList = customerDetails.getCustomerDirectorList();
@@ -932,46 +911,26 @@ public class CustomerController extends GenericService<Object> {
 
 	}
 
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aCustomerDetails
-	 * @param tranType
-	 * @return AuditHeader
-	 */
 	private AuditHeader getAuditHeader(CustomerDetails aCustomerDetails, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDetails.getBefImage(), aCustomerDetails);
 		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()),
 				String.valueOf(aCustomerDetails.getCustID()), null, null, auditDetail,
-				aCustomerDetails.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				aCustomerDetails.getUserDetails(), new HashMap<>());
 	}
 
 	private AuditHeader getAuditHeader(DirectorDetail directorDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, directorDetail.getBefImage(), directorDetail);
 		return new AuditHeader(String.valueOf(directorDetail.getCustID()), String.valueOf(directorDetail.getCustID()),
-				null, null, auditDetail, directorDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				null, null, auditDetail, directorDetail.getUserDetails(), new HashMap<>());
 	}
 
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aCustomerDetails
-	 * @param tranType
-	 * @return AuditHeader
-	 */
 	private AuditHeader getAuditHeader(CustomerEmploymentDetail aCustomerDetails, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDetails.getBefImage(), aCustomerDetails);
 		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()),
 				String.valueOf(aCustomerDetails.getCustID()), null, null, auditDetail,
-				aCustomerDetails.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				aCustomerDetails.getUserDetails(), new HashMap<>());
 	}
 
-	/**
-	 * get the Customer Details By the Customer Id
-	 * 
-	 * @param customerId
-	 * @return
-	 */
 	public CustomerDetails getCustomerDetails(long customerId) {
 		logger.debug(Literal.ENTERING);
 
@@ -1008,7 +967,7 @@ public class CustomerController extends GenericService<Object> {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			response = new CustomerDetails();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -1018,8 +977,8 @@ public class CustomerController extends GenericService<Object> {
 		return response;
 	}
 
+	@Override
 	public byte[] getDocumentImage(long docID) {
-
 		byte[] docImage = dMSService.getById(docID);
 		if (docImage != null) {
 			return docImage;
@@ -1027,12 +986,6 @@ public class CustomerController extends GenericService<Object> {
 		return null;
 	}
 
-	/**
-	 * delete the Customer by given CustomerId
-	 * 
-	 * @param customerId
-	 * @return
-	 */
 	public WSReturnStatus deleteCustomerById(long customerId) {
 		logger.debug(Literal.ENTERING);
 
@@ -1068,7 +1021,7 @@ public class CustomerController extends GenericService<Object> {
 				response = APIErrorHandlerService.getFailedStatus("90999", dae.getMessage());
 				return response;
 			} catch (Exception e) {
-				logger.error("Exception", e);
+				logger.error(Literal.EXCEPTION, e);
 				APIErrorHandlerService.logUnhandledException(e);
 				response = APIErrorHandlerService.getFailedStatus();
 				return response;
@@ -1080,15 +1033,7 @@ public class CustomerController extends GenericService<Object> {
 		return response;
 	}
 
-	// TODO: DDP- Need to change the below method
-	/**
-	 * set Record type while delete customer
-	 * 
-	 * @param customerDetails
-	 */
 	private void doSetCustomerDeleteData(CustomerDetails customerDetails) {
-
-		// customer employment details
 		List<CustomerEmploymentDetail> employmentDetails = customerDetails.getEmploymentDetailsList();
 		if (employmentDetails != null) {
 			for (CustomerEmploymentDetail employmentDetail : employmentDetails) {
@@ -1189,12 +1134,6 @@ public class CustomerController extends GenericService<Object> {
 		}
 	}
 
-	/**
-	 * get the Customer Personal Information By the Customer Id
-	 * 
-	 * @param customerId
-	 * @return
-	 */
 	public CustomerDetails getCustomerPersonalInfo(long customerId) {
 		logger.debug(Literal.ENTERING);
 		CustomerDetails response = new CustomerDetails();
@@ -1222,11 +1161,6 @@ public class CustomerController extends GenericService<Object> {
 
 	}
 
-	/**
-	 * 
-	 * @param customerDetails
-	 * @return WSReturnStatus
-	 */
 	public WSReturnStatus updateCustomerPersionalInfo(CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
 		// user details from session
@@ -1288,12 +1222,6 @@ public class CustomerController extends GenericService<Object> {
 
 	}
 
-	/**
-	 * get the Customer Employment By the Customer Id
-	 * 
-	 * @param customerId
-	 * @return
-	 */
 	public CustomerDetails getCustomerEmployment(String cif) {
 		logger.debug(Literal.ENTERING);
 
@@ -1319,7 +1247,7 @@ public class CustomerController extends GenericService<Object> {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			response = new CustomerDetails();
 			response.setCustomer(null);
@@ -1331,12 +1259,6 @@ public class CustomerController extends GenericService<Object> {
 
 	}
 
-	/**
-	 * Method for create CustomerEmployment in PLF system.
-	 * 
-	 * @param customerEmploymentDetail
-	 * 
-	 */
 	public EmploymentDetail addCustomerEmployment(CustomerEmploymentDetail customerEmploymentDetail, String cif) {
 
 		EmploymentDetail response = null;
@@ -1374,7 +1296,7 @@ public class CustomerController extends GenericService<Object> {
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			response = new EmploymentDetail();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -1432,11 +1354,6 @@ public class CustomerController extends GenericService<Object> {
 
 	}
 
-	/**
-	 * Method for update CustomerEmploymentDetail in PLF system.
-	 * 
-	 * @param customerEmploymentDetail
-	 */
 	public WSReturnStatus updateCustomerEmployment(CustomerEmploymentDetail customerEmploymentDetail, String cif) {
 		logger.debug(Literal.ENTERING);
 		WSReturnStatus response = null;
@@ -1520,9 +1437,8 @@ public class CustomerController extends GenericService<Object> {
 				response = APIErrorHandlerService.getSuccessStatus();
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
-			response = new WSReturnStatus();
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug(Literal.LEAVING);
@@ -1563,13 +1479,6 @@ public class CustomerController extends GenericService<Object> {
 
 	}
 
-	/**
-	 * delete the customerEmploymentDetail.
-	 * 
-	 * @param customerEmploymentDetail
-	 * @return WSReturnStatus
-	 * 
-	 */
 	public WSReturnStatus deleteCustomerEmployment(CustomerEmploymentDetail customerEmploymentDetail) {
 		// get the CustomerEmploymentDetail by the CustID and empName
 		WSReturnStatus response = null;
@@ -1597,7 +1506,7 @@ public class CustomerController extends GenericService<Object> {
 				response = APIErrorHandlerService.getSuccessStatus();
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			response = new WSReturnStatus();
 			return APIErrorHandlerService.getFailedStatus();
@@ -1631,7 +1540,7 @@ public class CustomerController extends GenericService<Object> {
 				response = APIErrorHandlerService.getSuccessStatus();
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			response = new WSReturnStatus();
 			return APIErrorHandlerService.getFailedStatus();
@@ -1769,8 +1678,6 @@ public class CustomerController extends GenericService<Object> {
 			if (addressList.size() == 1) {
 				setAddressDetails(agreement, addressList.get(0));
 			} else {
-				// sort the address based on priority and consider the top
-				// priority
 				sortCustomerAdress(addressList);
 				for (CustomerAddres customerAddres : addressList) {
 					setAddressDetails(agreement, customerAddres);
@@ -2077,11 +1984,10 @@ public class CustomerController extends GenericService<Object> {
 				// set the headerDetails to AuditHeader
 				auditHeader.setApiHeader(reqHeaderDetails);
 				auditHeader = creditApplicationReviewService.doApprove(auditHeader);
-				response = new WSReturnStatus();
 				response = APIErrorHandlerService.getSuccessStatus();
 				return response;
 			} catch (Exception e) {
-				logger.error("Exception", e);
+				logger.error(Literal.EXCEPTION, e);
 				response = APIErrorHandlerService.getFailedStatus();
 				return response;
 			}
@@ -2218,7 +2124,7 @@ public class CustomerController extends GenericService<Object> {
 	private AuditHeader getAuditHeader(Customer aCustomer, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomer.getBefImage(), aCustomer);
 		return new AuditHeader(String.valueOf(aCustomer.getCustID()), String.valueOf(aCustomer.getCustID()), null, null,
-				auditDetail, aCustomer.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				auditDetail, aCustomer.getUserDetails(), new HashMap<>());
 	}
 
 	public CustomerService getCustomerService() {

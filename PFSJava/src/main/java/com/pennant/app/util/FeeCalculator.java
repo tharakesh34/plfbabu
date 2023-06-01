@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.JointAccountDetailDAO;
@@ -36,7 +37,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.FinFeeDetailService;
-import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
@@ -53,9 +53,9 @@ public class FeeCalculator {
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private RuleDAO ruleDAO;
-	private FinanceDetailService financeDetailService;
 	private JointAccountDetailDAO jointAccountDetailDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
+	private FinanceDisbursementDAO financeDisbursementDAO;
 
 	public FinReceiptData calculateFees(FinReceiptData rd) {
 		FinanceDetail fd = rd.getFinanceDetail();
@@ -392,7 +392,7 @@ public class FeeCalculator {
 			return;
 		}
 
-		List<Integer> approvedDisbSeq = financeDetailService.getFinanceDisbSeqs(finID, false);
+		List<Integer> approvedDisbSeq = financeDisbursementDAO.getFinanceDisbSeqs(finID, "", false);
 		for (FinanceDisbursement disbursement : schdData.getDisbursementDetails()) {
 			if (!approvedDisbSeq.contains(disbursement.getDisbSeq())) {
 				disbursement.setDeductFeeDisb(deductFeeFromDisbTot);
@@ -456,6 +456,7 @@ public class FeeCalculator {
 		if (fd.getFinScheduleData() != null) {
 			objectList.add(schdData.getFinanceMain());
 			objectList.add(fd.getFinScheduleData().getFinanceType());
+			objectList.add(schdData.getFinanceMain().getLoanLetter());
 		}
 
 		for (Rule feeRule : feeRules) {
@@ -858,29 +859,24 @@ public class FeeCalculator {
 		return feeConfigList;
 	}
 
+	@Autowired
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
 	}
 
-	public void setRuleDAO(RuleDAO ruleDAO) {
-		this.ruleDAO = ruleDAO;
-	}
-
-	public FinanceProfitDetailDAO getProfitDetailsDAO() {
-		return profitDetailsDAO;
-	}
-
+	@Autowired
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
 	}
 
+	@Autowired
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
 	@Autowired
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
+	public void setRuleDAO(RuleDAO ruleDAO) {
+		this.ruleDAO = ruleDAO;
 	}
 
 	@Autowired
@@ -888,12 +884,14 @@ public class FeeCalculator {
 		this.jointAccountDetailDAO = jointAccountDetailDAO;
 	}
 
-	public FinTypeFeesDAO getFinTypeFeesDAO() {
-		return finTypeFeesDAO;
-	}
-
+	@Autowired
 	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
 		this.finTypeFeesDAO = finTypeFeesDAO;
+	}
+
+	@Autowired
+	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
+		this.financeDisbursementDAO = financeDisbursementDAO;
 	}
 
 }

@@ -86,16 +86,15 @@ public class UploadTaxPercentDAOImpl extends BasicDao<UploadTaxPercent> implemen
 
 		logger.debug(Literal.SQL + sql);
 
-		List<UploadTaxPercent> uploadList = this.jdbcOperations.query(sql, ps -> {
-			ps.setLong(1, uploadId);
-		}, (rs, rowNum) -> {
-			UploadTaxPercent tax = new UploadTaxPercent();
+		List<UploadTaxPercent> uploadList = this.jdbcOperations.query(sql, ps -> ps.setLong(1, uploadId),
+				(rs, rowNum) -> {
+					UploadTaxPercent tax = new UploadTaxPercent();
 
-			tax.setUploadId(rs.getLong("UploadId"));
-			tax.setStatus(rs.getString("Status"));
+					tax.setUploadId(rs.getLong("UploadId"));
+					tax.setStatus(rs.getString("Status"));
 
-			return tax;
-		});
+					return tax;
+				});
 
 		return uploadList.stream().sorted((l1, l2) -> StringUtils.compare(l1.getStatus(), l2.getStatus()))
 				.collect(Collectors.toList());

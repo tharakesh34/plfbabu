@@ -119,6 +119,7 @@ public class AutoKnockOffService {
 				try {
 					autoKnockProcessService.processAutoKnockOff(ad);
 
+					knockOffData.setValueDate(ad.getValueDate());
 					if (ad.getUtilzedAmount() != BigDecimal.ZERO) {
 						excessDetails.setUtilizedAmnt(ad.getUtilzedAmount());
 						knockOffData.setTotalUtilizedAmnt(BigDecimal.ZERO);

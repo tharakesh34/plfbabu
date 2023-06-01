@@ -563,7 +563,6 @@ public class AssetClassCodeDialogCtrl extends GFCBaseCtrl<AssetClassCode> {
 			}
 		}
 
-		// save it to database
 		try {
 			if (doProcess(assetClassCode, tranType)) {
 				refreshList();

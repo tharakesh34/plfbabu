@@ -110,6 +110,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.FinanceUtil;
+import com.pennanttech.pff.core.util.LoanCancelationUtil;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.payment.model.LoanPayment;
@@ -373,6 +374,7 @@ public class RepaymentProcessUtil {
 			holdMarkingService.removeHold(fm);
 		}
 
+		fm.setClosureType(rch.getClosureType());
 		letterService.logForAutoLetter(fm, appDate);
 
 		logger.debug(Literal.LEAVING);
@@ -534,11 +536,7 @@ public class RepaymentProcessUtil {
 			receiptAmount = receiptAmount.add(rcd.getAmount());
 			String paymentType = rcd.getPaymentType();
 			movements.addAll(rcd.getAdvMovements());
-			if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(paymentType)) && !"#".equals(paymentType)
-					&& !ReceiptMode.EMIINADV.equals(paymentType) && !ReceiptMode.EXCESS.equals(paymentType)
-					&& !ReceiptMode.TEXCESS.equals(paymentType) && !ReceiptMode.PAYABLE.equals(paymentType)
-					&& !ReceiptMode.ADVINT.equals(paymentType) && !ReceiptMode.ADVEMI.equals(paymentType)
-					&& !ReceiptMode.CASHCLT.equals(paymentType) && !ReceiptMode.DSF.equals(paymentType)) {
+			if (ReceiptMode.isReceiptFromBank(paymentType)) {
 				receiptFromBank = receiptFromBank.add(rcd.getAmount());
 			}
 		}
@@ -1689,27 +1687,28 @@ public class RepaymentProcessUtil {
 				financeRepaymentsDAO.saveRpySchdList(rpySchdList, TableType.MAIN_TAB);
 			}
 		}
-
-		if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
-			FinExcessAmount excess = new FinExcessAmount();
-			excess.setFinID(rch.getFinID());
-			excess.setFinReference(rch.getReference());
-			excess.setAmountType(rch.getExcessAdjustTo());
-			excess.setAmount(excessAmount);
-			excess.setUtilisedAmt(BigDecimal.ZERO);
-			excess.setBalanceAmt(excessAmount);
-			excess.setReservedAmt(BigDecimal.ZERO);
-			excess.setReceiptID(rch.getReceiptID());
-			excess.setValueDate(rch.getValueDate());
-			excess.setPostDate(SysParamUtil.getAppDate());
-
-			if (RepayConstants.PAYSTATUS_DEPOSITED.equals(rch.getReceiptModeStatus())) {
-				excess.setBalanceAmt(BigDecimal.ZERO);
-				excess.setReservedAmt(excessAmount);
+		if (!LoanCancelationUtil.LOAN_CANCEL_REBOOK.equals(rch.getLoanCancellationType())) {
+			if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
+				FinExcessAmount excess = new FinExcessAmount();
+				excess.setFinID(rch.getFinID());
+				excess.setFinReference(rch.getReference());
+				excess.setAmountType(rch.getExcessAdjustTo());
 				excess.setAmount(excessAmount);
-			}
+				excess.setUtilisedAmt(BigDecimal.ZERO);
+				excess.setBalanceAmt(excessAmount);
+				excess.setReservedAmt(BigDecimal.ZERO);
+				excess.setReceiptID(rch.getReceiptID());
+				excess.setValueDate(rch.getValueDate());
+				excess.setPostDate(SysParamUtil.getAppDate());
 
-			finExcessAmountDAO.saveExcess(excess);
+				if (RepayConstants.PAYSTATUS_DEPOSITED.equals(rch.getReceiptModeStatus())) {
+					excess.setBalanceAmt(BigDecimal.ZERO);
+					excess.setReservedAmt(excessAmount);
+					excess.setAmount(excessAmount);
+				}
+
+				finExcessAmountDAO.saveExcess(excess);
+			}
 		}
 
 		allocationPaidMap = null;
@@ -1952,9 +1951,9 @@ public class RepaymentProcessUtil {
 	 */
 	public FinanceMain updateStatus(FinanceMain financeMain, Date valueDate,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail,
-			List<FinODDetails> overdueList, String receiptPurpose) {
+			List<FinODDetails> overdueList, FinReceiptHeader rch) {
 		return repaymentPostingsUtil.updateStatus(financeMain, valueDate, scheduleDetails, profitDetail, overdueList,
-				receiptPurpose);
+				rch);
 	}
 
 	private List<Object> doRepayPostings(FinanceDetail financeDetail, FinReceiptHeader rch,
@@ -2481,7 +2480,7 @@ public class RepaymentProcessUtil {
 			finODDetailsDAO.updateList(overdueList);
 		}
 
-		fm = updateStatus(fm, appDate, scheduleDetails, profitDetail, overdueList, rch.getReceiptPurpose());
+		fm = updateStatus(fm, appDate, scheduleDetails, profitDetail, overdueList, rch);
 
 		financeMainDAO.updatePaymentInEOD(fm);
 		limitManagement.processLoanRepay(fm, customerDetails.getCustomer(), priPaynow);

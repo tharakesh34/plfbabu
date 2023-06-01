@@ -46,7 +46,7 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 
 	private class FinLogEntryRowMapper implements RowMapper<FinLogEntryDetail> {
 		public FinLogEntryRowMapper() {
-		    super();
+			super();
 		}
 
 		@Override
@@ -103,9 +103,7 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		}, (rs, i) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), (rs, i) -> {
 			FinServiceInstruction fsi = new FinServiceInstruction();
 
 			fsi.setServiceSeqId(rs.getLong("ServiceSeqId"));
@@ -329,9 +327,7 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, "ReSchedule");
-		}, (rs, i) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setString(1, "ReSchedule"), (rs, i) -> {
 			RescheduleLogHeader rlh = new RescheduleLogHeader();
 
 			rlh.setFinID(rs.getLong("FinID"));

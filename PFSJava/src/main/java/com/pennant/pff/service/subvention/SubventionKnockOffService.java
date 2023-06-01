@@ -544,10 +544,8 @@ public class SubventionKnockOffService extends BasicDao<Subvention> {
 	public AEEvent postAccounting(AEEvent aeEvent) {
 		logger.debug(Literal.ENTERING);
 
-		boolean isNewTranID = false;
 		if (aeEvent.getLinkedTranId() <= 0) {
 			aeEvent.setLinkedTranId(postingsDAO.getLinkedTransId());
-			isNewTranID = true;
 		}
 
 		postingsPreparationUtil.getEngineExecution().getAccEngineExecResults(aeEvent);

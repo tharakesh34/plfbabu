@@ -37,6 +37,7 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 		}
 
 		lu.setLienReference(String.valueOf(lu.getLienID()));
+
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
@@ -65,14 +66,14 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 	@Override
 	public void update(LienHeader lu) {
 		StringBuilder sql = new StringBuilder("Update Lien_Header");
-		sql.append(" Set ");
+		sql.append(" Set");
 		sql.append(" AccNumber = ?, Marking = ?, MarkingDate = ?, DeMarking = ?, DemarkingDate = ?");
 		sql.append(", LienReference = ?, LienStatus = ?, InterfaceStatus = ?");
 		sql.append(" Where LienID = ? and Reference = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 0;
 			ps.setString(++index, lu.getAccountNumber());
 			ps.setString(++index, lu.getMarking());
@@ -86,10 +87,6 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 			ps.setString(++index, lu.getReference());
 
 		});
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
 	}
 
 	@Override
@@ -117,8 +114,9 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 	@Override
 	public LienHeader getLienByReference(String finreference, String accNum) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" lh.LienID, lh.Reference, lh.AccNumber, lh.Marking, lh.MarkingDate,");
-		sql.append(" lh.DeMarking, lh.DemarkingDate, lh.LienReference, lh.LienStatus, lh.InterfaceStatus");
+		sql.append(" lh.LienID, lh.Reference, lh.AccNumber, lh.Marking, lh.MarkingDate");
+		sql.append(", lh.DeMarking, lh.DemarkingDate, lh.LienReference, lh.LienStatus");
+		sql.append(", lh.InterfaceStatus, lh.InterfaceRemarks");
 		sql.append(" From Lien_Header lh");
 		sql.append(" Inner Join Lien_Details ld ON lh.LienID = ld.LienID");
 		sql.append(" Where ld.Reference = ? and lh.AccNumber = ?");
@@ -139,6 +137,7 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 				lu.setLienReference(rs.getString("LienReference"));
 				lu.setLienStatus(rs.getBoolean("LienStatus"));
 				lu.setInterfaceStatus(rs.getString("InterfaceStatus"));
+				lu.setInterfaceRemarks(rs.getString("InterfaceRemarks"));
 				return lu;
 
 			}, finreference, accNum);
@@ -151,8 +150,9 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 	@Override
 	public LienHeader getLienByAcc(String accnumber) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ID, LienID, Reference, AccNumber, Marking, MarkingDate,");
-		sql.append(" DeMarking, DemarkingDate, LienReference, LienStatus, InterfaceStatus");
+		sql.append(" ID, LienID, Reference, AccNumber, Marking, MarkingDate");
+		sql.append(", DeMarking, DemarkingDate, LienReference, LienStatus");
+		sql.append(", InterfaceStatus, InterfaceRemarks");
 		sql.append(" From  Lien_Header");
 		sql.append(" Where AccNumber = ?");
 
@@ -173,6 +173,7 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 				lu.setLienReference(rs.getString("LienReference"));
 				lu.setLienStatus(rs.getBoolean("LienStatus"));
 				lu.setInterfaceStatus(rs.getString("InterfaceStatus"));
+				lu.setInterfaceRemarks(rs.getString("InterfaceRemarks"));
 				return lu;
 
 			}, accnumber);
@@ -185,8 +186,9 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 	@Override
 	public List<LienHeader> getLienHeaderList(String reference) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" lh.LienID, lh.Reference, lh.AccNumber, lh.Marking, lh.MarkingDate,");
-		sql.append(" lh.DeMarking, lh.DemarkingDate, lh.LienReference, lh.LienStatus, lh.InterfaceStatus");
+		sql.append(" lh.LienID, lh.Reference, lh.AccNumber, lh.Marking, lh.MarkingDate");
+		sql.append(", lh.DeMarking, lh.DemarkingDate, lh.LienReference, lh.LienStatus");
+		sql.append(", lh.InterfaceStatus, lh.InterfaceRemarks");
 		sql.append(" From Lien_Header lh");
 		sql.append(" Inner Join Lien_Details ld ON lh.LienID = ld.LienID");
 		sql.append(" Where ld.Reference = ?");
@@ -207,6 +209,7 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 				lu.setLienReference(rs.getString("LienReference"));
 				lu.setLienStatus(rs.getBoolean("LienStatus"));
 				lu.setInterfaceStatus(rs.getString("InterfaceStatus"));
+				lu.setInterfaceRemarks(rs.getString("InterfaceRemarks"));
 				return lu;
 
 			}, reference);
@@ -219,10 +222,11 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 	@Override
 	public LienHeader getLienByAccAndStatus(String accnumber, Boolean isActive) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ID, LienID, Reference, AccNumber, Marking, MarkingDate,");
-		sql.append(" DeMarking, DemarkingDate, LienReference, LienStatus, InterfaceStatus");
-		sql.append(" From  Lien_Header");
-		sql.append(" Where AccNumber = ? and LienStatus = ? ");
+		sql.append(" ID, LienID, Reference, AccNumber, Marking, MarkingDate");
+		sql.append(", DeMarking, DemarkingDate, LienReference, LienStatus");
+		sql.append(", InterfaceStatus, InterfaceRemarks");
+		sql.append(" From Lien_Header");
+		sql.append(" Where AccNumber = ? and LienStatus = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -241,6 +245,8 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 				lu.setLienReference(rs.getString("LienReference"));
 				lu.setLienStatus(rs.getBoolean("LienStatus"));
 				lu.setInterfaceStatus(rs.getString("InterfaceStatus"));
+				lu.setInterfaceRemarks(rs.getString("InterfaceRemarks"));
+
 				return lu;
 
 			}, accnumber, isActive);

@@ -74,9 +74,7 @@ public class FinCollateralsDAOImpl extends SequenceDao<FinCollaterals> implement
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		});
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, finID));
 	}
 
 	@Override
@@ -241,7 +239,7 @@ public class FinCollateralsDAOImpl extends SequenceDao<FinCollaterals> implement
 	private class FinCollateralsRowMapper implements RowMapper<FinCollaterals> {
 
 		private FinCollateralsRowMapper() {
-		    super();
+			super();
 		}
 
 		@Override

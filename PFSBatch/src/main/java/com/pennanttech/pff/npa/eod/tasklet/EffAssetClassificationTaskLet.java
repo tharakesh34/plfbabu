@@ -78,9 +78,7 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 		itemReader.setSql(QUEUE_QUERY);
 		itemReader.setDataSource(dataSource);
 
-		itemReader.setRowMapper((rs, rowNum) -> {
-			return rs.getLong("FinID");
-		});
+		itemReader.setRowMapper((rs, rowNum) -> rs.getLong("FinID"));
 
 		itemReader.setPreparedStatementSetter(ps -> {
 			ps.setLong(1, threadId);

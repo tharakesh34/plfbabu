@@ -366,16 +366,12 @@ public class DueExtractionConfigDialogCtrl extends GFCBaseCtrl<InstrumentTypes> 
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		try {
-			doSave();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		doSave();
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug(Literal.ENTERING);
 
 		DueExtractionHeader header = new DueExtractionHeader();

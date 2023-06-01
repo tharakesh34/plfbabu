@@ -5,12 +5,16 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
+import com.pennant.backend.util.NOCConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.noc.upload.dao.CourierDetailUploadDAO;
 import com.pennant.pff.noc.upload.model.CourierDetailUpload;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -139,4 +143,51 @@ public class CourierDetailUploadDAOImpl extends SequenceDao<CourierDetailUpload>
 			return null;
 		}
 	}
+
+	@Override
+	public boolean isValidRecord(long finID, String letterType, Date letterDate) {
+		String sql = "Select count(FinID) From LOAN_LETTERS Where FinID = ? and LetterType = ? and GeneratedOn = ? and ModeOfTransfer = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+		return jdbcOperations.queryForObject(sql, Integer.class, finID, letterType, letterDate,
+				NOCConstants.MODE_COURIER) > 0;
+
+	}
+
+	@Override
+	public String isValidCourierMode(long finID, String letterType, Date letterDate) {
+		String sql = "Select ModeOfTransfer From LOAN_LETTERS Where FinID = ? and LetterType = ? and GeneratedOn = ?";
+		logger.debug(Literal.SQL.concat(sql));
+		try {
+			return jdbcOperations.queryForObject(sql, String.class, finID, letterType, letterDate);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public void update(CourierDetailUpload cdu, long id) {
+		StringBuilder sql = new StringBuilder("Update LOAN_LETTERS");
+		sql.append(" Set CourierAgency = ?, DispatchDate = ?, DeliveryStatus = ?, DeliveryDate = ?");
+		sql.append(" Where Id = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 0;
+				ps.setString(++index, cdu.getCourierAgency());
+				ps.setDate(++index, JdbcUtil.getDate(cdu.getDispatchDate()));
+				ps.setString(++index, cdu.getDeliveryStatus());
+				ps.setDate(++index, JdbcUtil.getDate(cdu.getDeliveryDate()));
+
+				ps.setLong(++index, id);
+
+			});
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+	}
+
 }

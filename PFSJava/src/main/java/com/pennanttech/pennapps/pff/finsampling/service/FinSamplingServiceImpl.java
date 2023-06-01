@@ -285,7 +285,7 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 			object = object.toString();
 		}
 
-		return new Long(object.toString());
+		return Long.parseLong(object.toString());
 	}
 
 	private Integer getInt(ExtendedFieldData data) {
@@ -298,7 +298,7 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 			object = object.toString();
 		}
 
-		return new Integer(object.toString());
+		return Integer.parseInt(object.toString());
 	}
 
 	private String getVariance(Integer original, Integer current) {

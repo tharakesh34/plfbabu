@@ -58,6 +58,7 @@ import com.pennant.pff.settlement.model.FinSettlementHeader;
 import com.pennant.pff.settlement.model.SettlementAllocationDetail;
 import com.pennant.pff.settlement.model.SettlementSchedule;
 import com.pennant.pff.settlement.service.SettlementService;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -810,6 +811,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 
 		receiptData.setTotalPastDues(receiptCalculator.getTotalNetPastDue(receiptData));
 		rch.setReceiptAmount(actualReceiptAmount);
+		rch.setClosureType("Settled");
 		for (XcessPayables xcess : rch.getXcessPayables()) {
 			BigDecimal balAmount = xcess.getBalanceAmt();
 			if (actualReceiptAmount.compareTo(BigDecimal.ZERO) <= 0) {
@@ -847,6 +849,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
+			throw new AppException(e.getMessage());
 		}
 
 	}
@@ -972,7 +975,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 	public void updateProgress(long settlementId, int progress) {
 		settlementDAO.updateProgress(settlementId, progress);
 	}
-	
+
 	@Override
 	public boolean isSettlementInitiated(long finId) {
 		return settlementDAO.isSettlementInitiated(finId);

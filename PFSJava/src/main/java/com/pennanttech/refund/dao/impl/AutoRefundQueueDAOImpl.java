@@ -67,10 +67,7 @@ public class AutoRefundQueueDAOImpl extends SequenceDao<CustEODEvent> implements
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.update(sql, ps -> {
-			ps.setInt(1, EodConstants.PROGRESS_SUCCESS);
-
-		});
+		this.jdbcOperations.update(sql, ps -> ps.setInt(1, EodConstants.PROGRESS_SUCCESS));
 
 		sql = "Update Auto_Refund_Queue Set Progress = ? Where Progress = ?";
 
@@ -218,7 +215,7 @@ public class AutoRefundQueueDAOImpl extends SequenceDao<CustEODEvent> implements
 	}
 
 	private void updateQueingRecords(List<BatchJobQueue> jobQueue) {
-		String sql = "Update Auto_Refund_Queue Set Id = ? Where ID = ? and BatchID = ?";
+		String sql = "Update Auto_Refund_Queue Set Id = ? Where ID = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -228,11 +225,9 @@ public class AutoRefundQueueDAOImpl extends SequenceDao<CustEODEvent> implements
 				@Override
 				public void setValues(PreparedStatement ps, int i) throws SQLException {
 					BatchJobQueue jobQueuedetails = jobQueue.get(i);
-					int index = 1;
 
-					ps.setLong(index++, jobQueuedetails.getResetCounterId());
-					ps.setLong(index, jobQueuedetails.getId());
-					ps.setLong(index, jobQueuedetails.getBatchId());
+					ps.setLong(1, jobQueuedetails.getResetCounterId());
+					ps.setLong(2, jobQueuedetails.getId());
 				}
 
 				@Override
@@ -250,9 +245,7 @@ public class AutoRefundQueueDAOImpl extends SequenceDao<CustEODEvent> implements
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, bJobQueue.getBatchId());
-		}, (rs, Num) -> {
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
 			BatchJobQueue jobQueue = new BatchJobQueue();
 			jobQueue.setId(rs.getLong("ID"));
 			jobQueue.setResetCounterId(rs.getLong("ResetCounterId"));

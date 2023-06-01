@@ -1,5 +1,6 @@
 package com.pennanttech.pff.provision.eod.tasklet;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.BatchUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -47,8 +49,8 @@ public class ProvisionClacTaskLet implements Tasklet {
 	private static final String EXCEPTION_MSG = "Provision Calculation/Reversal failed on {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String ERROR_LOG = "Cause {}\nMessage {}\nLocalizedMessage {}\nStackTrace {}";
 
-	public static AtomicLong processedCount = new AtomicLong(0);
-	public static AtomicLong failedCount = new AtomicLong(0);
+	public static final AtomicLong processedCount = new AtomicLong(0);
+	public static final AtomicLong failedCount = new AtomicLong(0);
 
 	public ProvisionClacTaskLet() {
 		super();
@@ -66,7 +68,7 @@ public class ProvisionClacTaskLet implements Tasklet {
 		boolean isMonthStart = appDate.compareTo(monthStart) == 0;
 		boolean isMonthEnd = appDate.compareTo(monthEnd) == 0;
 
-		if (!isMonthStart && !isMonthEnd) {
+		if (!isMonthStart && !isMonthEnd && !NpaAndProvisionExtension.ALLOW_MANUAL_PROVISION) {
 			return RepeatStatus.FINISHED;
 		}
 
@@ -89,6 +91,34 @@ public class ProvisionClacTaskLet implements Tasklet {
 		});
 
 		itemReader.open(context.getStepContext().getStepExecution().getExecutionContext());
+
+		List<Exception> exceptions = new ArrayList<>();
+
+		if (NpaAndProvisionExtension.ALLOW_PROVISION) {
+			exceptions = autoProvision(appDate, isMonthStart, itemReader);
+		} else {
+			exceptions = manualProvision(appDate, itemReader);
+		}
+
+		itemReader.close();
+
+		if (!exceptions.isEmpty()) {
+			String sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
+			logger.info(EXCEPTION_MSG, sysDate, strAppDate, threadId);
+
+			throw exceptions.get(0);
+		}
+
+		String sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
+		logger.info(SUCCESS_MSG, sysDate, strAppDate, threadId);
+
+		BatchUtil.setExecutionStatus(context, StepUtil.PROVISION_CALC);
+
+		return RepeatStatus.FINISHED;
+	}
+
+	private List<Exception> autoProvision(Date appDate, boolean isMonthStart, JdbcCursorItemReader<Long> itemReader)
+			throws Exception {
 
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
@@ -159,7 +189,70 @@ public class ProvisionClacTaskLet implements Tasklet {
 				}
 
 				exceptions.add(e);
-				strSysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
+				String strSysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
+
+				logger.info(FAILED_MSG, strSysDate, finID);
+
+				provisionService.updateProgress(finID, EodConstants.PROGRESS_FAILED);
+			} finally {
+				txStatus = null;
+			}
+		}
+		return exceptions;
+	}
+
+	private List<Exception> manualProvision(Date appDate, JdbcCursorItemReader<Long> itemReader) throws Exception {
+
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus txStatus = null;
+
+		List<Exception> exceptions = new ArrayList<>(1);
+
+		Long finID = null;
+
+		while ((finID = itemReader.read()) != null) {
+			try {
+				provisionService.updateProgress(finID, EodConstants.PROGRESS_IN_PROCESS);
+
+				Provision mp = new Provision();
+				mp.setOverrideProvision(false);
+				mp.setManProvsnPer(BigDecimal.ZERO);
+				mp.setFinID(finID);
+				mp.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				mp.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				Provision provision = provisionService.getProvision(finID, appDate, mp);
+				mp = provisionService.getAssetClassSetIDByCode(provision.getManualAssetClassCode(),
+						provision.getEffNpaSubClassCode());
+				if (mp != null) {
+					provision.setManualAssetClassID(mp.getManualAssetClassID());
+					provision.setManualAssetSubClassID(mp.getManualAssetSubClassID());
+				}
+				if (provision != null) {
+					txStatus = transactionManager.getTransaction(txDef);
+					if (provision.getId() == null) {
+						provisionService.save(provision);
+					} else {
+						provisionService.update(provision);
+					}
+
+					provisionService.updateProgress(finID, EodConstants.PROGRESS_SUCCESS);
+
+					transactionManager.commit(txStatus);
+				}
+
+				StepUtil.PROVISION_CALC.setProcessedRecords(processedCount.incrementAndGet());
+			} catch (Exception e) {
+				StepUtil.PROVISION_CALC.setFailedRecords(failedCount.incrementAndGet());
+
+				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+
+				if (txStatus != null) {
+					transactionManager.rollback(txStatus);
+				}
+
+				exceptions.add(e);
+				String strSysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
 
 				logger.info(FAILED_MSG, strSysDate, finID);
 
@@ -169,21 +262,7 @@ public class ProvisionClacTaskLet implements Tasklet {
 			}
 		}
 
-		itemReader.close();
-
-		if (!exceptions.isEmpty()) {
-			String sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
-			logger.info(EXCEPTION_MSG, sysDate, strAppDate, threadId);
-
-			throw exceptions.get(0);
-		}
-
-		String sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
-		logger.info(SUCCESS_MSG, sysDate, strAppDate, threadId);
-
-		BatchUtil.setExecutionStatus(context, StepUtil.PROVISION_CALC);
-
-		return RepeatStatus.FINISHED;
+		return exceptions;
 	}
 
 	@Autowired

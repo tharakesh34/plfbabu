@@ -2029,10 +2029,6 @@ public class CreateFinanceWebServiceImpl extends AbstractController
 		return APIErrorHandlerService.getFailedStatus(code, parms);
 	}
 
-	private WSReturnStatus validateFinReference(String finReference) {
-		return StringUtils.isEmpty(finReference) ? getFailedStatus("90502", "FinReference") : null;
-	}
-
 	@Autowired
 	public void setCreateFinanceController(CreateFinanceController createFinanceController) {
 		this.createFinanceController = createFinanceController;

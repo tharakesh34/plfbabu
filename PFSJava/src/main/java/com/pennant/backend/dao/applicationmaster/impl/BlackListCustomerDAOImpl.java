@@ -254,9 +254,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 		logger.debug(Literal.SQL + sql.toString());
 
 		FinBlacklistCustomerRM rowMapper = new FinBlacklistCustomerRM();
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		}, rowMapper);
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), rowMapper);
 	}
 
 	@Override
@@ -312,9 +310,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 
 		logger.debug(Literal.SQL + sql);
 
-		this.jdbcOperations.update(sql, ps -> {
-			ps.setLong(1, finID);
-		});
+		this.jdbcOperations.update(sql, ps -> ps.setLong(1, finID));
 	}
 
 	@Override
@@ -585,9 +581,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setString(1, blackListCIF);
-		});
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setString(1, blackListCIF));
 	}
 
 	@Override
@@ -599,9 +593,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcOperations.update(sql.toString(), ps -> {
-				ps.setLong(1, reasonId);
-			});
+			jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, reasonId));
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -656,9 +648,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, blacklistCIF);
-		}, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setString(1, blacklistCIF), (rs, rowNum) -> {
 			NegativeReasoncodes nrc = new NegativeReasoncodes();
 
 			nrc.setId(rs.getLong("Id"));

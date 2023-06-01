@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,14 +24,14 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.NOCConstants;
+import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.letter.LetterUtil;
 import com.pennant.pff.noc.model.GenerateLetter;
+import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.core.util.LoanCancelationUtil;
 
 public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 
@@ -59,7 +60,7 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onCreate$windowSelectGenerateLetter(Event event) throws Exception {
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		setPageComponents(windowSelectGenerateLetter);
 
@@ -71,11 +72,11 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 
 		this.windowSelectGenerateLetter.doModal();
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnProceed(Event event) throws Exception {
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		doWriteComponentsToBean();
 		if (!validateReference()) {
@@ -85,13 +86,19 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 		doShowDialog();
 		this.windowSelectGenerateLetter.onClose();
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	private boolean validateReference() throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain fm = generateLetterService.getFinanceMainByRef(this.finReference.getValue(), "", false);
+		this.generateLetter.setFinReference(this.finReference.getValue());
+		this.generateLetter.setLetterType(getComboboxValue(letterType));
+		this.generateLetter.setWorkflowId(this.generateLetter.getWorkflowId());
+		this.generateLetter.setNewRecord(this.generateLetter.isNewRecord());
+		generateLetterService.getFinanceDetailById(this.generateLetter);
+
+		FinanceMain fm = this.generateLetter.getFinanceDetail().getFinScheduleData().getFinanceMain();
 
 		if (fm == null) {
 			MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_Finreference")
@@ -99,31 +106,57 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 			return false;
 		}
 
-		String ltrType = this.letterType.getValue();
+		List<LoanTypeLetterMapping> letterMapping = generateLetterService.getFinTypeMap(fm.getFinType());
 
-		if (NOCConstants.TYPE_CANCLTR.equals(ltrType)) {
-			if (FinanceConstants.CLOSE_STATUS_MATURED.equals(fm.getClosingStatus())
-					|| FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())
-					|| FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
-				MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_LetterType")
-						+ " for ".concat(this.finReference.getValue()));
-				return false;
+		if (CollectionUtils.isEmpty(letterMapping)) {
+			MessageUtil.showError("Loan Type Letter mapping not available");
+			return false;
+		}
+
+		String sellectedLetterType = getComboboxValue(letterType);
+		if (!letterMapping.stream().anyMatch(l -> l.getLetterType().equals(sellectedLetterType))) {
+			MessageUtil.showError(
+					"Loan Type Letter mapping not available for the selected Letter Type : " + sellectedLetterType);
+			return false;
+		}
+
+		this.generateLetter.setFinID(this.generateLetter.getFinanceDetail().getFinScheduleData().getFinID());
+
+		if (generateLetterService.getInitiatedLoan(fm.getFinID(), this.generateLetter.getLetterType()) > 0) {
+			MessageUtil.showError(Labels.getLabel("label_listheader_LetterType")
+					+ " is Already Initiated For".concat(this.finReference.getValue()));
+			return false;
+		}
+
+		if (generateLetterService.letterIsInQueu(fm.getFinID(), this.generateLetter.getLetterType())) {
+			String msg = Labels.getLabel("label_listheader_LetterType").concat(this.letterType.getValue())
+					+ " is Already Initiated For ".concat(this.finReference.getValue())
+					+ " and is in queue for letter generation, Do You Want proceed with Manual?";
+
+			if (MessageUtil.YES == MessageUtil.confirm(msg)) {
+				return true;
 			}
+
+			return false;
+		}
+
+		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())
+				&& !this.generateLetter.getLetterType().equals(LetterType.CANCELLATION.name())) {
+			MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_LetterType")
+					+ " for ".concat(this.finReference.getValue()));
+			return false;
+		}
+
+		if ((FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())
+				&& !(this.generateLetter.getLetterType().equals(LetterType.NOC.name())
+						|| this.generateLetter.getLetterType().equals(LetterType.CLOSURE.name())))) {
+			MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_LetterType")
+					+ " for ".concat(this.finReference.getValue()));
+			return false;
 		}
 
 		if (fm.isFinIsActive() && fm.getClosingStatus() == null) {
 			MessageUtil.showError("Active Loans are not allowed to Generate Letter");
-			return false;
-		}
-
-		if (LoanCancelationUtil.LOAN_CANCEL_REBOOK
-				.equals(generateLetterService.getCanceltype(this.finReference.getValue()))) {
-			MessageUtil.showError("Cancelled and Rebooked Loan's are not allowed to Generate Letter");
-			return false;
-		}
-
-		if (generateLetterService.getFinTypeMap(fm.getFinType()) == 0) {
-			MessageUtil.showError("Loan Type Letter mapping not available");
 			return false;
 		}
 
@@ -133,10 +166,10 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void doWriteComponentsToBean() throws Exception {
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		List<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if (StringUtils.isEmpty(this.letterType.getValue())) {
+			if ("#".equals(getComboboxValue(this.letterType))) {
 				throw new WrongValueException(this.letterType, Labels.getLabel("FIELD_IS_MAND",
 						new String[] { Labels.getLabel("label_GenerateLetterDialog_LetterType") }));
 
@@ -180,17 +213,8 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 		logger.debug(Literal.ENTERING);
 
 		final Map<String, Object> map = new HashMap<String, Object>();
-		GenerateLetter geneLtr = new GenerateLetter();
 
-		geneLtr.setFinReference(this.finReference.getValue());
-		geneLtr.setLetterType(getComboboxValue(letterType));
-		geneLtr.setWorkflowId(this.generateLetter.getWorkflowId());
-		geneLtr.setNewRecord(this.generateLetter.isNewRecord());
-		geneLtr.setFinanceDetail(
-				generateLetterService.getFinanceDetailById(geneLtr.getFinReference(), geneLtr.getLetterType()));
-		geneLtr.setFinID(geneLtr.getFinanceDetail().getFinScheduleData().getFinID());
-
-		map.put("generateLetter", geneLtr);
+		map.put("generateLetter", this.generateLetter);
 		map.put("moduleCode", this.moduleCode);
 		map.put("generateLetterListCtrl", generateLetterListCtrl);
 
@@ -200,11 +224,11 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onClick$btnClose(Event event) throws InterruptedException, ParseException {
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		this.windowSelectGenerateLetter.onClose();
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setGenerateLetterListCtrl(GenerateLetterListCtrl generateLetterListCtrl) {

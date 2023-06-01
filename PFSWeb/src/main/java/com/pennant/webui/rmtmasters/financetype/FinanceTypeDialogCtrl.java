@@ -4184,7 +4184,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				}
 
 				if (StringUtils.isNumeric(regProvRule)) {
-					aFinanceType.setRegProvRule(new Long(regProvRule));
+					aFinanceType.setRegProvRule(Long.parseLong(regProvRule));
 				} else {
 					aFinanceType.setRegProvRule(null);
 				}
@@ -4200,7 +4200,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				}
 
 				if (StringUtils.isNumeric(intProvRule)) {
-					aFinanceType.setIntProvRule(new Long(intProvRule));
+					aFinanceType.setIntProvRule(Long.parseLong(intProvRule));
 				} else {
 					aFinanceType.setIntProvRule(null);
 				}
@@ -6971,12 +6971,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 						|| this.cbfinSchdMthd.getSelectedItem().getValue().equals(CalculationConstants.SCHMTHD_PFT)
 						|| this.cbfinSchdMthd.getSelectedItem().getValue()
 								.equals(CalculationConstants.SCHMTHD_PFTCPZ)) {
-
-					String schdCalRvwOn = CalculationConstants.RPYCHG_TILLMDT;
-					if (isOverdraft || consumerDurable) {
-						schdCalRvwOn = CalculationConstants.RPYCHG_ADJMDT;
-					}
-
 					if (this.sanBsdSchdle.isChecked()) {
 						// Schedule Calculation Codes
 						fillComboBox(this.cbfinSchCalCodeOnRvw, getFinanceType().getFinSchCalCodeOnRvw(),
@@ -7176,7 +7170,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.oDAllowWaiver.setDisabled(true);
 			this.oDMaxWaiverPerc.setDisabled(true);
 			this.oDMinCapAmount.setDisabled(true);
-			// this.odMinAmount.setDisabled(true);
 			checkAction = true;
 			if (isOverdraft) {
 				this.collectionAmt.setReadonly(!isCompReadonly);

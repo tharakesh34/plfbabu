@@ -259,4 +259,8 @@ public class ManualAdviceUtil {
 
 		movementMap.put(feeCode, amt.add(amount));
 	}
+
+	public static boolean isValidateCancelManualAdvise(List<ManualAdvise> list) {
+		return list.stream().anyMatch(m -> m.getStatus() == null);
+	}
 }

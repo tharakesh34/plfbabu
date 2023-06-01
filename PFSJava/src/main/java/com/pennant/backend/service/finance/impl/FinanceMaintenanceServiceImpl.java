@@ -938,6 +938,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			linkedTranId = aeEvent.getLinkedTranId();
 		}
 
+		fd.setAppDate(appDate);
 		if (ImplementationConstants.ALLOW_LIEN) {
 			fd.setModuleDefiner(FinServiceEvent.RPYBASICMAINTAIN);
 			if (InstrumentType.isSI(fm.getFinRepayMethod())) {
@@ -1085,7 +1086,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		if (CollectionUtils.isNotEmpty(finScheduleData.getFinServiceInstructions())) {
 			List<FinServiceInstruction> oldList = finServiceInstructionDAO.getFinServiceInstructions(finID, "",
-					FinServiceEvent.BASICMAINTAIN);
+					fd.getModuleDefiner());
 
 			List<FinServiceInstruction> newList = new ArrayList<>();
 			if (CollectionUtils.isNotEmpty(oldList)) {

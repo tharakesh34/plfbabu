@@ -38,7 +38,7 @@ public class ExcessKnockOffLoading implements Tasklet {
 			return RepeatStatus.FINISHED;
 		}
 
-		excessKnockOffDAO.deleteQueue();
+		excessKnockOffDAO.clearStageData();
 
 		EventProperties eventProperties = EODUtil.getEventProperties(EODUtil.EVENT_PROPERTIES, context);
 		Date valueDate = eventProperties.getAppDate();
@@ -48,13 +48,11 @@ public class ExcessKnockOffLoading implements Tasklet {
 
 		String thresholdValue = eventProperties.getThresholdValue();
 
-		long totalRecords = excessKnockOffDAO.logExcessForCrossLoanKnockOff(valueDate, executionDay, thresholdValue);
+		excessKnockOffDAO.logExcessForCrossLoanKnockOff(valueDate, executionDay, thresholdValue);
 
-		StepUtil.CROSS_LOAN_KNOCKOFF.setTotalRecords(totalRecords);
 
 		excessKnockOffDAO.logExcessForCrossLoanDetails(valueDate, executionDay);
 
-		BatchUtil.setExecutionStatus(context, StepUtil.CROSS_LOAN_KNOCKOFF);
 
 		logger.debug(Literal.LEAVING);
 		return RepeatStatus.FINISHED;

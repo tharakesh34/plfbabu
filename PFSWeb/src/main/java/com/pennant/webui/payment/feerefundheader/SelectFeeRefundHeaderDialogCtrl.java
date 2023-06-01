@@ -49,7 +49,6 @@ import com.pennant.backend.model.feerefund.FeeRefundHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.feerefund.FeeRefundHeaderService;
-import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.UploadConstants;
@@ -71,7 +70,6 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 	private FeeRefundHeaderListCtrl feeRefundHeaderListCtrl;
 	private FeeRefundHeader feeRefundHeader;
 	private FeeRefundHeaderService feeRefundHeaderService;
-	private FinanceDetailService financeDetailService;
 	private PaymentHeaderService paymentHeaderService;
 	private HoldRefundUploadDAO holdRefundUploadDAO;
 	private FinOverDueService finOverDueService;
@@ -171,7 +169,8 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 
 		String rcdMntnSts = fm.getRcdMaintainSts();
 
-		if (StringUtils.isNotEmpty(rcdMntnSts) && (FinServiceEvent.MANUALADVISE.equals(rcdMntnSts) ? isValidateCancelManualAdvise(finID) : true)) {
+		if (StringUtils.isNotEmpty(rcdMntnSts)
+				&& (FinServiceEvent.MANUALADVISE.equals(rcdMntnSts) ? isValidateCancelManualAdvise(finID) : true)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
 			return;
 		}
@@ -263,10 +262,6 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 
 	public void setFeeRefundHeaderService(FeeRefundHeaderService feeRefundHeaderService) {
 		this.feeRefundHeaderService = feeRefundHeaderService;
-	}
-
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
 	}
 
 	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {

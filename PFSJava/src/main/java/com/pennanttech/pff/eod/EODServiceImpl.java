@@ -78,7 +78,7 @@ public class EODServiceImpl implements EODService {
 				&& bps.getEndTime() != null) {
 			int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
 			if (days == 0) {
-				int timeBetween = Integer.valueOf(DateUtil.timeBetween(sysDate, bps.getEndTime(), "HH"));
+				int timeBetween = Integer.parseInt(DateUtil.timeBetween(sysDate, bps.getEndTime(), "HH"));
 				if (timeBetween < 20) {
 					logger.debug("EOD is already processed for this System Date {$}.", sysDate);
 					return;

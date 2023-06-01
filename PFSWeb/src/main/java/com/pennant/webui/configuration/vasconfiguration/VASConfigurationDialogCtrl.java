@@ -1151,12 +1151,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aVASConfiguration
-	 * @throws InterruptedException
-	 * @throws ParseException
-	 * 
 	 */
-	public void doWriteBeanToComponents(VASConfiguration aVASConfiguration)
-			throws ParseException, InterruptedException {
+	public void doWriteBeanToComponents(VASConfiguration aVASConfiguration) {
 		logger.debug("Entering");
 
 		this.productCode.setValue(aVASConfiguration.getProductCode());
