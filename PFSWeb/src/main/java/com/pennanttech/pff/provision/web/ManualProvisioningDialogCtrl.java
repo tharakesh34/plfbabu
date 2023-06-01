@@ -546,7 +546,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		doSetValidation();
 
 		doWriteComponentsToBean(aProvision);
-		if (provisionService.isAssetClassCodeValid(aProvision.getFinID(),
+		if (this.manualProvision.isChecked() && provisionService.isAssetClassCodeValid(aProvision.getFinID(),
 				this.effManualAssetClassification.getValue())) {
 			MessageUtil.showError("ManualAsset Classification can't be upgarded");
 			return;
