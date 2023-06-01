@@ -243,7 +243,13 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 			gl.setEmailTemplate(ltlp.getEmailTemplateId());
 			gl.setModeofTransfer(LetterMode.OTC.name());
 
-			return autoLetterGenerationDAO.save(gl);
+			Long letterId = autoLetterGenerationDAO.getAutoLetterId(gl.getFinID(), gl.getLetterType(),
+					gl.getRequestType());
+			if (letterId == null) {
+				return autoLetterGenerationDAO.save(gl);
+			}
+
+			return letterId;
 		}
 		return 0;
 	}
