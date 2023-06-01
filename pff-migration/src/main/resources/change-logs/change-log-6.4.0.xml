@@ -16256,10 +16256,26 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#15956.89_Pre1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				 Insert into PLF_SEQUENCES (SCHEMA_CODE, TABLE_NAME, COLUMN_NAME, SEQUENCE_NAME, SEQUENCE_TYPE, REMARKS) values ('plf', 'LOAN_LETTER_MANUAL', 'Id', 'SEQ_Letter_Generate_Manual', 'sequence', null);
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#15956.89" author="Mounika.M">
 		<createSequence sequenceName="SEQ_Letter_Generate_Manual" minValue="1" maxValue="9223372036854775807"
 			incrementBy="1" startValue="1" />
+	</changeSet>
+	
+	<changeSet id="ST#15956.90_Pre1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				Insert into PLF_TABLES (TABLE_NAME, CATEGORY, SUB_CATEGORY, PART_OF_CLEANUP, TABLE_DESCRIPTION, CREATED_BY, CREATED_ON, TABLE_BLOCKED, TABLE_BLOCKED_BY, TABLE_BLOCKED_ON, REMARKS, IS_LOAN_ARCHIVE) values ('LETTER_GENERATE_MANUAL', 'transaction', 'loan', 0, 'This table contains the information of generated letter through Screen', 'Mounika.M', current_timestamp, 0, null, null, null, 0);
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#15956.90" author="Mounika.M">
@@ -16295,6 +16311,14 @@
 	<changeSet id="ST#15956.91" author="Mounika.M">
 		<addPrimaryKey tableName="LETTER_GENERATE_MANUAL" columnNames="ID"
 			constraintName="PK_LETTER_GENERATE_MANUAL_ID" />
+	</changeSet>
+	
+	<changeSet id="ST#15956.92_Pre1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				Insert into PLF_TABLES (TABLE_NAME, CATEGORY, SUB_CATEGORY, PART_OF_CLEANUP, TABLE_DESCRIPTION, CREATED_BY, CREATED_ON, TABLE_BLOCKED, TABLE_BLOCKED_BY, TABLE_BLOCKED_ON, REMARKS, IS_LOAN_ARCHIVE) values ('LETTER_GENERATE_MANUAL_TEMP', 'transaction', 'loan', 0, 'This table contains the information of generated letter through Screen in maker stage', 'Mounika.M' ,current_timestamp, 0, null, null, null, 0);
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#15956.92" author="Mounika.M">
@@ -18472,6 +18496,14 @@
 		<dropTable tableName="LOAN_LETTERS_STAGE" />
 		<dropTable tableName="LOAN_LETTERS" />
 	</changeSet> -->
+	
+	<changeSet id="ST#1561.100_Pre1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				Insert into PLF_TABLES (TABLE_NAME, CATEGORY, SUB_CATEGORY, PART_OF_CLEANUP, TABLE_DESCRIPTION, CREATED_BY, CREATED_ON, TABLE_BLOCKED, TABLE_BLOCKED_BY, TABLE_BLOCKED_ON, REMARKS, IS_LOAN_ARCHIVE) values ('LOAN_LETTERS', 'transaction', 'loan', 0, 'This table contains the information of generated letter through upload, web, EOD','Mounika.M',current_timestamp, 0, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#1561.100" author="Mounika.M">
 		<createTable tableName="LOAN_LETTERS">
@@ -18527,10 +18559,26 @@
 	<changeSet id="ST#1561.101" author="Mounika.M">
 		<addPrimaryKey tableName="LOAN_LETTERS" columnNames="ID" constraintName="PK_LOAN_LETTERS_ID" />
 	</changeSet>
+	
+	<changeSet id="ST#1561.102_Pre1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				Insert into PLF_FK_RELATIONS  (CATEGORY, BASE_TABLE, BASE_COLUMN, FK_CONSTRAINT_NAME, REFERENCE_TABLE, REFERENCE_COLUMN) values ('Loan', 'LOAN_LETTERS', 'FinID', 'FK_LOAN_LETTERS_FM_FinID', 'FinanceMain', 'FinID');
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#1561.102" author="Mounika.M">
 		<addForeignKeyConstraint constraintName="FK_LOAN_LETTERS_FM_FinID"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="LOAN_LETTERS" referencedColumnNames="FinID" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.103_Pre1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				Insert into PLF_FK_RELATIONS  (CATEGORY, BASE_TABLE, BASE_COLUMN, FK_CONSTRAINT_NAME, REFERENCE_TABLE, REFERENCE_COLUMN) values ('Loan', 'LOAN_LETTERS', 'AgreementTemplate', 'FK_LL_BMTAD_ID', 'BMTAggrementDef', 'AggId');
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1561.103" author="Mounika.M">
@@ -18538,11 +18586,27 @@
 			referencedTableName="BMTAggrementDef" baseColumnNames="AgreementTemplate" baseTableName="LOAN_LETTERS"
 			referencedColumnNames="AggId" />
 	</changeSet>
+	
+	<changeSet id="ST#1561.104_Pre1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				Insert into PLF_FK_RELATIONS  (CATEGORY, BASE_TABLE, BASE_COLUMN, FK_CONSTRAINT_NAME, REFERENCE_TABLE, REFERENCE_COLUMN) values ('Loan', 'LOAN_LETTERS', 'EmailTemplate', 'FK_LS_Template_ET', 'Templates', 'TemplateID');
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#1561.104" author="Mounika.M">
 		<addForeignKeyConstraint constraintName="FK_LS_Template_ET"
 			referencedTableName="Templates" baseColumnNames="EmailTemplate" baseTableName="LOAN_LETTERS"
 			referencedColumnNames="TemplateID" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.105_Pre1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				Insert into PLF_FK_RELATIONS (CATEGORY, BASE_TABLE, BASE_COLUMN, FK_CONSTRAINT_NAME, REFERENCE_TABLE, REFERENCE_COLUMN)  values ('Loan', 'LOAN_LETTERS', 'AdviseID', 'FK_LS_MA_ADVISEID', 'ManualAdvise', 'adviseID');
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1561.105" author="Mounika.M">
@@ -18565,6 +18629,14 @@
 		<sql>
 			<![CDATA[	
 				ALTER TABLE LOAN_LETTERS ADD CONSTRAINT DF_LL_GENERATED DEFAULT 0 FOR GENERATED;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.109_Pre1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				Insert into PLF_TABLES (TABLE_NAME, CATEGORY, SUB_CATEGORY, PART_OF_CLEANUP, TABLE_DESCRIPTION, CREATED_BY, CREATED_ON, TABLE_BLOCKED, TABLE_BLOCKED_BY, TABLE_BLOCKED_ON, REMARKS, IS_LOAN_ARCHIVE) values ('LOAN_LETTERS_STAGE', 'transaction', 'loan', 0, 'This table is for queue purpose to generate letters', 'Mounika.M', current_timestamp, 0, null, null, null, 0);
 			]]>
 		</sql>
 	</changeSet>
@@ -18623,6 +18695,14 @@
 	<changeSet id="ST#1561.110" author="Mounika.M">
 		<addPrimaryKey tableName="LOAN_LETTERS_STAGE" columnNames="ID" constraintName="PK_LLS_ID" />
 	</changeSet>
+	
+	<changeSet id="ST#1561.112_Pre1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				Insert into PLF_FK_RELATIONS  (CATEGORY, BASE_TABLE, BASE_COLUMN, FK_CONSTRAINT_NAME, REFERENCE_TABLE, REFERENCE_COLUMN) values ('Loan','LOAN_LETTERS_STAGE', 'FinID', 'FK_LLS_FM_FinID', 'FinanceMain', 'FinID');
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#1561.112" author="Mounika.M">
 		<addForeignKeyConstraint constraintName="FK_LLS_FM_FinID"
@@ -18630,16 +18710,40 @@
 			referencedColumnNames="FinID" />
 	</changeSet>
 
+	<changeSet id="ST#1561.113_Pre1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				Insert into PLF_FK_RELATIONS  (CATEGORY, BASE_TABLE, BASE_COLUMN, FK_CONSTRAINT_NAME, REFERENCE_TABLE, REFERENCE_COLUMN) values ('Loan', 'LOAN_LETTERS_STAGE', 'AgreementTemplate', 'FK_LLS_BMTAD_ID', 'BMTAggrementDef', 'AggId');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#1561.113" author="Mounika.M">
 		<addForeignKeyConstraint constraintName="FK_LLS_BMTAD_ID"
 			referencedTableName="BMTAggrementDef" baseColumnNames="AgreementTemplate" baseTableName="LOAN_LETTERS_STAGE"
 			referencedColumnNames="AggId" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.114_Pre1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				Insert into PLF_FK_RELATIONS  (CATEGORY, BASE_TABLE,BASE_COLUMN, FK_CONSTRAINT_NAME, REFERENCE_TABLE, REFERENCE_COLUMN) values ('Loan', 'LOAN_LETTERS_STAGE', 'EmailTemplate', 'FK_LLS_Template_ET', 'Templates', 'TemplateID');
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1561.114" author="Mounika.M">
 		<addForeignKeyConstraint constraintName="FK_LLS_Template_ET"
 			referencedTableName="Templates" baseColumnNames="EmailTemplate" baseTableName="LOAN_LETTERS_STAGE"
 			referencedColumnNames="TemplateID" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.115_Pre1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				Insert into PLF_FK_RELATIONS (CATEGORY, BASE_TABLE, BASE_COLUMN, FK_CONSTRAINT_NAME, REFERENCE_TABLE, REFERENCE_COLUMN)  values ('Loan', 'LOAN_LETTERS_STAGE', 'AdviseID', 'FK_LLS_MA_ADVISEID', 'ManualAdvise', 'adviseID');
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1561.115" author="Mounika.M">
@@ -18717,10 +18821,27 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#1561.46_Pre1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN, IS_MASKINGDATA) values ('LETTER_GENERATE_MANUAL', 'WaiverAmt', 'NUMBER', '18,0', ' Waiver amount', ' Used to captured amount which is waived while generating letter', 'Optional', 0, null, null, 0, null, CURRENT_TIMESTAMP, 'Mounika.M', null, null, 0, 0);
+				
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#1561.46" author="Mounika.M">
 		<addColumn tableName="Loan_Letter_Manual">
 			<column name="WaiverAmt" type = "decimal(18, 0)"/>
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1561.48_Pre1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN, IS_MASKINGDATA) values ('LOAN_LETTER_MANUAL_TEMP', 'WaiverAmt', 'NUMBER', '18,0', 'Waiver amount', 'Used to captured amount which is waived while generating letter', 'Optional', 0, null, null, 0, null, CURRENT_TIMESTAMP, 'Mounika.M', null, null, 0, 0);
+			]]>
+		</sql>
 	</changeSet>
 	
 	<changeSet id="ST#1561.48" author="Mounika.M">
