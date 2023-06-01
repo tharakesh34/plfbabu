@@ -15295,6 +15295,25 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1561.59.PRE1" author="sainaveen.y">
+		<sql>
+			<![CDATA[
+			INSERT INTO PLF_TABLES (TABLE_NAME, CATEGORY, SUB_CATEGORY, PART_OF_CLEANUP, TABLE_DESCRIPTION, CREATED_BY, CREATED_ON,TABLE_BLOCKED, TABLE_BLOCKED_BY, TABLE_BLOCKED_ON, REMARKS,IS_LOAN_ARCHIVE) VALUES('LETTER_BLOCKING','Transaction', 'Loan',1,'This Table is used to storing the Auto letter generation process blocked details against FINID','sainaveen.y', CURRENT_TIMESTAMP, 0, null, null, null,0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1561.59.PRE2" author="sainaveen.y">
+		<sql>
+			<![CDATA[
+			INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS,COMANDATORY,IS_CONDITION_COLUMN,IS_MASKINGDATA) VALUES ('LETTER_BLOCKING', 'ID',        'NUMBER',  '19,0',  'ID',          'Autoincremented value for unique identification',  'MANDATORY', 1, null, null, null, null, CURRENT_TIMESTAMP, 'sainaveen.y',   null,                                                                         null,0,0);
+			INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS,COMANDATORY,IS_CONDITION_COLUMN,IS_MASKINGDATA) VALUES ('LETTER_BLOCKING', 'FINID',     'NUMBER',  '19,0',  'FIN ID',      'To process data against the loan reference',       'Optional',  0, null, null, null, null, CURRENT_TIMESTAMP, 'sainaveen.y',   'we are creating unique constraint to This column-UK_LETTER_BLOCKINGR_FINID', null,0,0);
+			INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS,COMANDATORY,IS_CONDITION_COLUMN,IS_MASKINGDATA) VALUES ('LETTER_BLOCKING', 'CREATEDON', 'date',     '',     'CREATED ON',  'To know when the data has been inserted ',         'Optional',  0, null, null, null, null, CURRENT_TIMESTAMP, 'sainaveen.y',   null,                                                                         null,0,0);
+			
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#1561.59" author="sainaveen.y">
 		<createTable tableName="LETTER_BLOCKING">
@@ -15313,6 +15332,25 @@
 	<changeSet id="ST#1561.61" author="sainaveen.y">
 		<addUniqueConstraint tableName="LETTER_BLOCKING" columnNames="FinID"
 			constraintName="UK_LETTER_BLOCKINGR_FINID" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.62.PRE1" author="sainaveen.y">
+		<sql>
+			<![CDATA[
+			INSERT INTO PLF_TABLES (TABLE_NAME, CATEGORY, SUB_CATEGORY, PART_OF_CLEANUP, TABLE_DESCRIPTION, CREATED_BY, CREATED_ON, TABLE_BLOCKED, TABLE_BLOCKED_BY, TABLE_BLOCKED_ON, REMARKS,IS_LOAN_ARCHIVE) VALUES ('LOAN_LETTER_BLOCKING_LOG','Transaction', 'Loan',1, 'This Table is used to storing the Auto letter generation process block and remove block details against FINID','sainaveen.y', CURRENT_TIMESTAMP, 0, null, null, null,0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1561.62.PER2" author="sainaveen.y">
+		<sql>
+			<![CDATA[
+			INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS,COMANDATORY,IS_CONDITION_COLUMN,IS_MASKINGDATA) VALUES ('Letter_Blocking_Log', 'ID',         'NUMBER',   '19,0', 'ID',          'Autoincremented value for unique identification',                      'MANDATORY', 1, null, null, null, null, CURRENT_TIMESTAMP, 'sainaveen.y', null,null,0,0);
+			INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS,COMANDATORY,IS_CONDITION_COLUMN,IS_MASKINGDATA) VALUES ('Letter_Blocking_Log', 'FINID',      'NUMBER',   '19,0', 'FIN ID',      'To process data against the loan referenc',                            'Optional',  0, null, null, null, null, CURRENT_TIMESTAMP, 'sainaveen.y', null,null,0,0);
+			INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS,COMANDATORY,IS_CONDITION_COLUMN,IS_MASKINGDATA) VALUES ('Letter_Blocking_Log', 'BLOCKTYPE',  'STRING',   '1',    'BLOCK TYPE',  'To idetify data against the lan which its blocked(B) or unblocked(R)', 'Optional',  0, null, null, null, null, CURRENT_TIMESTAMP, 'sainaveen.y', null,null,0,0);
+			INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS,COMANDATORY,IS_CONDITION_COLUMN,IS_MASKINGDATA) VALUES ('Letter_Blocking_Log', 'UPDATEDON',  'date',     '',     'UPDATED ON',  'To know when the data has been updated',                               'Optional',  0, null, null, null, null, CURRENT_TIMESTAMP, 'sainaveen.y', null,null,0,0);
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1561.62" author="sainaveen.y">
@@ -15660,7 +15698,15 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
+      <changeSet id="ST#1561.64.PRE1" author="sainaveen.y">
+		<sql>
+		  <![CDATA[
+		      INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS,COMANDATORY,IS_CONDITION_COLUMN,IS_MASKINGDATA) VALUES ('LETTER_BLOCKING', 'Remarks', 'STRING','100', 'Remarks', 'To know the reason for block and unblocking', 'Optional', 0, null, null, null, null, CURRENT_TIMESTAMP, 'sainaveen.y', null,null,0,0);
+		    ]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#1561.64" author="sainaveen.y">
 		<addColumn tableName="Letter_Blocking">
 			<column name="Remarks" type="varchar(100)" />
