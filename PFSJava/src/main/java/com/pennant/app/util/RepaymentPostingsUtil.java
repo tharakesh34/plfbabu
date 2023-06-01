@@ -1513,6 +1513,7 @@ public class RepaymentPostingsUtil {
 					for (ManualAdvise ma1 : ma) {
 						if (ma1.getAdviseID() == rcd.getPayAgainstID()) {
 							feeTypeCode = ma1.getFeeTypeCode();
+							dataMap.put(feeTypeCode + "_P", ma1.getReservedAmt());
 							break;
 						}
 					}
