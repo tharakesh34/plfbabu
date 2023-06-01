@@ -74,7 +74,7 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 
 		if ("D".equals(deliveryStatus) || "R".equals(deliveryStatus)) {
 			if (StringUtils.isBlank(DateUtil.formatToLongDate(detail.getDeliveryDate()))) {
-				setError(detail, CourierDetailUploadError.LCD_005);
+				setError(detail, CourierDetailUploadError.LCD_009);
 				return;
 			}
 		}

@@ -13,7 +13,9 @@ public enum CourierDetailUploadError {
 
 	LCD_007("Mode is Configured as Email for the uploaded Loan Reference."),
 
-	LCD_008("Letter Details are not Available");
+	LCD_008("Letter Details are not Available"),
+
+	LCD_009("Delivery Date is mandatory.");
 
 	private String description;
 
