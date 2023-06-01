@@ -1,5 +1,6 @@
 package com.pennant.webui.lien.lienenquiry;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,11 +8,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -27,11 +31,13 @@ public class LienEnquiryDialogCtrl extends GFCBaseCtrl<LienDetails> {
 	private static final Logger logger = LogManager.getLogger(LienEnquiryDialogCtrl.class);
 
 	protected Window windowLienEnquiryDialog;
+	protected Borderlayout borderlayoutLienEnquiry;
 	protected Listbox lienDetails;
 	protected Label windowTitle;
 	protected Label title;
 	protected Listheader listheaderLienReference;
 	protected Textbox finReference;
+	protected Paging paging;
 
 	public LienEnquiryDialogCtrl() {
 		super();
@@ -65,6 +71,16 @@ public class LienEnquiryDialogCtrl extends GFCBaseCtrl<LienDetails> {
 				headerType = (boolean) arguments.get("header");
 			}
 
+			this.borderlayoutLienEnquiry.setHeight(getBorderLayoutHeight());
+			this.lienDetails.setHeight(getListBoxHeight(0));
+			this.paging.setPageSize(getListRows());
+			this.paging.setDetailed(true);
+
+			this.lienDetails.setItemRenderer(new ListModelItemRenderer(headerType));
+
+			this.paging.setActivePage(0);
+
+			pagedListWrapper.initList(lienDetail, this.lienDetails, this.paging);
 			doShowDialog(lienDetail, headerType);
 		} catch (Exception e) {
 			closeDialog();
@@ -76,8 +92,6 @@ public class LienEnquiryDialogCtrl extends GFCBaseCtrl<LienDetails> {
 
 	private void doShowDialog(List<LienDetails> lienDetail, boolean headerType) {
 		try {
-			doFillHeaderList(lienDetail, headerType);
-
 			if (!headerType) {
 				listheaderLienReference.setLabel(Labels.getLabel("label_SelectLienEnquiryList_accNum.value"));
 			}
@@ -89,29 +103,37 @@ public class LienEnquiryDialogCtrl extends GFCBaseCtrl<LienDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doFillHeaderList(List<LienDetails> lu, boolean headerType) {
-		for (LienDetails ld : lu) {
-			Listitem li = new Listitem();
-
-			li.appendChild(new Listcell(String.valueOf(ld.getLienID())));
-			li.appendChild(new Listcell(ld.getLienReference()));
-			li.appendChild(new Listcell(ld.getSource()));
-			li.appendChild(new Listcell(DateUtil.formatToLongDate(ld.getMarkingDate())));
-			li.appendChild(new Listcell(ld.getMarking()));
-			li.appendChild(new Listcell(headerType ? ld.getReference() : ld.getAccountNumber()));
-			li.appendChild(new Listcell(ld.getMarkingReason()));
-			li.appendChild(new Listcell(ld.isLienStatus() ? "ACTIVE" : "IN-ACTIVE"));
-			li.appendChild(new Listcell(ld.getInterfaceStatus()));
-			li.appendChild(new Listcell(ld.getInterfaceRemarks()));
-			li.appendChild(new Listcell(DateUtil.formatToLongDate(ld.getDemarkingDate())));
-			li.appendChild(new Listcell(ld.getDemarking()));
-			li.appendChild(new Listcell(ld.getDemarkingReason()));
-
-			this.lienDetails.appendChild(li);
-		}
-	}
-
 	public void onClick$btnClose(Event event) {
 		doClose(false);
 	}
+
+	public class ListModelItemRenderer implements ListitemRenderer<LienDetails>, Serializable {
+		private static final long serialVersionUID = 1L;
+
+		private boolean headerType;
+
+		public ListModelItemRenderer(boolean headerType) {
+			this.headerType = headerType;
+		}
+
+		@Override
+		public void render(Listitem item, LienDetails ld, int index) throws Exception {
+
+			item.appendChild(new Listcell(String.valueOf(ld.getLienID())));
+			item.appendChild(new Listcell(ld.getLienReference()));
+			item.appendChild(new Listcell(ld.getSource()));
+			item.appendChild(new Listcell(DateUtil.formatToLongDate(ld.getMarkingDate())));
+			item.appendChild(new Listcell(ld.getMarking()));
+			item.appendChild(new Listcell(headerType ? ld.getReference() : ld.getAccountNumber()));
+			item.appendChild(new Listcell(ld.getMarkingReason()));
+			item.appendChild(new Listcell(ld.isLienStatus() ? "ACTIVE" : "IN-ACTIVE"));
+			item.appendChild(new Listcell(ld.getInterfaceStatus()));
+			item.appendChild(new Listcell(ld.getInterfaceRemarks()));
+			item.appendChild(new Listcell(DateUtil.formatToLongDate(ld.getDemarkingDate())));
+			item.appendChild(new Listcell(ld.getDemarking()));
+			item.appendChild(new Listcell(ld.getDemarkingReason()));
+
+		}
+	}
+
 }

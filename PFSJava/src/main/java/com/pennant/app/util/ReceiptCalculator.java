@@ -2731,7 +2731,7 @@ public class ReceiptCalculator {
 
 		for (char repayTo : rpyOrder) {
 			List<ReceiptAllocationDetail> allocations = rch.getAllocations();
-			if (repayTo == RepayConstants.REPAY_PRINCIPAL) {
+			if (String.valueOf(repayTo).equals(RepayConstants.DUETYPE_PRINICIPAL)) {
 				rd = priApportion(rd);
 				/**
 				 * PSD#165029 - Unable to do Part Prepayment & Early Settlement on the date of schedule payment
@@ -2740,14 +2740,14 @@ public class ReceiptCalculator {
 						&& allocations.get(rch.getPriIdx()).getPaidAvailable().compareTo(BigDecimal.ZERO) <= 0) {
 					rd = priApportion(rd);
 				}
-			} else if (repayTo == RepayConstants.REPAY_PROFIT) {
+			} else if (String.valueOf(repayTo).equals(RepayConstants.DUETYPE_PROFIT)) {
 				rd = intApportion(rd);
 				// Common issue 16
 				if (rd.isAdjSchedule() && receiptPurposeCtg == 2 && rch.getPftIdx() != -1 && rch.getFutPftIdx() != -1
 						&& allocations.get(rch.getPftIdx()).getPaidAvailable().compareTo(BigDecimal.ZERO) <= 0) {
 					rd = repayIntApportion(rd);
 				}
-			} else if (!rch.isPenalSeparate() && repayTo == RepayConstants.REPAY_PENALTY) {
+			} else if (!rch.isPenalSeparate() && String.valueOf(repayTo).equals(RepayConstants.DUETYPE_ODC)) {
 				rd = penalApportion(rd);
 			} else if (repayTo == RepayConstants.REPAY_OTHERS) {
 				// Code Related to Schedule Fees & Insurance Deleted

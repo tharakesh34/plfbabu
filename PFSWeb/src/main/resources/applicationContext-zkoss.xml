@@ -6194,8 +6194,7 @@
 		parent="basisListCtrl" scope="prototype" />
 
 	<bean id="lienEnquiryDialogCtrl" class="com.pennant.webui.lien.lienenquiry.LienEnquiryDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-	</bean>
+		parent="basisCtrl" scope="prototype"  p:pagedListWrapper-ref="pagedListWrapper"/>
 
 	<bean id="createReceiptUploadList" class="com.pennant.pff.receipt.web.CreateReceiptUploadListCtrl"
 		parent="uploadList" />
