@@ -66,7 +66,8 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 
 	@Override
 	public FinMaintainInstruction getFinMaintainInstructionByFinRef(long finID, String event) {
-		return finMaintainInstructionDAO.getFinMaintainInstructionByFinRef(finID, event, "_Temp");
+		return finMaintainInstructionDAO.getFinMaintainInstructionByFinRef(finID, event,
+				TableType.TEMP_TAB.getSuffix());
 	}
 
 	@Override
@@ -97,11 +98,13 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 		fsd.setFinMaintainInstruction(fmi);
 
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
+		String tempTab = TableType.TEMP_TAB.getSuffix();
 		if (!FinServiceEvent.ORG.equals(fd.getModuleDefiner())) {
 			TableType tableType = TableType.MAIN_TAB;
 			if (fmi.isWorkflow()) {
@@ -109,7 +112,6 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 			}
 
 			fmi.setEvent(FinServiceEvent.LINKDELINK);
-			// Setting work FLow Details for child
 			for (LinkedFinances linkedFin : fd.getLinkedFinancesList()) {
 				if (!linkedFin.isNewRecord()) {
 					linkedFin.setNewRecord(fmi.isNewRecord());
@@ -123,6 +125,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 				linkedFin.setRecordStatus(fmi.getRecordStatus());
 				linkedFin.setLastMntBy(fmi.getLastMntBy());
 				linkedFin.setLastMntOn(fmi.getLastMntOn());
+
 				financeMainDAO.updateMaintainceStatus(linkedFin.getFinID(), FinServiceEvent.LINKDELINK);
 			}
 
@@ -134,6 +137,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 				finMaintainInstructionDAO.update(fmi, tableType);
 			}
 
+			financeMainDAO.updateMaintainceStatus(fmi.getFinID(), FinServiceEvent.LINKDELINK);
 			List<LinkedFinances> saveFinances = new ArrayList<>();
 			List<LinkedFinances> updateFinances = new ArrayList<>();
 
@@ -141,35 +145,34 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 				if (linkedFin.isNewRecord()) {
 					saveFinances.add(linkedFin);
 					if (saveFinances.size() == PennantConstants.CHUNK_SIZE) {
-						linkedFinancesDAO.saveList(saveFinances, "_Temp");
+						linkedFinancesDAO.saveList(saveFinances, tempTab);
 						saveFinances.isEmpty();
 					}
 				} else {
 					updateFinances.add(linkedFin);
 					if (updateFinances.size() == PennantConstants.CHUNK_SIZE) {
-						linkedFinancesDAO.updateList(updateFinances, "_Temp");
+						linkedFinancesDAO.updateList(updateFinances, tempTab);
 						updateFinances.isEmpty();
 					}
 				}
 			}
 
 			if (CollectionUtils.isNotEmpty(saveFinances)) {
-				linkedFinancesDAO.saveList(saveFinances, "_Temp");
+				linkedFinancesDAO.saveList(saveFinances, tempTab);
 			}
 
 			if (CollectionUtils.isNotEmpty(updateFinances)) {
-				linkedFinancesDAO.updateList(updateFinances, "_Temp");
+				linkedFinancesDAO.updateList(updateFinances, tempTab);
 			}
 		}
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
 
-		// Extended field Details
 		if (fd.getExtendedFieldRender() != null) {
 			List<AuditDetail> details = fd.getAuditDetailMap().get("ExtendedFieldDetails");
 
 			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-					ExtendedFieldConstants.MODULE_LOAN, fd.getExtendedFieldHeader().getEvent(), "_Temp", serviceUID);
+					ExtendedFieldConstants.MODULE_LOAN, fd.getExtendedFieldHeader().getEvent(), tempTab, serviceUID);
 			auditDetails.addAll(details);
 		}
 
@@ -297,6 +300,8 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 							linkedFinancesDAO.update(linkFin, "");
 						}
 					}
+
+					financeMainDAO.updateMaintainceStatus(linkFin.getFinID(), "");
 					String[] fields = PennantJavaUtil.getFieldDetails(new LinkedFinances(),
 							new LinkedFinances().getExcludeFields());
 					auditDetails
@@ -313,17 +318,17 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 					finMaintainInstructionDAO.update(finMainInst, TableType.MAIN_TAB);
 				}
 			}
+
 			finMaintainInstructionDAO.delete(finMainInst, TableType.TEMP_TAB);
-			linkedFinancesDAO.delete(finMainInst.getFinID(), "_Temp");
+			linkedFinancesDAO.delete(finMainInst.getFinID(), TableType.TEMP_TAB.getSuffix());
 			financeMainDAO.updateMaintainceStatus(finMainInst.getFinID(), "");
 
 			finServiceInstructionDAO.deleteList(fmi.getFinID(), fd.getExtendedFieldHeader().getEvent(), "_Temp");
-			// Extended field Render Details.
+
 			List<AuditDetail> details = fd.getAuditDetailMap().get("ExtendedFieldDetails");
 			if (fd.getExtendedFieldRender() != null) {
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
 						ExtendedFieldConstants.MODULE_LOAN, fd.getExtendedFieldHeader().getEvent(), "", serviceUID);
-
 				auditDetails.addAll(details);
 			}
 
@@ -331,7 +336,6 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 				auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 			}
 
-			// WorkFlow Image For Audit
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			auditHeader.getAuditDetail().setAuditTranType(PennantConstants.TRAN_WF);
 			auditHeader.setAuditDetails(oldAuditDetails);
@@ -349,7 +353,6 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
-
 	}
 
 	@Override
@@ -366,7 +369,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		FinMaintainInstruction finMainInst = finScheduleData.getFinMaintainInstruction();
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		if (!FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) {
 			finMaintainInstructionDAO.delete(finMainInst, TableType.TEMP_TAB);
@@ -378,9 +381,12 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 					new LinkedFinances().getExcludeFields());
 			auditDetails.add(new AuditDetail(PennantConstants.TRAN_WF, ++i, fields[0], fields[1], linkFin.getBefImage(),
 					linkFin));
+
+			financeMainDAO.updateMaintainceStatus(linkFin.getFinID(), "");
 		}
 
-		linkedFinancesDAO.delete(finMain.getFinID(), "_Temp");
+		linkedFinancesDAO.delete(finMain.getFinID(), TableType.TEMP_TAB.getSuffix());
+		financeMainDAO.updateMaintainceStatus(finMain.getFinID(), "");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetail(getAuditDetail(finMainInst, 1, auditHeader.getAuditTranType()));
 		auditHeader.setAuditDetails(auditDetails);
@@ -390,22 +396,12 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from getLinkedFinancesDAO().getErrorDetail with Error ID and
-	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
-
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = validate(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinScheduleData fsd = fd.getFinScheduleData();
@@ -418,7 +414,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 			usrLanguage = fmi.getUserDetails().getLanguage();
 		}
 
-		auditHeader = getAuditDetails(auditHeader, method);
+		getAuditDetails(auditHeader, method);
 
 		// Extended field details Validation
 		if (fd.getExtendedFieldRender() != null) {
@@ -446,7 +442,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
-		auditHeader = getAuditDetails(auditHeader, method);
+		getAuditDetails(auditHeader, method);
 		auditHeader = nextProcess(auditHeader);
 
 		logger.debug(Literal.LEAVING);
@@ -484,7 +480,6 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 			linkedFinances.setLastMntBy(financeMain.getLastMntBy());
 			linkedFinances.setLastMntOn(financeMain.getLastMntOn());
 			linkedFinances.setVersion(financeMain.getVersion());
-
 		}
 
 		String auditTranType;
@@ -507,13 +502,17 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 						linkedFinancesDAO.updateList(updateFinances, type);
 					}
 				}
+
+				financeMainDAO.updateMaintainceStatus(linkedFin.getFinID(), FinServiceEvent.LINKDELINK);
 			}
 
 			linkedFinancesDAO.saveList(saveFinances, type);
 			linkedFinancesDAO.updateList(updateFinances, type);
 		}
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		financeMainDAO.updateMaintainceStatus(financeMain.getFinID(), FinServiceEvent.LINKDELINK);
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		String[] fields = PennantJavaUtil.getFieldDetails(new LinkedFinances(),
 				new LinkedFinances().getExcludeFields());
 		int i = 0;
@@ -532,8 +531,9 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		linkedFinancesDAO.delete(financeMain.getFinID(), "_Temp");
+		financeMainDAO.updateMaintainceStatus(financeMain.getFinID(), "");
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		String[] fields = PennantJavaUtil.getFieldDetails(new LinkedFinances(),
 				new LinkedFinances().getExcludeFields());
 		int i = 0;
@@ -541,6 +541,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 		for (LinkedFinances linkedFinance : financeDetail.getLinkedFinancesList()) {
 			auditDetails.add(new AuditDetail(PennantConstants.TRAN_WF, ++i, fields[0], fields[1],
 					linkedFinance.getBefImage(), linkedFinance));
+			financeMainDAO.updateMaintainceStatus(linkedFinance.getFinID(), "");
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -585,11 +586,14 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 						linkedFinancesDAO.update(lf, "");
 					}
 				}
+
+				financeMainDAO.updateMaintainceStatus(lf.getFinID(), "");
 			}
 		}
 		linkedFinancesDAO.delete(financeMain.getFinID(), "_Temp");
+		financeMainDAO.updateMaintainceStatus(financeMain.getFinID(), "");
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		String[] fields = PennantJavaUtil.getFieldDetails(new LinkedFinances(),
 				new LinkedFinances().getExcludeFields());
 		int i = 0;
@@ -602,24 +606,22 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 		return auditDetails;
 	}
 
-	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
+	private void getAuditDetails(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
 
 		String auditTranType = "";
-
 		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
-			if (financeMain.isWorkflow()) {
+			if (fm.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
 
-		// Asset Type Extended Field Details
 		List<ExtendedFieldRender> renderList = financeDetail.getExtendedFieldRenderList();
 		if (renderList != null && !renderList.isEmpty()) {
 			auditDetailMap.put("ExtendedFieldDetails",
@@ -627,12 +629,10 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
-		// Loan Field Details
 		if (financeDetail.getExtendedFieldRender() != null) {
 			ExtendedFieldRender extendedFieldRender = financeDetail.getExtendedFieldRender();
-			if (extendedFieldRender.getInstructionUID() == Long.MIN_VALUE
-					&& financeMain.getInstructionUID() != Long.MIN_VALUE) {
-				extendedFieldRender.setInstructionUID(financeMain.getInstructionUID());
+			if (extendedFieldRender.getInstructionUID() == Long.MIN_VALUE && fm.getInstructionUID() != Long.MIN_VALUE) {
+				extendedFieldRender.setInstructionUID(fm.getInstructionUID());
 			}
 			auditDetailMap.put("LoanExtendedFieldDetails",
 					extendedFieldDetailsService.setExtendedFieldsAuditData(financeDetail.getExtendedFieldHeader(),
@@ -641,19 +641,16 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 			auditDetails.addAll(auditDetailMap.get("LoanExtendedFieldDetails"));
 		}
 
-		// Extended Field Details
-		if (financeDetail.getExtendedFieldRender() != null)
-
-		{
+		if (financeDetail.getExtendedFieldRender() != null) {
 			auditDetailMap.put("ExtendedFieldDetails",
 					extendedFieldDetailsService.setExtendedFieldsAuditData(financeDetail.getExtendedFieldHeader(),
 							financeDetail.getExtendedFieldRender(), auditTranType, method,
 							financeDetail.getExtendedFieldHeader().getModuleName()));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
+
 		financeDetail.setAuditDetailMap(auditDetailMap);
 		logger.debug(Literal.LEAVING);
-		return auditHeader;
 	}
 
 	private List<FinServiceInstruction> getServiceInstructions(FinanceDetail fd) {
