@@ -761,7 +761,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			return;
 		}
 
-		if (StringUtils.isBlank(rud.getPartnerBankCode())) {
+		if (!ReceiptMode.CASH.equals(receiptMode) && StringUtils.isBlank(rud.getPartnerBankCode())) {
 			List<FinTypePartnerBank> ftb = partnerBankDAO.getpartnerbankCode(fm.getFinType(), subReceiptMode);
 
 			if (ftb.size() > 1) {
@@ -780,6 +780,13 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 
 		if (ReceiptMode.ONLINE.equals(pbMode)) {
 			pbMode = subReceiptMode;
+		}
+
+		if (ReceiptMode.CASH.equals(receiptMode)) {
+			if (StringUtils.isNotBlank(rud.getPartnerBankCode())) {
+				setError(rud, "[PARTNERBANKCODE] is not allowed for CASH payment");
+				return;
+			}
 		}
 
 		if (StringUtils.isNotBlank(rud.getPartnerBankCode())) {
