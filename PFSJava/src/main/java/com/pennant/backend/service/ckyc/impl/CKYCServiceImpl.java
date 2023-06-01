@@ -3,7 +3,6 @@ package com.pennant.backend.service.ckyc.impl;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -519,12 +518,12 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 									if (insideFileFolder != null && insideFileFolder.exists()) {
 										File directoryToZip = new File(insideFileFolder.getPath());
 										try {
-											List<File> fileList = new ArrayList<File>();
+											List<File> fileList = new ArrayList<>();
 
 											getAllFiles(directoryToZip, fileList);
 											writeZipFile(directoryToZip, fileList);
 										} catch (Exception e) {
-											logger.warn(Literal.EXCEPTION + e);
+											logger.warn(Literal.EXCEPTION, e);
 										}
 									}
 								}
@@ -536,17 +535,17 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 						bw.flush();
 						fos.flush();
 					} catch (Exception e) {
-						logger.error(Literal.EXCEPTION + e);
+						logger.error(Literal.EXCEPTION, e);
 					}
 
 					if (fileFolder != null && fileFolder.exists() && folderData) {
 						File directoryToZip = new File(fileFolder.getPath());
 						try {
-							List<File> fileList = new ArrayList<File>();
+							List<File> fileList = new ArrayList<>();
 
 							getAllFiles(directoryToZip, fileList);
 
-							List<File> mainList = new ArrayList<File>();
+							List<File> mainList = new ArrayList<>();
 							for (File files : fileList) {
 								String fileName = files.toString();
 								if (fileName.contains(".zip") || fileName.contains(".txt")) {
@@ -557,7 +556,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 							boolean sucess = deleteDirectory(fileFolder);
 							flag = sucess;
 						} catch (Exception e) {
-							logger.warn(Literal.EXCEPTION + e);
+							logger.warn(Literal.EXCEPTION, e);
 						}
 					}
 
@@ -1343,8 +1342,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 	}
 
 	public int getCustId(String ckycNo) {
-		int custId = ckycDAO.getCustId(ckycNo);
-		return custId;
+		return ckycDAO.getCustId(ckycNo);
 	}
 
 	@Override
@@ -1414,8 +1412,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 	private String dateEmptyorNot(Date dt) {
 		if (dt != null) {
 			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			String strDate = dateFormat.format(dt);
-			return strDate;
+			return dateFormat.format(dt);
 		} else {
 			return "";
 		}
@@ -1468,15 +1465,12 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 
 			zos.close();
 			fos.close();
-		} catch (FileNotFoundException e) {
-			logger.error(Literal.EXCEPTION, e);
 		} catch (IOException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 
-	public void addToZip(File directoryToZip, File file, ZipOutputStream zos)
-			throws FileNotFoundException, IOException {
+	public void addToZip(File directoryToZip, File file, ZipOutputStream zos) throws IOException {
 
 		FileInputStream fis = new FileInputStream(file);
 
