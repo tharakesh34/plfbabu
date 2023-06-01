@@ -41,6 +41,7 @@ import com.pennanttech.external.collectionreceipt.model.ExtCollectionReceiptData
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class ExtCollectionFileProcessorJob extends AbstractJob
@@ -212,21 +213,21 @@ public class ExtCollectionFileProcessorJob extends AbstractJob
 
 		if (collectionData.getBccAmount().compareTo(BigDecimal.ZERO) > 0) {
 			CreateReceiptUpload alloc1 = new CreateReceiptUpload();
-			alloc1.setCode("BOUNCE");
+			alloc1.setCode(Allocation.BOUNCE);
 			alloc1.setAmount(getAbsoluteAmount(getRoundAmount(String.valueOf(collectionData.getBccAmount()))));
 			alloc1.setFeeId(Long.parseLong("45"));
 			alloc.add(alloc1);
 		}
 		if (collectionData.getLppAmount().compareTo(BigDecimal.ZERO) > 0) {
 			CreateReceiptUpload alloc2 = new CreateReceiptUpload();
-			alloc2.setCode("ODC");
+			alloc2.setCode(Allocation.ODC);
 			alloc2.setAmount(getAbsoluteAmount(getRoundAmount(String.valueOf(collectionData.getLppAmount()))));
 			alloc2.setFeeId(Long.parseLong("46"));
 			alloc.add(alloc2);
 		}
 		if (collectionData.getEmiAmount().compareTo(BigDecimal.ZERO) > 0) {
 			CreateReceiptUpload alloc3 = new CreateReceiptUpload();
-			alloc3.setCode("EM");
+			alloc3.setCode(Allocation.EMI);
 			alloc3.setAmount(getAbsoluteAmount(getRoundAmount(String.valueOf(collectionData.getEmiAmount()))));
 			// alloc3.setFeeId(Long.parseLong("46"));
 			alloc.add(alloc3);
