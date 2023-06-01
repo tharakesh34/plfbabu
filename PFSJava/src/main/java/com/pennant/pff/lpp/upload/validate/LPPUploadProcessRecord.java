@@ -146,6 +146,15 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 
 			lppUploadDAO.save(lpp);
 
+			if (StringUtils.isNotBlank(lpp.getLoanType())
+					&& lppUploadDAO.isDuplicatetFinType(lpp.getLoanType(), header.getId())) {
+				setError(lpp, LPPUploadError.LPP_29);
+			}
+
+			if (lpp.getProgress() != EodConstants.PROGRESS_FAILED) {
+				setSuccesStatus(lpp);
+			}
+
 			if (PennantConstants.YES.equals(lpp.getApplyToExistingLoans())) {
 				int totalRecords = lppUploadDAO.saveByFinType(lpp);
 				header.setTotalRecords(header.getTotalRecords() + totalRecords);

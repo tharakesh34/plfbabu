@@ -20,4 +20,6 @@ public interface LPPUploadDAO {
 	int saveByFinType(LPPUpload lpp);
 
 	void updateTotals(long headerId, int totalRecords);
+
+	boolean isDuplicatetFinType(String fintype, long headerId);
 }

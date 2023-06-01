@@ -58,7 +58,9 @@ public enum LPPUploadError {
 
 	LPP_27("[Include Grace Days] should be N, when [PenaltyType] either of following {F/A/P/M}."),
 
-	LPP_28("Not allowed to maintain the [Loan Type] as it is in under maintenance.");
+	LPP_28("Not allowed to maintain the [Loan Type] as it is in under maintenance."),
+
+	LPP_29("Not allowed to maintain the duplicate [Loan Type].");
 
 	private String description;
 

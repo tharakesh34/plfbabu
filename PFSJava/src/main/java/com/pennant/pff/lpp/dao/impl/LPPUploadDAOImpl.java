@@ -238,4 +238,12 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 
 	}
 
+	@Override
+	public boolean isDuplicatetFinType(String fintype, long headerId) {
+		String sql = "select Count(LoanType) from LPP_UPLOAD where LoanType= ? and HeaderId=?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, fintype, headerId) > 1;
+	}
 }
