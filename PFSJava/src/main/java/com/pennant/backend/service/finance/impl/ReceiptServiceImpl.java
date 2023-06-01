@@ -3738,8 +3738,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		boolean autoReceipt = ReceiptUtil.isAutoReceipt(receiptMode, productCategory);
 
-		if (!(isTerminationEvent(fsi) || ReceiptMode.isValidReceiptMode(receiptMode) || fsi.isKnockOffReceipt()
-				|| fsi.isLoanCancellation() || autoReceipt)) {
+		if (!isTerminationEvent(fsi) && (!(ReceiptMode.isValidReceiptMode(receiptMode)) && !fsi.isKnockOffReceipt()
+				&& !fsi.isLoanCancellation() || autoReceipt)) {
 			setError(schdData, "90281", "Receipt mode", ReceiptMode.getValidReceiptModes());
 			return;
 		}
@@ -6828,11 +6828,13 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		rd.setTotalPastDues(receiptCalculator.getTotalNetPastDue(rd));
 
-		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE && !fsi.isClosureReceipt()) {
+		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
 			rch.getReceiptDetails().clear();
 			createXcessRCD(rd);
-			rcd.setPayOrder(rch.getReceiptDetails().size() + 1);
-			rch.getReceiptDetails().add(rcd);
+			if (!fsi.isClosureReceipt()) {
+				rcd.setPayOrder(rch.getReceiptDetails().size() + 1);
+				rch.getReceiptDetails().add(rcd);
+			}
 		} else {
 			if (rd.getTotalPastDues().compareTo(rch.getReceiptAmount()) >= 0) {
 				rcd.setDueAmount(rch.getReceiptAmount());
