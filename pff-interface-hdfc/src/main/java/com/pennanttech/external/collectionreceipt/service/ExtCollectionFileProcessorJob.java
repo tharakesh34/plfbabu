@@ -184,7 +184,7 @@ public class ExtCollectionFileProcessorJob extends AbstractJob
 		cru.setValueDate(SysParamUtil.getAppDate());
 		cru.setReceiptModeStatus("R");
 		cru.setRealizationDate(getFormattedDate(collectionData.getReceiptDate()));
-		cru.setReceiptAmount(collectionData.getGrandTotal());
+		cru.setReceiptAmount(getAbsoluteAmount(collectionData.getGrandTotal()));
 		cru.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		// collectionData
 		if ("Q".equals(StringUtils.stripToEmpty(collectionData.getReceiptType()))) {
@@ -213,28 +213,29 @@ public class ExtCollectionFileProcessorJob extends AbstractJob
 		if (collectionData.getBccAmount().compareTo(BigDecimal.ZERO) > 0) {
 			CreateReceiptUpload alloc1 = new CreateReceiptUpload();
 			alloc1.setCode("BOUNCE");
-			alloc1.setAmount(getRoundAmount(String.valueOf(collectionData.getBccAmount())));
+			alloc1.setAmount(getAbsoluteAmount(getRoundAmount(String.valueOf(collectionData.getBccAmount()))));
 			alloc1.setFeeId(Long.parseLong("45"));
 			alloc.add(alloc1);
 		}
 		if (collectionData.getLppAmount().compareTo(BigDecimal.ZERO) > 0) {
 			CreateReceiptUpload alloc2 = new CreateReceiptUpload();
 			alloc2.setCode("ODC");
-			alloc2.setAmount(getRoundAmount(String.valueOf(collectionData.getLppAmount())));
+			alloc2.setAmount(getAbsoluteAmount(getRoundAmount(String.valueOf(collectionData.getLppAmount()))));
 			alloc2.setFeeId(Long.parseLong("46"));
 			alloc.add(alloc2);
 		}
 		if (collectionData.getEmiAmount().compareTo(BigDecimal.ZERO) > 0) {
 			CreateReceiptUpload alloc3 = new CreateReceiptUpload();
 			alloc3.setCode("EM");
-			alloc3.setAmount(getRoundAmount(String.valueOf(collectionData.getEmiAmount())));
+			alloc3.setAmount(getAbsoluteAmount(getRoundAmount(String.valueOf(collectionData.getEmiAmount()))));
 			// alloc3.setFeeId(Long.parseLong("46"));
 			alloc.add(alloc3);
 		}
 		if (collectionData.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
 			CreateReceiptUpload alloc4 = new CreateReceiptUpload();
 			alloc4.setCode("ADVEMI");
-			alloc4.setAmount(getRoundAmount(String.valueOf(collectionData.getExcessAmount() + ".00")));
+			alloc4.setAmount(
+					getAbsoluteAmount(getRoundAmount(String.valueOf(collectionData.getExcessAmount() + ".00"))));
 			alloc4.setFeeId(Long.parseLong("75"));
 			alloc.add(alloc4);
 		}
@@ -246,33 +247,41 @@ public class ExtCollectionFileProcessorJob extends AbstractJob
 		if (collectionData.getOtherAmt1().compareTo(BigDecimal.ZERO) > 0) {
 			CreateReceiptUpload alloc5 = new CreateReceiptUpload();
 			alloc5.setCode(String.valueOf(collectionData.getOthercharge1()));
-			alloc5.setAmount(getRoundAmount(String.valueOf(collectionData.getOtherAmt1())));
+			alloc5.setAmount(getAbsoluteAmount(getRoundAmount(String.valueOf(collectionData.getOtherAmt1()))));
 			alloc.add(alloc5);
 		}
 
 		if (collectionData.getOtherAmt2().compareTo(BigDecimal.ZERO) > 0) {
 			CreateReceiptUpload alloc6 = new CreateReceiptUpload();
 			alloc6.setCode(String.valueOf(collectionData.getOtherCharge2()));
-			alloc6.setAmount(getRoundAmount(String.valueOf(collectionData.getOtherAmt2())));
+			alloc6.setAmount(getAbsoluteAmount(getRoundAmount(String.valueOf(collectionData.getOtherAmt2()))));
 			alloc.add(alloc6);
 		}
 
 		if (collectionData.getOtherAmt3().compareTo(BigDecimal.ZERO) > 0) {
 			CreateReceiptUpload alloc7 = new CreateReceiptUpload();
 			alloc7.setCode(String.valueOf(collectionData.getOtherCharge3()));
-			alloc7.setAmount(getRoundAmount(String.valueOf(collectionData.getOtherAmt3())));
+			alloc7.setAmount(getAbsoluteAmount(getRoundAmount(String.valueOf(collectionData.getOtherAmt3()))));
 			alloc.add(alloc7);
 		}
 
 		if (collectionData.getOtherAmt4().compareTo(BigDecimal.ZERO) > 0) {
 			CreateReceiptUpload alloc8 = new CreateReceiptUpload();
 			alloc8.setCode(String.valueOf(collectionData.getOtherCharge4()));
-			alloc8.setAmount(getRoundAmount(String.valueOf(collectionData.getOtherAmt4())));
+			alloc8.setAmount(getAbsoluteAmount(getRoundAmount(String.valueOf(collectionData.getOtherAmt4()))));
 			alloc.add(alloc8);
 		}
 
 		cru.setAllocations(alloc);
 		return cru;
+	}
+
+	private BigDecimal getAbsoluteAmount(BigDecimal amt) {
+		String amtt = String.valueOf(amt);
+		if (amtt.contains(".")) {
+			amtt = amtt.replace(".", "");
+		}
+		return new BigDecimal(amtt);
 	}
 
 	private BigDecimal getRoundAmount(String strAmount) {
