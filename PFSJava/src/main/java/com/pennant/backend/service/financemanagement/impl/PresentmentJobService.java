@@ -359,11 +359,7 @@ public class PresentmentJobService extends AbstractInterface {
 		detailExtract.setUserDetails(new LoggedInUser());
 		detailExtract.setStatus(status);
 		presentmentDetailService.setProperties(detailExtract);
-		try {
-			detailExtract.setMediaOnly(aMedia);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		detailExtract.setMediaOnly(aMedia);
 		Thread thread = new Thread(detailExtract);
 		thread.start();
 		try {
