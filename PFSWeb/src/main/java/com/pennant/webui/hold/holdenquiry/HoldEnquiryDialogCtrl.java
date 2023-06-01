@@ -130,11 +130,10 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		}
 
 		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
+		BigDecimal releaseAmount = BigDecimal.ZERO;
 
 		@Override
 		public void render(Listitem item, HoldMarkingDetail hd, int index) throws Exception {
-			BigDecimal releaseAmount = BigDecimal.ZERO;
-			releaseAmount = releaseAmount.add(hd.getAmount());
 
 			item.appendChild(new Listcell(String.valueOf(hd.getHoldID())));
 			item.appendChild(new Listcell(headerType ? hd.getFinReference() : hd.getAccountNumber()));
@@ -145,6 +144,7 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 				item.appendChild(new Listcell(String.valueOf(BigDecimal.ZERO)));
 				item.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getHoldAmount(), formatter)));
 			} else {
+				releaseAmount = releaseAmount.add(hd.getAmount());
 				item.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getHoldAmount(), formatter)));
 				item.appendChild(new Listcell(PennantApplicationUtil.amountFormate(releaseAmount, formatter)));
 				item.appendChild(new Listcell(
