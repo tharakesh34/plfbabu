@@ -1,20 +1,23 @@
 package com.pennant.webui.hold.holdenquiry;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -34,11 +37,13 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 	private static final Logger logger = LogManager.getLogger(HoldEnquiryDialogCtrl.class);
 
 	protected Window windowHoldEnquiryDialog;
-	protected Listbox holdDetails;
+	protected Borderlayout borderlayoutHoldEnquiry;
 	protected Label windowTitle;
 	protected Label title;
 	protected Listheader listheaderHoldReference;
 	protected Textbox finReference;
+	protected Listbox listBoxHold;
+	protected Paging paging;
 
 	public HoldEnquiryDialogCtrl() {
 		super();
@@ -72,6 +77,22 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 				headerType = (boolean) arguments.get("header");
 			}
 
+			this.borderlayoutHoldEnquiry.setHeight(getBorderLayoutHeight());
+			this.listBoxHold.setHeight(getListBoxHeight(0));
+			this.paging.setPageSize(getListRows());
+			this.paging.setDetailed(true);
+
+			if (CollectionUtils.isNotEmpty(holdDetail)) {
+				holdDetail = holdDetail.stream().sorted((l1, l2) -> Long.compare(l1.getHoldID(), l2.getHoldID()))
+						.toList();
+			}
+
+			this.listBoxHold.setItemRenderer(new ListModelItemRenderer(headerType));
+
+			this.paging.setActivePage(0);
+
+			pagedListWrapper.initList(holdDetail, this.listBoxHold, this.paging);
+
 			doShowDialog(holdDetail, headerType);
 		} catch (Exception e) {
 			closeDialog();
@@ -83,8 +104,6 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 
 	private void doShowDialog(List<HoldMarkingDetail> holdDetail, boolean headerType) {
 		try {
-			doFillHeaderList(holdDetail, headerType);
-
 			if (headerType) {
 				this.listheaderHoldReference
 						.setLabel(Labels.getLabel("label_SelectHoldEnquiryList_FinReference.value"));
@@ -97,43 +116,48 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doFillHeaderList(List<HoldMarkingDetail> lu, boolean headerType) {
-		if (CollectionUtils.isNotEmpty(lu)) {
-			lu = lu.stream().sorted((l1, l2) -> Long.compare(l1.getHoldID(), l2.getHoldID()))
-					.collect(Collectors.toList());
+	public void onClick$btnClose(Event event) {
+		doClose(false);
+	}
+
+	public class ListModelItemRenderer implements ListitemRenderer<HoldMarkingDetail>, Serializable {
+		private static final long serialVersionUID = 1L;
+
+		private boolean headerType;
+
+		public ListModelItemRenderer(boolean headerType) {
+			this.headerType = headerType;
 		}
 
-		BigDecimal releaseAmount = BigDecimal.ZERO;
-		for (HoldMarkingDetail hd : lu) {
-			releaseAmount = hd.getAmount().add(releaseAmount);
-			Listitem li = new Listitem();
-			int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
+		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 
-			li.appendChild(new Listcell(String.valueOf(hd.getHoldID())));
-			li.appendChild(new Listcell(headerType ? hd.getFinReference() : hd.getAccountNumber()));
-			li.appendChild(new Listcell(String.valueOf(hd.getHoldReference())));
+		@Override
+		public void render(Listitem item, HoldMarkingDetail hd, int index) throws Exception {
+			BigDecimal releaseAmount = BigDecimal.ZERO;
+			releaseAmount = releaseAmount.add(hd.getAmount());
+
+			item.appendChild(new Listcell(String.valueOf(hd.getHoldID())));
+			item.appendChild(new Listcell(headerType ? hd.getFinReference() : hd.getAccountNumber()));
+			item.appendChild(new Listcell(String.valueOf(hd.getHoldReference())));
+
 			if (PennantConstants.HOLD_MARKING.equals(String.valueOf(hd.getHoldType()))) {
-				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getHoldAmount(), formatter)));
-				li.appendChild(new Listcell(String.valueOf(BigDecimal.ZERO)));
-				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getHoldAmount(), formatter)));
+				item.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getHoldAmount(), formatter)));
+				item.appendChild(new Listcell(String.valueOf(BigDecimal.ZERO)));
+				item.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getHoldAmount(), formatter)));
 			} else {
-				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getHoldAmount(), formatter)));
-				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(releaseAmount, formatter)));
-				li.appendChild(new Listcell(
+				item.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getHoldAmount(), formatter)));
+				item.appendChild(new Listcell(PennantApplicationUtil.amountFormate(releaseAmount, formatter)));
+				item.appendChild(new Listcell(
 						PennantApplicationUtil.amountFormate(hd.getHoldAmount().subtract(releaseAmount), formatter)));
 			}
 
-			li.appendChild(new Listcell(String.valueOf(hd.getHoldType())));
-			li.appendChild(new Listcell(DateUtil.formatToLongDate(hd.getMovementDate())));
-			li.appendChild(new Listcell(hd.getMarking()));
-			li.appendChild(new Listcell(hd.getStatus()));
-			li.appendChild(new Listcell(hd.getHoldReleaseReason()));
+			item.appendChild(new Listcell(String.valueOf(hd.getHoldType())));
+			item.appendChild(new Listcell(DateUtil.formatToLongDate(hd.getMovementDate())));
+			item.appendChild(new Listcell(hd.getMarking()));
+			item.appendChild(new Listcell(hd.getStatus()));
+			item.appendChild(new Listcell(hd.getHoldReleaseReason()));
 
-			this.holdDetails.appendChild(li);
 		}
-	}
 
-	public void onClick$btnClose(Event event) {
-		doClose(false);
 	}
 }

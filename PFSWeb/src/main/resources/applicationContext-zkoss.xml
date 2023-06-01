@@ -6285,6 +6285,5 @@
 		parent="basisListCtrl" scope="prototype" />
 
 	<bean id="holdEnquiryDialogCtrl" class="com.pennant.webui.hold.holdenquiry.HoldEnquiryDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-	</bean>
+		parent="basisCtrl" scope="prototype"  p:pagedListWrapper-ref="pagedListWrapper"/>
 </beans>
