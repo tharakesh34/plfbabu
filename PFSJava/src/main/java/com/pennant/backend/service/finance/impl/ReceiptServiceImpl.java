@@ -5970,7 +5970,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE && fsi.isReceiptUpload()
-				&& ReceiptMode.CHEQUE.equals(rcd.getPaymentType()) || ReceiptMode.DD.equals(rcd.getPaymentType())) {
+				&& (ReceiptMode.CHEQUE.equals(rcd.getPaymentType()) || ReceiptMode.DD.equals(rcd.getPaymentType()))) {
 			int defaultClearingDays = SysParamUtil.getValueAsInt("EARLYSETTLE_CHQ_DFT_DAYS");
 			fsi.setValueDate(DateUtil.addDays(fsi.getReceivedDate(), defaultClearingDays));
 			rch.setValueDate(fsi.getValueDate());
