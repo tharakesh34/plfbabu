@@ -22,7 +22,6 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.ExtendedCombobox;
 import com.pennant.pff.holdmarking.model.HoldMarkingDetail;
 import com.pennant.pff.holdmarking.upload.dao.HoldMarkingDetailDAO;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -36,7 +35,7 @@ public class SelectHoldEnquiryListCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 	private static final Logger logger = LogManager.getLogger(SelectHoldEnquiryListCtrl.class);
 
 	protected Window windowSelectHoldEnquiryList;
-	protected ExtendedCombobox finReference;
+	protected Textbox finReference;
 	protected Button btnProceed;
 	private boolean isModelWindow = false;
 	private String finRefValue;
@@ -92,11 +91,6 @@ public class SelectHoldEnquiryListCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 			this.finReference.setReadonly(true);
 		} else {
 			accNumber.setDisabled(true);
-
-			this.finReference.setModuleName("FinanceDetail");
-			this.finReference.setValueColumn("FinReference");
-			this.finReference.setDescColumn("FinType");
-			this.finReference.setValidateColumns(new String[] { "FinReference" });
 
 			logger.debug(Literal.LEAVING);
 		}
@@ -183,8 +177,8 @@ public class SelectHoldEnquiryListCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 
 		try {
 			this.finRefValue = "";
-			if (!this.finReference.isReadonly())
-				this.finRefValue = this.finReference.getValidatedValue();
+			if (!this.finReference.isDisabled())
+				this.finRefValue = this.finReference.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -214,7 +208,7 @@ public class SelectHoldEnquiryListCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		this.accNumber.setDisabled(true);
-		this.finReference.setButtonDisabled(false);
+		this.finReference.setDisabled(false);
 		this.accNumber.setValue("");
 		this.accNumber.setConstraint("");
 		this.accNumber.setReadonly(true);
@@ -232,7 +226,7 @@ public class SelectHoldEnquiryListCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		this.accNumber.setDisabled(false);
 		this.finReference.setValue("");
 		this.finReference.setConstraint("");
-		this.finReference.setButtonDisabled(true);
+		this.finReference.setDisabled(true);
 
 		logger.debug(Literal.LEAVING);
 	}

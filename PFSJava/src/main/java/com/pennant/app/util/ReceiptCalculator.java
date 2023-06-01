@@ -4735,10 +4735,10 @@ public class ReceiptCalculator {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		List<XcessPayables> xcessPayables = rch.getXcessPayables();
 
-		if (rch.getReceiptDetails() != null && rch.getReceiptDetails().size() > 0) {
+		FinServiceInstruction fsi = receiptData.getFinanceDetail().getFinScheduleData().getFinServiceInstruction();
+		if (CollectionUtils.isNotEmpty(rch.getReceiptDetails()) && !(fsi != null && fsi.isClosureReceipt())) {
 			for (FinReceiptDetail recDtl : rch.getReceiptDetails()) {
-				for (int i = 0; i < xcessPayables.size(); i++) {
-					XcessPayables exs = xcessPayables.get(i);
+				for (XcessPayables exs : xcessPayables) {
 					if (payType(recDtl.getPaymentType()).equals(exs.getPayableType())
 							&& recDtl.getPayAgainstID() == exs.getPayableID()) {
 						exs.setTotPaidNow(BigDecimal.ZERO);

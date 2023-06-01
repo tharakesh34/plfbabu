@@ -410,16 +410,16 @@
 	<changeSet id="ST#1561.2" author="Mounika.M">
 		<createTable tableName="AdtService_Branches_LoanType">
 			<column name="AuditID" type="bigint">
-				<constraints nullable="false" primaryKey="true" />
+				<constraints nullable="false" />
 			</column>
 			<column name="AuditDate" type="datetime">
-				<constraints nullable="false" primaryKey="true" />
+				<constraints nullable="false" />
 			</column>
 			<column name="AuditSeq" type="int">
-				<constraints nullable="false" primaryKey="true" />
+				<constraints nullable="false" />
 			</column>
 			<column name="AuditImage" type="char(2)">
-				<constraints nullable="false" primaryKey="true" />
+				<constraints nullable="false" />
 			</column>
 			<column name="Id" type="bigint">
 				<constraints nullable="false" />
@@ -452,6 +452,10 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#1561.2_post" author="Mounika.M">
+    	<addPrimaryKey columnNames="AuditID, AuditDate,AuditSeq,AuditImage" constraintName="PK_AdtSrv_Branches_LoanType" tableName="AdtService_Branches_LoanType"/>
 	</changeSet>
 
 	<changeSet id="ST#1561.3" author="saikrishna.b">
@@ -659,5 +663,31 @@
 			<column name="FinBranch" type="varchar(13)" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ST#1561.48" author="Mounika.M">
+		<addColumn tableName="ADTLoan_Letter_Manual">
+			<column name="WaiverAmt" type ="decimal(18, 0)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1561.50" author="Mounika.M">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTLOAN_LETTER_MANUAL SET WAIVERAMT = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.49" author="Mounika.M" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTLOAN_LETTER_MANUAL ADD CONSTRAINT DF_AFT_WAIVERAMT DEFAULT 0 FOR WaiverAmt;
+			]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="ST#1561.49" author="Mounika.M" dbms="postgresql, oracle">
+		<addDefaultValue tableName="ADTLOAN_LETTER_MANUAL" columnName="WaiverAmt" defaultValue="0" />
+	</changeSet>
+	
 </databaseChangeLog>

@@ -1953,6 +1953,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
 		}
 
+		if (fsi != null && fsi.getRequestSource() == RequestSource.UPLOAD
+				&& RepayConstants.PAYSTATUS_DEPOSITED.equals(status)) {
+			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
+		}
+
 		if (!StringUtils.equals(ReceiptMode.CHEQUE, rch.getReceiptMode())) {
 			rch.setRealizationDate(rch.getValueDate());
 			rch.setReceivedDate(rch.getValueDate());
@@ -2347,14 +2352,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		if (MandateExtension.ALLOW_HOLD_MARKING && !FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
-			List<FinExcessAmount> excessList = rch.getExcessAmounts();
-			BigDecimal refund = BigDecimal.ZERO;
-			for (FinExcessAmount finExcessAmount : excessList) {
-				refund = refund.add(finExcessAmount.getBalanceAmt());
-			}
-
-			BigDecimal receiptAmount = rch.getReceiptAmount().subtract(refund);
-			holdMarkingService.updateHoldRemoval(receiptAmount, fm.getFinID(), fm.getFinReference());
+			holdMarkingService.updateHoldRemoval(ReceiptUtil.getAllocatedAmount(rch.getAllocations()), fm.getFinID(),
+					fm.getFinReference());
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -3093,7 +3092,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			rch.setBefImage(befFinReceiptHeader);
 		}
 
-		if (isExcessUtilized(rch, method)) {
+		if (rch.getReceiptID() > 0 && isExcessUtilized(rch, method)) {
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60219", "", null)));
 		}
 
@@ -3612,8 +3611,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			fsi.setAllocationType(AllocationType.AUTO);
 			fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		}
-
-		validateClosureType(schdData, fsi);
 	}
 
 	private void validateCheque(FinScheduleData schdData, String favourNumber) {
@@ -5147,7 +5144,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			fsi.setBounceReason(rud.getBounceReason());
 			fsi.setReceiptId(rud.getReceiptId());
 			fsi.setNewReceipt(rud.isNewReceipt());
-			fsi.setNewReceipt(rud.getReceiptId() == 0);
 		} else {
 			fsi.setNewReceipt(true);
 		}
@@ -6408,11 +6404,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return fd;
 		}
 
+		setFinanceMain(schdData, receiptPurpose);
+
 		if (receiptPurpose == ReceiptPurpose.RESTRUCTURE) {
 			schdData.getFinanceMain().setOldSchedules(schdData.getFinanceScheduleDetails());
 		}
-
-		setFinanceMain(schdData, receiptPurpose);
 
 		FinanceMain fm = schdData.getFinanceMain();
 		fm.setCancelType(fsi.getLoanCancellationType());
@@ -6462,6 +6458,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose && fsi.isReceiptUpload() && !"Post".equals(fsi.getReqType())) {
 			setReceiptDataForEarlySettlement(rd);
+			validateClosureType(schdData, fsi);
 		}
 
 		setFinanceData(rd);
@@ -8882,7 +8879,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 		}
 
-		if (FinServiceEvent.EARLYRPY.equals(receiptPurpose)) {
+		if ((FinServiceEvent.EARLYRPY.equals(receiptPurpose)) || (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose))) {
 			List<Date> dates = finServiceInstructionDAO.getListDates(finID, receiptDt);
 
 			if (CollectionUtils.isNotEmpty(dates)) {

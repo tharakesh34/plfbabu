@@ -178,7 +178,7 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 				pincode = pinCodeDAO.getPinCodeById(pinCodeId);
 
 				if (pincode == null) {
-					setError(detail, "RU0040", "PinCodeId" + String.valueOf(pinCodeId));
+					setError(detail, "RU0040", "PinCodeId :" + pinCodeId);
 					return pincode;
 				}
 
@@ -224,7 +224,7 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 			return;
 		}
 
-		if (!province.iscPIsActive()) {
+		if (province != null && !province.iscPIsActive()) {
 			setError(detail, "81004", "province :", custAddrProvince);
 			return;
 		}

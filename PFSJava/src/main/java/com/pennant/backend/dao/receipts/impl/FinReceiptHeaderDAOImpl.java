@@ -1809,7 +1809,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	@Override
 	public FinReceiptHeader getReceiptById(long receiptId, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Reference, ReceiptModeStatus, ReceiptMode, DepositDate");
+		sql.append(" Reference, ReceiptModeStatus, ReceiptMode, DepositDate, ReceiptPurpose");
 		sql.append(" From FinReceiptHeader");
 		sql.append(type);
 		sql.append(" Where ReceiptID = ?");
@@ -1824,6 +1824,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 				rch.setReceiptModeStatus(rs.getString("ReceiptModeStatus"));
 				rch.setReceiptMode(rs.getString("ReceiptMode"));
 				rch.setDepositDate(rs.getDate("DepositDate"));
+				rch.setReceiptPurpose(rs.getString("ReceiptPurpose"));
 				return rch;
 			}, receiptId);
 		} catch (EmptyResultDataAccessException e) {

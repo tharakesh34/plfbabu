@@ -2,6 +2,7 @@ package com.pennant.pff.api.controller;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
@@ -84,7 +85,7 @@ public class AbstractController {
 			return;
 		}
 
-		apiLog.setKeyFields(args.toString());
+		apiLog.setKeyFields(Arrays.toString(args));
 	}
 
 	protected void logException(String exception) {

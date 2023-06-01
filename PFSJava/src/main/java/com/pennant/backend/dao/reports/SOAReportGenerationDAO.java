@@ -146,5 +146,5 @@ public interface SOAReportGenerationDAO {
 
 	AdviseDueTaxDetail getAdviseDueTaxDetails(long adviseId);
 
-	List<CrossLoanTransfer> getCrossLoanDetail(String finReference, boolean fromRef);
+	List<CrossLoanTransfer> getCrossLoanDetail(long finId, boolean fromRef);
 }

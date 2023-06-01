@@ -41,7 +41,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		StringBuilder sql = new StringBuilder("select");
 		sql.append(" Id, FinID, LetterType, Finreference, CustAcctHolderName");
 		sql.append(", CustCoreBank, CustCIF, FinBranch, Product");
-		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
+		sql.append(", WaiverAmt, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From (");
@@ -121,7 +121,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		StringBuilder sql = new StringBuilder("select");
 		sql.append(" ID, FinID, LetterType, Finreference, CustAcctHolderName");
 		sql.append(", CustCoreBank, CustCIF, FinBranch, Product, LetterType");
-		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
+		sql.append(", WaiverAmt, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From (");
@@ -175,6 +175,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			sb.setCustCoreBank(rs.getString("CustCoreBank"));
 			sb.setFinBranch(rs.getString("FinBranch"));
 			sb.setProduct(rs.getString("Product"));
+			sb.setWaiverAmt(rs.getBigDecimal("WaiverAmt"));
 			sb.setVersion(rs.getInt("Version"));
 			sb.setCreatedBy(rs.getLong("CreatedBy"));
 			sb.setCreatedOn(rs.getTimestamp("CreatedOn"));
@@ -198,7 +199,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" gl.Id, gl.FinID, gl.lettertype, fm.Finreference, cu.Custshrtname CustAcctHolderName");
 		sql.append(", cu.CustCoreBank, cu.CustCIF, fm.FinBranch, ft.fintypedesc Product");
-		sql.append(", gl.Version, gl.CreatedBy, gl.CreatedOn, gl.ApprovedBy, gl.ApprovedOn");
+		sql.append(", gl.WaiverAmt, gl.Version, gl.CreatedBy, gl.CreatedOn, gl.ApprovedBy, gl.ApprovedOn");
 		sql.append(", gl.LastMntBy, gl.LastMntOn, gl.RecordStatus, gl.RoleCode");
 		sql.append(", gl.NextRoleCode, gl.TaskId, gl.NextTaskId, gl.RecordType, gl.WorkflowId");
 		sql.append(" From Loan_Letter_Manual").append(tableType.getSuffix()).append(" gl");
@@ -297,11 +298,11 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 
 		StringBuilder sql = new StringBuilder("Insert Into Loan_Letter_Manual");
 		sql.append(type.getSuffix());
-		sql.append("(LetterType, FinReference, FinID, CustCIF, CoreBankId, FinBranch");
+		sql.append("(LetterType, FinReference, FinID, CustCIF, CoreBankId, FinBranch, WaiverAmt");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -315,6 +316,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 				ps.setString(++index, gl.getCustCIF());
 				ps.setString(++index, gl.getCoreBankId());
 				ps.setString(++index, gl.getFinBranch());
+				ps.setBigDecimal(++index, gl.getWaiverAmt());
 				ps.setInt(++index, gl.getVersion());
 				ps.setLong(++index, gl.getCreatedBy());
 				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));

@@ -348,7 +348,7 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 
 		BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
 
-		if (calcClosureAmt.compareTo(receiptAmount.add(fsd.getFinanceType().getClosureThresholdLimit())) > 0) {
+		if (calcClosureAmt.compareTo(receiptAmount) > 0) {
 			setFailureStatus(lcu, "", "Receipt amount is in sufficient for closure. Excepted amount is :"
 					+ CurrencyUtil.format(calcClosureAmt, 2));
 		}

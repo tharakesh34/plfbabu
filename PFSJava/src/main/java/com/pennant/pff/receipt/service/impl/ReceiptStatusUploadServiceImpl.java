@@ -2,6 +2,7 @@ package com.pennant.pff.receipt.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.applicationmaster.RejectDetailDAO;
@@ -35,7 +37,9 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.DisbursementConstants;
@@ -49,7 +53,9 @@ import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.upload.ReceiptStatusUploadError;
 import com.pennapps.core.util.ObjectUtil;
 
@@ -121,9 +127,18 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		String status = StringUtils.upperCase(detail.getStatusRM());
 		Date appDate = SysParamUtil.getAppDate();
 		Date realizedDate = detail.getRealizationDate();
+		String receiptmode = frh.getReceiptMode();
+		String receiptPurpose = frh.getReceiptPurpose();
 
 		if (StringUtils.isBlank(status)) {
 			setError(detail, ReceiptStatusUploadError.RU04);
+			return;
+		}
+
+		if (!FinServiceEvent.SCHDRPY.equals(receiptPurpose) && !RepayConstants.PAYSTATUS_REALIZED.equals(status)
+				&& realizedDate != null && (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(receiptmode)
+						|| DisbursementConstants.PAYMENT_TYPE_DD.equals(receiptmode))) {
+			setError(detail, ReceiptStatusUploadError.RU021);
 			return;
 		}
 
@@ -137,8 +152,6 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 			setError(detail, ReceiptStatusUploadError.RU06);
 			return;
 		}
-
-		String receiptmode = frh.getReceiptMode();
 
 		if (!DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(receiptmode)
 				&& !DisbursementConstants.PAYMENT_TYPE_DD.equals(receiptmode)) {
@@ -280,6 +293,12 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		List<ReceiptAllocationDetail> allocations = receiptAllocationDetailDAO.getAllocationsByReceiptID(receiptId,
 				"_View");
 
+		allocations.forEach(rad -> rad.setValueDate(frh.getValueDate()));
+
+		if (ReceiptPurpose.EARLYRPY.code().equals(frh.getReceiptPurpose())) {
+			frh.setPartPayAmount(frh.getReceiptAmount());
+		}
+
 		frh.setReceiptID(detail.getReceiptId());
 		frh.setReceiptModeStatus(detail.getStatusRM());
 		frh.setRealizationDate(detail.getRealizationDate());
@@ -290,7 +309,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		}
 		if (RepayConstants.PAYSTATUS_BOUNCE.equals(detail.getStatusRM())) {
 			frh.setBounceDate(detail.getBounceDate());
-			frh.setBounceDate(detail.getBounceDate());
+			frh.setBounceReason(Long.parseLong(detail.getBounceReason()));
 		}
 
 		if (RepayConstants.PAYSTATUS_CANCEL.equals(detail.getStatusRM())) {
@@ -303,7 +322,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		fd.setUserDetails(detail.getUserDetails());
 
 		long finid = fd.getFinID();
-		FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(finid);
+		FinanceMain financeMain = financeMainDAO.getFinanceMainForLMSEvent(finid);
 		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finid, "_AView", false);
 		FinanceType ft = financeTypeDAO.getFinanceTypeByFinType(financeMain.getFinType());
 		FinanceProfitDetail fpd = financeProfitDetailDAO.getFinProfitDetailsById(finid);
@@ -328,6 +347,10 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		financeDetail.setFinScheduleData(schdData);
 		financeDetail.setCustomerDetails(customerDetails);
 		fd.setFinanceDetail(financeDetail);
+
+		RepayMain repayMain = fd.getRepayMain();
+		repayMain.setEarlyPayOnSchDate(frh.getValueDate());
+		repayMain.setEarlyPayAmount(frh.getReceiptAmount());
 
 		auditHeader = getAuditHeader(fd, PennantConstants.TRAN_WF);
 		auditHeader.getAuditDetail().setModelData(fd);
@@ -354,6 +377,17 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 			setFailureStatus(detail, auditHeader.getErrorMessage().get(0));
 		} else {
 			setSuccesStatus(detail);
+		}
+
+		Map<String, String> map = new HashMap<>();
+		if (detail != null) {
+			FinReceiptData fdTemp = (FinReceiptData) auditHeader.getModelData();
+
+			ManualAdvise manualAdvise = fdTemp.getReceiptHeader().getManualAdvise();
+			if (manualAdvise != null) {
+				map.put("Bounce Charge", CurrencyUtil.format(manualAdvise.getAdviseAmount()));
+				detail.setExtendedFields(map);
+			}
 		}
 	}
 

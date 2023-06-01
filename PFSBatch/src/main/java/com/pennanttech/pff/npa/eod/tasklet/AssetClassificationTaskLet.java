@@ -49,8 +49,8 @@ public class AssetClassificationTaskLet implements Tasklet {
 	private static final String EXCEPTION_MSG = "Asset Classification failed on {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String ERROR_LOG = "Cause {}\nMessage {}\n LocalizedMessage {}\nStackTrace {}";
 
-	public static AtomicLong processedCount = new AtomicLong(0);
-	public static AtomicLong failedCount = new AtomicLong(0);
+	public static final AtomicLong processedCount = new AtomicLong(0);
+	public static final AtomicLong failedCount = new AtomicLong(0);
 
 	public AssetClassificationTaskLet() {
 		super();

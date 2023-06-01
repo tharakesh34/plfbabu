@@ -312,7 +312,7 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 			return;
 		}
 
-		if (includeGraceDays || !includeGraceDays && (detail.getGraceDays() < 0 || detail.getGraceDays() > 999)) {
+		if (detail.getGraceDays() < 0 || detail.getGraceDays() > 999) {
 			setError(detail, LPPUploadError.LPP_15);
 			return;
 		}

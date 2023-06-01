@@ -1889,7 +1889,6 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 				if (finStpDtl.getInstallments() == instCount) {
 					stepEndDate = fsd.getSchDate();
-					/* aFinStepPolicy.setValidAmountForRestructuring(fsd.getRepayAmount()); */
 					idxStart = iFsd + 1;
 					break;
 				}

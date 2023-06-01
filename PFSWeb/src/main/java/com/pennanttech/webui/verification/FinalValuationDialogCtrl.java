@@ -331,8 +331,12 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 			}
 
-			if (ImplementationConstants.TV_FINALVAL_COP_AMOUNT_VALD
-					&& "PRIMARY".equals(verification.getCollTranType())) {
+			String collTranType = null;
+			if (verification != null) {
+				collTranType = verification.getCollTranType();
+			}
+
+			if (ImplementationConstants.TV_FINALVAL_COP_AMOUNT_VALD && "PRIMARY".equals(collTranType)) {
 				verificationAmountsList.add(PennantApplicationUtil
 						.unFormateAmount(this.valuationAsPerCOP.getValidateValue(), PennantConstants.defaultCCYDecPos));
 			}

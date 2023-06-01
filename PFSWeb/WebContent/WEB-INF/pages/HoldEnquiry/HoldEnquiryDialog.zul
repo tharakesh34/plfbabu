@@ -6,12 +6,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<script type="text/javascript" src="/deviceUtils/printerutil.js" />
-
-	<style>
-		div.z-column-cnt { padding: 3px; } div.z-column-cnt, div.z-row-cnt { color: #000000;
-		font-family:Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 11px; font-weight: bold; }
-	</style>
 	<window>
 		<window id="windowHoldEnquiryDialog"  border="normal" width="100%" height="100%" sizable="false" apply="${holdEnquiryDialogCtrl}">
 
@@ -38,25 +32,16 @@
 							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose,btnPrint"
 							sclass="z-toolbarbutton" />
 					</toolbar>
-					
-					
 				</hbox>
 			</div>
 
 			<borderlayout id="borderlayoutHoldEnquiry">
+				<north border="none" />
 				<center border="none" id="divCenter">
-					<tabbox width="99%" height="100%" id="tabBoxIndexCenter">
-						<tabs id="tabsIndexCenter">
-							<tab label="Hold Details" />
-						</tabs>
-						<tabpanels id="tabpanelsBoxIndexCenter">
-							<tabpanel style="overflow:auto">
-								<div style="border:none;">
-									<groupbox closable="false">
-										<caption label="${c:l('label_HoldDialog_HoldDetails')}" />
-										<listbox id="holdDetails" fixedLayout="true" sizedByContent="true" span="true"
-											emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false">
-											<listhead sizable="false" style="padding:0px;position:relative;">
+									<div>
+										<listbox id="listBoxHold" fixedLayout="true" sizedByContent="true" span="true"
+											emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false" height="100%" style="white-space: nowrap;">
+											<listhead sizable="false">
 												<listheader label="${c:l('listheader_HoldDialog_HoldId.label')}"
 													align="right" sort="false" hflex="min" />
 												<listheader id = "listheaderHoldReference" label="${c:l('listheader_HoldDialog_HoldAccountNumber.label')}"
@@ -81,12 +66,11 @@
 													align="right" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
-									</groupbox>
-								</div>
-							</tabpanel>
-						</tabpanels>
-					</tabbox>
+										</div>
 				</center>
+				<south border="none">
+					<paging id="paging" />
+				</south>
 			</borderlayout>
 		</window>
 	</window>

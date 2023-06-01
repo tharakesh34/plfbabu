@@ -310,9 +310,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		// GST Invoice Preparation
 		if (gstInvoiceTxnService != null && aeEvent.getLinkedTranId() > 0 && CollectionUtils.isNotEmpty(cbdList)) {
 
-			// Normal Fees invoice preparation
-			// this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), fd, cbDetail,
-			// PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, percentages);
 		}
 		return aeEvent;
 
@@ -842,6 +839,10 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		FinanceDetail detail = receiptService.receiptTransaction(fsi);
 		if (detail.getReturnStatus() != null) {
 			throw new AppException("AppException", detail.getReturnStatus().getReturnText());
+		}
+
+		if (CollectionUtils.isNotEmpty(detail.getFinScheduleData().getErrorDetails())) {
+			throw new AppException("AppException", detail.getFinScheduleData().getErrorDetails().get(0).getError());
 		}
 	}
 

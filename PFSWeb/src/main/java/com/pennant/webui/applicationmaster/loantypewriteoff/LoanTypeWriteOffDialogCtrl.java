@@ -42,6 +42,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
@@ -84,7 +85,7 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 	}
 
 	public void onCreate$windowLoanTypeWriteOffDialog(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		setPageComponents(windowLoanTypeWriteOffDialog);
 
@@ -93,7 +94,7 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 			this.loanTypeWriteOffListCtrl = (LoanTypeWriteOffListCtrl) arguments.get("loanTypeWriteOffListCtrl");
 
 			if (this.finTypeWriteOff == null) {
-				throw new Exception(Labels.getLabel("error.unhandled"));
+				throw new AppException(Labels.getLabel("error.unhandled"));
 			}
 
 			FinTypeWriteOff writeOff = new FinTypeWriteOff();
@@ -141,6 +142,7 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
+
 		this.btnNewCodeMapping.setVisible(getUserWorkspace().isAllowed("button_LoanTypeWriteOffDialog_btnPSLCode"));
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LoanTypeWriteOffDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LoanTypeWriteOffDialog_btnEdit"));
@@ -190,7 +192,7 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException {
+	public void onClick$btnDelete(Event event) {
 		logger.debug(Literal.ENTERING);
 		doDelete();
 		logger.debug(Literal.LEAVING);
@@ -233,8 +235,10 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 		logger.debug("Entering");
 
 		FinTypeWriteOff autoWriteOff = new FinTypeWriteOff();
+
 		isAutoWriteOffNew = true;
 		autoWriteOff.setNewRecord(true);
+
 		if (StringUtils.isBlank(autoWriteOff.getRecordType())) {
 			autoWriteOff.setVersion(1);
 			autoWriteOff.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -251,20 +255,18 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 		}
 
 		autoWriteOff.setKeyvalue(keyValue + 1);
+
 		appendAutoWriteOff(autoWriteOff);
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void appendAutoWriteOff(FinTypeWriteOff autoWriteOff) {
 		Listitem listitem = new Listitem();
-		Hbox hbox;
-		Space space;
 		boolean isReadOnly = isReadOnly("button_LoanTypeWriteOffDialog_btnPSLCode");
 
 		listitem.setAttribute("writeOffCodeMapping", autoWriteOff);
-		Listcell listcell;
 
-		hbox = new Hbox();
 		ExtendedCombobox writeOffCode = new ExtendedCombobox();
 		writeOffCode.setWidth("100px");
 		writeOffCode.setModuleName("PSLCategory");
@@ -272,25 +274,32 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 		writeOffCode.setDescColumn("Description");
 
 		writeOffCode.setValidateColumns(new String[] { "Code" });
-		hbox = new Hbox();
-		space = new Space();
+
+		Hbox hbox = new Hbox();
+		Space space = new Space();
+
 		space.setSpacing("2px");
 		space.setSclass("mandatory");
+
 		hbox.appendChild(space);
 		hbox.appendChild(writeOffCode);
+
 		writeOffCode.addForward("onFulfill", windowLoanTypeWriteOffDialog, "onChangeWriteOffCode", listitem);
 		writeOffCode.setId("pslCode".concat(String.valueOf(autoWriteOff.getKeyvalue())));
+
 		if (!"".equals(this.filterWriteOffCode)) {
 			String[] code = filterWriteOffCode.split(",");
 			Filter[] codeFilter = new Filter[1];
 			codeFilter[0] = Filter.notIn("Code", Arrays.asList(code));
 			writeOffCode.setFilters(codeFilter);
 		}
+
 		readOnlyComponent(isReadOnly, writeOffCode);
 
-		listcell = new Listcell();
+		Listcell listcell = new Listcell();
 		listcell.appendChild(hbox);
 		listcell.setParent(listitem);
+
 		if (autoWriteOff.getPslCode() != null) {
 			Search search = new Search(PSLCategory.class);
 			search.addFilterEqual("Code", autoWriteOff.getPslCode());
@@ -330,7 +339,6 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 		listcell.appendChild(hbox);
 		listcell.setParent(listitem);
 
-		listcell = new Listcell();
 		Textbox recordStatus = new Textbox();
 		recordStatus.setWidth("100px");
 		recordStatus.setValue(autoWriteOff.getRecordStatus());
@@ -339,7 +347,6 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 		listcell.appendChild(recordStatus);
 		listcell.setParent(listitem);
 
-		listcell = new Listcell();
 		Textbox recordType = new Textbox();
 		recordType.setWidth("100px");
 		recordType.setValue(autoWriteOff.getRecordType());
@@ -358,7 +365,6 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 		listcell.setParent(listitem);
 		readOnlyComponent(isReadOnly, deleteButton);
 
-		listcell = new Listcell();
 		Longbox id = new Longbox();
 		id.setWidth("80px");
 		if (autoWriteOff.getDpdDays() != 0) {
@@ -398,12 +404,15 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 	public void onChangeWriteOffCode(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		Hbox hbox = (Hbox) getComponent(listitem, 1);
-		ExtendedCombobox writeOffCode = (ExtendedCombobox) hbox.getLastChild();
-		String code = writeOffCode.getValue();
-		if (this.filterWriteOffCode.equals("")) {
-			this.filterWriteOffCode = code;
-		} else {
-			this.filterWriteOffCode = this.filterWriteOffCode + "," + code;
+
+		if (hbox != null) {
+			ExtendedCombobox writeOffCode = (ExtendedCombobox) hbox.getLastChild();
+			String code = writeOffCode.getValue();
+			if (this.filterWriteOffCode.equals("")) {
+				this.filterWriteOffCode = code;
+			} else {
+				this.filterWriteOffCode = this.filterWriteOffCode + "," + code;
+			}
 		}
 
 	}
@@ -422,16 +431,23 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 	private void getCompValuetoBean(Listitem listItem, int index) {
 		int i = 1;
 		Hbox hbox = null;
+
 		for (Component component : listItem.getChildren()) {
 			if (i == index) {
 				hbox = (Hbox) component.getFirstChild();
 			}
 			i++;
 		}
+
+		if (hbox == null) {
+			return;
+		}
+
 		String id = StringUtils.trimToNull(hbox.getLastChild().getId());
 		if (id == null) {
 			return;
 		}
+
 		id = id.replaceAll("\\d", "");
 
 		switch (id) {
@@ -457,6 +473,7 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 		}
 	}
 
+	@Override
 	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		loanTypeWriteOffListCtrl.search();
@@ -484,11 +501,6 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Writes the components values to the bean.<br>
-	 * 
-	 * @param aVoucherVendor
-	 */
 	public void doWriteComponentsToBean(FinTypeWriteOff awriteOff) {
 		logger.debug(Literal.ENTERING);
 
@@ -497,39 +509,49 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 		List<String> writeOffCodes = new ArrayList<>();
 
 		for (Listitem component : autoWriteOffRows.getItems()) {
-			Listitem listitem = (Listitem) component;
+			Listitem listitem = component;
 			FinTypeWriteOff writeOffMapping = (FinTypeWriteOff) listitem.getAttribute("data");
 
 			try {
 				Hbox hbox = (Hbox) getComponent(listitem, 1);
 				getCompValuetoBean(listitem, 1);
-				ExtendedCombobox writeOffCode = (ExtendedCombobox) hbox.getLastChild();
-				PSLCategory object = (PSLCategory) writeOffCode.getObject();
 
-				if (writeOffCodes.contains(object.getCode())) {
-					MessageUtil.showError("Duplicate PSL codes are not allowed for same LOAN type " + object.getCode());
-					wve.add(new WrongValueException(object.getCode()));
+				if (hbox != null) {
+					ExtendedCombobox writeOffCode = (ExtendedCombobox) hbox.getLastChild();
+					PSLCategory object = (PSLCategory) writeOffCode.getObject();
+
+					if (writeOffCodes.contains(object.getCode())) {
+						MessageUtil.showError(
+								"Duplicate PSL codes are not allowed for same LOAN type " + object.getCode());
+						wve.add(new WrongValueException(object.getCode()));
+					}
+
+					writeOffCodes.add(object.getCode());
+
+					writeOffMapping.setPslCode(object.getCode());
+					writeOffMapping.setPslCodeDesc(object.getDescription());
 				}
-
-				writeOffCodes.add(object.getCode());
-
-				writeOffMapping.setPslCode(object.getCode());
-				writeOffMapping.setPslCodeDesc(object.getDescription());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 			try {
 				Hbox hbox = (Hbox) getComponent(listitem, 2);
 				getCompValuetoBean(listitem, 2);
-				Intbox order = (Intbox) hbox.getLastChild();
-				writeOffMapping.setDpdDays(order.getValue());
+
+				if (hbox != null) {
+					Component lastChild = hbox.getLastChild();
+					if (lastChild != null) {
+						Intbox order = (Intbox) lastChild;
+						writeOffMapping.setDpdDays(order.getValue());
+					}
+				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 
 			try {
 				Longbox id = (Longbox) getComponent(listitem, 6);
-				if (id.getValue() != null) {
+				if (id != null && id.getValue() != null) {
 					writeOffMapping.setId(id.getValue());
 				}
 			} catch (WrongValueException we) {
@@ -560,16 +582,11 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 						writeOffMapping.setRecordType(PennantConstants.RCD_UPD);
 					}
 
-					if (writeOffMapping.getRecordType().equals(PennantConstants.RCD_ADD)
-							&& writeOffMapping.isNewRecord()) {
-					} else if (writeOffMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					if (writeOffMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 						writeOffMapping.setVersion(writeOffMapping.getVersion() + 1);
 					}
 				} else {
 					writeOffMapping.setVersion(writeOffMapping.getVersion() + 1);
-					if (isNew) {
-					} else {
-					}
 				}
 			}
 
@@ -594,7 +611,7 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -707,7 +724,7 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 	}
 
 	public void onLoanTypeMappingItemDoubleClicked(Event event) {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxWriteOffCode.getSelectedItem();
@@ -721,7 +738,7 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 				MessageUtil.showError(Labels.getLabel("RECORD_NO_MAINTAIN"));
 			} else {
 				codeMapping.setNewRecord(false);
-				final Map<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<>();
 				map.put("loanTypeWriteOffDialogCtrl", this);
 				map.put("loanTypeWriteOff", getLoanTypeWriteOff());
 				map.put("loanTypeCodeMapping", codeMapping);
@@ -739,10 +756,10 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 				}
 			}
 		}
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	private void doDelete() throws InterruptedException {
+	private void doDelete() {
 		logger.debug(Literal.ENTERING);
 
 		final FinTypeWriteOff awriteOff = new FinTypeWriteOff();
@@ -904,16 +921,6 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Set the workFlow Details List to Object
-	 * 
-	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
-	 * 
-	 * @param tranType                       (String)
-	 * 
-	 * @return boolean
-	 * 
-	 */
 	protected boolean doProcess(FinTypeWriteOff aWriteOff, String tranType) {
 		logger.debug(Literal.ENTERING);
 
@@ -994,15 +1001,6 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 		return processCompleted;
 	}
 
-	/**
-	 * Get the result after processing DataBase Operations
-	 * 
-	 * @param AuditHeader auditHeader
-	 * @param method      (String)
-	 * @return boolean
-	 * 
-	 */
-
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -1038,7 +1036,7 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 				} else {
 					auditHeader.setErrorDetails(
 							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
-					retValue = ErrorControl.showErrorControl(this.windowLoanTypeWriteOffDialog, auditHeader);
+					ErrorControl.showErrorControl(this.windowLoanTypeWriteOffDialog, auditHeader);
 					return processCompleted;
 				}
 			}

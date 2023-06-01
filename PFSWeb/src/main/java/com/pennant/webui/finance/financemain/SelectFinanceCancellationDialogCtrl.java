@@ -1,11 +1,11 @@
 package com.pennant.webui.finance.financemain;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,11 +59,11 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 	protected Label customerNameLabel;
 	private String moduleDefiner;
 	private String workflowCode;
-	private CustomerDAO customerDAO;
+
+	private transient CustomerDAO customerDAO;
 
 	private FinanceSelectCtrl financeSelectCtrl;
 
-	private transient FinanceWorkFlowService financeWorkFlowService;
 	private transient FinanceCancellationService financeCancellationService;
 	private transient FinanceCancelValidator financeCancelValidator;
 
@@ -101,10 +101,10 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 			MessageUtil.showError(e);
 		}
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	private void showSelectFinanceCancellationDialog() throws InterruptedException {
+	private void showSelectFinanceCancellationDialog() {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -270,10 +270,10 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 			MessageUtil.showError(e);
 		}
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnClose(Event event) throws InterruptedException, ParseException {
+	public void onClick$btnClose(Event event) {
 		this.windowSelectFinanceCancellationDialog.onClose();
 	}
 
@@ -355,7 +355,7 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 
 		this.finReference.setConstraint("");
 
-		if (wve.size() > 0) {
+		if (CollectionUtils.isNotEmpty(wve)) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
@@ -368,7 +368,7 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 	}
 
 	private void validateFinReference(Event event, boolean b) {
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		this.finReference.setConstraint("");
 		this.finReference.clearErrorMessage();
@@ -401,21 +401,20 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 			this.customerNameLabel.setValue("");
 		} else {
 			FinanceMain fm = (FinanceMain) dataObject;
-			if (fm != null) {
-				this.finReference.setValue(fm.getFinReference());
-				this.finReference.setDescription(fm.getFinType());
-				this.custCIF.setValue(String.valueOf(fm.getCustCIF()));
+			this.finReference.setValue(fm.getFinReference());
+			this.finReference.setDescription(fm.getFinType());
+			this.custCIF.setValue(String.valueOf(fm.getCustCIF()));
 
-				Customer cust = this.customerDAO.getCustomer(fm.getCustCIF());
-				if (cust.getCustCoreBank() != null) {
-					this.customerNameLabel.setValue(cust.getCustShrtName());
-				}
+			Customer cust = this.customerDAO.getCustomer(fm.getCustCIF());
+			if (cust.getCustCoreBank() != null) {
+				this.customerNameLabel.setValue(cust.getCustShrtName());
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
 	@Autowired
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;

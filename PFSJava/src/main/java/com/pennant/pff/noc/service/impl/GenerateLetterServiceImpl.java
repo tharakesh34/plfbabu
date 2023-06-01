@@ -252,6 +252,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		List<FinFeeDetail> fees = gl.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 		if (CollectionUtils.isNotEmpty(fees)) {
 			for (FinFeeDetail fee : fees) {
+				fee.setRemainingFee(fee.getRemainingFee().subtract(fee.getWaivedAmount()));
 				fee.setFeeID(finFeeDetailDAO.save(fee, false, ""));
 				gl.setFeeID(fee.getFeeID());
 			}
