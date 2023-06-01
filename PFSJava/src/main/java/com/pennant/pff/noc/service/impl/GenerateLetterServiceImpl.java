@@ -243,8 +243,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 			gl.setEmailTemplate(ltlp.getEmailTemplateId());
 			gl.setModeofTransfer(LetterMode.OTC.name());
 
-			Long letterId = autoLetterGenerationDAO.getAutoLetterId(gl.getFinID(), gl.getLetterType(),
-					gl.getRequestType());
+			Long letterId = autoLetterGenerationDAO.getAutoLetterId(gl.getFinID(), gl.getLetterType(), "A");
 			if (letterId == null) {
 				return autoLetterGenerationDAO.save(gl);
 			}
@@ -312,8 +311,6 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 		ah.setAuditTranType(PennantConstants.TRAN_WF);
 		generateLetterDAO.delete(gl, TableType.TEMP_TAB);
-
-		generateLetterDAO.updateAutoLetterGeneration(gl.getFinID(), gl.getLetterType());
 
 		auditHeaderDAO.addAudit(ah);
 

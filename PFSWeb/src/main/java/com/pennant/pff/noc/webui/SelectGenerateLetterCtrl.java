@@ -134,7 +134,6 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 					+ " and is in queue for letter generation, Do You Want proceed with Manual?";
 
 			if (MessageUtil.YES == MessageUtil.confirm(msg)) {
-				generateLetterService.deleteAutoLetterGeneration(fm.getFinID(), this.generateLetter.getLetterType());
 				return true;
 			}
 
