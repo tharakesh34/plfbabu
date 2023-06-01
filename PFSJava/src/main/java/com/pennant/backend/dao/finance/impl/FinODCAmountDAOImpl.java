@@ -246,9 +246,7 @@ public class FinODCAmountDAOImpl extends SequenceDao<FinOverDueCharges> implemen
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, receiptID);
-		}, (rs, i) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, receiptID), (rs, i) -> {
 			FinOverDueChargeMovement mam = new FinOverDueChargeMovement();
 			mam.setChargeId(rs.getLong("ChargeId"));
 			mam.setMovementAmount(rs.getBigDecimal("MovementAmount"));

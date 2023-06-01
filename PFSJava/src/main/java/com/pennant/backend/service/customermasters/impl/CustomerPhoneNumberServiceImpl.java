@@ -197,7 +197,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 	 */
 	@Override
 	public List<CustomerPhoneNumber> getApprovedCustomerPhoneNumberById(long id) {
-		return getCustomerPhoneNumberDAO().getCustomerPhoneNumberById(id, "_AView");
+		return getCustomerPhoneNumberDAO().getCustPhoneNumberById(id, "_AView");
 	}
 
 	/**
@@ -340,7 +340,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 		String mobileNumber = customerPhoneNumber.getPhoneNumber();
 		if (StringUtils.equals(method, "Create")) {
 			List<CustomerPhoneNumber> customerPhoneNumberList = customerPhoneNumberDAO
-					.getCustomerPhoneNumberById(customerPhoneNumber.getPhoneCustID(), "");
+					.getCustPhoneNumberById(customerPhoneNumber.getPhoneCustID(), "");
 			if (customerPhoneNumberList != null && !customerPhoneNumberList.isEmpty()) {
 				for (CustomerPhoneNumber custPhoneNumber : customerPhoneNumberList) {
 					if (custPhoneNumber.getPhoneTypePriority() == customerPhoneNumber.getPhoneTypePriority()) {
@@ -375,7 +375,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 		}
 		if (StringUtils.equals(method, "Update")) {
 			List<CustomerPhoneNumber> customerPhoneNumberList = customerPhoneNumberDAO
-					.getCustomerPhoneNumberById(customerPhoneNumber.getPhoneCustID(), "");
+					.getCustPhoneNumberById(customerPhoneNumber.getPhoneCustID(), "");
 			if (customerPhoneNumberList != null && !customerPhoneNumberList.isEmpty()) {
 				for (CustomerPhoneNumber prvCustPhoneNumber : customerPhoneNumberList) {
 					if (StringUtils.equals(prvCustPhoneNumber.getPhoneTypeCode(),

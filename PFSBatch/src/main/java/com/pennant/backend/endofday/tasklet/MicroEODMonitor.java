@@ -51,14 +51,6 @@ public class MicroEODMonitor implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-
-		// long running = customerQueuingDAO.getCountByProgress(DateUtility.getValueDate(),
-		// EodConstants.PROGRESS_START);
-
-		// if (running != 0) {
-		// return RepeatStatus.CONTINUABLE;
-		// }
-
 		return RepeatStatus.FINISHED;
 
 	}

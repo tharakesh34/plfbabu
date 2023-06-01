@@ -65,9 +65,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			jdbcOperations.update(sql, ps -> {
-				parameterizedSetter(ps, fsd);
-			});
+			jdbcOperations.update(sql, ps -> parameterizedSetter(ps, fsd));
 		} catch (Exception e) {
 			throw e;
 		}
@@ -490,9 +488,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		return this.jdbcOperations.query(sql, ps -> {
 			ps.setLong(1, finID);
 			ps.setDate(2, JdbcUtil.getDate(approvedDate));
-		}, (rs, rowNum) -> {
-			return rs.getDate("ApprovedDate");
-		});
+		}, (rs, rowNum) -> rs.getDate("ApprovedDate"));
 	}
 
 	@Override

@@ -18,7 +18,7 @@ public enum LPPUploadError {
 
 	LPP_07("[Amount/percentage] should be greater than ZERO, when PenaltyType either of following {F/A}."),
 
-	LPP_08("[Amount/percentage] shold be between {1 to 100}, when PenaltyType either of following {P/D/M/E}."),
+	LPP_08("[Amount/percentage] should be between {1 to 100}, when PenaltyType either of following {P/D/M/E}."),
 
 	LPP_09("When [Apply Overdue Penalty] is N then the following fields [Amount/Percent, GraceDays, MaxWaiver, AllowWaivers, Calculated On, Include Grace Days, Penalty Type] should  blank."),
 
@@ -50,13 +50,17 @@ public enum LPPUploadError {
 
 	LPP_23("[Calculated On] should not blank, when [PenaltyType] either of following {P/D/M/E}."),
 
-	LPP_24("Not allowed to maintain the LAN as It is already initiated."),
+	LPP_24("Not allowed to maintain the LAN as it is already initiated."),
 
 	LPP_25("[Calculated On] is invalid, possible value should be {INST}, when PenaltyType either of following {P/M}."),
 
 	LPP_26("[Minimum Amount] should not be Blank, when [Penalty Type] either of following {P/M}."),
 
-	LPP_27("[Include Grace Days] should be N, when [PenaltyType] either of following {F/A/P/M}.");
+	LPP_27("[Include Grace Days] should be N, when [PenaltyType] either of following {F/A/P/M}."),
+
+	LPP_28("Not allowed to maintain the [Loan Type] as it is in under maintenance."),
+
+	LPP_29("Not allowed to maintain the duplicate [Loan Type].");
 
 	private String description;
 

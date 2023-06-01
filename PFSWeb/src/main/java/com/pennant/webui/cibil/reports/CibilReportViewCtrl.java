@@ -12,18 +12,17 @@ public class CibilReportViewCtrl extends GFCBaseCtrl<Object> {
 
 	private Window window_Report;
 	private Iframe report;
-	private String data = null;
 	Window dialogWindow = null;
 	private String name;
 
 	public void onCreate$window_Report(Event event) {
-
 		setPageComponents(window_Report);
+
+		String data = null;
+
 		// READ OVERHANDED parameters !
 		if (arguments.containsKey("reportData")) {
-			this.data = (String) arguments.get("reportData");
-		} else {
-			this.data = null;
+			data = (String) arguments.get("reportData");
 		}
 
 		if (arguments.containsKey("dialogWindow")) {

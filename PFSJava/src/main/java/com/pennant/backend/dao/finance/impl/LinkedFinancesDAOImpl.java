@@ -87,9 +87,7 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			setInsertParameterizedFields(lnkdFinance, ps);
-		});
+		this.jdbcOperations.update(sql.toString(), ps -> setInsertParameterizedFields(lnkdFinance, ps));
 
 		return lnkdFinance.getId();
 	}
@@ -124,9 +122,8 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-			setUpdateParameterizedFields(lnkdFinance, ps);
-		});
+		int recordCount = this.jdbcOperations.update(sql.toString(),
+				ps -> setUpdateParameterizedFields(lnkdFinance, ps));
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -201,9 +198,7 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 			int index = 1;
 
 			ps.setString(index, finReference);
-		}, (rs, i) -> {
-			return getRowMapper(type, rs);
-		});
+		}, (rs, i) -> getRowMapper(type, rs));
 	}
 
 	@Override
@@ -213,9 +208,8 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
-			return getRowMapper(type, rs);
-		}, finID, linkedReference);
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> getRowMapper(type, rs), finID,
+				linkedReference);
 	}
 
 	@Override
@@ -225,11 +219,8 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, linkedRef);
-		}, (rs, i) -> {
-			return getRowMapper(type, rs);
-		});
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setString(1, linkedRef),
+				(rs, i) -> getRowMapper(type, rs));
 	}
 
 	@Override
@@ -247,9 +238,7 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 		return jdbcOperations.query(sql.toString(), ps -> {
 			ps.setString(1, reference);
 			ps.setString(2, reference);
-		}, (rs, i) -> {
-			return rs.getString(1);
-		});
+		}, (rs, i) -> rs.getString(1));
 	}
 
 	private StringBuilder getInsertSqlQuery(String type) {

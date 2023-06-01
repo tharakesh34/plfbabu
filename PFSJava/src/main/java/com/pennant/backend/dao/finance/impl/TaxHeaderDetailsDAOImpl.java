@@ -227,9 +227,7 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			jdbcOperations.update(sql, ps -> {
-				setparameters(ps, taxes);
-			});
+			jdbcOperations.update(sql, ps -> setparameters(ps, taxes));
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -305,9 +303,7 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-			return JdbcUtil.getLong(rs.getObject(1));
-		}, receiptId);
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> JdbcUtil.getLong(rs.getObject(1)), receiptId);
 	}
 
 	@Override
@@ -318,9 +314,7 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-			return JdbcUtil.getLong(rs.getObject(1));
-		}, receiptId);
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> JdbcUtil.getLong(rs.getObject(1)), receiptId);
 	}
 
 	@Override

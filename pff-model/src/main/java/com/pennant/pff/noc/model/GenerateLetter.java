@@ -1,5 +1,6 @@
 package com.pennant.pff.noc.model;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
@@ -15,17 +16,20 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private long id;
 	private long finID;
 	private String finReference;
+	private String custCIF;
+	private String coreBankId;
 	private String letterType;
 	private String requestType;
-	private Long feeTypeID;
+	private Long feeID;
 	private Date createdDate;
 	private Date createdOn;
-	private long createdBy;
+	private Long createdBy;
 	private int generated;
 	private Date generatedDate;
 	private Date generatedOn;
-	private long generatedBy;
-	private long approvedBy;
+	private Long generatedBy;
+	private Long approvedBy;
+	private String approverName;
 	private Timestamp approvedOn;
 	private String custAcctHolderName;
 	private String custCoreBank;
@@ -34,9 +38,7 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private String modeofTransfer;
 	private String courierAgencyName;
 	private String status;
-	private String email;
 	private String fileName;
-	private Long trackingID;
 	private String remarks;
 	private Long adviseID;
 	private GenerateLetter befImage;
@@ -44,6 +46,15 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private FinanceDetail financeDetail;
 	private long agreementTemplate;
 	private Long emailTemplate;
+	private Long emailNotificationID;
+	private String emailID;
+	private String letterName;
+	private String reasonCode;
+	private String courierAgency;
+	private String deliveryStatus;
+	private Date deliveryDate;
+	private Date dispatchDate;
+	private BigDecimal waiverAmt = BigDecimal.ZERO;
 
 	public GenerateLetter() {
 		super();
@@ -53,7 +64,7 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("finReference");
 		excludeFields.add("requestType");
-		excludeFields.add("feeTypeID");
+		excludeFields.add("feeID");
 		excludeFields.add("createdDate");
 		excludeFields.add("createdOn");
 		excludeFields.add("createdBy");
@@ -77,6 +88,16 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		excludeFields.add("userDetails");
 		excludeFields.add("financeDetail");
 		excludeFields.add("emailTemplate");
+		excludeFields.add("agreementTemplate");
+		excludeFields.add("emailNotificationID");
+		excludeFields.add("reasonCode");
+		excludeFields.add("emailID");
+		excludeFields.add("letterName");
+		excludeFields.add("courierAgency");
+		excludeFields.add("deliveryStatus");
+		excludeFields.add("deliveryDate");
+		excludeFields.add("dispatchDate");
+		excludeFields.add("approverName");
 
 		return excludeFields;
 	}
@@ -105,6 +126,22 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.finReference = finReference;
 	}
 
+	public String getCustCIF() {
+		return custCIF;
+	}
+
+	public void setCustCIF(String custCIF) {
+		this.custCIF = custCIF;
+	}
+
+	public String getCoreBankId() {
+		return coreBankId;
+	}
+
+	public void setCoreBankId(String coreBankId) {
+		this.coreBankId = coreBankId;
+	}
+
 	public String getLetterType() {
 		return letterType;
 	}
@@ -121,12 +158,12 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.requestType = requestType;
 	}
 
-	public Long getFeeTypeID() {
-		return feeTypeID;
+	public Long getFeeID() {
+		return feeID;
 	}
 
-	public void setFeeTypeID(Long feeTypeID) {
-		this.feeTypeID = feeTypeID;
+	public void setFeeID(Long feeID) {
+		this.feeID = feeID;
 	}
 
 	public Date getCreatedDate() {
@@ -145,11 +182,11 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.createdOn = createdOn;
 	}
 
-	public long getCreatedBy() {
+	public Long getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(long createdBy) {
+	public void setCreatedBy(Long createdBy) {
 		this.createdBy = createdBy;
 	}
 
@@ -177,20 +214,28 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.generatedOn = generatedOn;
 	}
 
-	public long getGeneratedBy() {
+	public Long getGeneratedBy() {
 		return generatedBy;
 	}
 
-	public void setGeneratedBy(long generatedBy) {
+	public void setGeneratedBy(Long generatedBy) {
 		this.generatedBy = generatedBy;
 	}
 
-	public long getApprovedBy() {
+	public Long getApprovedBy() {
 		return approvedBy;
 	}
 
-	public void setApprovedBy(long approvedBy) {
+	public void setApprovedBy(Long approvedBy) {
 		this.approvedBy = approvedBy;
+	}
+
+	public String getApproverName() {
+		return approverName;
+	}
+
+	public void setApproverName(String approverName) {
+		this.approverName = approverName;
 	}
 
 	public Timestamp getApprovedOn() {
@@ -257,28 +302,12 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.status = status;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getFileName() {
 		return fileName;
 	}
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
-	}
-
-	public Long getTrackingID() {
-		return trackingID;
-	}
-
-	public void setTrackingID(Long trackingID) {
-		this.trackingID = trackingID;
 	}
 
 	public String getRemarks() {
@@ -337,4 +366,75 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.emailTemplate = emailTemplate;
 	}
 
+	public Long getEmailNotificationID() {
+		return emailNotificationID;
+	}
+
+	public void setEmailNotificationID(Long emailNotificationID) {
+		this.emailNotificationID = emailNotificationID;
+	}
+
+	public String getReasonCode() {
+		return reasonCode;
+	}
+
+	public void setReasonCode(String reasonCode) {
+		this.reasonCode = reasonCode;
+	}
+
+	public String getEmailID() {
+		return emailID;
+	}
+
+	public void setEmailID(String emailID) {
+		this.emailID = emailID;
+	}
+
+	public String getLetterName() {
+		return letterName;
+	}
+
+	public void setLetterName(String letterName) {
+		this.letterName = letterName;
+	}
+
+	public String getCourierAgency() {
+		return courierAgency;
+	}
+
+	public void setCourierAgency(String courierAgency) {
+		this.courierAgency = courierAgency;
+	}
+
+	public String getDeliveryStatus() {
+		return deliveryStatus;
+	}
+
+	public void setDeliveryStatus(String deliveryStatus) {
+		this.deliveryStatus = deliveryStatus;
+	}
+
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+
+	public Date getDispatchDate() {
+		return dispatchDate;
+	}
+
+	public void setDispatchDate(Date dispatchDate) {
+		this.dispatchDate = dispatchDate;
+	}
+
+	public BigDecimal getWaiverAmt() {
+		return waiverAmt;
+	}
+
+	public void setWaiverAmt(BigDecimal waiverAmt) {
+		this.waiverAmt = waiverAmt;
+	}
 }

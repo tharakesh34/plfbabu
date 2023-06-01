@@ -101,7 +101,6 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private String pdfPassWord;
 	private String year;
 	private String sourceId;
-	private String docType;
 	private String offerId;
 	private String applicationNo;
 	private String finReference;

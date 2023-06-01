@@ -70,7 +70,7 @@ public class MandateExtension {
 	 */
 	public static boolean EXPIRY_DATE_MANDATORY = getValueAsBoolean("EXPIRY_DATE_MANDATORY", true);
 
-	public static int MANDATE_SPLIT_COUNT = getValueAsInt("MANDATE_SPLIT_COUNT", 0);;
+	public static int MANDATE_SPLIT_COUNT = getValueAsInt("MANDATE_SPLIT_COUNT", 0);
 
 	public static boolean BR_INST_TYPE_MAN = getValueAsBoolean("BR_INST_TYPE_MAN", false);
 

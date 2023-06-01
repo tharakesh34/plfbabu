@@ -26,10 +26,12 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -82,15 +84,16 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 		super();
 	}
 
+	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "GenerateLetter";
 		super.pageRightName = "GenerateLetterList";
-		super.tableName = "Letter_Generate_Manual";
-		super.queueTableName = "Letter_Generate_Manual";
+		super.tableName = "Loan_Letter_Manual";
+		super.queueTableName = "Loan_Letter_Manual";
 	}
 
 	public void onCreate$windowGenerateLetterList(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		setPageComponents(windowGenerateLetterList, blGenerateLetterList, lbGenerateLetter, pagingGenerateLetterList);
 
@@ -106,28 +109,53 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 		this.productHeader.setSortAscending(new FieldComparator("product", true));
 		this.letterTypeHeader.setSortDescending(new FieldComparator("letterType", false));
 
-		this.finRefSort.setModel(new ListModelList<SearchOperators>(new SearchOperators().getMultiStringOperators()));
+		this.finRefSort.setModel(new ListModelList<>(new SearchOperators().getMultiStringOperators()));
 		this.finRefSort.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.branchSort.setModel(new ListModelList<SearchOperators>(new SearchOperators().getMultiStringOperators()));
+		this.branchSort.setModel(new ListModelList<>(new SearchOperators().getMultiStringOperators()));
 		this.branchSort.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.corebankidSort
-				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getMultiStringOperators()));
+		this.corebankidSort.setModel(new ListModelList<>(new SearchOperators().getMultiStringOperators()));
 		this.corebankidSort.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.custCifSort.setModel(new ListModelList<SearchOperators>(new SearchOperators().getMultiStringOperators()));
+		this.custCifSort.setModel(new ListModelList<>(new SearchOperators().getMultiStringOperators()));
 		this.custCifSort.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		doSetFieldProperties();
 
 		fillListData();
 
 		doRenderPage();
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void doSetFieldProperties() {
+		this.branch.setModuleName("CSDBranch");
+		this.branch.setDisplayStyle(2);
+		this.branch.setValueColumn("BranchCode");
+		this.branch.setDescColumn("BranchDesc");
+		this.branch.setValidateColumns(new String[] { "BranchCode" });
+	}
+
+	public void onFulfill$branch(Event event) {
+		logger.debug(Literal.ENTERING);
+		Object dataObject = branch.getObject();
+		if (dataObject instanceof String) {
+			this.branch.setValue("");
+			this.branch.setDescription("");
+		} else {
+			Branch details = (Branch) dataObject;
+			if (details != null) {
+				this.branch.setValue(String.valueOf(details.getBranchCode()));
+				this.branch.setDescription(details.getBranchDesc());
+			}
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnSearch(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		List<GenerateLetter> excludeCodes = this.generateLetterService.getResult(getSearchFilters());
 
@@ -135,17 +163,25 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 
 		this.pagedListWrapper.initList(excludeCodes, lbGenerateLetter, pagingGenerateLetterList);
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnRefresh(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
-		doReset();
+		this.finRefSort.setSelectedIndex(0);
+		this.branchSort.setSelectedIndex(0);
+		this.corebankidSort.setSelectedIndex(0);
+		this.custCifSort.setSelectedIndex(0);
+
+		this.finReference.setValue("");
+		this.branch.setValue("");
+		this.coreBankID.setValue("");
+		this.custCIF.setValue("");
 
 		fillListData();
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnNew(Event event) {
@@ -154,6 +190,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 		GenerateLetter gl = new GenerateLetter();
 		gl.setNewRecord(true);
 		gl.setWorkflowId(getWorkFlowId());
+		gl.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("moduleCode", this.moduleCode);
@@ -170,21 +207,21 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	}
 
 	public void onClick$print(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		doPrintResults(this.generateLetterService.getPrintLetters(getWorkFlowRoles()));
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onGenerateLetterItemDoubleClicked(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		long id = (Long) this.lbGenerateLetter.getSelectedItem().getAttribute("Id");
 
 		GenerateLetter letters = this.generateLetterService.getLetter(id);
-		letters.setFinanceDetail(
-				generateLetterService.getFinanceDetailById(letters.getFinReference(), letters.getLetterType()));
+
+		generateLetterService.getFinanceDetailById(letters);
 
 		if (letters == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -203,7 +240,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doShowDialogPage(GenerateLetter gl) {
@@ -224,7 +261,8 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	}
 
 	public void fillListData() {
-		List<GenerateLetter> letters = this.generateLetterService.getGenerateLetters(getWorkFlowRoles());
+
+		List<GenerateLetter> letters = this.generateLetterService.getResult(getSearchFilters());
 
 		this.lbGenerateLetter.setItemRenderer(new GenerateLetterModelItemRenderer());
 
@@ -234,24 +272,25 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	private ISearch getSearchFilters() {
 		ISearch search = new Search();
 
-		String finReference = this.finReference.getValue();
-		if (StringUtils.isNotEmpty(finReference)) {
-			search.getFilters().add(new Filter("gl.FinReference", finReference, this.finRefSort.getSelectedIndex()));
+		String selectedfinReference = this.finReference.getValue();
+		if (StringUtils.isNotEmpty(this.finReference.getValue())) {
+			search.getFilters()
+					.add(new Filter("gl.FinReference", selectedfinReference, this.finRefSort.getSelectedIndex()));
 		}
 
-		String branch = this.branch.getValue();
-		if (StringUtils.isNotEmpty(branch)) {
-			search.getFilters().add(new Filter("gl.Branch", branch, this.branchSort.getSelectedIndex()));
+		String selectedBranch = this.branch.getValue();
+		if (StringUtils.isNotEmpty(selectedBranch)) {
+			search.getFilters().add(new Filter("gl.FinBranch", selectedBranch, this.branchSort.getSelectedIndex()));
 		}
 
 		String coreBankId = this.coreBankID.getValue();
 		if (StringUtils.isNotEmpty(coreBankId)) {
-			search.getFilters().add(new Filter("gl.CoreBankID", coreBankId, this.corebankidSort.getSelectedIndex()));
+			search.getFilters().add(new Filter("gl.CustCoreBank", coreBankId, this.corebankidSort.getSelectedIndex()));
 		}
 
-		String custCIF = this.custCIF.getValue();
-		if (StringUtils.isNotEmpty(custCIF)) {
-			search.getFilters().add(new Filter("gl.CustCIF", custCIF, this.custCifSort.getSelectedIndex()));
+		String selectedCIF = this.custCIF.getValue();
+		if (StringUtils.isNotEmpty(selectedCIF)) {
+			search.getFilters().add(new Filter("gl.CustCIF", selectedCIF, this.custCifSort.getSelectedIndex()));
 		}
 
 		return search;
@@ -266,6 +305,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 
 		@Override
 		public void render(Listitem item, GenerateLetter gl, int arg2) throws Exception {
+			LetterType letterType = LetterType.getType(gl.getLetterType());
 
 			Listcell lc;
 			lc = new Listcell(gl.getFinReference());
@@ -278,7 +318,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 			lc.setParent(item);
 			lc = new Listcell(gl.getProduct());
 			lc.setParent(item);
-			lc = new Listcell(gl.getLetterType());
+			lc = new Listcell(letterType == null ? "" : letterType.getDescription());
 			lc.setParent(item);
 			lc = new Listcell(gl.getRecordStatus());
 			lc.setParent(item);
@@ -298,30 +338,29 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	}
 
 	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
-			throws InterruptedException {
-		logger.debug("Entering");
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) {
+		logger.debug(Literal.ENTERING);
 
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
 		customer = (Customer) nCustomer;
 		addFilter(customer);
 
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void addFilter(Customer customer) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		if (customer != null && customer.getCustID() != 0) {
 			this.custId = customer.getCustID();
@@ -332,7 +371,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 			this.custCIF.setValue("");
 		}
 
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public Customer fetchCustomerDataByCIF() {

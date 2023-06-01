@@ -65,9 +65,8 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				return getFinTypePartnerBank(tableType, rs);
-			}, id, finType);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> getFinTypePartnerBank(tableType, rs),
+					id, finType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -81,12 +80,8 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, finType);
-
-		}, (rs, rowNum) -> {
-			return getFinTypePartnerBank(tableType, rs);
-		});
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setString(1, finType),
+				(rs, rowNum) -> getFinTypePartnerBank(tableType, rs));
 	}
 
 	@Override
@@ -267,9 +262,9 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				return getFinTypePartnerBank(TableType.AVIEW, rs);
-			}, partnerBankCode, finType, AccountConstants.PARTNERSBANK_PAYMENT, paymentMode);
+			return jdbcOperations.queryForObject(sql.toString(),
+					(rs, rowNum) -> getFinTypePartnerBank(TableType.AVIEW, rs), partnerBankCode, finType,
+					AccountConstants.PARTNERSBANK_PAYMENT, paymentMode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -370,11 +365,8 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.query(sql, ps -> {
-			ps.setLong(1, JdbcUtil.getLong(partnerbankId));
-		}, (rs, rowNum) -> {
-			return rs.getLong("ClusterId");
-		});
+		return this.jdbcOperations.query(sql, ps -> ps.setLong(1, JdbcUtil.getLong(partnerbankId)),
+				(rs, rowNum) -> rs.getLong("ClusterId"));
 	}
 
 	@Override
@@ -401,9 +393,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 				ps.setObject(++index, clusterId);
 			}
 
-		}, (rs, rowNum) -> {
-			return getFinTypePartnerBank(TableType.AVIEW, rs);
-		});
+		}, (rs, rowNum) -> getFinTypePartnerBank(TableType.AVIEW, rs));
 	}
 
 	@Override
@@ -454,9 +444,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 			ps.setString(++index, fpb.getEntityCode());
 			ps.setInt(++index, 1);
 
-		}, (rs, rowNum) -> {
-			return getFinTypePartnerBank(tableType, rs);
-		});
+		}, (rs, rowNum) -> getFinTypePartnerBank(tableType, rs));
 	}
 
 	private FinTypePartnerBank getFinTypePartnerBank(TableType tableType, ResultSet rs) throws SQLException {

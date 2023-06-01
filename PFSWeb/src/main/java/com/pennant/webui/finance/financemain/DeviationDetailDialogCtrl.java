@@ -187,7 +187,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	private void doCheckRight() {
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
-		boolean alloowd = deviationHelper.checkInputAllowed(financeMain.getFinType(), roleCode);
+		deviationHelper.checkInputAllowed(financeMain.getFinType(), roleCode);
 
 		this.btnNew_ManualDeviation.setVisible(true);
 		this.btnApprove.setVisible(getUserWorkspace().isAllowed("btn_DeviationDetailDialog_btnApprove"));
@@ -478,13 +478,9 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		autoDeviations.addAll(getFinanceDetail().getFinanceDeviations());
 		manualDeviations.addAll(getFinanceDetail().getManualDeviations());
 
-		autoDeviations.forEach(deviation -> {
-			setApprovalStatus(deviation, true);
-		});
+		autoDeviations.forEach(deviation -> setApprovalStatus(deviation, true));
 
-		manualDeviations.forEach(deviation -> {
-			setApprovalStatus(deviation, true);
-		});
+		manualDeviations.forEach(deviation -> setApprovalStatus(deviation, true));
 
 		// Rendering
 		doFillAutoDeviationDetails(autoDeviations);
@@ -501,13 +497,9 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		autoDeviations.addAll(getFinanceDetail().getFinanceDeviations());
 		manualDeviations.addAll(getFinanceDetail().getManualDeviations());
 
-		autoDeviations.forEach(deviation -> {
-			setApprovalStatus(deviation, false);
-		});
+		autoDeviations.forEach(deviation -> setApprovalStatus(deviation, false));
 
-		manualDeviations.forEach(deviation -> {
-			setApprovalStatus(deviation, false);
-		});
+		manualDeviations.forEach(deviation -> setApprovalStatus(deviation, false));
 
 		// Rendering
 		doFillAutoDeviationDetails(autoDeviations);

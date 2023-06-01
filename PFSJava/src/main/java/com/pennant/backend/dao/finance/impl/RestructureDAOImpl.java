@@ -486,9 +486,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setLong(1, restructureId);
-		});
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, restructureId));
 	}
 
 	@Override
@@ -513,9 +511,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setLong(1, id);
-		});
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, id));
 	}
 
 	@Override
@@ -531,9 +527,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, restructureId);
-		}, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, restructureId), (rs, rowNum) -> {
 			RestructureCharge rc = new RestructureCharge();
 
 			rc.setId(rs.getLong("ID"));

@@ -88,4 +88,6 @@ public interface FinFeeDetailDAO {
 	boolean isFinFeeDetailExists(FinFeeDetail finFeeDetail, String tableType);
 
 	List<FinFeeDetail> getTotalPaidFees(String reference, String type);
+
+	FinFeeDetail getFinFeeDetail(long feeID);
 }

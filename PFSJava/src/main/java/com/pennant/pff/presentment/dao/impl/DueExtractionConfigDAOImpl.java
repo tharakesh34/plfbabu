@@ -302,9 +302,7 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		List<Long> list = jdbcOperations.query(sql, (rs, rowNum) -> {
-			return rs.getLong(1);
-		}, extractionDate);
+		List<Long> list = jdbcOperations.query(sql, (rs, rowNum) -> rs.getLong(1), extractionDate);
 
 		if (CollectionUtils.isEmpty(list)) {
 			return;

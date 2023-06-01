@@ -53,7 +53,7 @@ public enum Agencies {
 
 	public static Agencies getType(String key) {
 		for (Agencies type : values()) {
-			if (type.getKey() == key) {
+			if (type.getKey().equals(key)) {
 				return type;
 			}
 		}

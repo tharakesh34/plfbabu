@@ -136,10 +136,7 @@ public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDe
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		upldAllctnDtlList = this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, ulDetailID);
-
-		}, (rs, rowNum) -> {
+		upldAllctnDtlList = this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, ulDetailID), (rs, rowNum) -> {
 			UploadAlloctionDetail uad = new UploadAlloctionDetail();
 			uad.setUploadDetailId(JdbcUtil.getLong(rs.getLong("UploadDetailId")));
 			uad.setUploadAlloctionDetailId(JdbcUtil.getLong(rs.getLong("UploadAlloctionDetailId")));

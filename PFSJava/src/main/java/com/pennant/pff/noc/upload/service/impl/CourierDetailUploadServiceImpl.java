@@ -12,7 +12,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.NOCConstants;
+import com.pennant.pff.letter.dao.AutoLetterGenerationDAO;
 import com.pennant.pff.noc.upload.dao.CourierDetailUploadDAO;
 import com.pennant.pff.noc.upload.error.CourierDetailUploadError;
 import com.pennant.pff.noc.upload.model.CourierDetailUpload;
@@ -30,6 +31,7 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 
 	private FinanceMainDAO financeMainDAO;
 	private CourierDetailUploadDAO courierDetailUploadDAO;
+	private AutoLetterGenerationDAO autoLetterGenerationDAO;
 
 	public CourierDetailUploadServiceImpl() {
 		super();
@@ -50,17 +52,15 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 		String letterType = detail.getLetterType();
 		String reference = detail.getReference();
 		String deliveryStatus = detail.getDeliveryStatus();
-		FinanceMain fm = financeMainDAO.getFinanceMain(reference, header.getEntityCode());
 
-		if (fm == null) {
+		Long finID = financeMainDAO.getFinID(reference);
+
+		if (finID == null) {
 			setError(detail, CourierDetailUploadError.LCD_001);
 			return;
 		}
 
-		if (!fm.isFinIsActive()) {
-			setError(detail, CourierDetailUploadError.LCD_002);
-			return;
-		}
+		detail.setReferenceID(finID);
 
 		if (!isValidLetterType(letterType)) {
 			setError(detail, CourierDetailUploadError.LCD_003);
@@ -74,26 +74,30 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 
 		if ("D".equals(deliveryStatus) || "R".equals(deliveryStatus)) {
 			if (StringUtils.isBlank(DateUtil.formatToLongDate(detail.getDeliveryDate()))) {
-				setError(detail, CourierDetailUploadError.LCD_005);
+				setError(detail, CourierDetailUploadError.LCD_009);
 				return;
 			}
 		}
 
-		Date date = DateUtil.getSqlDate(detail.getLetterDate());
-		Long isExist = courierDetailUploadDAO.isFileExist(reference, letterType, date);
+		Date letterGenDate = DateUtil.getSqlDate(detail.getLetterDate());
+		Long isExist = courierDetailUploadDAO.isFileExist(reference, letterType, letterGenDate);
 		if (isExist != null) {
 			setFailureStatus(detail, "LCD_999", "Same data already exist with the uploadId : " + isExist);
 			return;
 		}
 
-		// If Courier details are being uploaded against a letter generated and shared with customer
-		// with Mode as ‘Email’ than application will mark the status of record as ‘failed’ with relevant reject reason.
+		if (courierDetailUploadDAO.isValidRecord(detail.getReferenceID(), letterType, letterGenDate)) {
+			setError(detail, CourierDetailUploadError.LCD_006);
+			return;
+		}
 
-		// If Combination of Loan reference, Letter Type and Letter Generation date is not available where letter was
-		// issued
-		// through courier then application to mark the status of record as ‘Failed’ with relevant reject reasons.
+		String letterMode = courierDetailUploadDAO.isValidCourierMode(detail.getReferenceID(), letterType,
+				letterGenDate);
+		if (letterMode != null && !NOCConstants.MODE_COURIER.equals(letterMode)) {
+			setError(detail, CourierDetailUploadError.LCD_007);
+			return;
+		}
 
-		detail.setReferenceID(fm.getFinID());
 		setSuccesStatus(detail);
 	}
 
@@ -105,11 +109,18 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 
 			for (FileUploadHeader header : headers) {
 				logger.info("Processing the File {}", header.getFileName());
+
 				List<CourierDetailUpload> details = courierDetailUploadDAO.getDetails(header.getId());
 				header.getUploadDetails().addAll(details);
 
 				for (CourierDetailUpload detail : details) {
 					doValidate(header, detail);
+					Long letterId = validateLetterDetails(detail);
+
+					if (letterId != null) {
+						courierDetailUploadDAO.update(detail, letterId);
+					}
+
 				}
 
 				try {
@@ -124,6 +135,16 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 				}
 			}
 		}).start();
+	}
+
+	private Long validateLetterDetails(CourierDetailUpload detail) {
+		Long letterId = autoLetterGenerationDAO.getLetterId(detail.getReferenceID(), detail.getLetterType(),
+				detail.getLetterDate());
+		if (letterId == null) {
+			setError(detail, CourierDetailUploadError.LCD_008);
+		}
+
+		return letterId;
 	}
 
 	@Override
@@ -191,7 +212,7 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 		switch (letterType) {
 		case "CLOSURE":
 		case "NOC":
-		case "CANCELLATIONLETTER":
+		case "CANCELLATION":
 			return true;
 		default:
 			return false;
@@ -208,6 +229,11 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 		default:
 			return false;
 		}
+	}
+
+	@Autowired
+	public void setAutoLetterGenerationDAO(AutoLetterGenerationDAO autoLetterGenerationDAO) {
+		this.autoLetterGenerationDAO = autoLetterGenerationDAO;
 	}
 
 	@Override

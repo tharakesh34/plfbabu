@@ -14,7 +14,7 @@ public interface WriteOffUploadDAO {
 
 	String getSqlQuery();
 
-	long saveLog(WriteOffUploadDetail detail, FileUploadHeader header);
+	void saveLog(WriteOffUploadDetail detail, FileUploadHeader header);
 
 	boolean isInProgress(String finReference, long headerID);
 

@@ -187,7 +187,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	private Map<Long, String> mandateIdMap = new HashMap<>();
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private ExternalInterfaceService externalInterfaceService;
-	private String extractionType = null;
 
 	private transient ClusterService clusterService;
 	private transient BranchService branchService;
@@ -252,7 +251,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		// Render the page and display the data.
 		doRenderPage();
 		this.mandateIdMap.clear();
-		extractionType = SysParamUtil.getValueAsString(SMTParameterConstants.PRESENTMENT_EXTRACTION_TYPE);
 		doSetFieldProperties();
 
 		if (listBoxMandateRegistration.getItems().size() > 0) {

@@ -88,11 +88,25 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 
 		detail.setReferenceID(finID);
 
-		FinanceMain fm = financeMainDAO.getFinBasicDetails(finID, "");
-		boolean isundermaintainance = finServiceInstrutionDAO.isFinServiceInstExists(finID, "_temp");
+		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 
-		if (isundermaintainance || fm.isUnderSettlement()) {
-			setError(detail, BranchChangeUploadError.BC_07);
+		if (StringUtils.isNotEmpty(financeMainDAO.getFinanceMainByRcdMaintenance(finID))) {
+			setError(detail, BranchChangeUploadError.BC_07, rcdMntnSts);
+			return;
+		}
+
+		if (branchChangeUploadDAO.isInSettlement(finID, "_temp")) {
+			setError(detail, BranchChangeUploadError.BC_08);
+			return;
+		}
+
+		if (branchChangeUploadDAO.isInlinkingDelinking(finID, "_temp")) {
+			setError(detail, BranchChangeUploadError.BC_09);
+			return;
+		}
+
+		if (branchChangeUploadDAO.getReceiptQueueList(finID)) {
+			setError(detail, BranchChangeUploadError.BC_10);
 			return;
 		}
 
@@ -100,6 +114,7 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 			setError(detail, BranchChangeUploadError.BC_05);
 			return;
 		}
+		FinanceMain fm = financeMainDAO.getFinBasicDetails(finID, "");
 
 		if (fm.getFinBranch().equals(branchcode)) {
 			setError(detail, BranchChangeUploadError.BC_04);
@@ -300,6 +315,10 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 
 	private void setError(BranchChangeUpload detail, BranchChangeUploadError error) {
 		setFailureStatus(detail, error.name(), error.description());
+	}
+
+	protected void setError(BranchChangeUpload detail, BranchChangeUploadError error, String arg) {
+		setFailureStatus(detail, error.name(), error.description().concat(arg));
 	}
 
 	@Autowired

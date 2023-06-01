@@ -1174,7 +1174,7 @@ public class ServiceBranchDialogCtrl extends GFCBaseCtrl<ServiceBranch> {
 		String recordType = loanTypeMapping.getRecordType();
 		String recordStatus = loanTypeMapping.getRecordStatus();
 
-		if (!(loanTypeMapping.isNewRecord()) || (recordStatus != null || "".equals(recordStatus))) {
+		if (!loanTypeMapping.isNewRecord() || recordStatus != null || "".equals(recordStatus)) {
 			isReadOnly = true;
 		}
 

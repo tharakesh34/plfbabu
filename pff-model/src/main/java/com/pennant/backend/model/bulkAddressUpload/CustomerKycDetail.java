@@ -1,4 +1,4 @@
-package com.pennant.backend.model.bulkAddressUpload;
+package com.pennant.backend.model.bulkaddressupload;
 
 import com.pennant.pff.upload.model.UploadDetails;
 import com.pennanttech.pennapps.core.model.LoggedInUser;

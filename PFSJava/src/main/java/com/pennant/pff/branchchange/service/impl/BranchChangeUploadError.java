@@ -16,7 +16,13 @@ public enum BranchChangeUploadError {
 
 	BC_06("Branch Code is Mandatory."),
 
-	BC_07("FinReference is Under Maintainance.");
+	BC_07("FinReference is Under Maintainance in :"),
+
+	BC_08("Selected FinReference is under Maintainance in Settlement"),
+
+	BC_09("Selected FinReference is under Maintainance in Linking/Delinking"),
+
+	BC_10("Selected FinReference is under Maintainance in Receipt Process");
 
 	private String description;
 

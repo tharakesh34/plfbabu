@@ -23,6 +23,7 @@ public class LienDetails extends AbstractWorkflowEntity {
 	private String lienReference;
 	private boolean lienStatus;
 	private String interfaceStatus;
+	private String interfaceRemarks;
 	private long createdBy;
 	private Timestamp createdOn;
 	private long approvedBy;
@@ -150,6 +151,14 @@ public class LienDetails extends AbstractWorkflowEntity {
 
 	public void setInterfaceStatus(String interfaceStatus) {
 		this.interfaceStatus = interfaceStatus;
+	}
+
+	public String getInterfaceRemarks() {
+		return interfaceRemarks;
+	}
+
+	public void setInterfaceRemarks(String interfaceRemarks) {
+		this.interfaceRemarks = interfaceRemarks;
 	}
 
 	public long getCreatedBy() {

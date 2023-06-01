@@ -562,6 +562,7 @@ public class ReceiptCalculator {
 			rd.setEarlySettle(true);
 		}
 		FinanceMain fm = rd.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		fm.setClosureType(rd.getReceiptHeader().getClosureType());
 		List<FinFeeDetail> oldFinFeeDtls = rd.getFinFeeDetails();
 		List<FinFeeDetail> finFeedetails = null;
 
@@ -2028,7 +2029,7 @@ public class ReceiptCalculator {
 			return rd;
 		}
 
-		if (AllocationType.AUTO.equals(rch.getAllocationType()) || rd.isAdjSchedule()) {
+		if (AllocationType.AUTO.equals(rch.getAllocationType())) {
 			recalAutoAllocationHierarchy(rd, isPresentment);
 			return rd;
 		}
@@ -2095,6 +2096,18 @@ public class ReceiptCalculator {
 				rd = eventFeeAndAdviseApportion(rd, false);
 			}
 		}
+
+		FinServiceInstruction fsi = rd.getFinanceDetail().getFinScheduleData().getFinServiceInstruction();
+		if (fsi != null && fsi.isClosureReceipt() && rd.isAdjSchedule()) {
+			rd = earlySettleAllocation(rd);
+			if (rd.isSetPaidValues()) {
+				setPaidValues(rd);
+			}
+			rd.setSetPaidValues(true);
+			setTotals(rd, 0);
+			return rd;
+		}
+
 		setEmi(rd);
 
 		setTotals(rd, 0);
@@ -2396,7 +2409,7 @@ public class ReceiptCalculator {
 				if (allocate.getAllocationTo() >= 0) {
 					continue;
 				}
-				if (!allocate.getFeeTypeCode().equals(dueData.getFeeTypeCode())) {
+				if (dueData != null && !allocate.getFeeTypeCode().equals(dueData.getFeeTypeCode())) {
 					continue;
 				}
 			} else {
@@ -2718,7 +2731,7 @@ public class ReceiptCalculator {
 
 		for (char repayTo : rpyOrder) {
 			List<ReceiptAllocationDetail> allocations = rch.getAllocations();
-			if (repayTo == RepayConstants.REPAY_PRINCIPAL) {
+			if (String.valueOf(repayTo).equals(RepayConstants.DUETYPE_PRINICIPAL)) {
 				rd = priApportion(rd);
 				/**
 				 * PSD#165029 - Unable to do Part Prepayment & Early Settlement on the date of schedule payment
@@ -2727,14 +2740,14 @@ public class ReceiptCalculator {
 						&& allocations.get(rch.getPriIdx()).getPaidAvailable().compareTo(BigDecimal.ZERO) <= 0) {
 					rd = priApportion(rd);
 				}
-			} else if (repayTo == RepayConstants.REPAY_PROFIT) {
+			} else if (String.valueOf(repayTo).equals(RepayConstants.DUETYPE_PROFIT)) {
 				rd = intApportion(rd);
 				// Common issue 16
 				if (rd.isAdjSchedule() && receiptPurposeCtg == 2 && rch.getPftIdx() != -1 && rch.getFutPftIdx() != -1
 						&& allocations.get(rch.getPftIdx()).getPaidAvailable().compareTo(BigDecimal.ZERO) <= 0) {
 					rd = repayIntApportion(rd);
 				}
-			} else if (!rch.isPenalSeparate() && repayTo == RepayConstants.REPAY_PENALTY) {
+			} else if (!rch.isPenalSeparate() && String.valueOf(repayTo).equals(RepayConstants.DUETYPE_ODC)) {
 				rd = penalApportion(rd);
 			} else if (repayTo == RepayConstants.REPAY_OTHERS) {
 				// Code Related to Schedule Fees & Insurance Deleted
@@ -4722,10 +4735,10 @@ public class ReceiptCalculator {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		List<XcessPayables> xcessPayables = rch.getXcessPayables();
 
-		if (rch.getReceiptDetails() != null && rch.getReceiptDetails().size() > 0) {
+		FinServiceInstruction fsi = receiptData.getFinanceDetail().getFinScheduleData().getFinServiceInstruction();
+		if (CollectionUtils.isNotEmpty(rch.getReceiptDetails()) && !(fsi != null && fsi.isClosureReceipt())) {
 			for (FinReceiptDetail recDtl : rch.getReceiptDetails()) {
-				for (int i = 0; i < xcessPayables.size(); i++) {
-					XcessPayables exs = xcessPayables.get(i);
+				for (XcessPayables exs : xcessPayables) {
 					if (payType(recDtl.getPaymentType()).equals(exs.getPayableType())
 							&& recDtl.getPayAgainstID() == exs.getPayableID()) {
 						exs.setTotPaidNow(BigDecimal.ZERO);

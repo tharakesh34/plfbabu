@@ -673,8 +673,6 @@ public class PresentmentDetailExtractService {
 			}
 		}
 
-		// FinExcessAmount finExAmt = finExcessAmountDAO.getExcessAmountsByRefAndType(pd.getFinID(), amountType);
-
 		FinExcessAmount finExAmt = new FinExcessAmount();
 
 		BigDecimal excessBal = finExAmt.getBalanceAmt();
@@ -727,10 +725,6 @@ public class PresentmentDetailExtractService {
 		long finID = pd.getFinID();
 
 		BigDecimal emiInAdvanceAmt = BigDecimal.ZERO;
-		/*
-		 * FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
-		 * RepayConstants.EXAMOUNTTYPE_EMIINADV);
-		 */
 
 		FinExcessAmount excessAmount = new FinExcessAmount();
 

@@ -66,9 +66,7 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
-				return getRowMapper(rs);
-			}, finMaintainId);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> getRowMapper(rs), finMaintainId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -83,9 +81,7 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
-				return getRowMapper(rs);
-			}, finID, event);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> getRowMapper(rs), finID, event);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -254,9 +250,7 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			int recordCount = jdbcOperations.update(sql.toString(), ps -> {
-				ps.setLong(1, fmi.getFinMaintainId());
-			});
+			int recordCount = jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, fmi.getFinMaintainId()));
 
 			if (recordCount == 0) {
 				throw new ConcurrencyException();

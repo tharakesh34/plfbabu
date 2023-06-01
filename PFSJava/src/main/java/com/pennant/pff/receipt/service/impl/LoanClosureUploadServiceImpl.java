@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,12 +14,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.finance.FinFeeConfigDAO;
+import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -28,10 +42,11 @@ import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.impl.ManualAdviceUtil;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.core.loan.util.LoanClosureCalculator;
+import com.pennant.pff.extension.CustomerExtension;
 import com.pennant.pff.receipt.ClosureType;
 import com.pennant.pff.receipt.dao.LoanClosureUploadDAO;
 import com.pennant.pff.receipt.error.LoanClosureUploadError;
@@ -41,10 +56,16 @@ import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosureUpload> {
 	private static final Logger logger = LogManager.getLogger(LoanClosureUploadServiceImpl.class);
@@ -56,6 +77,13 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 	protected FinanceRepaymentsDAO financeRepaymentsDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ManualAdviseDAO manualAdviseDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinTypeFeesDAO finTypeFeesDAO;
+	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	private FinanceTypeDAO financeTypeDAO;
+	private CustomerDAO customerDAO;
+	private FinODPenaltyRateDAO finODPenaltyRateDAO;
+	private FinFeeConfigDAO finFeeConfigDAO;
 
 	protected LoanClosureUpload getDetail(Object object) {
 		if (object instanceof LoanClosureUpload detail) {
@@ -174,9 +202,15 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 	private void createReceipt(LoanClosureUpload lcu, FileUploadHeader header) {
 		String entityCode = header.getEntityCode();
 
-		ReceiptUploadDetail rud = new ReceiptUploadDetail();
 		Date appDate = header.getAppDate();
-
+		ReceiptUploadDetail rud = new ReceiptUploadDetail();
+		if (CollectionUtils.isNotEmpty(lcu.getExcessList())) {
+			List<FinExcessAmount> excessList = lcu.getExcessList().stream()
+					.sorted((l1, l2) -> DateUtil.compare(l2.getValueDate(), l1.getValueDate()))
+					.collect(Collectors.toList());
+			appDate = receiptService.getExcessBasedValueDate(appDate, lcu.getReferenceID(), appDate, excessList.get(0),
+					FinServiceEvent.EARLYSETTLE);
+		}
 		rud.setReference(lcu.getReference());
 		rud.setFinID(lcu.getReferenceID());
 		rud.setValueDate(appDate);
@@ -185,12 +219,14 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		rud.setDepositDate(appDate);
 		rud.setReceiptAmount(lcu.getAmount());
 		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
-		rud.setReceiptPurpose(FinanceConstants.EARLYSETTLEMENT);
+		rud.setReceiptPurpose(ReceiptPurpose.EARLYSETTLE.code());
 		rud.setReceiptMode(PennantConstants.List_Select);
 		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
 		rud.setReceiptChannel(PennantConstants.List_Select);
 
 		List<UploadAlloctionDetail> list = new ArrayList<>();
+
+		BigDecimal totalWaivedAmount = BigDecimal.ZERO;
 
 		for (LoanClosureUpload alloc : lcu.getAllocations()) {
 			UploadAlloctionDetail uad = new UploadAlloctionDetail();
@@ -199,6 +235,7 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 			uad.setReferenceCode(getAllocationCode(alloc));
 			uad.setWaivedAmount(alloc.getAmount());
 
+			totalWaivedAmount = totalWaivedAmount.add(uad.getWaivedAmount());
 			list.add(uad);
 		}
 
@@ -206,6 +243,16 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 
 		if (!list.isEmpty()) {
 			rud.setAllocationType(AllocationType.MANUAL);
+		}
+
+		prepareUserDetails(header, lcu);
+
+		BigDecimal receiptAmount = lcu.getAmount().add(totalWaivedAmount);
+
+		validateReceiptAmount(lcu, appDate, receiptAmount);
+
+		if (lcu.getProgress() == EodConstants.PROGRESS_FAILED) {
+			return;
 		}
 
 		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, entityCode);
@@ -217,7 +264,6 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		fsi.setClosureType(lcu.getClosureType());
 		fsi.setClosureWithFullWaiver(!list.isEmpty() && rud.getReceiptAmount().compareTo(BigDecimal.ZERO) == 0);
 
-		prepareUserDetails(header, lcu);
 		fsi.setLoggedInUser(lcu.getUserDetails());
 		fsi.setKnockOffReceipt(true);
 		fsi.setReceiptDetail(null);
@@ -250,6 +296,61 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		} else {
 			lcu.setReceiptID(fd.getReceiptId());
 			setSuccesStatus(lcu);
+		}
+	}
+
+	private void validateReceiptAmount(LoanClosureUpload lcu, Date appDate, BigDecimal receiptAmount) {
+		FinReceiptData rd = new FinReceiptData();
+		FinanceDetail fd = new FinanceDetail();
+
+		rd.setFinID(lcu.getReferenceID());
+		rd.setFinReference(lcu.getReference());
+		rd.setUserDetails(lcu.getUserDetails());
+
+		FinReceiptHeader rch = new FinReceiptHeader();
+		rch.setReceiptPurpose(ReceiptPurpose.EARLYSETTLE.code());
+		rch.setReceivableAdvises(manualAdviseDAO.getReceivableAdvises(lcu.getReferenceID(), "_AVIEW"));
+		rch.setValueDate(appDate);
+		rch.setPartPayAmount(BigDecimal.ZERO);
+
+		FinScheduleData fsd = fd.getFinScheduleData();
+
+		FinanceMain fm = financeMainDAO.getFinanceMainForLMSEvent(lcu.getReferenceID());
+		fm.setPenaltyRates(finODPenaltyRateDAO.getFinODPenaltyRateByRef(fm.getFinID(), ""));
+		fsd.setFinanceMain(fm);
+		fsd.setFinPftDeatil(financeProfitDetailDAO.getFinProfitDetailsByFinRef(lcu.getReferenceID()));
+		fsd.setFinanceType(financeTypeDAO.getFinanceTypeByID(fm.getFinType(), TableType.MAIN_TAB.getSuffix()));
+		fsd.setFinanceScheduleDetails(financeScheduleDetailDAO.getSchedulesForLMSEvent(lcu.getReferenceID()));
+		fsd.setFeeEvent(AccountingEvent.EARLYSTL);
+
+		fd.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesForLMSEvent(fm.getFinType(), AccountingEvent.EARLYSTL));
+		fd.setFinFeeConfigList(
+				finFeeConfigDAO.getFinFeeConfigList(fm.getFinID(), AccountingEvent.EARLYSTL, false, "_View"));
+
+		rd.setTdPriBal(fsd.getFinPftDeatil().getTdSchdPriBal());
+		rd.setFinanceDetail(fd);
+		rd.setReceiptHeader(rch);
+
+		Customer customer = null;
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			customer = customerDAO.getCustomerEOD(fm.getCustCoreBank());
+		} else {
+			customer = customerDAO.getCustomerEOD(fm.getCustID());
+		}
+
+		CustomerDetails cd = new CustomerDetails();
+		cd.setCustomer(customer);
+		fd.setCustomerDetails(cd);
+
+		ReceiptDTO receiptDTO = receiptService.prepareReceiptDTO(rd);
+
+		receiptDTO.setCustomer(customer);
+
+		BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
+
+		if (calcClosureAmt.compareTo(receiptAmount) > 0) {
+			setFailureStatus(lcu, "", "Receipt amount is in sufficient for closure. Excepted amount is :"
+					+ CurrencyUtil.format(calcClosureAmt, 2));
 		}
 	}
 
@@ -367,4 +468,40 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
+
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
+		this.finTypeFeesDAO = finTypeFeesDAO;
+	}
+
+	@Autowired
+	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
+		this.financeProfitDetailDAO = financeProfitDetailDAO;
+	}
+
+	@Autowired
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	@Autowired
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	@Autowired
+	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
+		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
+	}
+
+	@Autowired
+	public void setFinFeeConfigDAO(FinFeeConfigDAO finFeeConfigDAO) {
+		this.finFeeConfigDAO = finFeeConfigDAO;
+	}
+
 }

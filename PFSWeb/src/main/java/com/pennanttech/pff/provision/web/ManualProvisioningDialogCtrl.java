@@ -344,7 +344,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 		Long manualAssetSubClassID = p.getManualAssetSubClassID();
 		this.effManualAssetSubClassification.setValue(String.valueOf(manualAssetSubClassID));
-		fillList(this.effManualAssetSubClassification, String.valueOf(manualAssetSubClassID),
+		fillComboBox(this.effManualAssetSubClassification, String.valueOf(manualAssetSubClassID),
 				getAssetSubClassCodes(manualAssetClassID));
 
 		this.newProvisionRegPercentage.setValue(p.getNewRegProvisionPer());
@@ -377,7 +377,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			wve.add(we);
 		}
 		try {
-			if (this.effManualAssetClassification.getSelectedIndex() <= 0) {
+			if (this.effManualAssetClassification.getSelectedIndex() < 0) {
 				provision.setManualAssetClassID(null);
 			} else {
 				provision.setManualAssetClassID(getSelectedValue(this.effManualAssetClassification));
@@ -387,7 +387,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		}
 
 		try {
-			if (this.effManualAssetSubClassification.getSelectedIndex() <= 0) {
+			if (this.effManualAssetSubClassification.getSelectedIndex() < 0) {
 				provision.setManualAssetSubClassID(null);
 			} else {
 				provision.setManualAssetSubClassID(getSelectedValue(effManualAssetSubClassification));
@@ -508,7 +508,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 					Labels.getLabel("STATIC_INVALID", new String[] {
 							Labels.getLabel("label_ManualProvisioningDialog_EffManualAssetClassification.value") }));
 		}
-		if (this.effManualAssetSubClassification.getSelectedIndex() < 0) {
+		if (this.manualProvision.isChecked() && this.effManualAssetSubClassification.getSelectedIndex() < 0) {
 			throw new WrongValueException(this.effManualAssetSubClassification,
 					Labels.getLabel("STATIC_INVALID", new String[] {
 							Labels.getLabel("label_ManualProvisioningDialog_EffManualAssetSubClassification.value") }));
@@ -546,6 +546,11 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		doSetValidation();
 
 		doWriteComponentsToBean(aProvision);
+		if (this.manualProvision.isChecked() && provisionService.isAssetClassCodeValid(aProvision.getFinID(),
+				this.effManualAssetClassification.getValue())) {
+			MessageUtil.showError("ManualAsset Classification can't be upgarded");
+			return;
+		}
 
 		boolean isNew = aProvision.isNew();
 		String tranType = null;
@@ -778,6 +783,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			this.manProvisionAmount.setValue(BigDecimal.ZERO);
 			this.effManualAssetClassification.setDisabled(true);
 			this.effManualAssetSubClassification.setDisabled(true);
+			this.effManualAssetClassification.setValue(null);
+			this.effManualAssetSubClassification.setValue(null);
 			doClearmessage();
 		}
 
@@ -791,13 +798,13 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		if (this.overrideProvision.isChecked()) {
 			this.manProvisionPercentage.setDisabled(false);
 			this.manProvisionPercentage.setReadonly(false);
-			this.manProvisionAmount.setDisabled(false);
-			this.manProvisionAmount.setReadonly(false);
+			this.manProvisionAmount.setDisabled(true);
+			this.manProvisionAmount.setReadonly(true);
 		} else {
 			this.manProvisionPercentage.setDisabled(true);
 			this.manProvisionPercentage.setReadonly(true);
-			this.manProvisionAmount.setDisabled(true);
-			this.manProvisionAmount.setReadonly(true);
+			this.manProvisionAmount.setValue(BigDecimal.ZERO);
+			this.manProvisionPercentage.setValue(BigDecimal.ZERO);
 		}
 	}
 
@@ -823,7 +830,11 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	}
 
 	private Long getSelectedValue(Combobox combobox) {
-		return Long.parseLong(combobox.getSelectedItem().getValue());
+		if (combobox.getSelectedItem() != null) {
+			return Long.parseLong(combobox.getSelectedItem().getValue());
+		} else {
+			return 0L;
+		}
 	}
 
 	private String getSelectedLabel(Combobox combobox) {
@@ -831,7 +842,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		if (combobox.getSelectedItem() != null) {
 			comboValue = combobox.getSelectedItem().getValue().toString();
 		} else {
-			combobox.setSelectedIndex(0);
+			combobox.setValue(Labels.getLabel("Combo.Select"));
 		}
 		return comboValue;
 	}

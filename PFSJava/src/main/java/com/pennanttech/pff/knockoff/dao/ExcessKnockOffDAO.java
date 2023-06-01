@@ -10,19 +10,9 @@ import com.pennanttech.pff.knockoff.model.ExcessKnockOffDetails;
 
 public interface ExcessKnockOffDAO {
 
+	void clearStageData();
+
 	long logExcessForCrossLoanKnockOff(Date valueDate, String executionDay, String thresholdValue);
-
-	long prepareQueue();
-
-	void handleFailures();
-
-	long getQueueCount();
-
-	int updateThreadID(long from, long to, int i);
-
-	void deleteQueue();
-
-	void updateProgress(CustomerCoreBank ccb, int progressInProcess);
 
 	List<ExcessKnockOff> loadData(CustomerCoreBank customerCoreBank);
 

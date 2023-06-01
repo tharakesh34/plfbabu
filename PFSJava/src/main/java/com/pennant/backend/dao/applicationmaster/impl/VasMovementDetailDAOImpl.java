@@ -67,9 +67,7 @@ public class VasMovementDetailDAOImpl extends BasicDao<VasMovementDetail> implem
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, id);
-		}, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, id), (rs, rowNum) -> {
 			VasMovementDetail vmd = new VasMovementDetail();
 
 			vmd.setVasMovementId(rs.getLong("VasMovementId"));

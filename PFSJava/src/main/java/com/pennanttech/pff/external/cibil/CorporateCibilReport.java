@@ -24,7 +24,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import com.northconcepts.datapipeline.core.Record;
 import com.northconcepts.datapipeline.csv.CSVWriter;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
@@ -851,7 +850,6 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				addField(record, loan.getFinAssetValue());
 
 				/* Current Balance / Limit Utilized /Mark to Marketr */
-				int odDays = Integer.parseInt(getOdDays(loan.getCurODDays()));
 				String closingstatus = StringUtils.trimToEmpty(loan.getClosingStatus());
 
 				Map<String, BigDecimal> amountMap = getCurrentBalAndOverDueAmt(loan);
@@ -1093,32 +1091,6 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			}
 
 		}
-
-		private BigDecimal amountOverdue(FinanceEnquiry loan) {
-			BigDecimal amountOverdue = BigDecimal.ZERO;
-			FinanceSummary finSummary = new FinanceSummary();
-			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(loan.getFinID());
-			if (finODDetails != null) {
-				finSummary.setFinODTotPenaltyAmt(finODDetails.getTotPenaltyAmt());
-				finSummary.setFinODTotWaived(finODDetails.getTotWaived());
-				finSummary.setFinODTotPenaltyPaid(finODDetails.getTotPenaltyPaid());
-				finSummary.setFinODTotPenaltyBal(finODDetails.getTotPenaltyBal());
-			}
-			FinanceSummary summary = cibilService.getFinanceProfitDetails(loan.getFinID());
-			int formatter = CurrencyUtil.getFormat(summary.getFinCcy());
-			amountOverdue = PennantApplicationUtil
-					.formateAmount(summary.getTotalOverDue().add(finSummary.getFinODTotPenaltyBal()), formatter);
-
-			if (amountOverdue.compareTo(BigDecimal.ZERO) < 0) {
-				amountOverdue = BigDecimal.ZERO;
-			}
-
-			if (StringUtils.equals("C", loan.getClosingStatus())) {
-				amountOverdue = BigDecimal.ZERO;
-			}
-			return amountOverdue;
-		}
-
 	}
 
 	public class GuarantorSegment {
@@ -1549,13 +1521,6 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 	public void setCibilService(CIBILService cibilService) {
 		this.cibilService = cibilService;
-	}
-
-	private String getOdDays(int odDays) {
-		if (odDays > 900) {
-			odDays = 900;
-		}
-		return String.valueOf(odDays);
 	}
 
 	private BigDecimal getAmount(BigDecimal amount) {

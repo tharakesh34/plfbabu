@@ -16,6 +16,7 @@ import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
+import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -193,6 +194,10 @@ public class AccountingConfigCache {
 
 	public static String getAccountMapping(String account) {
 		return accountMappingDAO.getAccountMappingByAccount(account);
+	}
+
+	public static AccountMapping getAccountMappingForAccounting(String account) {
+		return accountMappingDAO.getAccountMappingForAcounting(account);
 	}
 
 	public static void setAccountTypeDAO(AccountTypeDAO accountTypeDAO) {

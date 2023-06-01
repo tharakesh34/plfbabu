@@ -795,12 +795,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	 * Method to fill finance data.
 	 * 
 	 * @param isChgReceipt
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
 	 */
-	private boolean setSummaryData(boolean isChgReceipt)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	private boolean setSummaryData(boolean isChgReceipt) {
 		logger.debug(Literal.ENTERING);
 		receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(receiptData.getReceiptHeader().getReceiptPurpose());
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
@@ -1320,18 +1316,13 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 
 	/**
 	 * Method for on Changing Paid Amounts
-	 * 
-	 * @throws InterruptedException
 	 */
-	private void changePaid() throws InterruptedException {
+	private void changePaid() {
 		receiptData = receiptCalculator.setTotals(receiptData, 0);
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
 		receiptData.getReceiptHeader().setAllocationsSummary(allocationList);
-		try {
-			setSummaryData(true);
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
+
+		setSummaryData(true);
 		setBalances();
 		doFillAllocationDetail();
 	}
@@ -4789,11 +4780,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			}
 		}
 
-		try {
-			changePaid();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		changePaid();
 
 		// if no extra balance or partial pay disable excessAdjustTo
 		if (this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) <= 0 || receiptPurposeCtg == 1) {

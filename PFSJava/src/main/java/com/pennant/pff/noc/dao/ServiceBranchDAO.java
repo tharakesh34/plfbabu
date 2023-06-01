@@ -33,4 +33,6 @@ public interface ServiceBranchDAO {
 	void updateLoanType(ServiceBranchesLoanType sb, TableType type);
 
 	void deleteBranchLoanTypeById(long id, TableType type);
+
+	ServiceBranchesLoanType getServiceBranchesLoanType(String finType, String branch, String code);
 }

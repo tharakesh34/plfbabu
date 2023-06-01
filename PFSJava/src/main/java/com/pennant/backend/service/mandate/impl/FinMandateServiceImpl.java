@@ -730,7 +730,8 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 	@Override
 	public void autoSwaping(long custID) {
 		logger.debug(Literal.ENTERING);
-		List<Mandate> mandatesForAutoSwap = mandateDAO.getMandatesForAutoSwap(custID, SysParamUtil.getAppDate());
+		Date appDate = SysParamUtil.getAppDate();
+		List<Mandate> mandatesForAutoSwap = mandateDAO.getMandatesForAutoSwap(custID, appDate);
 
 		for (Mandate mandate : mandatesForAutoSwap) {
 			long mandateID = mandate.getMandateID();
@@ -766,6 +767,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 				financeMainDAO.loanMandateSwapping(mandate.getFinID(), mandateID, mandateType, "", securityMandate);
 			}
 
+			fd.setAppDate(appDate);
 			if (ImplementationConstants.ALLOW_LIEN) {
 				fd.setModuleDefiner(FinServiceEvent.RPYBASICMAINTAIN);
 				if (InstrumentType.isSI(mandateType)) {

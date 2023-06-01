@@ -141,9 +141,7 @@ public class OverdraftPresentmentDAOImpl extends SequenceDao<AbstractWorkflowEnt
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			jdbcOperations.update(sql, ps -> {
-				ps.setLong(1, presentmentID);
-			});
+			jdbcOperations.update(sql, ps -> ps.setLong(1, presentmentID));
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

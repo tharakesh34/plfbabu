@@ -19,8 +19,8 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennapps.core.util.ObjectUtil;
 
-public class SingelFeeUtil {
-	private SingelFeeUtil() {
+public class SingleFeeUtil {
+	private SingleFeeUtil() {
 		super();
 	}
 
@@ -251,8 +251,7 @@ public class SingelFeeUtil {
 		for (Entry<String, List<TransactionEntry>> items : bulkingEntries.entrySet()) {
 			TransactionEntry newTxnEntry = null;
 
-			StringBuilder tsb = new StringBuilder();
-			StringBuilder arsb = new StringBuilder();
+			StringBuilder builder = new StringBuilder();
 
 			for (TransactionEntry item : items.getValue()) {
 				if (newTxnEntry == null) {
@@ -260,13 +259,29 @@ public class SingelFeeUtil {
 				}
 
 				String amountRule = item.getAmountRule();
-				tsb = tsb.append("(" + amountRule.substring(7, amountRule.length() - 1)).append(")+");
+
+				amountRule = removeSpaces(amountRule);
+
+				amountRule = amountRule.replace(";", "");
+				amountRule = amountRule.replace(" ;", "");
+				amountRule = amountRule.replace("; ", "");
+				amountRule = amountRule.replace(" ; ", "");
+
+				amountRule = amountRule.replace(PennantConstants.RESULT, "");
+
+				amountRule = StringUtils.trim(amountRule);
+
+				if (builder.length() > 0) {
+					builder.append("+");
+				}
+
+				builder.append("(").append(amountRule).append(")");
 			}
 
-			arsb.append(PennantConstants.RESULT.concat(tsb.replace(tsb.length() - 1, tsb.length(), ";").toString()));
+			String finalRule = PennantConstants.RESULT.concat(builder.toString()).concat(";");
 
 			if (newTxnEntry != null) {
-				newTxnEntry.setAmountRule(arsb.toString());
+				newTxnEntry.setAmountRule(finalRule);
 
 				list.add(newTxnEntry);
 			}
@@ -394,6 +409,14 @@ public class SingelFeeUtil {
 		}
 
 		return false;
+	}
+
+	private static String removeSpaces(String amountRule) {
+		amountRule = amountRule.replace("Result=", "Result=");
+		amountRule = amountRule.replace("Result =", "Result=");
+		amountRule = amountRule.replace("Result= ", "Result=");
+		amountRule = amountRule.replace("Result = ", "Result=");
+		return amountRule.replace("Result = ", "Result=");
 	}
 
 	private static String[] getAmountCodes(String amountRule) {

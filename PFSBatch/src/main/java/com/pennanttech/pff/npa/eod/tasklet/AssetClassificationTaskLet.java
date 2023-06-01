@@ -49,8 +49,8 @@ public class AssetClassificationTaskLet implements Tasklet {
 	private static final String EXCEPTION_MSG = "Asset Classification failed on {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String ERROR_LOG = "Cause {}\nMessage {}\n LocalizedMessage {}\nStackTrace {}";
 
-	public static AtomicLong processedCount = new AtomicLong(0);
-	public static AtomicLong failedCount = new AtomicLong(0);
+	public static final AtomicLong processedCount = new AtomicLong(0);
+	public static final AtomicLong failedCount = new AtomicLong(0);
 
 	public AssetClassificationTaskLet() {
 		super();
@@ -75,9 +75,7 @@ public class AssetClassificationTaskLet implements Tasklet {
 		JdbcCursorItemReader<Long> itemReader = new JdbcCursorItemReader<>();
 		itemReader.setSql(QUEUE_QUERY);
 		itemReader.setDataSource(dataSource);
-		itemReader.setRowMapper((rs, rowNum) -> {
-			return rs.getLong("FinID");
-		});
+		itemReader.setRowMapper((rs, rowNum) -> rs.getLong("FinID"));
 		itemReader.setPreparedStatementSetter(ps -> {
 			ps.setLong(1, threadId);
 			ps.setInt(2, EodConstants.PROGRESS_WAIT);
@@ -102,9 +100,6 @@ public class AssetClassificationTaskLet implements Tasklet {
 
 				if (ac == null) {
 					throw new AppException("Data is not found in NPA Loan Info Stage for the FinID :" + finID);
-				}
-				if (finID == 102599) {
-					System.out.println("hiiiii");
 				}
 
 				ac.setAssetClassSetup(header);

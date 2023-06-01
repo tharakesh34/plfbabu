@@ -19,6 +19,7 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FeeType;
@@ -28,6 +29,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.service.finance.FeeWaiverUploadHeaderService;
+import com.pennant.backend.service.finance.impl.ManualAdviceUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.eod.constants.EodConstants;
@@ -48,6 +50,7 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 
 	private BulkFeeWaiverUploadDAO bulkFeeWaiverUploadDAO;
 	private FinanceMainDAO financeMainDAO;
+	private ManualAdviseDAO manualAdviseDAO;
 	private FeeWaiverUploadHeaderService feeWaiverUploadHeaderService;
 	private FeeWaiverHeaderService feeWaiverHeaderService;
 
@@ -101,7 +104,7 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 			return;
 		}
 
-		prepare(detail, header);
+		detail.setWaiverHeader(prepare(detail, header));
 	}
 
 	@Override
@@ -114,24 +117,17 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 			for (FileUploadHeader header : headers) {
 				logger.info("Processing the File {}", header.getFileName());
 				List<BulkFeeWaiverUpload> details = bulkFeeWaiverUploadDAO.getDetails(header.getId());
+				header.getUploadDetails().addAll(details);
 
 				for (BulkFeeWaiverUpload detail : details) {
 					detail.setUserDetails(header.getUserDetails());
 					detail.setAppDate(appDate);
-					detail.setUserDetails(header.getUserDetails());
+					prepareUserDetails(header, detail);
 
 					doValidate(header, detail);
 
 					if (EodConstants.PROGRESS_SUCCESS == detail.getProgress()) {
 						processWaiver(detail, header);
-					}
-
-					header.getUploadDetails().add(detail);
-
-					if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-						setFailureStatus(detail);
-					} else {
-						setSuccesStatus(detail);
 					}
 				}
 
@@ -152,20 +148,19 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 
 	private void processWaiver(BulkFeeWaiverUpload detail, FileUploadHeader header) {
 		TransactionStatus txStatus = getTransactionStatus();
-		AuditHeader ah = getAuditHeader(prepare(detail, header), PennantConstants.TRAN_WF);
+		AuditHeader ah = getAuditHeader(detail.getWaiverHeader(), PennantConstants.TRAN_WF);
 
 		try {
 			ah = feeWaiverHeaderService.doApprove(ah);
 			transactionManager.commit(txStatus);
 		} catch (AppException e) {
-			setFailureStatus(detail, e.getMessage());
-
 			logger.error(Literal.EXCEPTION, e);
 
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
 			}
 
+			setFailureStatus(detail, e.getMessage());
 			return;
 		}
 
@@ -177,6 +172,8 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 		if (ah.getErrorMessage() != null) {
 			setFailureStatus(detail, ah.getErrorMessage().get(0));
 		}
+
+		setSuccesStatus(detail);
 	}
 
 	@Override
@@ -219,16 +216,26 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 		}
 
 		boolean feeExists = false;
+		BigDecimal amount = detail.getWaivedAmount();
 		for (FeeWaiverDetail fwd : fwh.getFeeWaiverDetails()) {
 			if (fwd.getFeeTypeCode().equals(detail.getFeeTypeCode())) {
 				feeExists = true;
-				BigDecimal remainingFee = fwd.getReceivableAmount().subtract(fwd.getReceivedAmount());
 
-				if (detail.getWaivedAmount().compareTo(remainingFee) > 0) {
-					setError(detail, BulkFeeWaiverUploadError.FWU_006);
-					return fwh;
+				BigDecimal remainingFee = fwd.getReceivableAmount().subtract(fwd.getReceivedAmount());
+				if (amount.compareTo(remainingFee) > 0) {
+					fwd.setCurrWaiverAmount(remainingFee);
+					fwd.setWaivedAmount(remainingFee);
+				} else {
+					fwd.setCurrWaiverAmount(amount);
+					fwd.setWaivedAmount(amount);
 				}
+				amount = amount.subtract(fwd.getWaivedAmount());
 			}
+		}
+
+		if (amount.compareTo(BigDecimal.ZERO) != 0) {
+			setError(detail, BulkFeeWaiverUploadError.FWU_006);
+			return fwh;
 		}
 
 		if (!feeExists) {
@@ -237,7 +244,8 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 		}
 
 		String rcdMaintainSts = feeWaiverUploadHeaderService.getFinanceMainByRcdMaintenance(detail.getReferenceID());
-		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+
+		if (isRcdInMaintain(detail, rcdMaintainSts)) {
 			setFailureStatus(detail, "FWU_999", Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 			return fwh;
 		}
@@ -247,6 +255,15 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 		setSuccesStatus(detail);
 
 		return fwh;
+	}
+
+	private boolean isRcdInMaintain(BulkFeeWaiverUpload detail, String rcdMaintainSts) {
+		if (FinServiceEvent.MANUALADVISE.equals(rcdMaintainSts)) {
+			return ManualAdviceUtil
+					.isValidateCancelManualAdvise(manualAdviseDAO.getAdvises(detail.getReferenceID(), "_Temp"));
+		}
+
+		return StringUtils.isNotEmpty(rcdMaintainSts);
 	}
 
 	private FeeWaiverHeader prepareFWH(BulkFeeWaiverUpload detail, FileUploadHeader header) {
@@ -283,8 +300,6 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 			taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
 		}
 
-		BigDecimal amount = detail.getWaivedAmount();
-
 		if (!FinServiceEvent.FEEWAIVERS.equals(fm.getRcdMaintainSts())) {
 			fwh.setNewRecord(true);
 		}
@@ -295,16 +310,15 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 
 		for (FeeWaiverDetail fwd : fwh.getFeeWaiverDetails()) {
 			String feetypecode = StringUtils.trimToEmpty(detail.getFeeTypeCode());
+			BigDecimal amount = fwd.getWaivedAmount();
 			if (feetypecode.equals(StringUtils.trimToEmpty(fwd.getFeeTypeCode()))) {
 				fwd.setLastMntOn(fwh.getLastMntOn());
-				fwd.setCurrWaiverAmount(amount);
 				if (amount.compareTo(BigDecimal.ZERO) == 0) {
 					fwd.setCurrWaiverGST(BigDecimal.ZERO);
 					fwd.setCurrActualWaiver(BigDecimal.ZERO);
 				}
 				prepareGST(fwd, amount, taxPercentages);
 				fwd.setBalanceAmount(fwd.getReceivableAmount().subtract(fwd.getCurrWaiverAmount()));
-				break;
 			}
 		}
 	}
@@ -315,7 +329,6 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 		if (fwh.isNewRecord()) {
 			for (FeeWaiverDetail fwd : fwh.getFeeWaiverDetails()) {
 				if (isValidRecord(detail, fwd)) {
-					fwd.setWaivedAmount(detail.getWaivedAmount());
 					fwd.setFeeTypeCode(detail.getFeeTypeCode());
 					fwdList.add(fwd);
 				}
@@ -407,6 +420,11 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 	@Autowired

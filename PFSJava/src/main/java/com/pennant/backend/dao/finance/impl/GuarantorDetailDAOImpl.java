@@ -107,9 +107,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-				ps.setLong(1, gd.getGuarantorId());
-			});
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, gd.getGuarantorId()));
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();

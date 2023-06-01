@@ -29,4 +29,18 @@ public interface GenerateLetterDAO {
 	void delete(GenerateLetter pinCode, TableType mainTab);
 
 	List<GenerateLetter> getLetterInfo(long finID);
+
+	long getInitiatedLoan(long finID, String letterType);
+
+	boolean letterIsInQueu(long finID, String letterType);
+
+	void deleteAutoLetterGeneration(long finID, String letterType);
+
+	String getReasonCode(long finID);
+
+	String getCancelReasons(String reference);
+
+	List<GenerateLetter> getLoanLetterInfo(long finID, String letterType);
+
+	void updateAutoLetterGeneration(long finID, String letterType);
 }

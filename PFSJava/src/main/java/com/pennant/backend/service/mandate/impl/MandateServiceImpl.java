@@ -2476,6 +2476,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			setOtherDetails(mandate, mndt);
 			break;
 		case SI:
+			mndt.setMaxLimit(BigDecimal.ZERO);
 			setAccountDetails(mandate, mndt);
 			setMandateSwapDetails(mandate, mndt);
 			break;

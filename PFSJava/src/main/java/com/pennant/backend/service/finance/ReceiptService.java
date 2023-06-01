@@ -161,4 +161,6 @@ public interface ReceiptService {
 	FinReceiptData prepareFinReceiptData(FinServiceInstruction fsi, FinanceDetail fd);
 
 	Date getExcessBasedValueDate(Date receiptDt, long finID, Date appDate, FinExcessAmount fea, String receiptPurpose);
+
+	BigDecimal[] getEmiSplitForManualAlloc(FinanceMain toFm, Date valueDate, BigDecimal emiAmt);
 }

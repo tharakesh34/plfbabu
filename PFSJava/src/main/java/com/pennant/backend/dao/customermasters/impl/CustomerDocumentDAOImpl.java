@@ -104,9 +104,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		sql.append(" Where Id = ?");
 
 		try {
-			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-				ps.setLong(1, cd.getID());
-			});
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, cd.getID()));
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -123,10 +121,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setLong(1, customerId);
-		});
-
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, customerId));
 	}
 
 	@Override
@@ -393,9 +388,6 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 					dd.setCustDocIsVerified(rs.getBoolean("CustDocIsVerified"));
 					dd.setCustDocVerifiedBy(rs.getLong("CustDocVerifiedBy"));
 					dd.setCustDocIsAcrive(rs.getBoolean("CustDocIsAcrive"));
-					// dd.setDocExpDateIsMand(rs.getString("DocExpDateIsMand"));
-					// dd.setDocIssueDateMand(rs.getString("DocIssueDateMand"));
-					// dd.setDocIdNumMand(rs.getString("DocIdNumMand"));
 					dd.setDocIsPdfExtRequired(rs.getBoolean("DocIsPdfExtRequired"));
 					dd.setDocIsPasswordProtected(rs.getBoolean("DocIsPasswordProtected"));
 					dd.setPdfMappingRef(JdbcUtil.getLong(rs.getObject("PdfMappingRef")));
@@ -492,9 +484,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, custId);
-		}, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, custId), (rs, rowNum) -> {
 			DocumentDetails dd = new DocumentDetails();
 
 			dd.setCustId(JdbcUtil.getLong(rs.getObject("CustID")));
@@ -597,10 +587,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		return jdbcOperations.query(sql.toString(), ps -> {
 			ps.setString(1, docCategory);
 			ps.setString(2, docNumber);
-		}, (rs, rowNum) -> {
-			return rs.getString(1);
-		});
-
+		}, (rs, rowNum) -> rs.getString(1));
 	}
 
 	@Override
@@ -629,9 +616,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, bankId);
-		}, (rs, i) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, bankId), (rs, i) -> {
 			ExternalDocument ed = new ExternalDocument();
 
 			ed.setId(rs.getLong("Id"));

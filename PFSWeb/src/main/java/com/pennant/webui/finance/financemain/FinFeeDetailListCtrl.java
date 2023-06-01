@@ -77,7 +77,6 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FeePaymentDetail;
@@ -94,7 +93,6 @@ import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -110,6 +108,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.extension.FeeExtension;
+import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -208,6 +207,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private String eventCode = "";
 	private Map<String, FeeRule> feeRuleDetailsMap = null;
 	private Map<Long, List<FinFeeReceipt>> finFeeReceiptMap = new LinkedHashMap<>();
+	private Object finHeaderList = new ArrayList<>();
+	private GenerateLetter generateLetter;
 
 	private FeeDetailService feeDetailService;
 
@@ -281,6 +282,14 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				eventCode = (String) arguments.get("eventCode");
 			}
 
+			if (arguments.containsKey("finHeaderList")) {
+				finHeaderList = (Object) arguments.get("finHeaderList");
+			}
+
+			if (arguments.containsKey("generateLetter")) {
+				this.generateLetter = (GenerateLetter) arguments.get("generateLetter");
+			}
+
 			if (arguments.containsKey("financeMainDialogCtrl")) {
 				this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
 				try {
@@ -345,8 +354,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			this.listheader_FeeDetailList_Terms.setVisible(false);
 		}
 
-		if (FinServiceEvent.ADDDISB.equals(this.moduleDefiner)
-				|| FinServiceEvent.RESTRUCTURE.equals(this.moduleDefiner)) {
+		if (FinServiceEvent.ADDDISB.equals(this.moduleDefiner) || FinServiceEvent.RESTRUCTURE.equals(this.moduleDefiner)
+				|| "GenerateLetter".equals(this.moduleDefiner)) {
 			this.listheader_FeeDetailList_FeeScheduleMethod.setVisible(true);
 			this.listheader_FeeDetailList_PaidAmount.setVisible(false);
 		}
@@ -1670,6 +1679,18 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				} else {
 					waiverBox.setDisabled(true);
 				}
+
+				if (("GenerateLetter".equals(this.moduleDefiner))
+						&& finFeeDetail.getMaxWaiverPerc().compareTo(BigDecimal.ZERO) > 0) {
+
+					waiverBox.setDisabled(readOnly);
+				}
+
+				if (this.generateLetter != null && this.generateLetter.getWaiverAmt() != null
+						&& this.generateLetter.getWaiverAmt().compareTo(BigDecimal.ZERO) > 0) {
+					finFeeDetail.setWaivedAmount(this.generateLetter.getWaiverAmt());
+				}
+
 				waiverBox.setId(getComponentId(FEE_UNIQUEID_WAIVEDAMOUNT, finFeeDetail));
 				waiverBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getWaivedAmount(), formatter));
 				lc = new Listcell();
@@ -1903,6 +1924,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				if (StringUtils.equals(CalculationConstants.REMFEE_WAIVED_BY_BANK, feeScheduleMethod)) {
 					feeScheduleMethod = "";
 				}
+
 				Combobox feeSchdMethCombo = new Combobox();
 				fillComboBox(feeSchdMethCombo, feeScheduleMethod, remFeeSchList, excludeFields);
 				feeSchdMethCombo.setWidth("135px");
@@ -1922,6 +1944,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				if (finFeeDetail.isRestructureFee()
 						|| (getFinanceDetail().getFinScheduleData().getRestructureDetail() != null
 								&& FinServiceEvent.RESTRUCTURE.equals(getFinanceDetail().getModuleDefiner()))) {
+					feeSchdMethCombo.setDisabled(true);
+				}
+
+				if ("GenerateLetter".equals(this.moduleDefiner)) {
+					feeSchdMethCombo.setValue(Labels.getLabel("label_CreateReceivable_Advise"));
 					feeSchdMethCombo.setDisabled(true);
 				}
 
@@ -2215,6 +2242,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		boolean feeSchdMthdDisable = false;
 		if (finFeeDetail.isAlwModifyFeeSchdMthd() && remFeeBox.getValue().compareTo(BigDecimal.ZERO) == 0) {
 			feeSchdMthdDisable = readOnly;
+		}
+
+		if ("GenerateLetter".equals(this.moduleDefiner)) {
+			feeSchdMthdDisable = true;
 		}
 
 		feeSchdMthdBox.setDisabled(feeSchdMthdDisable);
@@ -2532,6 +2563,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		try {
 			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
+			map.put("finHeaderList", this.finHeaderList);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
 					map);
 		} catch (Exception e) {
@@ -2756,6 +2788,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		if (getFinanceDetail().getFinScheduleData() != null) {
 			objectList.add(financeMain);
 			objectList.add(getFinanceDetail().getFinScheduleData().getFinanceType());
+			objectList.add(scheduleData.getFinanceMain().getLoanLetter());
 		}
 
 		for (Rule feeRule : rules) {
@@ -3128,26 +3161,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		feeDetails.setPaidAmount(feeDetails.getPaidAmountOriginal().add(feeDetails.getPaidAmountGST())
 				.subtract(feeDetails.getPaidTDS()));
 
-	}
-
-	/**
-	 * @param financeMain
-	 * @param customer
-	 * @param financeType
-	 * @return
-	 */
-	private Map<String, Object> getDataMap(FinanceMain financeMain, Customer customer, FinanceType financeType) {
-		Map<String, Object> dataMap = new HashMap<String, Object>();
-		if (financeMain != null) {
-			dataMap.putAll(financeMain.getDeclaredFieldValues());
-		}
-		if (customer != null) {
-			dataMap.putAll(customer.getDeclaredFieldValues());
-		}
-		if (financeType != null) {
-			dataMap.putAll(financeType.getDeclaredFieldValues());
-		}
-		return dataMap;
 	}
 
 	public void doReSetDataChanged() {

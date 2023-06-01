@@ -239,7 +239,6 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	protected Textbox posting_finBranch;
 
 	protected Groupbox gb_FeeDetail;
-	// TODO: labels are same
 	protected Listbox listBoxFeeDetail;
 
 	private FinReceiptHeader receiptHeader = null;
@@ -269,8 +268,6 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 	protected ExtendedFieldCtrl extendedFieldCtrl = null;
 	private String moduleDefiner = null;
-
-	private FinReceiptData receiptData = null;
 
 	/**
 	 * default constructor.<br>
@@ -317,10 +314,6 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 					ManualAdvise adviseBefImage = ObjectUtil.clone(getReceiptHeader().getManualAdvise());
 					getReceiptHeader().getManualAdvise().setBefImage(adviseBefImage);
 				}
-			}
-
-			if (arguments.containsKey("receiptData")) {
-				setReceiptData((FinReceiptData) arguments.get("receiptData"));
 			}
 
 			this.module = (String) arguments.get("module");
@@ -2209,9 +2202,5 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	public void setFinanceCheckListReferenceDialogCtrl(
 			FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl) {
 		this.financeCheckListReferenceDialogCtrl = financeCheckListReferenceDialogCtrl;
-	}
-
-	public void setReceiptData(FinReceiptData receiptData) {
-		this.receiptData = receiptData;
 	}
 }

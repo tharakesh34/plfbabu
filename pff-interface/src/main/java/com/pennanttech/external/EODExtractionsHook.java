@@ -10,4 +10,6 @@ public interface EODExtractionsHook {
 
 	void processALMReportExtarction();
 
+	void processExtRBIADFExtarction();
+
 }

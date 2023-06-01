@@ -14,7 +14,7 @@ import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.bulkAddressUpload.CustomerKycDetail;
+import com.pennant.backend.model.bulkaddressupload.CustomerKycDetail;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
@@ -132,7 +132,6 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 
 		if ((StringUtils.isNotBlank(custAddrZIP)) && (custAddrZIP.length() < 3 || custAddrZIP.length() > 6)) {
 			setError(detail, "65031", "pinCode", "2 digits", "7 digits");
-			return;
 		}
 	}
 
@@ -179,7 +178,7 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 				pincode = pinCodeDAO.getPinCodeById(pinCodeId);
 
 				if (pincode == null) {
-					setError(detail, "RU0040", "PinCodeId" + String.valueOf(pinCodeId));
+					setError(detail, "RU0040", "PinCodeId :" + pinCodeId);
 					return pincode;
 				}
 
@@ -225,7 +224,7 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 			return;
 		}
 
-		if (!province.iscPIsActive()) {
+		if (province != null && !province.iscPIsActive()) {
 			setError(detail, "81004", "province :", custAddrProvince);
 			return;
 		}

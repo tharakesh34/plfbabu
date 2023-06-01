@@ -213,7 +213,6 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	public void doShowDialog() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering");
 
-		FinanceMain main = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		custCtgType = getFinanceDetail().getCustomerDetails().getCustomer().getCustCtgCode();
 
 		appendFinBasicDetails();

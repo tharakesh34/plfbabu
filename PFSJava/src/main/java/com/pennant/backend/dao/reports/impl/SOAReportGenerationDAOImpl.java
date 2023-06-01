@@ -1340,19 +1340,18 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.query(sql.toString(), ps -> {
-				ps.setString(1, finReference);
-			}, new ResultSetExtractor<Map<Long, Integer>>() {
+			return this.jdbcOperations.query(sql.toString(), ps -> ps.setString(1, finReference),
+					new ResultSetExtractor<Map<Long, Integer>>() {
 
-				@Override
-				public Map<Long, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
-					Map<Long, Integer> rcMap = new HashMap<>();
-					while (rs.next()) {
-						rcMap.put(rs.getLong("ReceiptId"), rs.getInt("InstNumber"));
-					}
-					return rcMap;
-				}
-			});
+						@Override
+						public Map<Long, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
+							Map<Long, Integer> rcMap = new HashMap<>();
+							while (rs.next()) {
+								rcMap.put(rs.getLong("ReceiptId"), rs.getInt("InstNumber"));
+							}
+							return rcMap;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Records are not found in FinScheduleDetails table for the FinReference >> " + finReference);
 		}
@@ -1418,26 +1417,24 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	}
 
 	@Override
-	public List<CrossLoanTransfer> getCrossLoanDetail(String finReference, boolean fromRef) {
+	public List<CrossLoanTransfer> getCrossLoanDetail(long finId, boolean fromRef) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" clt.ID, clt.CustId, clt.ReceiptId, clt.FromFinID, clt.ToFinID, clt.FromFinReference");
 		sql.append(", clt.ToFinReference, clt.TransferAmount, clt.ExcessId, clt.ToLinkedTranId");
 		sql.append(", clt.FromLinkedTranId, clt.ExcessAmount, clt.UtiliseAmount, clt.ReserveAmount");
-		sql.append(", clt.AvailableAmount, clt.ToExcessId, clt.ExcessType, frh.ValueDate");
+		sql.append(", clt.AvailableAmount, clt.ToExcessId, clt.ExcessType, frh.ValueDate, frh.ReceivedDate");
 		sql.append(" from Cross_Loan_Transfer clt");
 		sql.append(" Inner Join FinReceiptHeader frh on frh.ReceiptID = clt.ReceiptId");
 
 		if (fromRef) {
-			sql.append("  where FromFinReference = ?");
+			sql.append(" Where FromFinID = ?");
 		} else {
-			sql.append("  where ToFinReference = ?");
+			sql.append(" Where ToFinID = ?");
 		}
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, finReference);
-		}, (rs, i) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finId), (rs, i) -> {
 			CrossLoanTransfer clt = new CrossLoanTransfer();
 
 			clt.setId(rs.getLong("ID"));
@@ -1459,12 +1456,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 			clt.setToExcessId(rs.getLong("ToExcessId"));
 			clt.setExcessType(rs.getString("ExcessType"));
 			clt.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
-			/*
-			 * clt.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
-			 * clt.setTransactionRef(rs.getString("TransactionRef"));
-			 * clt.setToLinkedTranId(rs.getLong("ToLinkedTranId"));
-			 * clt.setFromLinkedTranId(rs.getLong("FromLinkedTranId"));
-			 */
+			clt.setPostDate(JdbcUtil.getDate(rs.getDate("ReceivedDate")));
 
 			return clt;
 		});

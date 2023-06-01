@@ -82,9 +82,7 @@ public class OTSTasklet implements Tasklet {
 		JdbcCursorItemReader<Long> itemReader = new JdbcCursorItemReader<>();
 		itemReader.setSql(QUEUE_QUERY);
 		itemReader.setDataSource(dataSource);
-		itemReader.setRowMapper((rs, rowNum) -> {
-			return rs.getLong(1);
-		});
+		itemReader.setRowMapper((rs, rowNum) -> rs.getLong(1));
 		itemReader.setPreparedStatementSetter(ps -> {
 			ps.setLong(1, threadId);
 			ps.setInt(2, EodConstants.PROGRESS_WAIT);
@@ -95,7 +93,7 @@ public class OTSTasklet implements Tasklet {
 		Long id = null;
 		while ((id = itemReader.read()) != null) {
 			settlementService.updateProgress(id, EodConstants.PROGRESS_IN_PROCESS);
-			
+
 			FinSettlementHeader fsh = settlementService.getsettlementById(id);
 
 			if (fsh == null) {
@@ -131,7 +129,7 @@ public class OTSTasklet implements Tasklet {
 				if (validSettlementCancellation) {
 					settlementService.processSettlementCancellation(fsh);
 				}
-				
+
 				settlementService.updateProgress(id, EodConstants.PROGRESS_SUCCESS);
 				transactionManager.commit(txStatus);
 			} catch (Exception e) {

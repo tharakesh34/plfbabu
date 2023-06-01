@@ -262,18 +262,17 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 
 		logger.trace(Literal.SQL + sql);
 
-		List<DashboardPosition> dpList = this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, userId);
-		}, (rs, rowNum) -> {
-			DashboardPosition dp = new DashboardPosition();
+		List<DashboardPosition> dpList = this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, userId),
+				(rs, rowNum) -> {
+					DashboardPosition dp = new DashboardPosition();
 
-			dp.setDashboardRow(rs.getInt("DashboardRow"));
-			dp.setDashboardCol(rs.getInt("DashboardCol"));
-			dp.setDashboardRef(rs.getString("DashboardRef"));
-			dp.setDashboardColIndex(rs.getInt("DashboardColIndex"));
+					dp.setDashboardRow(rs.getInt("DashboardRow"));
+					dp.setDashboardCol(rs.getInt("DashboardCol"));
+					dp.setDashboardRef(rs.getString("DashboardRef"));
+					dp.setDashboardColIndex(rs.getInt("DashboardColIndex"));
 
-			return dp;
-		});
+					return dp;
+				});
 
 		return dpList.stream().sorted((dp1, dp2) -> compareTo(dp1.getDashboardRef(), dp2.getDashboardRef()))
 				.collect(Collectors.toList());

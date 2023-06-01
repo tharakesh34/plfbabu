@@ -2,6 +2,7 @@ package com.pennant.pff.model.paymentmethodupload;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.zkoss.util.media.Media;
@@ -21,6 +22,7 @@ public class PaymentMethodUploadHeader {
 	private String status;
 	private List<PaymentMethodUpload> paymentmethodUpload = new ArrayList<>();
 	private DataEngineStatus deStatus = new DataEngineStatus();
+	private Date appDate;
 
 	public Long getUserId() {
 		return userId;
@@ -116,6 +118,14 @@ public class PaymentMethodUploadHeader {
 
 	public void setPaymentmethodUpload(List<PaymentMethodUpload> paymentmethodUpload) {
 		this.paymentmethodUpload = paymentmethodUpload;
+	}
+
+	public Date getAppDate() {
+		return appDate;
+	}
+
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
 	}
 
 }

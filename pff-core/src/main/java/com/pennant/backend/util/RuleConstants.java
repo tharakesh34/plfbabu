@@ -131,11 +131,13 @@ public class RuleConstants {
 	public static final String ft = "FinanceType";
 	public static final String cust = "Customer";
 	public static final String custEmp = "CustEmployeeDetail";
+	public static final String lt = "LoanLetter";
 
 	public static final String financeMain = "fm";
 	public static final String financeType = "ft";
 	public static final String customer = "ct";
 	public static final String custEmployeeDetail = "custEmp";
+	public static final String letter = "lt";
 
 	// JavaScriptBuilder ComponentType Constants
 	public static final String COMPONENTTYPE_COMBOBOX = "Combobox";

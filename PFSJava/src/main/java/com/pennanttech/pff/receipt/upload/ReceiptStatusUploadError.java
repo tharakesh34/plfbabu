@@ -42,7 +42,9 @@ public enum ReceiptStatusUploadError {
 
 	RU019(" BOUNCEDATE should not be greater than APPLICATION DATE "),
 
-	RU020(" NO DATA FOUND with specified receipt");
+	RU020(" NO DATA FOUND with specified receipt"),
+
+	RU021("REALIZATION DATE Should be empty when Status is B/C");
 
 	private String description;
 
@@ -59,13 +61,7 @@ public enum ReceiptStatusUploadError {
 	}
 
 	public static boolean isValidation(String errorCode) {
-		ReceiptStatusUploadError error = getError(errorCode);
-
-		if (error == null) {
-			return false;
-		}
-
-		return true;
+		return getError(errorCode) != null;
 	}
 
 	private static ReceiptStatusUploadError getError(String errorCode) {

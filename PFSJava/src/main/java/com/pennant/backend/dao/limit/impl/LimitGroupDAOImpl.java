@@ -95,7 +95,7 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select LimitCategory, GroupCode, GroupName,Active, GroupOf");
 		sql.append(", Version, CreatedBy, CreatedOn, LastMntBy, LastMntOn, RecordStatus");
-		sql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append("");
 		}

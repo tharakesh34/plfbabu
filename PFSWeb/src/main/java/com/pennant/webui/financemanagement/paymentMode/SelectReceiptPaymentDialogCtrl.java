@@ -38,7 +38,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.ValueLabel;
@@ -178,7 +177,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private Label label_ReceiptPayment_ReceiptDate;
 	private Label label_ReceiptPayment_ValueDate;
 	private FinExcessAmountDAO finExcessAmountDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
 	/**
 	 * default constructor.<br>
@@ -545,9 +543,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		if (maturitydate != null) {
 			this.rowClosureType.setVisible(true);
 
-			String excludeFields = ",CLOSURE,SETTLEMENT,";
+			String excludeFields = ",Closure,";
 			if (maturitydate.compareTo(appDate) <= 0) {
-				excludeFields = ",FORE-CLOSURE,CANCEL,SETTLEMENT,";
+				excludeFields = ",Fore-Closure,Cancel,";
 			}
 
 			fillComboBox(this.closureType, "", ClosureType.getTypes(), excludeFields);
@@ -756,12 +754,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinScheduleData fsd = financeDetail.getFinScheduleData();
 		FinanceMain finMain = fsd.getFinanceMain();
-
-		if (StringUtils.equals(this.receiptPurpose.getSelectedItem().getValue(), FinServiceEvent.EARLYSETTLE)
-				&& DateUtil.compare(valueDate.getValue(), finMain.getMaturityDate()) > 0) {
-			MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("RM0001", null)));
-			return;
-		}
 
 		errorDetail = receiptService.getWaiverValidation(finMain.getFinID(),
 				this.receiptPurpose.getSelectedItem().getValue(), valueDate.getValue());
@@ -1145,7 +1137,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		validateFinReference(event, false);
 		this.btnValidate.setDisabled(false);
 
-		Date receiptDt = appDate;
 		long finID = ComponentUtil.getFinID(this.finReference);
 
 		this.referenceId.setMandatoryStyle(true);
@@ -1160,25 +1151,14 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.referenceId.setFilters(filter);
 
 		if (FinanceConstants.CLOSURE_MAKER.equals(this.module)) {
-			Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(finID, appDate);
 			List<FinExcessAmount> excessAmounts = finExcessAmountDAO.getExcessAmountsByRef(finID);
-			Date maxValueDate = financeRepaymentsDAO.getMaxValueDate(finID);
 
 			if (CollectionUtils.isNotEmpty(excessAmounts)) {
 				FinExcessAmount fea = excessAmounts.get(excessAmounts.size() - 1);
-				if (fea != null && fea.getValueDate() != null) {
-					receiptDt = fea.getValueDate();
-
-					if (DateUtil.compare(receiptDt, schDate) < 0) {
-						receiptDt = schDate;
-					}
-
-					if (DateUtil.compare(receiptDt, maxValueDate) < 0) {
-						receiptDt = maxValueDate;
-					}
-					this.receiptDate.setValue(receiptDt);
-					this.receiptDate.setDisabled(true);
-				}
+				Date receiptDt = receiptService.getExcessBasedValueDate(appDate, finID, appDate, fea,
+						FinServiceEvent.EARLYSETTLE);
+				this.receiptDate.setValue(receiptDt);
+				this.receiptDate.setDisabled(true);
 			}
 
 			closureType();
@@ -1334,7 +1314,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Receipt Amount" })));
 				}
 
-				if ("EarlySettlement".equals(this.receiptPurpose.getSelectedItem().getValue())) {
+				if (isForeClosure && "EarlySettlement".equals(this.receiptPurpose.getSelectedItem().getValue())) {
 					if (this.receiptDues.getValidateValue().compareTo(this.receiptAmount.getValidateValue()
 							.add(receiptData.getReceiptHeader().getClosureThresholdLimit())) > 0) {
 						wve.add(new WrongValueException(this.receiptAmount.getCcyTextBox(),
@@ -1523,8 +1503,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		if (!financeMain.isFinIsActive()
 				|| DateUtil.compare(SysParamUtil.getAppDate(), financeMain.getMaturityDate()) > 0) {
 			fillComboBox(receiptPurpose, FinServiceEvent.SCHDRPY, PennantStaticListUtil.getReceiptPurpose(),
-					",EarlyPayment, EarlySettlement, FeePayment,");
-			receiptPurpose.setDisabled(true);
+					",EarlyPayment,FeePayment,");
+			receiptPurpose.setDisabled(false);
 		} else if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)) {
 			String excludeFields = ",FeePayment,EarlySettlement,";
 			if (FinanceConstants.PRODUCT_CD.equals(financeMain.getProductCategory())) {
@@ -1574,7 +1554,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			isDisabled = true;
 		}
 
-		receiptDt = receiptService.getExcessBasedValueDate(receiptDt, finID, appDate, fea, getComboboxValue(receiptPurpose));
+		receiptDt = receiptService.getExcessBasedValueDate(receiptDt, finID, appDate, fea,
+				getComboboxValue(receiptPurpose));
 		this.receiptDate.setValue(receiptDt);
 		this.receiptDate.setDisabled(isDisabled);
 	}
@@ -1677,11 +1658,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
-	}
-
-	@Autowired
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
 }

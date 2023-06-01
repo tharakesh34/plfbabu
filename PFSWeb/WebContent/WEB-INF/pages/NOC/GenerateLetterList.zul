@@ -51,19 +51,19 @@
 								<row>
 									<label value="${c:l('label_GenerateLetterDialog_Finreference')}" />
 									<listbox id="finRefSort" width="43px" mold="select" rows="1" />
-									<textbox id="finReference" width="80px" maxlength="8" />
+									<textbox id="finReference" width="150px" />
 									<label value="${c:l('label_GenerateLetterDialog_Branch')}" />
-									<listbox id="branchSort" width="43px" mold="select" rows="1" />
-									<extendedcombobox id="branch" />
+									<listbox id="branchSort" width="37px" mold="select" rows="1" />
+									<extendedcombobox id="branch" removeSpace = "true"/>
 								</row>
 								<row>
 									<label value="${c:l('label_GenerateLetterDialog_coreBankId')}" />
 									<listbox id="corebankidSort" width="43px" mold="select" rows="1" />
-									<textbox id="coreBankID" width="80px" maxlength="8" />
+									<textbox id="coreBankID" width="150px" />
 									<label value="${c:l('label_GenerateLetterDialog_CustomerCif')}" />
 									<listbox id="custCifSort" width="43px" mold="select" rows="1" />
 									<hbox>
-										<textbox id="custCIF" width="160px" />
+										<textbox id="custCIF" width="150px" />
 										<button id="btnSearchCustCIF" tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchCustCIF.tooltiptext')}"
 											image="/images/icons/more.png" autodisable="btnSearchCustCIF" />
 									</hbox>

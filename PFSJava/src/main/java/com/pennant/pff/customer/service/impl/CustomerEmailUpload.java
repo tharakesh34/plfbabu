@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.bulkAddressUpload.CustomerKycDetail;
+import com.pennant.backend.model.bulkaddressupload.CustomerKycDetail;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.service.customermasters.CustomerEMailService;
 import com.pennant.backend.util.PennantConstants;
@@ -100,7 +100,6 @@ public class CustomerEmailUpload extends KycDetailsUploadServiceImpl {
 
 		if (!EmailValidator.getInstance().isValid(detail.getCustEMail())) {
 			setError(detail, "90237", detail.getCustEMail());
-			return;
 		}
 	}
 

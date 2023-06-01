@@ -102,7 +102,6 @@ public class FeeRefundInstructionDialogCtrl extends GFCBaseCtrl<FeeRefundInstruc
 
 	private transient BankDetailService bankDetailService;
 	private FeeRefundInstruction feeRefundInstruction;
-	private FeeRefundHeaderDialogCtrl feeRefundHeaderDialogCtrl;
 	private FeeRefundHeader feeRefundHeader;
 	private FinanceMain financeMain;
 
@@ -564,8 +563,8 @@ public class FeeRefundInstructionDialogCtrl extends GFCBaseCtrl<FeeRefundInstruc
 		logger.debug(Literal.ENTERING);
 
 		if (!this.paymentType.isDisabled()) {
-			this.paymentType
-					.setConstraint(new PTListValidator<ValueLabel>(Labels.getLabel("label_DisbInstructionsDialog_DisbType.value"),
+			this.paymentType.setConstraint(
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_DisbInstructionsDialog_DisbType.value"),
 							PennantStaticListUtil.getPaymentTypesWithIST(), true));
 		}
 
@@ -889,12 +888,7 @@ public class FeeRefundInstructionDialogCtrl extends GFCBaseCtrl<FeeRefundInstruc
 		this.feeRefundInstruction = feeRefundInstruction;
 	}
 
-	public void setFeeRefundHeaderDialogCtrl(FeeRefundHeaderDialogCtrl feeRefundHeaderDialogCtrl) {
-		this.feeRefundHeaderDialogCtrl = feeRefundHeaderDialogCtrl;
-	}
-
 	public void setFeeRefundHeader(FeeRefundHeader feeRefundHeader) {
 		this.feeRefundHeader = feeRefundHeader;
 	}
-
 }

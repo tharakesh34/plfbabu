@@ -44,7 +44,6 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.pennanttech.pff.receipt.upload.ReceiptDataValidator;
 
 public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockOff>
 		implements CrossLoanKnockOffService {
@@ -57,7 +56,6 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private FinanceMainService financeMainService;
 	private ReceiptService receiptService;
-	private ReceiptDataValidator receiptDataValidator;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private PaymentDetailDAO paymentDetailDAO;
 
@@ -183,6 +181,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		CrossLoanTransfer clt = clk.getCrossLoanTransfer();
 		clt.setUserDetails(clk.getUserDetails());
 		clk.getCrossLoanTransfer().setValueDate(clk.getValueDate());
+		clk.getCrossLoanTransfer().setExcessValueDate(clk.getExcessValueDate());
 
 		FinReceiptData frd = clk.getFinReceiptData();
 
@@ -414,7 +413,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		aeEvent.setAccountingEvent(AccountingEvent.CROSS_LOAN_FROM);
 		aeEvent.setFinID(crossLoan.getFromFinID());
 		aeEvent.setFinReference(crossLoan.getFromFinReference());
-		aeEvent.setValueDate(crossLoan.getValueDate());
+		aeEvent.setValueDate(crossLoan.getExcessValueDate());
 
 		aeEvent.setFinReference(main.getFinReference());
 		aeEvent.setFinID(main.getFinID());
@@ -451,7 +450,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		aeEvent1.setAccountingEvent(AccountingEvent.CROSS_LOAN_TO);
 		aeEvent1.setFinID(crossLoan.getToFinID());
 		aeEvent1.setFinReference(crossLoan.getToFinReference());
-		aeEvent1.setValueDate(crossLoan.getValueDate());
+		aeEvent1.setValueDate(crossLoan.getExcessValueDate());
 
 		aeEvent1.setFinReference(fm.getFinReference());
 		aeEvent1.setFinID(fm.getFinID());
@@ -528,11 +527,6 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 	@Autowired
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	@Autowired
-	public void setReceiptDataValidator(ReceiptDataValidator receiptDataValidator) {
-		this.receiptDataValidator = receiptDataValidator;
 	}
 
 	@Autowired

@@ -687,18 +687,18 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			return;
 		}
 		Checkbox active = (Checkbox) event.getOrigin().getTarget();
-		BigDecimal reservedAmount = CurrencyUtil.unFormat(this.reservedAmount.getValidateValue(),
+		BigDecimal reservedAmt = CurrencyUtil.unFormat(this.reservedAmount.getValidateValue(),
 				PennantConstants.defaultCCYDecPos);
 		if (active.isChecked()) {
-			reservedAmount = reservedAmount.add(depositCheques.getAmount());
+			reservedAmt = reservedAmt.add(depositCheques.getAmount());
 			depositCheques.setVisible(true);
 		} else {
-			reservedAmount = reservedAmount.subtract(depositCheques.getAmount());
+			reservedAmt = reservedAmt.subtract(depositCheques.getAmount());
 			depositCheques.setVisible(false);
 		}
 
 		this.reservedAmount
-				.setValue(PennantApplicationUtil.formateAmount(reservedAmount, PennantConstants.defaultCCYDecPos));
+				.setValue(PennantApplicationUtil.formateAmount(reservedAmt, PennantConstants.defaultCCYDecPos));
 
 		logger.debug("Leaving");
 	}

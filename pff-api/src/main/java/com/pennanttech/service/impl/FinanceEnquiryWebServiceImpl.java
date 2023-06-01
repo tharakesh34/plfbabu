@@ -817,7 +817,6 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		logger.debug(Literal.ENTERING);
 
 		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
-		List<LoanDetail> ldList = new ArrayList<>();
 
 		WSReturnStatus wsrs = validateFinReference(finReference);
 
@@ -874,6 +873,7 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 
 		CustomerData customerData = prepareCustomerData(financeEnquiryController.getCustomerDetails(custID));
 		enquiryResponse.setCustomerData(customerData);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
 
 		return enquiryResponse;
 	}
@@ -974,33 +974,12 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		return null;
 	}
 
-	private LoanDetail getLoanDetail(WSReturnStatus wsrs) {
-		LoanDetail ld = new LoanDetail();
-		ld.setReturnStatus(wsrs);
-
-		return ld;
-	}
-
 	private WSReturnStatus validateFinReference(String finReference) {
 		return StringUtils.isEmpty(finReference) ? getFailedStatus("90502", "FinReference") : null;
 	}
 
 	private WSReturnStatus validateCustomerIF(String cif) {
 		return StringUtils.isEmpty(cif) ? getFailedStatus("90502", "Customer CIF") : null;
-	}
-
-	private CustomerData getCustomerData(WSReturnStatus wsrs) {
-		CustomerData cd = new CustomerData();
-		cd.setReturnStatus(wsrs);
-
-		return cd;
-	}
-
-	private CustomerData getResponse(String errorCode, String... param) {
-		CustomerData cd = new CustomerData();
-		cd.setReturnStatus(getFailedStatus(errorCode, param));
-
-		return cd;
 	}
 
 	@Autowired
@@ -1022,4 +1001,5 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
+
 }

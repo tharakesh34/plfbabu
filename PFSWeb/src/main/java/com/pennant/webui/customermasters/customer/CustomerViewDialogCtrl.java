@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 
@@ -22,7 +21,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.spring.SpringUtil;
-import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -35,7 +33,6 @@ import org.zkoss.zul.Box;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Div;
-import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
@@ -93,9 +90,7 @@ import com.pennant.backend.model.reports.ReportFilterFields;
 import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.configuration.VASConfigurationService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerOffersService;
-import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -300,34 +295,23 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label exp;
 
 	protected Listbox listBoxCustomerDocuments;
-	private List<CustomerDocument> customerDocumentDetailList = new ArrayList<CustomerDocument>();
 
 	protected Button btnNew_CustomerAddress;
 	protected Listbox listBoxCustomerAddress;
-	private List<CustomerAddres> customerAddressDetailList = new ArrayList<CustomerAddres>();
 
 	protected Button btnNew_CustomerPhoneNumber;
 	protected Listbox listBoxCustomerPhoneNumbers;
-	private List<CustomerPhoneNumber> customerPhoneNumberDetailList = new ArrayList<CustomerPhoneNumber>();
 	protected Listheader listheader_CustPhone_RecordStatus;
 	protected Listheader listheader_CustPhone_RecordType;
 
 	protected Listbox listBoxCustomerEmails;
-	private List<CustomerEMail> customerEmailDetailList = new ArrayList<CustomerEMail>();
-
 	protected Listbox listBoxCustomerBankInformation;
-	private List<CustomerBankInfo> customerBankInfoDetailList = new ArrayList<CustomerBankInfo>();
-
 	protected Listbox listBoxCustomerChequeInformation;
-	private List<CustomerChequeInfo> customerChequeInfoDetailList = new ArrayList<CustomerChequeInfo>();
-
 	protected Listbox listBoxCustomerFinExposure;
 
 	private List<ValueLabel> countryList;
-	private List<ValueLabel> docTypeList;
 
 	protected Listbox listBoxCustomerExternalLiability;
-	private List<CustomerExtLiability> customerExtLiabilityDetailList = new ArrayList<CustomerExtLiability>();
 
 	protected Listbox listBoxCustomerLoanDetails;
 	protected Listbox listBoxCustomerVasDetails;
@@ -346,8 +330,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	private CustomerDetails customerDetails;
 
-	// Declaration of Service(s) & DAO(s)
-	private transient CustomerDetailsService customerDetailsService;
 	private int ccyFormatter = 0;
 	private String moduleType = "";
 	protected Div divKeyDetails;
@@ -363,7 +345,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Listheader listheader_CustDirector_RecordType;
 	private List<DirectorDetail> directorList = new ArrayList<DirectorDetail>();
 	protected Label label_CustomerDialog_CustNationality;
-	private transient DirectorDetailService directorDetailService;
 	Date appDate = SysParamUtil.getAppDate();
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 
@@ -873,10 +854,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			cKYCRef.setVisible(true);
 			labelCKYCRef.setVisible(true);
 
-			getAddressDetails(aCustomerDetails.getAddressList());
 			doFillCustomerPhoneNumberDetails(aCustomerDetails.getCustomerPhoneNumList());
 
-			AMedia amedia = null;
 			for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
 				if (customerDocument.getCustDocCategory().equalsIgnoreCase(PennantConstants.DOC_TYPE_CODE_PHOTO)) {
 					if (customerDocument.getCustDocImage() == null) {
@@ -884,8 +863,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 							customerDocument.setCustDocImage(dMSService.getById(customerDocument.getDocRefId()));
 						}
 					}
-					amedia = new AMedia(customerDocument.getCustDocName(), null, null,
-							customerDocument.getCustDocImage());
 					BufferedImage img = ImageIO.read(new ByteArrayInputStream(customerDocument.getCustDocImage()));
 					customerPic1.setContent(img);
 					isCustPhotoAvail = true;
@@ -1081,12 +1058,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				entityType.setStyle("color:orange; font:12px");
 				entityType.setValue("- - - - - - - - -");
 			}
-			getAddressDetails(aCustomerDetails.getAddressList());
 			doFillCustomerPhoneNumberDetails(aCustomerDetails.getCustomerPhoneNumList());
 
-			String s = StringUtils.isNotBlank(aCustomer.getRecordType()) ? " for " + aCustomer.getRecordType() : "";
-
-			AMedia amedia = null;
 			for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
 				if (customerDocument.getCustDocCategory().equalsIgnoreCase(PennantConstants.DOC_TYPE_CODE_PHOTO)) {
 					if (customerDocument.getCustDocImage() == null) {
@@ -1094,9 +1067,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 							customerDocument.setCustDocImage(dMSService.getById(customerDocument.getDocRefId()));
 						}
 					}
-					amedia = new AMedia(customerDocument.getCustDocName(), null, null,
-							customerDocument.getCustDocImage());
-					BufferedImage img = ImageIO.read(new ByteArrayInputStream(customerDocument.getCustDocImage()));
 					isCustPhotoAvail = true;
 					break;
 				}
@@ -1808,21 +1778,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					listBoxCustomerDocuments.appendChild(item);
 				}
 			}
-			customerDocumentDetailList = custDocumentDetails;
 		}
 		logger.debug("Leaving");
-	}
-
-	public void getAddressDetails(List<CustomerAddres> customerAddresDetails) {
-		logger.debug("Entering");
-		if (customerAddresDetails != null && !customerAddresDetails.isEmpty()) {
-			for (CustomerAddres customerAddress : customerAddresDetails) {
-				if (customerAddress.getCustAddrPriority() == 5) {
-					// this.address1.setValue(customerAddress.getLovDescCustAddrCityName());
-				}
-			}
-		}
-		customerAddressDetailList = customerAddresDetails;
 	}
 
 	public void doFillCustomerAddressDetails(List<CustomerAddres> customerAddresDetails) {
@@ -1849,7 +1806,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.listBoxCustomerAddress.appendChild(item);
 
 			}
-			customerAddressDetailList = customerAddresDetails;
 		}
 		logger.debug("Leaving");
 	}
@@ -1872,7 +1828,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerEmailAddressItemDoubleClicked");
 				this.listBoxCustomerEmails.appendChild(item);
 			}
-			customerEmailDetailList = customerEmailDetails;
 		}
 		logger.debug("Leaving");
 	}
@@ -1895,7 +1850,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerPhoneNumberItemDoubleClicked");
 				this.listBoxCustomerPhoneNumbers.appendChild(item);
 			}
-			customerPhoneNumberDetailList = customerPhoneNumDetails;
 		}
 		logger.debug("Leaving");
 	}
@@ -1922,7 +1876,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerBankInfoItemDoubleClicked");
 				this.listBoxCustomerBankInformation.appendChild(item);
 			}
-			customerBankInfoDetailList = customerBankInfoDetails;
 		}
 		logger.debug("Leaving");
 	}
@@ -1957,7 +1910,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.listBoxCustomerChequeInformation.appendChild(item);
 
 			}
-			customerChequeInfoDetailList = customerChequeInfoDetails;
 		}
 		logger.debug("Leaving");
 	}
@@ -2015,8 +1967,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.listBoxCustomerExternalLiability.appendChild(item);
 
 			}
-			// add summary list item
-			customerExtLiabilityDetailList = customerExtLiabilityDetails;
 		}
 		logger.debug("Leaving");
 	}
@@ -2173,14 +2123,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
-	public void setDirectorDetailService(DirectorDetailService directorDetailService) {
-		this.directorDetailService = directorDetailService;
 	}
 
 	public List<CustomerIncome> getIncomeList() {
@@ -3033,55 +2975,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void onClick$fetchCustOffers(Event event) {
 		doFillCustomerOffers();
-	}
-
-	public void onClick_download(ForwardEvent event) {
-
-		Button soa = (Button) event.getOrigin().getTarget();
-
-		Map.Entry<String, String> entry = (Entry<String, String>) soa.getAttribute("data");
-		String value = entry.getKey();
-		String path = null;
-
-		switch (value) {
-		case "BCF":
-			path = PathUtil.getPath(PathUtil.CUSTOMER_BALIC_CLAIM_FORM_FOR_CRITICAL_ILLNESS);
-			break;
-		case "DCF":
-			path = PathUtil.getPath(PathUtil.CUSTOMER_DEALTH_CLAIM_FORM);
-			break;
-		case "FGICF":
-			path = PathUtil.getPath(PathUtil.CUSTOMER_FGI_CI_CLAIM_FORM);
-			break;
-		case "FGNCF":
-			path = PathUtil.getPath(PathUtil.CUSTOMER_FUTURE_GENERAL_NEW_CLAIM_FORM);
-			break;
-		case "HDFCF":
-			path = PathUtil.getPath(PathUtil.CUSTOMER_HDFC_CLAIM_FORM);
-			break;
-		case "CDCICF":
-			path = PathUtil.getPath(PathUtil.CUSTOMER_CHECKLIST_FOR_DEALTHCRITICAL_FORM);
-			break;
-		default:
-			break;
-		}
-
-		if (path == null) {
-			return;
-		}
-
-		File file = new File(path);
-		if (!file.exists()) {
-			String msg = String.format("%s file not found in %s location", file.getName(), file.getParent());
-			MessageUtil.showError(msg);
-			return;
-		}
-
-		try {
-			Filedownload.save(file, "text/plain");
-		} catch (FileNotFoundException e) {
-			//
-		}
 	}
 
 	private String getTabID(String id) {

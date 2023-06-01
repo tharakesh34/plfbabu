@@ -152,13 +152,13 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	// ServiceDAOs / Domain Classes
 	private transient MailTemplateService mailTemplateService;
 	private transient PagedListService pagedListService;
-	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<>();
 	private List<ValueLabel> listEmailFormat = TemplateUtil.getFormats(); // autowired
 	private List<ValueLabel> listTemplateFor = TemplateUtil.getTemplatesFor();
 	private List<ValueLabel> mailTeplateModulesList = TemplateUtil.getModules();
 	private List<ValueLabel> templateEvents = TemplateUtil.getEvents();
-	private Map<String, String> filedValues = new HashMap<String, String>();
-	private Map<String, String> filedDesc = new HashMap<String, String>();
+	private Map<String, String> filedValues = new HashMap<>();
+	private Map<String, String> filedDesc = new HashMap<>();
 
 	/**
 	 * default constructor.<br>

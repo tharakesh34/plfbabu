@@ -75,6 +75,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 			fc.setFeeId(rs.getLong("Feeid"));
 			fc.setCode(rs.getString("Code"));
 			fc.setAmount(rs.getBigDecimal("Amount"));
+			fc.setBalanceAmount(rs.getBigDecimal("Amount"));
 
 			return fc;
 		});

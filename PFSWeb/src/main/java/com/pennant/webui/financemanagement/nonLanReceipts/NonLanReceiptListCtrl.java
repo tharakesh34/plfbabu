@@ -62,7 +62,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 778410382420505812L;
@@ -129,7 +128,6 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Checkbox list_CheckBox;
 
 	private String roleCode;
-	private String nextRoleCode;
 	private String recordAction;
 
 	private Map<Long, FinReceiptHeader> recHeaderMap = new HashMap<Long, FinReceiptHeader>();
@@ -139,7 +137,6 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private ReceiptService receiptService;
 	private NonLanReceiptService nonLanReceiptService;
 
-	private String workflowCode = FinServiceEvent.RECEIPT;
 	private transient FinanceWorkFlowService financeWorkFlowService;
 
 	private transient WorkFlowDetails workFlowDetails = null;
@@ -455,7 +452,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		private static final long serialVersionUID = 8848425569301884635L;
 
 		public ReceiptListModelItemRenderer() {
-		    super();
+			super();
 		}
 
 		@Override
@@ -787,7 +784,6 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		map.put("module", module);
 		map.put("moduleCode", moduleCode);
 		map.put("roleCode", roleCode);
-		// map.put("nextRoleCode", nextRoleCode);
 		map.put("recordAction", recordAction);
 
 		try {

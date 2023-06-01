@@ -92,7 +92,6 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	private List<MiscPostingUpload> rejectedMiscList = new ArrayList<>();
 	private List<MiscPostingUpload> failedMiscList = new ArrayList<>();
 
-	private int count = 0;
 	private boolean enqModule = false;
 
 	/**
@@ -1064,7 +1063,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		private static final long serialVersionUID = -8236407402292558694L;
 
 		public MiscPostingUploadListModelItemRenderer() {
-		    super();
+			super();
 		}
 
 		@Override
@@ -1131,7 +1130,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		private static final long serialVersionUID = -1575041147690519358L;
 
 		public MiscPostingUploadRejectListItemRenderer() {
-		    super();
+			super();
 		}
 
 		@Override

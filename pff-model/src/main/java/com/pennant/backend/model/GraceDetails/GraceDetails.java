@@ -1,4 +1,4 @@
-package com.pennant.backend.model.GraceDetails;
+package com.pennant.backend.model.gracedetails;
 
 import java.math.BigDecimal;
 import java.util.Date;

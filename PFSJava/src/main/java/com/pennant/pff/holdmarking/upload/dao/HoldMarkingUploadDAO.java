@@ -14,11 +14,10 @@ public interface HoldMarkingUploadDAO {
 
 	String getSqlQuery();
 
-	boolean isValidateAction(long finId, String action, long headerId);
-
 	int getReference(String reference, String accountNumber, int progressSuccess);
 
 	void delete(String reference, String accountNumber, int progressSuccess);
 
-	long save(HoldMarkingUpload hmu);
+	boolean isValidateType(long finid, String accountNumber);
+
 }

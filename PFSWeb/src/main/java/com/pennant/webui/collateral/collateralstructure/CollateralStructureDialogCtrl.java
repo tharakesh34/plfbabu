@@ -465,9 +465,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			preScriptValidated = true;
 			// check if code mirror is empty or not
 			if (StringUtils.isNotEmpty(this.preValidation.getValue().trim())) {
-				MessageUtil.confirm("NO Errors Found! Proceed With Simulation?", evnt -> {
-					createSimulationWindow(variables, this.preValidation.getValue());
-				});
+				MessageUtil.confirm("NO Errors Found! Proceed With Simulation?",
+						evnt -> createSimulationWindow(variables, this.preValidation.getValue()));
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1024,12 +1023,10 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 
 					if (this.nextValuationDate.getValue() == null || this.nextValuationDate.getValue().before(appDate)
 							|| this.nextValuationDate.getValue().after(appEndDate)) {
-						throw new WrongValueException(this.nextValuationDate, Labels.getLabel(
-								"DATE_ALLOWED_RANGE_EQUAL",
-								new String[] {
+						throw new WrongValueException(this.nextValuationDate,
+								Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL", new String[] {
 										Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"),
-										DateUtil.formatToShortDate(appDate),
-										DateUtil.formatToShortDate(appEndDate) }));
+										DateUtil.formatToShortDate(appDate), DateUtil.formatToShortDate(appEndDate) }));
 					}
 				} else {
 					collateralStructure.setValuationFrequency(this.valuationFrequency.getValue());

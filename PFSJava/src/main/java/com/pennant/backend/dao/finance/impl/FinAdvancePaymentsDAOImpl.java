@@ -773,8 +773,6 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
-			return rs.getString(1);
-		}, finID);
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> rs.getString(1), finID);
 	}
 }

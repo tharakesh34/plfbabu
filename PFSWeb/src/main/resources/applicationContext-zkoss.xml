@@ -1440,7 +1440,6 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="financeTypeService" ref="financeTypeService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="customerInterfaceService" ref="customerInterfaceService" />
 		<property name="relationshipOfficerService" ref="relationshipOfficerService" />
 		<property name="branchService" ref="branchService" />
 		<property name="customerTypeService" ref="customerTypeService" />
@@ -2493,7 +2492,6 @@
 		class="com.pennant.webui.financemanagement.receipts.ReceiptCancellationListCtrl" parent="basisListCtrl"
 		scope="prototype">
 		<property name="receiptCancellationService" ref="receiptCancellationService" />
-		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
 	<bean id="receiptCancellationDialogCtrl"
@@ -4294,8 +4292,6 @@
 
 	<bean id="customerViewDialogCtrl" class="com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="directorDetailService" ref="directorDetailService" />
 		<property name="approvalStatusEnquiryDAO" ref="approvalStatusEnquiryDAO" />
 		<property name="notesDAO" ref="notesDAO" />
 		<property name="dMSService" ref="dMSService" />
@@ -4626,10 +4622,7 @@
 
 
 	<bean id="finalValuationDialogCtrl" class="com.pennanttech.webui.verification.FinalValuationDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="collateralSetupService" ref="collateralSetupService" />
-		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
-	</bean>
+		parent="basisCtrl" scope="prototype" />
 
 	<!--============ Authorization Limit ============== -->
 
@@ -6094,7 +6087,6 @@
 	<bean id="selectFeeRefundHeaderDialogCtrl"
 		class="com.pennant.webui.payment.feerefundheader.SelectFeeRefundHeaderDialogCtrl" parent="basisListCtrl"
 		scope="prototype">
-		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="feeRefundHeaderService" ref="feeRefundHeaderService" />
 		<property name="paymentHeaderService" ref="paymentHeaderService" />
 		<property name="holdRefundUploadDAO" ref="holdRefundUploadDAO" />
@@ -6202,8 +6194,7 @@
 		parent="basisListCtrl" scope="prototype" />
 
 	<bean id="lienEnquiryDialogCtrl" class="com.pennant.webui.lien.lienenquiry.LienEnquiryDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-	</bean>
+		parent="basisCtrl" scope="prototype"  p:pagedListWrapper-ref="pagedListWrapper"/>
 
 	<bean id="createReceiptUploadList" class="com.pennant.pff.receipt.web.CreateReceiptUploadListCtrl"
 		parent="uploadList" />
@@ -6288,4 +6279,10 @@
 		
 	<bean id="holdMarkingUploadListCtrl" class="com.pennant.pff.holdmarking.upload.web.list.HoldMarkingUploadListCtrl"
 		parent="uploadList" />
+		
+	<bean id="selectHoldEnquiryListCtrl" class="com.pennant.webui.hold.holdenquiry.SelectHoldEnquiryListCtrl"
+		parent="basisListCtrl" scope="prototype" />
+
+	<bean id="holdEnquiryDialogCtrl" class="com.pennant.webui.hold.holdenquiry.HoldEnquiryDialogCtrl"
+		parent="basisCtrl" scope="prototype"  p:pagedListWrapper-ref="pagedListWrapper"/>
 </beans>

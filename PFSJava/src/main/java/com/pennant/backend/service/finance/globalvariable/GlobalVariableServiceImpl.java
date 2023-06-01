@@ -3,9 +3,6 @@ package com.pennant.backend.service.finance.globalvariable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.pennant.backend.dao.smtmasters.PFSParameterDAO;
 import com.pennant.backend.service.GenericService;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
@@ -16,8 +13,6 @@ import com.pennanttech.pennapps.service.GlobalVariableService;
  * 
  */
 public class GlobalVariableServiceImpl extends GenericService<List<GlobalVariable>> implements GlobalVariableService {
-	private static final Logger logger = LogManager.getLogger(GlobalVariableServiceImpl.class);
-
 	private PFSParameterDAO pFSParameterDAO;
 	private static List<GlobalVariable> globalVariablesList = null;
 

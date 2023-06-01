@@ -10,15 +10,15 @@ import com.pennant.backend.model.ValueLabel;
 
 public enum ClosureType {
 
-	CLOSURE("CLOSURE"),
+	CLOSURE("Closure"),
 
-	FORE_CLOSURE("FORE-CLOSURE"),
+	FORE_CLOSURE("Fore-Closure"),
 
-	RE_POSSESSION("REPOSSESSION"),
+	RE_POSSESSION("Repossession"),
 
-	TOP_UP("TOPUP"),
+	TOP_UP("Top Up"),
 
-	CANCEL("CANCEL");
+	CANCEL("Cancel");
 
 	private String code;
 
@@ -44,6 +44,10 @@ public enum ClosureType {
 
 	public static boolean isClosure(String closureType) {
 		return isEqual(CLOSURE, getType(closureType));
+	}
+
+	public static boolean isForeClosure(String closureType) {
+		return isEqual(FORE_CLOSURE, getType(closureType));
 	}
 
 	private static boolean isEqual(ClosureType closureType, ClosureType type) {

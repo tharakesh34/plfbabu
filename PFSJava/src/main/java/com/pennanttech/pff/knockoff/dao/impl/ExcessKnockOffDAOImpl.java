@@ -1,35 +1,31 @@
 package com.pennanttech.pff.knockoff.dao.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.model.customermasters.CustomerCoreBank;
 import com.pennant.backend.model.finance.AutoKnockOff;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.eod.constants.EodConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.pff.extension.CustomerExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.knockoff.dao.ExcessKnockOffDAO;
 import com.pennanttech.pff.knockoff.model.ExcessKnockOff;
 import com.pennanttech.pff.knockoff.model.ExcessKnockOffDetails;
-import com.pennanttech.pff.model.Queing;
 
 public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements ExcessKnockOffDAO {
 
-	private static Logger logger = LogManager.getLogger(ExcessKnockOffDAOImpl.class);
+	@Override
+	public void clearStageData() {
+		jdbcOperations.update("Truncate table Cross_Loan_KnockOff_Dtl_Stage");
+		jdbcOperations.update("Truncate table Cross_Loan_KnockOff_Stage");
+	}
 
 	@Override
 	public long logExcessForCrossLoanKnockOff(Date valueDate, String day, String thresholdValue) {
@@ -44,8 +40,8 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 		sql.append(" From FinExcessAmount ea");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = ea.FinID");
 		sql.append(" Inner Join Customers c on c.CustId = fm.CustId");
-		sql.append(" Where  AmountType = ? and BalanceAmt > ?");
-		sql.append("  and fm.WriteoffLoan = ? Group by c.CustId, c.CustCoreBank, fm.FinID, ea.ExcessId, ea.AmountType");
+		sql.append(" Where  AmountType = ? and BalanceAmt > ? and (fm.ClosingStatus is null or fm.ClosingStatus <> ?)");
+		sql.append(" and fm.WriteoffLoan = ? Group by c.CustId, c.CustCoreBank, fm.FinID, ea.ExcessId, ea.AmountType");
 		sql.append(" Union All");
 		sql.append(" Select CustId, CustCoreBank, FinId, ReferenceId, AmountType");
 		sql.append(", sum(BalanceAmt) BalanceAmt from ");
@@ -54,6 +50,7 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = ma.FinID");
 		sql.append(" Inner Join Customers c on c.CustId = fm.CustId");
 		sql.append(" Where  ma.AdviseType = ? and BalanceAmt > ?");
+		sql.append(" and (fm.ClosingStatus is null or fm.ClosingStatus <> ?)");
 		sql.append("  and fm.WriteoffLoan = ?) it ");
 		sql.append(" group by it.CustId, it.CustCoreBank, it.FinID, it.ReferenceId, it.AmountType) T");
 
@@ -68,183 +65,16 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 				ps.setString(++index, thresholdValue);
 				ps.setString(++index, "E");
 				ps.setInt(++index, 0);
+				ps.setString(++index, FinanceConstants.CLOSE_STATUS_CANCELLED);
 				ps.setInt(++index, 0);
 				ps.setString(++index, "P");
 				ps.setInt(++index, 2);
 				ps.setInt(++index, 0);
+				ps.setString(++index, FinanceConstants.CLOSE_STATUS_CANCELLED);
 				ps.setInt(++index, 0);
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
-		}
-	}
-
-	@Override
-	public void deleteQueue() {
-		jdbcOperations.update("Truncate table Cross_Loan_KnockOff_Dtl_Stage");
-		jdbcOperations.update("Truncate table Cross_Loan_KnockOff_Stage");
-		jdbcOperations.update("Truncate table Cross_Loan_KnockOff_Queue");
-	}
-
-	@Override
-	public long prepareQueue() {
-		String sql = "Insert Into Cross_Loan_KnockOff_Queue(ID, CustID) Select row_number() over(order by CustID) ID, CustID From (Select distinct CustID From Cross_Loan_KnockOff_Stage) T";
-
-		if (CustomerExtension.CUST_CORE_BANK_ID) {
-			sql = "Insert Into Cross_Loan_KnockOff_Queue(ID, CoreBankId) Select row_number() over(order by CoreBankId) ID, CoreBankId From (Select distinct CoreBankId From Cross_Loan_KnockOff_Stage) T";
-		}
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		return this.jdbcOperations.update(sql);
-	}
-
-	@Override
-	public void handleFailures() {
-		String sql = "Delete From Cross_Loan_KnockOff_Queue Where Progress = ?";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		this.jdbcOperations.update(sql, ps -> {
-			ps.setInt(1, EodConstants.PROGRESS_SUCCESS);
-		});
-
-		sql = "Update Cross_Loan_KnockOff_Queue Set Progress = ? Where Progress = ?";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		int count = this.jdbcOperations.update(sql, ps -> {
-			ps.setInt(1, EodConstants.PROGRESS_WAIT);
-			ps.setInt(2, EodConstants.PROGRESS_FAILED);
-		});
-
-		if (count > 0) {
-			updateQueingRecords(getQueingRecords());
-		}
-	}
-
-	@Override
-	public long getQueueCount() {
-		String sql = "Select Coalesce(count(ID), 0) From Cross_Loan_KnockOff_Queue where Progress = ?";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		return this.jdbcOperations.queryForObject(sql, Long.class, EodConstants.PROGRESS_WAIT);
-	}
-
-	@Override
-	public int updateThreadID(long from, long to, int threadId) {
-		String sql = "Update Cross_Loan_KnockOff_Queue Set ThreadId = ? Where Id > ? and Id <= ?  and ThreadId = ?";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		try {
-			return this.jdbcOperations.update(sql, threadId, from, to, 0);
-		} catch (DataAccessException dae) {
-			logger.error(Literal.EXCEPTION, dae);
-		}
-
-		return 0;
-	}
-
-	private List<Queing> getQueingRecords() {
-		String sql = "Select row_number() over(order by id) resteID, ID from Cross_Loan_KnockOff_Queue";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-
-		}, (rs, Num) -> {
-			Queing queing = new Queing();
-			queing.setId(rs.getLong("ID"));
-			queing.setResetId(rs.getLong("resteID"));
-			return queing;
-		});
-
-	}
-
-	private void updateQueingRecords(List<Queing> queing) {
-		String sql = "Update Cross_Loan_KnockOff_Queue Set Id = ? Where ID = ?";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		try {
-			jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps, int i) throws SQLException {
-					Queing queingdetails = queing.get(i);
-					int index = 1;
-
-					ps.setLong(index++, queingdetails.getResetId());
-					ps.setLong(index, queingdetails.getId());
-				}
-
-				@Override
-				public int getBatchSize() {
-					return queing.size();
-				}
-			});
-		} catch (DataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-	}
-
-	@Override
-	public void updateProgress(CustomerCoreBank ccb, int progressInProcess) {
-		String sql = null;
-		if (progressInProcess == EodConstants.PROGRESS_IN_PROCESS) {
-			sql = "Update Cross_Loan_KnockOff_Queue Set Progress = ?, StartTime = ? Where CustID = ? and Progress = ?";
-
-			if (CustomerExtension.CUST_CORE_BANK_ID) {
-				sql = "Update Cross_Loan_KnockOff_Queue Set Progress = ?, StartTime = ? Where CoreBankId = ? and Progress = ?";
-			}
-
-			logger.debug(Literal.SQL.concat(sql));
-
-			this.jdbcOperations.update(sql, ps -> {
-				ps.setInt(1, progressInProcess);
-				ps.setDate(2, JdbcUtil.getDate(DateUtil.getSysDate()));
-				ps.setLong(3, ccb.getCustID());
-				if (CustomerExtension.CUST_CORE_BANK_ID) {
-					ps.setString(3, ccb.getCustCoreBank());
-				}
-				ps.setInt(4, EodConstants.PROGRESS_WAIT);
-			});
-		} else if (progressInProcess == EodConstants.PROGRESS_SUCCESS) {
-			sql = "Update Cross_Loan_KnockOff_Queue Set EndTime = ?, Progress = ? where CustID = ?";
-
-			if (CustomerExtension.CUST_CORE_BANK_ID) {
-				sql = "Update Cross_Loan_KnockOff_Queue Set EndTime = ?, Progress = ? where CoreBankId = ?";
-			}
-
-			logger.debug(Literal.SQL.concat(sql));
-
-			this.jdbcOperations.update(sql, ps -> {
-				ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
-				ps.setInt(2, EodConstants.PROGRESS_SUCCESS);
-				ps.setLong(3, ccb.getCustID());
-				if (CustomerExtension.CUST_CORE_BANK_ID) {
-					ps.setString(3, ccb.getCustCoreBank());
-				}
-			});
-		} else if (progressInProcess == EodConstants.PROGRESS_FAILED) {
-			sql = "Update Cross_Loan_KnockOff_Queue Set EndTime = ?, ThreadId = ?, Progress = ? Where CustID = ?";
-
-			if (CustomerExtension.CUST_CORE_BANK_ID) {
-				sql = "Update Cross_Loan_KnockOff_Queue Set EndTime = ?, ThreadId = ?, Progress = ? Where CoreBankId = ?";
-			}
-
-			logger.debug(Literal.SQL.concat(sql));
-
-			this.jdbcOperations.update(sql, ps -> {
-				ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
-				ps.setInt(2, 0);
-				ps.setInt(3, EodConstants.PROGRESS_FAILED);
-				ps.setLong(4, ccb.getCustID());
-				if (CustomerExtension.CUST_CORE_BANK_ID) {
-					ps.setString(4, ccb.getCustCoreBank());
-				}
-			});
 		}
 	}
 
@@ -264,6 +94,7 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 		} else {
 			sql.append("Where clk.CustId = ?");
 		}
+		sql.append(" Order By ReferenceID");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -342,9 +173,7 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, id);
-		}, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, id), (rs, rowNum) -> {
 			ExcessKnockOffDetails eko = new ExcessKnockOffDetails();
 
 			eko.setId(rs.getLong("ID"));
@@ -441,7 +270,7 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 			sql.append("Where c.CustId = ?");
 		}
 		sql.append(" and fm.FinID != ? and fm.FinIsActive = ? and FinID in (Select FinID from ManualAdvise");
-		sql.append(" Where AdviseType = ? and (AdviseAmount-PaidAmount-WaivedAmount) > 0)");
+		sql.append(" Where AdviseType = ? and (AdviseAmount-PaidAmount-WaivedAmount) > 0) Order By FinID ");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

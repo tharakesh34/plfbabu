@@ -164,16 +164,18 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 							List<ManualAdvise> mbList = manualAdviseDAO.getManualAdviseByRefAndFeeCode(
 									fromFm.getFinID(), AdviseType.PAYABLE.id(), clk.getFeeTypeCode());
 
+							mbList = mbList.stream()
+									.filter(ma -> !PennantConstants.MANUALADVISE_CANCEL.equals(ma.getStatus()))
+									.collect(Collectors.toList());
+
 							if (CollectionUtils.isEmpty(mbList)) {
 								setError(clk, CrossLoanKnockOffUploadError.CLKU_020);
-								return;
 							}
 
 							clk.setAdvises(mbList);
 
 							if (ManualAdviceUtil.getBalanceAmount(mbList).compareTo(clk.getExcessAmount()) < 0) {
 								setError(clk, CrossLoanKnockOffUploadError.CLKU_020);
-								return;
 							}
 						}
 					}
@@ -321,10 +323,12 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 			clt.setExcessAmount(fea.getAmount());
 			clt.setReserveAmount(fea.getReservedAmt());
 			clt.setAvailableAmount(fea.getBalanceAmt().subtract(payableAmount));
+			clt.setExcessValueDate(fea.getValueDate() != null ? fea.getValueDate() : receiptDt);
 
 			CrossLoanKnockOff clko = prepareKnockOffBean(header, clk, toFm, receiptDt, payableAmount);
 			clko.setCrossLoanTransfer(clt);
 			clko.setValueDate(clt.getValueDate());
+			clko.setExcessValueDate(fea.getValueDate() != null ? fea.getValueDate() : receiptDt);
 			clko.getFinServiceInstruction().setAdviseId(fea.getExcessID());
 
 			if (clk.getProgress() != EodConstants.PROGRESS_FAILED) {
@@ -374,6 +378,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 			CrossLoanKnockOff clko = prepareKnockOffBean(header, clk, toFm, receiptDt, payableAmount);
 			clko.setCrossLoanTransfer(clt);
 			clko.setValueDate(clt.getValueDate());
+			clko.setExcessValueDate(clt.getValueDate());
 			clko.getFinServiceInstruction().setAdviseId(ma.getAdviseID());
 
 			if (clk.getProgress() != EodConstants.PROGRESS_FAILED) {
@@ -775,7 +780,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 			return new FinServiceInstruction();
 		}
 
-		rud.setListAllocationDetails(prepareAllocations(fc, receiptAmount, repayHierarchy));
+		rud.setListAllocationDetails(prepareAllocations(fc, receiptAmount, repayHierarchy, valueDate));
 
 		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, header.getEntityCode());
 
@@ -797,8 +802,32 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 	}
 
 	private List<UploadAlloctionDetail> prepareAllocations(CrossLoanKnockoffUpload fc, BigDecimal receiptAmount,
-			String repayHierarchy) {
+			String repayHierarchy, Date valueDate) {
+
+		CrossLoanKnockoffUpload emiAlloc = null;
+		boolean isEmi = false;
+		BigDecimal emiAmt = BigDecimal.ZERO;
 		List<UploadAlloctionDetail> list = new ArrayList<>();
+
+		for (CrossLoanKnockoffUpload alloc : fc.getAllocations()) {
+			if (alloc.getCode().equals(Allocation.EMI)) {
+				emiAmt = alloc.getAmount();
+				emiAlloc = alloc;
+				isEmi = true;
+				break;
+			}
+		}
+
+		BigDecimal[] emiSplit = new BigDecimal[3];
+
+		if (isEmi) {
+			try {
+				emiSplit = receiptService.getEmiSplitForManualAlloc(fc.getToFm(), valueDate, emiAmt);
+			} catch (AppException e) {
+				setFailureStatus(emiAlloc, "EMI_999", e.getMessage());
+				return new ArrayList<>();
+			}
+		}
 
 		String[] relHierarchy = repayHierarchy.split("\\|");
 
@@ -817,6 +846,11 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 
 					String allocType = Allocation.getCode(alloc.getCode());
 					if (hi.equals(allocType)) {
+						if ((Allocation.getCode(Allocation.PRI).equals(hi)
+								|| Allocation.getCode(Allocation.PFT).equals(hi)) && isEmi) {
+							continue;
+						}
+
 						UploadAlloctionDetail uad = new UploadAlloctionDetail();
 						uad.setAllocationType(allocType);
 						uad.setReferenceCode(alloc.getCode());
@@ -834,6 +868,34 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 
 						list.add(uad);
 						continue;
+					} else if (Allocation.getCode(Allocation.EMI).equals(allocType)) {
+						UploadAlloctionDetail uad = new UploadAlloctionDetail();
+
+						BigDecimal amount = BigDecimal.ZERO;
+						if (Allocation.getCode(Allocation.PRI).equals(hi)) {
+							uad.setAllocationType(hi);
+							uad.setReferenceCode(Allocation.PRI);
+							amount = emiSplit[0];
+						} else if (Allocation.getCode(Allocation.PFT).equals(hi)) {
+							uad.setAllocationType(hi);
+							uad.setReferenceCode(Allocation.PFT);
+							amount = emiSplit[1];
+						} else {
+							continue;
+						}
+
+						BigDecimal paidAmount = receiptAmount;
+						if (receiptAmount.compareTo(amount) > 0) {
+							paidAmount = amount;
+						}
+
+						receiptAmount = receiptAmount.subtract(amount);
+						alloc.setBalanceAmount(alloc.getBalanceAmount().subtract(amount));
+
+						uad.setStrPaidAmount(String.valueOf(paidAmount));
+						uad.setPaidAmount(paidAmount);
+
+						list.add(uad);
 					}
 				}
 			}
@@ -897,5 +959,4 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 	public void setReceiptService(ReceiptService receiptService) {
 		this.receiptService = receiptService;
 	}
-
 }

@@ -215,9 +215,6 @@ public class CustomerGstServiceImpl extends GenericService<CustomerGST> implemen
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
 
-		// Get the model object.
-		CustomerGST customerGST = (CustomerGST) auditDetail.getModelData();
-
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");

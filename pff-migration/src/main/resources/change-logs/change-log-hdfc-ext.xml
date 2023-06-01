@@ -560,21 +560,6 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="021" author="goutham.ch">
-		<createTable tableName="UCIC_RESP_FILES">
-			<column name="ID" type="bigint" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="FILE_NAME" type="VARCHAR(2000)" />
-			<column name="STATUS" type="int" />
-			<column name="FILE_LOCATION" type="VARCHAR(2000)" />
-			<column name="CREATED_DATE" type="datetime" />
-			<column name="EXTRACTION" type="int" />
-			<column name="ERROR_CODE" type="VARCHAR(20)" />
-			<column name="ERROR_MESSAGE" type="VARCHAR(2000)" />
-		</createTable>
-	</changeSet>
-
 	<changeSet id="022" author="goutham.ch">
 		<createTable tableName="UCIC_CUSTOMERS_STATUS">
 			<column name="CUSTID" type="int" />
@@ -815,14 +800,67 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="002.9" author="sreeram.r">
-	<sql>
+		<sql>
 			<![CDATA[
 	 				UPDATE FILE_INTERFACE_CONFIG 
 					SET INTERFACE_TYPE='SILIEN_REQ', FILE_PREPEND='PNSILIEN_' WHERE INTERFACE_TYPE='SILIEN';
 			]]>
-	</sql>
+		</sql>
 	</changeSet>
 
+	<changeSet id="002.10" author="sreeram.r">
+		<sql>
+			<![CDATA[
+					UPDATE FILE_INTERFACE_CONFIG SET FILE_LOCATION = 'SILIEN/REQUEST' WHERE INTERFACE_TYPE='SILIEN_REQ';
+					UPDATE FILE_INTERFACE_CONFIG SET FILE_LOCATION = 'SILIEN/RESPONSE' WHERE INTERFACE_TYPE='SILIEN_RESP';
+			]]>
+		</sql>
+	</changeSet>
+	
+		<changeSet id="002.11" author="sreeram.r">
+		<sql>
+			<![CDATA[
+					UPDATE FILE_INTERFACE_CONFIG SET FILE_EXTENSION='.EBF' WHERE INTERFACE_TYPE='SILIEN_RESP';
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="31" author="goutham.ch">
+		<createTable tableName="UCIC_RESP_FILES">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FILE_NAME" type="VARCHAR(2000)" />
+			<column name="STATUS" type="int" />
+			<column name="FILE_LOCATION" type="VARCHAR(2000)" />
+			<column name="CREATED_DATE" type="datetime" />
+			<column name="EXTRACTION" type="int" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="32" author="goutham.ch">
+		<createTable tableName="UCIC_RESP_FILE_DATA">
+
+			<column name="UCIC_ID" type="VARCHAR(50)" />
+			<column name="CUSTID" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PROCESS_FLAG" type="int" />
+			<column name="ACK_SENT" type="int" />
+			<column name="HEADER_ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="STATUS" type="int" />
+			<column name="PROCESS_DESC" type="VARCHAR(2000)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="33" author="goutham.ch">
+		<dropTable tableName="UCIC_CUSTOMERS_STATUS" />
+		<dropTable tableName="UCIC_RESP_FILE_DATA" />
+	</changeSet>
+	
 </databaseChangeLog>

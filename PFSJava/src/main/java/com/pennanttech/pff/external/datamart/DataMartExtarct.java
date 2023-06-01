@@ -2561,9 +2561,6 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
-		} finally {
-			paramSource = null;
-			sql = null;
 		}
 	}
 

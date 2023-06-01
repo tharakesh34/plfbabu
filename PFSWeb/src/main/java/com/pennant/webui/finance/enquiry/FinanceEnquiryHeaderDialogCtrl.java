@@ -143,6 +143,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.mandate.MandateUtil;
+import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -379,7 +380,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
 			this.finStatus_Reason.setValue("Cancelled");
 		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
-			String closureType = finReceiptHeaderDAO.getClosureTypeValue(this.finID, FinServiceEvent.EARLYSETTLE);
+			String closureType = finReceiptHeaderDAO.getClosureTypeValue(this.finID);
 			if (closureType != null) {
 				this.finStatus_Reason.setValue(closureType);
 			}
@@ -987,6 +988,22 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("isEnquiry", true);
 			map.put("basicDetailgrid", this.grid_BasicDetails);
 			path = "/WEB-INF/pages/Finance/FinanceMain/FinancialSummaryDialog.zul";
+		} else if ("LTRENQ".equals(this.enquiryType)) {
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_LetterLogEnquiry.value"));
+			this.btnPrint.setVisible(false);
+			GenerateLetter gl = new GenerateLetter();
+			gl.setFinID(this.finID);
+			FinanceDetail fd = new FinanceDetail();
+			FinanceMain fm = this.financeMainDAO.getFinanceMain(this.finID);
+			fd.setCustomerDetails(customerDataService.getCustomerDetailsbyID(enquiry.getCustID(), true, "_View"));
+			FinScheduleData fs = new FinScheduleData();
+			fs.setFinanceMain(fm);
+			fd.setFinScheduleData(fs);
+			gl.setFinanceDetail(fd);
+
+			map.put("enquiry", true);
+			map.put("generateLetter", gl);
+			path = "/WEB-INF/pages/NOC/LetterLogEnquiryDialog.zul";
 		}
 
 		if (StringUtils.isNotEmpty(path)) {

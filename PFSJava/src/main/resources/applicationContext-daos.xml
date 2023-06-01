@@ -5150,13 +5150,8 @@
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 	</bean>
 
-	<bean name="feeCalculator" class="com.pennant.app.util.FeeCalculator">
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="finFeeDetailService" ref="finFeeDetailService" />
-		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
-		<property name="ruleDAO" ref="ruleDAO" />
-		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
-	</bean>
+	<bean name="feeCalculator" class="com.pennant.app.util.FeeCalculator" />
+
 
 	<!--============ Receipt Calculator Util ============== -->
 	<bean name="receiptCalculator" class="com.pennant.app.util.ReceiptCalculator">
@@ -8022,12 +8017,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="extendedFieldExtensionService" ref="extendedFieldExtensionService" />
 	</bean>
-
-	<!-- custom service tasks -->
-	<!-- <bean id="customServiceTask" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"> <property 
-		name="transactionManager"> <ref bean="transactionManager" /> </property> <property name="target"> <ref bean="customServiceTaskTarget" 
-		/> </property> <property name="transactionAttributes"> <props> <prop key="*">PROPAGATION_REQUIRED,readOnly</prop> </props> 
-		</property> </bean> -->
+	
 	<bean id="customServiceTask" class="com.pennant.backend.service.custom.FinanceExternalServiceTask">
 		<property name="serviceTaskDAO" ref="serviceTaskDAO" />
 	</bean>
@@ -9433,9 +9423,6 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="customerDAO" ref="customerDAO" />
 	</bean>
-
-	<!-- <bean id="defaultJobSchedular" class="com.pennanttech.pff.jobs.DefaultJobSchedular"> <property name="dMSService" ref="dMSService" 
-		/> <property name="disbursementRequestService" ref="disbursementRequestService" /> </bean> -->
 
 	<bean id="systemNotificationsDAO" class="com.pennanttech.pff.notifications.dao.SystemNotificationsDAOImpl"
 		parent="sequenceDao">
@@ -13434,7 +13421,11 @@
 		</property>
 	</bean>
 
-	<bean name="generateLetterServiceTarget" class="com.pennant.pff.noc.service.impl.GenerateLetterServiceImpl" />
+	<bean name="generateLetterServiceTarget" class="com.pennant.pff.noc.service.impl.GenerateLetterServiceImpl" >
+		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+	</bean>
 
 	<bean id="loanClosureUploadService" class="com.pennant.pff.receipt.service.impl.LoanClosureUploadServiceImpl"
 		parent="aUploadService" />
@@ -13489,14 +13480,16 @@
 			</props>
 		</property>
 	</bean>
-	
-	<bean name="holdMarkingServiceTarget" class="com.pennant.pff.holdmarking.service.impl.HoldMarkingServiceImpl"/>
-	
-	<bean id="autoLetterGenerationDAO" class="com.pennant.pff.letter.dao.AutoLetterGenerationDAOImpl" parent="sequenceDao" />
-	
+
+	<bean name="holdMarkingServiceTarget" class="com.pennant.pff.holdmarking.service.impl.HoldMarkingServiceImpl" />
+
+	<bean id="autoLetterGenerationDAO" class="com.pennant.pff.letter.dao.AutoLetterGenerationDAOImpl"
+		parent="sequenceDao" />
+
 	<bean id="batchJobDAO" class="com.pennant.pff.batch.dao.BatchJobDAOImpl" parent="sequenceDao" />
-	
-	<bean id="letterGenerationJobQueueDAO" class="com.pennant.pff.letter.dao.impl.LetterGenerationJobQueueDAOImpl" parent="sequenceDao" />
-	
-	<bean id="letterService" class="com.pennant.pff.letter.service.LetterService"/>
+
+	<bean id="letterGenerationJobQueueDAO" class="com.pennant.pff.letter.dao.impl.LetterGenerationJobQueueDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="letterService" class="com.pennant.pff.letter.service.LetterService" />
 </beans>

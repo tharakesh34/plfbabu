@@ -34,9 +34,7 @@ public class FinOCRCaptureDAOImpl extends SequenceDao<FinOCRCapture> implements 
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		}, (rs, num) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), (rs, num) -> {
 			FinOCRCapture ocr = new FinOCRCapture();
 
 			ocr.setId(rs.getLong("ID"));
@@ -117,9 +115,7 @@ public class FinOCRCaptureDAOImpl extends SequenceDao<FinOCRCapture> implements 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			this.jdbcOperations.update(sql.toString(), ps -> {
-				ps.setLong(1, ocr.getId());
-			});
+			this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, ocr.getId()));
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

@@ -103,7 +103,6 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl<Customer> {
 	private static final long serialVersionUID = 3257569537441008225L;
@@ -155,8 +154,6 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	public List<Notes> notesList = new ArrayList<Notes>();
 	protected Label label_CreditApplicationReviewDialog_BankName; // autowired
 
-	@SuppressWarnings("unused")
-	private transient CreditApplicationReviewDialogCtrl creditApplicationReviewDialogCtrl;
 	private transient CreditApplicationReviewListCtrl creditApplicationReviewListCtrl;
 	private transient FinCreditReviewDetails creditReviewDetail;
 	private transient boolean validationOn;
@@ -177,7 +174,6 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	int currentYear = DateUtil.getYear(SysParamUtil.getAppDate());
 	private List<FinCreditReviewDetails> finCreditReviewDetailsList = null;
 	List<Filter> filterList = null;
-	private NotificationService notificationService;
 	protected JdbcSearchObject<Customer> newSearchObject;
 	CreditReviewMainCtgDetails creditReviewMainCtgDetails = new CreditReviewMainCtgDetails();
 	int currFormatter = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
@@ -208,13 +204,6 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	 */
 	public void onCreate$window_CorporateCreditRevFinanceFileUploadDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		if (arguments.containsKey("creditApplicationReviewDialogCtrl")) {
-			this.creditApplicationReviewDialogCtrl = (CreditApplicationReviewDialogCtrl) arguments
-					.get("creditApplicationReviewDialogCtrl");
-		} else {
-			this.creditApplicationReviewDialogCtrl = null;
-		}
 
 		if (arguments.containsKey("creditApplicationReviewListCtrl")) {
 			this.creditApplicationReviewListCtrl = (CreditApplicationReviewListCtrl) arguments
@@ -1298,10 +1287,6 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 
 	public FinCreditRevSubCategoryService getFinCreditRevSubCategoryService() {
 		return finCreditRevSubCategoryService;
-	}
-
-	public void setNotificationService(NotificationService notificationService) {
-		this.notificationService = notificationService;
 	}
 
 	public CreditApplicationReviewListCtrl getCreditApplicationReviewListCtrl() {

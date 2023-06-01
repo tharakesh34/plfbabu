@@ -762,9 +762,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql, ps -> ps.setLong(1, receiptId), (rs, i) -> {
-			return rs.getLong(1);
-		});
+		return this.jdbcOperations.query(sql, ps -> ps.setLong(1, receiptId), (rs, i) -> rs.getLong(1));
 	}
 
 	@Override
@@ -1006,9 +1004,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 		logger.debug(Literal.SQL + sql);
 
-		List<Long> tarnIds = this.jdbcOperations.query(sql, ps -> ps.setLong(1, finID), (rs, rowNum) -> {
-			return rs.getLong(1);
-		});
+		List<Long> tarnIds = this.jdbcOperations.query(sql, ps -> ps.setLong(1, finID), (rs, rowNum) -> rs.getLong(1));
 		if (tarnIds.isEmpty()) {
 			return 0;
 		}
@@ -1021,9 +1017,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 		logger.debug(Literal.SQL + sql);
 
-		List<Date> list = this.jdbcOperations.query(sql, ps -> ps.setLong(1, finID), (rs, rowNum) -> {
-			return rs.getDate(1);
-		});
+		List<Date> list = this.jdbcOperations.query(sql, ps -> ps.setLong(1, finID), (rs, rowNum) -> rs.getDate(1));
 		if (list.isEmpty()) {
 			return null;
 		}

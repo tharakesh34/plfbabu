@@ -14,7 +14,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
-import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -66,7 +65,6 @@ public class FinanceEnquiryController extends AbstractController {
 	private FinODDetailsDAO finODDetailsDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinServiceInstrutionDAO finServiceInstrutionDAO;
-	private FinFeeDetailDAO finFeeDetailDAO;
 
 	private static final String ERROR_92021 = "92021";
 
@@ -380,48 +378,6 @@ public class FinanceEnquiryController extends AbstractController {
 		return ldList;
 	}
 
-	/*
-	 * public List<ChargeDetails> getChargeDetails(long finID) { logger.debug(Literal.ENTERING);
-	 * 
-	 * List<ChargeDetails> response = new ArrayList<>();
-	 * 
-	 * List<ManualAdvise> recAdvises = manualAdviseDAO.getReceivableAdvises(finID, "_AView"); List<FinFeeDetail> fees =
-	 * finFeeDetailDAO.getFinFeeDetailByFinRef(finID, false, "_AView"); List<FinODDetails> lppDues =
-	 * finODDetailsDAO.getLPPDueAmount(finID);
-	 * 
-	 * Map<String, ChargeDetails> chargeDetails = new HashMap<>();
-	 * 
-	 * ChargeDetails cd;
-	 * 
-	 * for (ManualAdvise ma : recAdvises) { if (!chargeDetails.containsKey(ma.getFeeTypeCode()) &&
-	 * BigDecimal.ZERO.compareTo(ma.getBalanceAmt()) < 0) { cd = new ChargeDetails();
-	 * cd.setChargeTypeDesc(ma.getFeeTypeDesc()); cd.setDueAmount(ma.getBalanceAmt());
-	 * 
-	 * chargeDetails.put(ma.getFeeTypeCode(), cd); continue; } if (BigDecimal.ZERO.compareTo(ma.getBalanceAmt()) < 0) {
-	 * cd = chargeDetails.get(ma.getFeeTypeCode()); cd.setDueAmount(cd.getDueAmount().add(ma.getBalanceAmt())); } }
-	 * 
-	 * for (FinFeeDetail fee : fees) { if (!chargeDetails.containsKey(fee.getFeeTypeCode()) &&
-	 * BigDecimal.ZERO.compareTo(fee.getRemainingFee()) < 0) { cd = new ChargeDetails();
-	 * cd.setChargeTypeDesc(fee.getFeeTypeDesc()); cd.setDueAmount(fee.getRemainingFee());
-	 * cd.setChargeRate(fee.getPercentage());
-	 * 
-	 * chargeDetails.put(fee.getFeeTypeCode(), cd); continue; } if (BigDecimal.ZERO.compareTo(fee.getRemainingFee()) <
-	 * 0) { cd = chargeDetails.get(fee.getFeeTypeCode()); cd.setDueAmount(cd.getDueAmount().add(fee.getRemainingFee()));
-	 * } }
-	 * 
-	 * cd = new ChargeDetails();
-	 * 
-	 * cd.setChargeTypeDesc("Late Pay Penalty"); cd.setDueAmount(SchdUtil.getLPPDueAmount(lppDues));
-	 * 
-	 * if (BigDecimal.ZERO.compareTo(cd.getDueAmount()) < 0) { chargeDetails.put("LPP", cd); }
-	 * 
-	 * chargeDetails.forEach((k, v) -> response.add(v));
-	 * 
-	 * return response;
-	 * 
-	 * }
-	 */
-
 	private void getRateChange(FinanceMain fm, List<LoanDetail> ldList, LoanDetail ld,
 			List<FinServiceInstruction> fsiList) {
 
@@ -553,11 +509,6 @@ public class FinanceEnquiryController extends AbstractController {
 	@Autowired
 	public void setFinServiceInstrutionDAO(FinServiceInstrutionDAO finServiceInstrutionDAO) {
 		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
-	}
-
-	@Autowired
-	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
-		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
 
 	@Autowired

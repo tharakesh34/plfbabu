@@ -8,12 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -21,7 +22,7 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
-import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -37,17 +38,23 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceSummary;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.AssetConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.letter.LetterMode;
 import com.pennant.pff.letter.LetterUtil;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.service.GenerateLetterService;
@@ -57,6 +64,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.receipt.constants.Allocation;
@@ -104,17 +112,18 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	protected Label totalOtherFee;
 	protected Label feePaid;
 	protected Label feeWaived;
-
+	protected Label generateLetterDialogClosureDate;
 	protected Listbox listBoxPaybles;
-
 	protected String selectMethodName = "onSelectTab";
 
 	private GenerateLetter generateLetter;
-	private transient GenerateLetterService generateLetterService;
 	private transient GenerateLetterListCtrl generateLetterListCtrl;
 	private transient FinFeeDetailListCtrl finFeeDetailListCtrl;
 	private FinanceDetail financeDetail;
 	private int ccyFormatter = 0;
+
+	private transient FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private transient GenerateLetterService generateLetterService;
 
 	public GenerateLetterDialogCtrl() {
 		super();
@@ -126,7 +135,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	}
 
 	public void onCreate$windowGenerateLetterDialog(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		setPageComponents(windowGenerateLetterDialog);
 
@@ -161,11 +170,11 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 			MessageUtil.showError(e);
 		}
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnSave(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		GenerateLetter gl = new GenerateLetter();
 		BeanUtils.copyProperties(this.generateLetter, gl);
@@ -190,39 +199,44 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 					gl.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					gl.setNewRecord(true);
 				}
-			} else {
-				gl.setVersion(gl.getVersion() + 1);
-
-				if (isNew) {
-					tranType = PennantConstants.TRAN_ADD;
-				} else {
-					tranType = PennantConstants.TRAN_UPD;
-				}
 			}
+		} else {
+			gl.setVersion(gl.getVersion() + 1);
 
-			try {
-				if (doProcess(gl, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		try {
+			if (doProcess(gl, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doSetValidation() {
 	}
 
 	private void doWriteComponentsToBean(GenerateLetter geneLtr) {
+		List<FinFeeDetail> fee = geneLtr.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 		Date appDate = SysParamUtil.getAppDate();
 
-		geneLtr.setRequestType("M");
-		geneLtr.setCreatedOn(appDate);
+		if (CollectionUtils.isNotEmpty(fee)) {
+			geneLtr.setWaiverAmt(fee.get(0).getWaivedAmount());
+		}
+
+		geneLtr.setRequestType(LetterMode.OTC.name());
+		geneLtr.setCreatedOn(DateUtil.getSysDate());
 		geneLtr.setCreatedDate(appDate);
 		geneLtr.setGeneratedBy(getUserWorkspace().getUserId());
+		geneLtr.setFinanceDetail(getFinanceDetail());
 	}
 
 	protected boolean doProcess(GenerateLetter gl, String tranType) {
@@ -367,11 +381,11 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	}
 
 	public void onClick$btnClose(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		doClose(this.btnSave.isVisible());
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnNotes(Event event) {
@@ -391,19 +405,19 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	}
 
 	public void onClick$btnHelp(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		MessageUtil.showHelpWindow(event, windowGenerateLetterDialog);
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnEdit(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		doEdit();
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doShowDialog(GenerateLetter csb) {
@@ -411,6 +425,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 		if (PennantConstants.RCD_STATUS_APPROVED.equals(csb.getRecordStatus())) {
 			this.btnDownload.setVisible(true);
+			this.btnSave.setVisible(false);
 		}
 
 		if (csb.isNewRecord()) {
@@ -441,6 +456,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 				.getFormat(gl.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
 		FinanceMain fm = gl.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		Customer customer = gl.getFinanceDetail().getCustomerDetails().getCustomer();
 
 		dofillDetails(gl.getFinanceDetail());
 
@@ -449,23 +465,43 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		appendGenerateLetterEnquiryTab(true);
 
 		this.finReference.setValue(fm.getFinReference());
-		this.custCIF.setValue(gl.getFinanceDetail().getCustomerDetails().getCustomer().getCustCIF());
-		this.custName.setValue(gl.getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName());
+		this.custCIF.setValue(customer.getCustCIF());
+		this.custName.setValue(customer.getCustShrtName());
 		this.finType.setValue(fm.getFinType());
-		this.finStatus.setValue(fm.getFinStatus());
-		this.finStatusReason.setValue(fm.getFinStsReason());
 
-		this.coreBankID.setValue(fm.getCoreBankId());
+		String loanClosureType = finReceiptHeaderDAO.getClosureTypeValue(fm.getFinID());
+
+		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
+			this.finStatus.setValue(Labels.getLabel("label_Status_Cancelled"));
+			this.finStatusReason.setValue(Labels.getLabel("label_Status_Cancelled"));
+			this.closureType.setValue(Labels.getLabel("label_ClosureType_Cancel"));
+			this.closureReason.setValue(gl.getReasonCode());
+			this.generateLetterDialogClosureDate
+					.setValue(Labels.getLabel("label_GenerateLetterDialog_CancellationDate"));
+		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())) {
+			this.finStatus.setValue(Labels.getLabel("label_Closed"));
+
+			if (loanClosureType != null) {
+				this.finStatusReason.setValue(loanClosureType);
+				this.closureType.setValue(loanClosureType);
+				this.closureReason.setValue(gl.getReasonCode());
+			}
+
+		} else if (FinanceConstants.CLOSE_STATUS_MATURED.equals(fm.getClosingStatus())) {
+			this.finStatus.setValue(Labels.getLabel("label_Matured"));
+			this.finStatusReason.setValue(Labels.getLabel("label_normal"));
+			this.closureType.setValue(Labels.getLabel("label_ClosureType_Closure"));
+			this.closureReason.setValue(gl.getReasonCode());
+		}
+
+		this.coreBankID.setValue(customer.getCustCoreBank());
 		this.finStartDate.setValue(fm.getFinStartDate());
 		this.branch.setValue(fm.getFinBranch());
-		this.finAmount.setValue(fm.getFinAmount());
+		this.finAmount.setValue(CurrencyUtil.parse(fm.getFinAmount(), this.ccyFormatter));
 		this.finClosureDate.setValue(fm.getClosedDate());
-		this.sourcingOfcr.setValue(fm.getSourcingBranch());
+		this.sourcingOfcr.setValue(String.valueOf(fm.getAccountsOfficer()));
 		this.letterType.setValue(gl.getLetterType());
 		fillComboBox(this.letterType, gl.getLetterType(), LetterUtil.getLetterTypes(), "");
-		this.closureType.setValue(fm.getClosingStatus());
-		this.closureReason.setValue(fm.getClosingStatus());
-
 		this.recordStatus.setValue(gl.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
@@ -497,7 +533,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 				Map<String, Object> map = getDefaultArguments();
 				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FEE));
 				map.put("moduleDefiner", this.moduleCode);
-				map.put("eventCode", "GENERLTR");
+				map.put("eventCode", this.generateLetter.getLetterType());
 				map.put("isReceiptsProcess", false);
 				map.put("numberOfTermsLabel", Labels.getLabel("label_FinanceMainDialog_NumberOfTerms.value"));
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinFeeDetailList.zul",
@@ -555,61 +591,118 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	}
 
 	public void onClick$btnDownload(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		doWriteComponentsToBean(this.generateLetter);
+
+		boolean downLoadStatus = false;
+
+		String selectedRecordType = userAction.getSelectedItem().getLabel();
+
+		generateLetter.setRecordType(selectedRecordType);
+
+		try {
+			LoanLetter letter = generateLetterService.generateLetter(this.generateLetter);
+
+			if ("S".equals(letter.getStatus())) {
+				Filedownload.save(new AMedia(letter.getLetterName(), "pdf", "application/pdf", letter.getContent()));
+				downLoadStatus = true;
+			} else if ("B".equals(letter.getStatus())) {
+				MessageUtil.showMessage(letter.getRemarks());
+			}
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+			return;
+		}
+
+		if (downLoadStatus) {
+			MessageUtil.showMessage("Letter Downloaded successfully.");
+
+			refreshList();
+
+			closeDialog();
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void dofillDetails(FinanceDetail findetail) {
-		FinanceSummary financeSummary = findetail.getFinScheduleData().getFinanceSummary();
-		if (financeSummary != null) {
+		FinanceSummary fmSummary = findetail.getFinScheduleData().getFinanceSummary();
 
-			BigDecimal priWaived = BigDecimal.ZERO;
-			BigDecimal pftWaived = BigDecimal.ZERO;
-
-			List<ReceiptAllocationDetail> waiver = generateLetterService
-					.getPrinAndPftWaiver(financeSummary.getFinReference());
-
-			if (waiver != null) {
-				for (ReceiptAllocationDetail al : waiver) {
-					if (al.getAllocationType().equals(Allocation.PRI)
-							|| al.getAllocationType().equals(Allocation.FUT_PRI)) {
-						priWaived = priWaived.add(al.getWaivedAmount());
-					}
-					if (al.getAllocationType().equals(Allocation.PFT)
-							|| al.getAllocationType().equals(Allocation.FUT_PFT)) {
-						pftWaived = pftWaived.add(al.getWaivedAmount());
-					}
-				}
-			}
-
-			this.totalPriSchd.setValue(CurrencyUtil.format(financeSummary.getOutStandPrincipal(), ccyFormatter));
-			this.priPaid.setValue(CurrencyUtil.format(financeSummary.getSchdPriPaid(), ccyFormatter));
-			this.priWaived.setValue(CurrencyUtil.format(priWaived, ccyFormatter));
-
-			this.totalProfitSchd.setValue(CurrencyUtil.format(financeSummary.getTotalProfit(), ccyFormatter));
-			this.profitPaid.setValue(CurrencyUtil.format(financeSummary.getSchdPftPaid(), ccyFormatter));
-			this.profitWaived.setValue(CurrencyUtil.format(pftWaived, ccyFormatter));
-
-			this.totalLPP.setValue(CurrencyUtil.format(financeSummary.getFinODTotPenaltyAmt(), ccyFormatter));
-			this.lPPWaived.setValue(CurrencyUtil.format(financeSummary.getFinODTotWaived(), ccyFormatter));
-			this.lPPPaid.setValue(CurrencyUtil.format(financeSummary.getFinODTotPenaltyPaid(), ccyFormatter));
-
-			this.totalLPI.setValue(CurrencyUtil.format(financeSummary.getFinODTotPenaltyAmt(), ccyFormatter));
-			this.lPIPaid.setValue(CurrencyUtil.format(financeSummary.getFinODTotWaived(), ccyFormatter));
-			this.lPIWaived.setValue(CurrencyUtil.format(financeSummary.getFinODTotPenaltyPaid(), ccyFormatter));
-
-			this.totalOtherFee.setValue(CurrencyUtil.format(financeSummary.getTotalFees(), ccyFormatter));
-			this.feePaid.setValue(CurrencyUtil.format(financeSummary.getTotalPaidFee(), ccyFormatter));
-			this.feeWaived.setValue(CurrencyUtil.format(financeSummary.getTotalWaiverFee(), ccyFormatter));
-
-			this.totalBounces.setValue(CurrencyUtil.format(financeSummary.getTotalPaidFee(), ccyFormatter));
-			this.bouncesPaid.setValue(CurrencyUtil.format(financeSummary.getTotalPaidFee(), ccyFormatter));
-			this.bouncesWaived.setValue(CurrencyUtil.format(financeSummary.getTotalPaidFee(), ccyFormatter));
-
-			dofillPaybleDetails(financeSummary.getFinID());
-
+		if (fmSummary == null) {
+			return;
 		}
+
+		BigDecimal priWaived = BigDecimal.ZERO;
+		BigDecimal pftWaived = BigDecimal.ZERO;
+
+		List<ReceiptAllocationDetail> waiver = generateLetterService.getPrinAndPftWaiver(fmSummary.getFinReference());
+
+		for (ReceiptAllocationDetail al : waiver) {
+			if (al.getAllocationType().equals(Allocation.PRI) || al.getAllocationType().equals(Allocation.FUT_PRI)) {
+				priWaived = priWaived.add(al.getWaivedAmount());
+			}
+			if (al.getAllocationType().equals(Allocation.PFT) || al.getAllocationType().equals(Allocation.FUT_PFT)) {
+				pftWaived = pftWaived.add(al.getWaivedAmount());
+			}
+		}
+
+		this.totalPriSchd.setValue(
+				CurrencyUtil.format(fmSummary.getTotalPriSchd().subtract(fmSummary.getTotalCpz()), ccyFormatter));
+		this.priPaid.setValue(CurrencyUtil.format(fmSummary.getSchdPriPaid(), ccyFormatter));
+		this.priWaived.setValue(CurrencyUtil.format(priWaived, ccyFormatter));
+
+		this.totalProfitSchd.setValue(CurrencyUtil.format(fmSummary.getTotalProfit(), ccyFormatter));
+		this.profitPaid.setValue(CurrencyUtil.format(fmSummary.getSchdPftPaid(), ccyFormatter));
+		this.profitWaived.setValue(CurrencyUtil.format(pftWaived, ccyFormatter));
+
+		this.totalLPP.setValue(CurrencyUtil.format(fmSummary.getFinODTotPenaltyAmt(), ccyFormatter));
+		this.lPPWaived.setValue(CurrencyUtil.format(fmSummary.getFinODTotWaived(), ccyFormatter));
+		this.lPPPaid.setValue(CurrencyUtil.format(fmSummary.getFinODTotPenaltyPaid(), ccyFormatter));
+
+		this.totalLPI.setValue(CurrencyUtil.format(fmSummary.getTotalLPI(), ccyFormatter));
+		this.lPIPaid.setValue(CurrencyUtil.format(fmSummary.getLpiPaid(), ccyFormatter));
+		this.lPIWaived.setValue(CurrencyUtil.format(fmSummary.getLpiWaived(), ccyFormatter));
+
+		dofillPaybleDetails(fmSummary.getFinID());
+
+		fillManualAdvises(fmSummary.getFinID(), fmSummary);
+	}
+
+	private void fillManualAdvises(long finID, FinanceSummary financeSummary) {
+		List<ManualAdvise> maList = generateLetterService.getManualAdvises(finID);
+
+		BigDecimal paidAmount = BigDecimal.ZERO;
+		BigDecimal adviseAmt = BigDecimal.ZERO;
+		BigDecimal waivedAmt = BigDecimal.ZERO;
+
+		BigDecimal bouncPaid = BigDecimal.ZERO;
+		BigDecimal bounces = BigDecimal.ZERO;
+		BigDecimal bouncWaived = BigDecimal.ZERO;
+
+		for (ManualAdvise ma : maList) {
+			if (Allocation.BOUNCE.equals(ma.getFeeTypeCode())) {
+				bouncPaid = bouncPaid.add(ma.getPaidAmount());
+				bounces = bounces.add(ma.getAdviseAmount());
+				bouncWaived = bouncWaived.add(ma.getWaivedAmount());
+			} else {
+				paidAmount = paidAmount.add(ma.getPaidAmount());
+				adviseAmt = adviseAmt.add(ma.getAdviseAmount());
+				waivedAmt = waivedAmt.add(ma.getWaivedAmount());
+			}
+		}
+
+		adviseAmt = adviseAmt.add(financeSummary.getTotalFees());
+		paidAmount = paidAmount.add(financeSummary.getTotalPaidFee());
+		waivedAmt = waivedAmt.add(financeSummary.getTotalWaiverFee());
+
+		this.totalBounces.setValue(CurrencyUtil.format(bounces, ccyFormatter));
+		this.bouncesPaid.setValue(CurrencyUtil.format(bouncPaid, ccyFormatter));
+		this.bouncesWaived.setValue(CurrencyUtil.format(bouncWaived, ccyFormatter));
+
+		this.totalOtherFee.setValue(CurrencyUtil.format(adviseAmt, ccyFormatter));
+		this.feePaid.setValue(CurrencyUtil.format(paidAmount, ccyFormatter));
+		this.feeWaived.setValue(CurrencyUtil.format(waivedAmt, ccyFormatter));
 	}
 
 	private void dofillPaybleDetails(long finID) {
@@ -692,7 +785,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	private Map<String, Object> getDefaultArguments() {
 		this.financeDetail = this.generateLetter.getFinanceDetail();
 
-		final Map<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<>();
 		map.put("roleCode", getRole());
 		map.put("generateLetter", this.generateLetter);
 		map.put("financeMainDialogCtrl", this);
@@ -705,7 +798,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	}
 
 	private Object getFinBasicDetails() {
-		ArrayList<Object> arrayList = new ArrayList<Object>();
+		ArrayList<Object> arrayList = new ArrayList<>();
 		FinanceMain financeMain = this.generateLetter.getFinanceDetail().getFinScheduleData().getFinanceMain();
 
 		arrayList.add(0, financeMain.getFinType());
@@ -716,18 +809,18 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		arrayList.add(5, financeMain.getGrcPeriodEndDate());
 		arrayList.add(6, financeMain.isAllowGrcPeriod());
 		FinanceType fianncetype = getFinanceDetail().getFinScheduleData().getFinanceType();
-		if (fianncetype != null && StringUtils.isNotEmpty(fianncetype.getProduct())) {
-			arrayList.add(7, true);
-		} else {
-			arrayList.add(7, false);
-		}
+
+		arrayList.add(7, fianncetype != null && StringUtils.isNotEmpty(fianncetype.getProduct()));
+
 		arrayList.add(8, getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory());
+
 		if (getFinanceDetail().getCustomerDetails() != null
 				&& getFinanceDetail().getCustomerDetails().getCustomer() != null) {
 			arrayList.add(9, getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName());
 		} else {
 			arrayList.add(9, "");
 		}
+
 		arrayList.add(10, false);
 		arrayList.add(11, this.moduleCode);
 		return arrayList;
@@ -757,16 +850,15 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 	public void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-
 		int finCcy = CurrencyUtil
 				.getFormat(this.generateLetter.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
-		this.finReference.setMaxlength(15);
 		this.finStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finClosureDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-
 		this.finAmount.setProperties(false, finCcy);
-
+		readOnlyComponent(true, this.finStartDate);
+		readOnlyComponent(true, this.finClosureDate);
+		readOnlyComponent(true, this.letterType);
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -836,16 +928,6 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		return (Tab) tabsIndexCenter.getFellowIfAny(getTabID(id));
 	}
 
-	private Decimalbox getDecimalbox(BigDecimal amount) {
-		Decimalbox decimalbox = new Decimalbox();
-		decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-		decimalbox.setStyle("text-align:right; ");
-		decimalbox.setReadonly(true);
-		decimalbox.setValue(PennantApplicationUtil.formateAmount(amount, ccyFormatter));
-
-		return decimalbox;
-	}
-
 	private AuditHeader getAuditHeader(GenerateLetter csb, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, csb.getBefImage(), csb);
 		return new AuditHeader(String.valueOf(csb.getId()), null, null, null, auditDetail, csb.getUserDetails(),
@@ -875,5 +957,10 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
+	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 }

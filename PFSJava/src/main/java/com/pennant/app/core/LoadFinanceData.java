@@ -463,7 +463,9 @@ public class LoadFinanceData extends ServiceHelper {
 
 						for (FinOverDueCharges finODCAmount : finODCAmounts) {
 							if (finODCAmount.isNewRecord()) {
-								saveList.add(finODCAmount);
+								if (finODCAmount.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+									saveList.add(finODCAmount);
+								}
 							} else {
 								updateList.add(finODCAmount);
 							}

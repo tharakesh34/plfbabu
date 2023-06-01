@@ -13,7 +13,9 @@ public enum ProvisionUploadError {
 
 	PROVSN_06("Manual Provision% should be zero when Override Provision is 'N'."),
 
-	PROVSN_07("Asset Classification is not found, Manual Provision upload is allowed after execution of EOD.");
+	PROVSN_07("Asset Classification is not found, Manual Provision upload is allowed after execution of EOD."),
+
+	PROVSN_08("Manual Asset Classification can't be upgarded");
 
 	private String description;
 

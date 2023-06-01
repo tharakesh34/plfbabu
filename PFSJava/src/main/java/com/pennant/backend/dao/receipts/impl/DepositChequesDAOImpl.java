@@ -211,8 +211,6 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 
 	@Override
 	public List<DepositCheques> getDepositChequesList(String branchCode) {
-		List<DepositCheques> list;
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ReceiptId, Receiptpurpose, ReceiptMode, Remarks, TransactionRef FavourNumber");
 		sql.append(", ReceivedDate, FundingAc, Amount, FinReference, CustShrtName");
@@ -221,9 +219,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, branchCode);
-		}, (rs, i) -> {
+		return jdbcOperations.query(sql.toString(), ps -> ps.setString(1, branchCode), (rs, i) -> {
 			DepositCheques dc = new DepositCheques();
 
 			dc.setReceiptId(JdbcUtil.getLong(rs.getLong("ReceiptId")));

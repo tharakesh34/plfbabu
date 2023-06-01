@@ -389,8 +389,6 @@ public class TanAssignmentDAOImpl extends SequenceDao<TanAssignment> implements 
 			int index = 1;
 			ps.setString(index++, tanNumber);
 			ps.setString(index, finReference);
-		}, (rs, rowNum) -> {
-			return rs.getString("FinReference");
-		});
+		}, (rs, rowNum) -> rs.getString("FinReference"));
 	}
 }

@@ -97,20 +97,10 @@ public class EODUtil {
 		}
 
 		StepContext stepContext = context.getStepContext();
-		if (stepContext == null) {
-			return null;
-		}
 
 		StepExecution stepExecution = stepContext.getStepExecution();
-		if (stepExecution == null) {
-			return null;
-		}
 
 		JobExecution jobExecution = stepExecution.getJobExecution();
-
-		if (jobExecution == null) {
-			return null;
-		}
 
 		return jobExecution.getExecutionContext();
 	}

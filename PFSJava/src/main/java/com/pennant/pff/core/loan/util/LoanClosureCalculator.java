@@ -102,7 +102,7 @@ public class LoanClosureCalculator {
 
 		for (FinanceScheduleDetail schedule : schedules) {
 			pos = pos.add(schedule.getPrincipalSchd());
-			pos = pos.subtract(schedule.getSchdPriPaid().add(schedule.getTDSAmount().subtract(schedule.getTDSPaid())));
+			pos = pos.subtract(schedule.getSchdPriPaid());
 
 			if (valuedate.compareTo(schedule.getSchDate()) <= 0) {
 				pos = pos.subtract(schedule.getCpzAmount());

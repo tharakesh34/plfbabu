@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.holdmarking.model.HoldMarkingDetail;
@@ -58,7 +59,7 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 
 		HoldMarkingHeader hmh = new HoldMarkingHeader();
 		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-		Date appData = SysParamUtil.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		long userId = 1000;
 		int count = 0;
 
@@ -83,11 +84,15 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 		hmd.setFinID(finID);
 		hmd.setHoldType(PennantConstants.REMOVE_HOLD_MARKING);
 		hmd.setMarking(PennantConstants.AUTO_ASSIGNMENT);
-		hmd.setMovementDate(appData);
+		hmd.setMovementDate(appDate);
 		hmd.setStatus(InsuranceConstants.SUCCESS);
 		hmd.setAmount(BigDecimal.ZERO);
 		hmd.setLogID(++count);
-		hmd.setHoldReleaseReason("Loan Closed");
+		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
+			hmd.setHoldReleaseReason("Loan Cancelled");
+		} else {
+			hmd.setHoldReleaseReason("Loan Closed");
+		}
 		hmd.setCreatedBy(userId);
 		hmd.setCreatedOn(currentTime);
 		hmd.setLastMntBy(userId);
@@ -105,11 +110,6 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 		logger.debug(Literal.ENTERING);
 
 		List<HoldMarkingHeader> list = holdMarkingHeaderDAO.getHoldListByFinId(finId);
-		HoldMarkingHeader hmh = new HoldMarkingHeader();
-		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-		Date appData = SysParamUtil.getAppDate();
-		long userId = 1000;
-		int count = 0;
 
 		if (CollectionUtils.isNotEmpty(list)) {
 			list = list.stream().sorted((l1, l2) -> Long.compare(l1.getHoldID(), l2.getHoldID()))
@@ -127,30 +127,46 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 				if (amount.compareTo(headerList.getBalance()) > 0) {
 					headerList.setBalance(BigDecimal.ZERO);
 					headerList.setReleaseAmount(headerList.getHoldAmount());
+
+					headerList.setId(headerList.getId());
+					headerList.setHoldID(headerList.getHoldID());
+					headerList.setRemovalAmount(headerList.getHoldAmount());
+					saveDetail(headerList);
 				} else {
 					headerList.setBalance(headerList.getBalance().subtract(amount));
 					headerList.setReleaseAmount(headerList.getReleaseAmount().add(amount));
+
+					headerList.setId(headerList.getId());
+					headerList.setHoldID(headerList.getHoldID());
+					headerList.setRemovalAmount(amount);
+					saveDetail(headerList);
 				}
 				amount.subtract(headerList.getHoldAmount());
 
 				holdMarkingHeaderDAO.updateHeader(headerList);
-				hmh.setId(headerList.getId());
-				hmh.setHoldID(headerList.getHoldID());
 			}
+
 		}
 
-		count = holdMarkingDetailDAO.getCountId(hmh.getHoldID());
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void saveDetail(HoldMarkingHeader hmh) {
+		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+		Date appData = SysParamUtil.getAppDate();
+		long userId = 1000;
+		int count = holdMarkingDetailDAO.getCountId(hmh.getHoldID());
 
 		HoldMarkingDetail hmd = new HoldMarkingDetail();
 		hmd.setHoldID(hmh.getHoldID());
 		hmd.setHeaderID(hmh.getId());
-		hmd.setFinReference(finReference);
-		hmd.setFinID(finId);
+		hmd.setFinReference(hmh.getFinReference());
+		hmd.setFinID(hmh.getFinID());
 		hmd.setHoldType(PennantConstants.REMOVE_HOLD_MARKING);
 		hmd.setMarking(PennantConstants.AUTO_ASSIGNMENT);
 		hmd.setMovementDate(appData);
 		hmd.setStatus(InsuranceConstants.PENDING);
-		hmd.setAmount(amount);
+		hmd.setAmount(hmh.getRemovalAmount());
 		hmd.setLogID(++count);
 		hmd.setHoldReleaseReason("Receipt");
 		hmd.setCreatedBy(userId);
@@ -161,8 +177,6 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 		hmd.setApprovedBy(userId);
 
 		holdMarkingDetailDAO.saveDetail(hmd);
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -170,10 +184,6 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 		logger.debug(Literal.ENTERING);
 
 		HoldMarkingHeader hmh = new HoldMarkingHeader();
-		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-		Date appData = SysParamUtil.getAppDate();
-		long userId = 1000;
-
 		String repayMethod = financeMainDAO.getApprovedRepayMethod(finId, "");
 
 		if (!InstrumentType.isSI(repayMethod)) {
@@ -240,29 +250,6 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 			hmh.setId(hmh.getId());
 			hmh.setHoldID(hmh.getHoldID());
 		}
-
-		int count = holdMarkingDetailDAO.getCountId(hmh.getHoldID());
-
-		HoldMarkingDetail hmd = new HoldMarkingDetail();
-		hmd.setHoldID(hmh.getHoldID());
-		hmd.setHeaderID(hmh.getId());
-		hmd.setFinReference(finReference);
-		hmd.setFinID(finId);
-		hmd.setHoldType(PennantConstants.REMOVE_HOLD_MARKING);
-		hmd.setMarking(PennantConstants.AUTO_ASSIGNMENT);
-		hmd.setMovementDate(appData);
-		hmd.setStatus(InsuranceConstants.PENDING);
-		hmd.setAmount(amount);
-		hmd.setLogID(++count);
-		hmd.setHoldReleaseReason("Fund Recovery");
-		hmd.setCreatedBy(userId);
-		hmd.setCreatedOn(currentTime);
-		hmd.setLastMntBy(userId);
-		hmd.setLastMntOn(currentTime);
-		hmd.setApprovedOn(currentTime);
-		hmd.setApprovedBy(userId);
-
-		holdMarkingDetailDAO.saveDetail(hmd);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -365,17 +352,21 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 	private void HoldRemoval(BigDecimal amount, HoldMarkingHeader headerList) {
 		logger.debug(Literal.ENTERING);
 
-		if (headerList.getRemovalAmount().compareTo(headerList.getBalance()) > 0) {
+		if (amount.compareTo(headerList.getBalance()) > 0) {
 			headerList.setBalance(BigDecimal.ZERO);
 			headerList.setReleaseAmount(headerList.getHoldAmount());
+			headerList.setRemovalAmount(headerList.getHoldAmount());
 		} else {
 			headerList.setBalance(headerList.getBalance().subtract(amount));
 			headerList.setReleaseAmount(amount.add(headerList.getReleaseAmount()));
+			headerList.setRemovalAmount(amount);
 		}
 		headerList.setId(headerList.getId());
 		headerList.setHoldID(headerList.getHoldID());
-		headerList.setRemovalAmount(amount);
+
 		holdMarkingHeaderDAO.updateHeader(headerList);
+
+		saveDetail(headerList);
 
 		logger.debug(Literal.LEAVING);
 	}

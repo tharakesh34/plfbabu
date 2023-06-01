@@ -269,7 +269,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			if (bps != null && bps.getEndTime() != null && "S".equals(bps.getStatus())) {
 				int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
 				if (days == 0) {
-					int timeBetween = Integer.valueOf(DateUtil.timeBetween(sysDate, bps.getEndTime(), "HH"));
+					int timeBetween = Integer.parseInt(DateUtil.timeBetween(sysDate, bps.getEndTime(), "HH"));
 
 					if (timeBetween > 20) {
 						this.btnStartJob.setDisabled(false);
@@ -849,7 +849,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			appendRow(Step.effAssetClassification.name(), StepUtil.EFF_NPA_CLASSIFICATION.getName());
 		}
 
-		if (NpaAndProvisionExtension.ALLOW_PROVISION) {
+		if (NpaAndProvisionExtension.ALLOW_PROVISION || NpaAndProvisionExtension.ALLOW_MANUAL_PROVISION) {
 			appendRow(Step.provisionCalc.name(), StepUtil.PROVISION_CALC.getName());
 		}
 		// Auto Write Off

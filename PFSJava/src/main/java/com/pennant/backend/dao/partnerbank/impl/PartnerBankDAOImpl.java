@@ -560,8 +560,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		sql.append(type);
 		sql.append(" WHERE ENTITY = ? AND PARTNERBANKCODE = ?");
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, entity, partnerbankCode) > 0 ? true
-				: false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, entity, partnerbankCode) > 0;
 	}
 
 	@Override
@@ -650,7 +649,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return jdbcOperations.query(sql.toString(), ps -> {
+		return jdbcOperations.query(sql, ps -> {
 			ps.setString(1, loanType);
 			ps.setString(2, receiptmode);
 		}, (rs, rownum) -> {
@@ -664,11 +663,10 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 
 	@Override
 	public int getValidPartnerBank(String loanType, String receiptmode, long partnerBankId) {
-		String sql = "SELECT COUNT(PartnerBankID) From FINTYPEPARTNERBANKS Where FinType = ? and PaymentMode = ? and PartnerbankId = ? ";
+		String sql = "SELECT COUNT(PartnerBankID) From FINTYPEPARTNERBANKS Where FinType = ? and PaymentMode = ? and PartnerbankId = ? and Purpose = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.queryForObject(sql, Integer.class, loanType, receiptmode, partnerBankId);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, loanType, receiptmode, partnerBankId, "R");
 	}
-
 }

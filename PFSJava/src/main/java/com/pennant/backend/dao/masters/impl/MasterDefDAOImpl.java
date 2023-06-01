@@ -69,9 +69,7 @@ public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDA
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
-				return rs.getString(1);
-			}, masterType, keyType);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> rs.getString(1), masterType, keyType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(
 					"Record is not found in Master_Def table for the specified Master_Type >> {} and Key_type >> {}",

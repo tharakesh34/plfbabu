@@ -1,8 +1,17 @@
 package com.pennant.pff.letter.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Date;
+
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
+import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.model.ServiceBranch;
@@ -16,26 +25,49 @@ import com.pennanttech.pennapps.core.resource.Message;
 public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> implements AutoLetterGenerationDAO {
 
 	@Override
-	public void save(GenerateLetter gl) {
-		StringBuilder sql = new StringBuilder("Insert Into Letter_Generation_Stage");
+	public long save(GenerateLetter gl) {
+		StringBuilder sql = new StringBuilder("Insert Into LOAN_LETTERS_STAGE");
 		sql.append("(FinID, RequestType, LetterType");
-		sql.append(", CreatedDate, CreatedOn, AgreementTemplate, ModeOfTransfer)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", CreatedDate, CreatedOn, GeneratedBy, ApprovedBy, ApprovedOn");
+		sql.append(", AgreementTemplate, EmailTemplate, ModeOfTransfer, FeeID)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			this.jdbcOperations.update(sql.toString(), ps -> {
-				int index = 0;
+			KeyHolder keyHolder = new GeneratedKeyHolder();
 
-				ps.setLong(++index, gl.getFinID());
-				ps.setString(++index, gl.getRequestType());
-				ps.setString(++index, gl.getLetterType());
-				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedDate()));
-				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
-				ps.setLong(++index, gl.getAgreementTemplate());
-				ps.setString(++index, gl.getModeofTransfer());
-			});
+			this.jdbcOperations.update(new PreparedStatementCreator() {
+
+				@Override
+				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+					PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
+					int index = 0;
+
+					ps.setLong(++index, gl.getFinID());
+					ps.setString(++index, gl.getRequestType());
+					ps.setString(++index, gl.getLetterType());
+					ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedDate()));
+					ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
+					ps.setObject(++index, gl.getGeneratedBy());
+					ps.setObject(++index, gl.getApprovedBy());
+					ps.setTimestamp(++index, gl.getApprovedOn());
+					ps.setLong(++index, gl.getAgreementTemplate());
+					ps.setObject(++index, gl.getEmailTemplate());
+					ps.setString(++index, gl.getModeofTransfer());
+					ps.setObject(++index, gl.getFeeID());
+
+					return ps;
+				}
+			}, keyHolder);
+
+			Number key = keyHolder.getKey();
+
+			if (key == null) {
+				return 0;
+			}
+
+			return key.longValue();
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -45,10 +77,10 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	public GenerateLetter getLetter(long id) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, FinID, RequestType, LetterType");
-		sql.append(", AgreementTemplate, FeeTypeID");
+		sql.append(", AgreementTemplate, FeeID");
 		sql.append(", ModeofTransfer, EmailTemplate");
 		sql.append(", CreatedDate");
-		sql.append(" From Letter_Generation_Stage");
+		sql.append(" From LOAN_LETTERS_STAGE ");
 		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -62,7 +94,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 				generateLetter.setRequestType(rs.getString("RequestType"));
 				generateLetter.setLetterType(rs.getString("LetterType"));
 				generateLetter.setAgreementTemplate(rs.getLong("AgreementTemplate"));
-				generateLetter.setFeeTypeID(JdbcUtil.getLong(rs.getObject("FeeTypeID")));
+				generateLetter.setFeeID(JdbcUtil.getLong(rs.getObject("FeeID")));
 				generateLetter.setModeofTransfer(rs.getString("ModeofTransfer"));
 				generateLetter.setEmailTemplate(rs.getLong("EmailTemplate"));
 				generateLetter.setCreatedDate(rs.getDate("CreatedDate"));
@@ -76,10 +108,12 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	}
 
 	@Override
-	public void update(GenerateLetter gl) {
-		StringBuilder sql = new StringBuilder("Update Letter_Generation_Stage");
-		sql.append(" Set FeeTypeId = ?, Generated = ?, GeneratedDate = ?, GeneratedOn = ?, AdviseID = ?");
-		sql.append(", TrackingID = ?, Status = ?, Remarks = ?");
+	public void update(LoanLetter letter) {
+		StringBuilder sql = new StringBuilder("Update LOAN_LETTERS_STAGE");
+		sql.append(" Set Generated = ?, GeneratedDate = ?, GeneratedOn = ?");
+		sql.append(", LetterName = ?, FileName = ?, LetterLocation = ?");
+		sql.append(", AdviseID = ?, EmailID = ?, EmailNotificationID = ?");
+		sql.append(", Status = ?, Remarks = ?");
 		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -88,16 +122,19 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 0;
 
-				ps.setObject(++index, JdbcUtil.getLong(gl.getFeeTypeID()));
-				ps.setInt(++index, gl.getGenerated());
-				ps.setDate(++index, JdbcUtil.getDate(gl.getGeneratedDate()));
-				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
-				ps.setObject(++index, JdbcUtil.getLong(gl.getAdviseID()));
-				ps.setObject(++index, JdbcUtil.getLong(gl.getTrackingID()));
-				ps.setString(++index, gl.getStatus());
-				ps.setString(++index, gl.getRemarks());
+				ps.setInt(++index, letter.getGenerated());
+				ps.setDate(++index, JdbcUtil.getDate(letter.getGeneratedDate()));
+				ps.setDate(++index, JdbcUtil.getDate(letter.getGeneratedOn()));
+				ps.setString(++index, letter.getLetterName());
+				ps.setString(++index, letter.getFileName());
+				ps.setString(++index, letter.getLetterLocation());
+				ps.setObject(++index, letter.getAdviseID());
+				ps.setString(++index, letter.getEmailID());
+				ps.setObject(++index, letter.getEmailNotificationID());
+				ps.setString(++index, letter.getStatus());
+				ps.setString(++index, letter.getRemarks());
 
-				ps.setLong(++index, gl.getId());
+				ps.setLong(++index, letter.getId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -106,7 +143,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 
 	@Override
 	public void moveFormStage(long letterID) {
-		String sql = "Insert Into Letter_Generation Select * from Letter_Generation_Stage Where Id = ?";
+		String sql = "Insert Into LOAN_LETTERS Select * from LOAN_LETTERS_STAGE Where Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -115,7 +152,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 
 	@Override
 	public void deleteFromStage(long letterID) {
-		String sql = "Delete From Letter_Generation_Stage Where Id = ?";
+		String sql = "Delete From LOAN_LETTERS_STAGE Where Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -124,7 +161,9 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 
 	@Override
 	public ServiceBranch getServiceBranch(String finType, String finBranch) {
-		StringBuilder sql = new StringBuilder("Select sb.Code, sb.FolderPath");
+		StringBuilder sql = new StringBuilder("Select sb.Code, sb.Description");
+		sql.append(", sb.OfCorhouseNum, sb.Flatnum, sb.Street, sb.AddrLine1, sb.AddrLine2, sb.Pobox ");
+		sql.append(", sb.Country, sb.City, CPProvince, sb.PinCodeID, sb.PinCode, sb.FolderPath");
 		sql.append(" From Service_Branches sb");
 		sql.append(" Inner Join Service_Branches_LoanType sbl on sbl.HeaderID = sb.ID");
 		sql.append(" Where sbl.FinType = ? and sbl.Branch = ?");
@@ -136,6 +175,19 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 				ServiceBranch sb = new ServiceBranch();
 
 				sb.setCode(rs.getString("Code"));
+				sb.setDescription(rs.getString("Description"));
+				sb.setFolderPath(rs.getString("FolderPath"));
+				sb.setOfcOrHouseNum(rs.getString("OfCorhouseNum"));
+				sb.setFlatNum(rs.getString("Flatnum"));
+				sb.setStreet(rs.getString("Street"));
+				sb.setAddrLine1(rs.getString("AddrLine1"));
+				sb.setAddrLine2(rs.getString("AddrLine2"));
+				sb.setPoBox(rs.getString("Pobox"));
+				sb.setCountry(rs.getString("Country"));
+				sb.setCity(rs.getString("City"));
+				sb.setCpProvince(rs.getString("CPProvince"));
+				sb.setPinCodeId(rs.getLong("PinCodeID"));
+				sb.setPinCode(rs.getString("PinCode"));
 				sb.setFolderPath(rs.getString("FolderPath"));
 
 				return sb;
@@ -150,7 +202,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 
 	@Override
 	public int getNextSequence(long finID, LetterType letterType) {
-		String sql = "Select count(FinID)+1 from Letter_Generation Where FinID = ? and LetterType = ?";
+		String sql = "Select count(FinID)+1 from LOAN_LETTERS Where FinID = ? and LetterType = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -188,4 +240,38 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 		}
 	}
 
+	@Override
+	public int getCountBlockedItems(Long finID) {
+		String sql = "Select count(FinID) From Loan_Letter_Blocking Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID);
+	}
+
+	@Override
+	public Long getLetterId(Long finID, String letterType, Date generatedDate) {
+		String sql = "Select ID From LOAN_LETTERS Where FinID = ? and LetterType = ? and GeneratedDate = ? ";
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, finID, letterType, generatedDate);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+
+	}
+
+	@Override
+	public Long getAutoLetterId(Long finID, String letterType, String requestType) {
+		String sql = "Select ID From LOAN_LETTERS_STAGE Where FinID = ? and LetterType = ? and RequestType = ? ";
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, finID, letterType, requestType);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+
+	}
 }

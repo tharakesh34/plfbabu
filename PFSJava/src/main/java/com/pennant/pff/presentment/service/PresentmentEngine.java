@@ -1027,7 +1027,11 @@ public class PresentmentEngine {
 
 		if (pd.getExcessAmountReversal() != null) {
 			excessRevarsal.addAll(pd.getExcessAmountReversal());
+		}
+
+		if (pd.getExcessMovements() != null) {
 			excessMovement.addAll(pd.getExcessMovements());
+			excessMovement.forEach(em -> em.setReceiptID(pd.getId()));
 		}
 
 		if (pd.getExcessAmount() != null) {
@@ -1492,6 +1496,7 @@ public class PresentmentEngine {
 			errorDesc = (errorDesc.length() >= 1000) ? errorDesc.substring(0, 998) : errorDesc;
 		}
 		presentmentDetailDAO.updatePresentmentDetail(pd);
+		String accountNumber = mandateDAO.getMandateNumber(pd.getMandateId());
 
 		if (InstrumentType.SI.code().equals(pd.getMandateType()) && RepayConstants.PEXC_BOUNCE.equals(pd.getStatus())) {
 
@@ -1506,7 +1511,7 @@ public class PresentmentEngine {
 			HoldMarkingHeader hmh = new HoldMarkingHeader();
 			hmh.setFinReference(pd.getFinReference());
 			hmh.setFinID(pd.getFinID());
-			hmh.setAccountNumber(pd.getAccountNo());
+			hmh.setAccountNumber(accountNumber);
 			hmh.setHoldAmount(pd.getPresentmentAmt());
 			hmh.setBalance(pd.getPresentmentAmt());
 

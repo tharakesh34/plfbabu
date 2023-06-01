@@ -347,7 +347,6 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 			}
 
 			FinanceDetail fd = financeDetailService.getFinSchdDetailById(rcu.getFinID(), "_AView", false);
-			List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
 			FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 
 			List<Date> dates = new ArrayList<>();

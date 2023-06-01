@@ -44,7 +44,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserAccessDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
-import com.pennant.backend.dao.applicationmaster.impl.BranchDAOImpl;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.administration.SecurityUserAccess;
@@ -68,7 +67,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class BranchServiceImpl extends GenericService<Branch> implements BranchService {
-	private static Logger logger = LogManager.getLogger(BranchDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BranchServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BranchDAO branchDAO;

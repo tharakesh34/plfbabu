@@ -8,6 +8,10 @@ public interface BatchJobQueueDAO {
 		return 0;
 	}
 
+	default int prepareQueue() {
+		return 0;
+	}
+
 	default void updateQueue(BatchJobQueue jobQueue) {
 	}
 
@@ -51,5 +55,9 @@ public interface BatchJobQueueDAO {
 	}
 
 	default void logQueue(int progress) {
+	}
+
+	default String getRefBySequence(long sequence) {
+		return null;
 	}
 }

@@ -111,9 +111,7 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 			ps.setLong(1, finID);
 			ps.setInt(2, 1);
 			ps.setInt(3, 0);
-		}, (rs, i) -> {
-			return getRowMapper(rs);
-		});
+		}, (rs, i) -> getRowMapper(rs));
 
 		return list.stream().sorted((l1, l2) -> l1.getValueDate().compareTo(l2.getValueDate()))
 				.collect(Collectors.toList());

@@ -58,10 +58,7 @@ public class InterfaceConstants {
 	public static final String method_bre = "executeBRE";
 	public static String automaticMandate = "N";
 
-	// UAT Details
-	public static final String SOCKET_IP = "103.225.112.28";
 	public static final int DEFAULT_PORT = 7506;
-	public static final int SCOKET_TIMEOUT = 60000;
 
 	public static final String EndCharacters = "0102**";
 	public static final int EndCharacterLength = 11;

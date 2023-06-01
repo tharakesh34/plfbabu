@@ -215,7 +215,7 @@ public interface CustomerDAO {
 
 	Date getCustomerDOBByCustID(long custID);
 
-	List<Long> getByCustShrtName(String CustShrtName, TableType tableType);
+	List<Long> getByCustShrtName(String custShrtName, TableType tableType);
 
 	List<Long> getByCustCRCPR(String custCRCPR, TableType tableType);
 
@@ -225,7 +225,7 @@ public interface CustomerDAO {
 
 	List<Long> getByPhoneNumber(String phoneNumber, TableType tableType);
 
-	List<Long> getByCustShrtNameAndPhoneNumber(String CustShrtName, String phoneNumber, TableType tableType);
+	List<Long> getByCustShrtNameAndPhoneNumber(String custShrtName, String phoneNumber, TableType tableType);
 
 	List<Long> getByCustShrtNameAndDOB(String custShrtName, Date custDOB, TableType tableType);
 

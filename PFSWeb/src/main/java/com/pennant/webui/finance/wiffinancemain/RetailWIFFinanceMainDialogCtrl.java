@@ -816,7 +816,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_WIFFinanceMainDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_WIFFinanceMainDialog_btnEdit"));
-		this.btnDelete.setVisible(false);// getUserWorkspace().isAllowed("button_WIFFinanceMainDialog_btnDelete")
+		this.btnDelete.setVisible(false);
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_WIFFinanceMainDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
@@ -858,22 +858,6 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onClick$btnHelp(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 		MessageUtil.showHelpWindow(event, window_RetailWIFFinanceMainDialog);
-		logger.debug("Leaving " + event.toString());
-	}
-
-	/**
-	 * when the "delete" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 * @throws JaxenException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
-	public void onClick$btnDelete(Event event)
-			throws InterruptedException, JaxenException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering " + event.toString());
-		doDelete();
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -3878,23 +3862,6 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		return true;
-	}
-
-	private void doDelete()
-			throws InterruptedException, JaxenException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
-
-		final FinanceDetail afinanceDetail = new FinanceDetail();
-		BeanUtils.copyProperties(getFinanceDetail(), afinanceDetail);
-
-		FinanceMain afinanceMain = afinanceDetail.getFinScheduleData().getFinanceMain();
-
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_FinanceMainDialog_FinReference.value") + " : "
-				+ afinanceMain.getFinReference();
-
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -7627,14 +7594,8 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering : " + event.toString());
 		doStepPolicyCheck(true);
 		if (this.stepFinance.isChecked()) {
-			// TODO ###BAJAJ###
-			/*
-			 * fillComboBox(this.repayRateBasis,CalculationConstants.RATE_BASIS_C,
-			 * PennantStaticListUtil.getInterestRateType(true), ""); this.repayRateBasis.setDisabled(true);
-			 * fillComboBox(this.cbScheduleMethod, CalculationConstants.SCHMTHD_EQUAL, schMethodList,
-			 * ",NO_PAY,GRCNDPAY,PFTCAP,"); this.cbScheduleMethod.setDisabled(true);
-			 * Events.sendEvent("onChange",repayRateBasis, null);
-			 */} else {
+			// Do nothing!
+		} else {
 			fillComboBox(this.repayRateBasis, getFinanceDetail().getFinScheduleData().getFinanceType().getFinRateType(),
 					PennantStaticListUtil.getInterestRateType(true), "");
 			this.repayRateBasis.setDisabled(isReadOnly("WIFFinanceMainDialog_scheduleMethod"));

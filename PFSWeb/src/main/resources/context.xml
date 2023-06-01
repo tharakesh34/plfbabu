@@ -5,18 +5,15 @@
 	<Resource auth="Container" type="javax.sql.DataSource"
 		factory="com.pennanttech.pennapps.core.factory.DataSourceFactory" maxTotal="10" minIdle="0" maxIdle="8"
 		name="jdbc/PFFSEC" driverClassName="org.postgresql.Driver"
-		url="jdbc:postgresql://192.168.1.26:5432/plfcore?currentSchema=plf,public" appcode="PFF" username="postgres"
-		password="Pennant_123" />
+		url="jdbc:postgresql://host:port/plfcore?currentSchema=plf,public" appcode="PFF" username="" password="" />
 	<Resource auth="Container" type="javax.sql.DataSource"
 		factory="com.pennanttech.pennapps.core.factory.DataSourceFactory" maxTotal="10" minIdle="0" maxIdle="8"
 		name="jdbc/PFF" driverClassName="org.postgresql.Driver"
-		url="jdbc:postgresql://192.168.1.26:5432/plfcore?currentSchema=plf,public" appcode="PFF" username="postgres"
-		password="Pennant_123" />
+		url="jdbc:postgresql://host:port/plfcore?currentSchema=plf,public" appcode="PFF" username="" password="" />
 	<Resource auth="Container" type="javax.sql.DataSource"
 		factory="com.pennanttech.pennapps.core.factory.DataSourceFactory" maxTotal="10" minIdle="0" maxIdle="8"
 		name="jdbc/PFFAUDIT" driverClassName="org.postgresql.Driver"
-		url="jdbc:postgresql://192.168.1.26:5432/plfcore?currentSchema=plfaudit,plf,public" appcode="PFF" username="postgres"
-		password="Pennant_123" />
+		url="jdbc:postgresql://host:port/plfcore?currentSchema=plfaudit,plf,public" appcode="PFF" username="" password="" />
 	<Resource auth="Container" type="javax.sql.DataSource"
 		factory="com.pennanttech.pennapps.core.factory.DataSourceFactory" maxTotal="10" minIdle="0" maxIdle="8"
 		name="jdbc/PFFEXT" driverClassName="org.postgresql.Driver" url="" appcode="PFF" username="" password="" />

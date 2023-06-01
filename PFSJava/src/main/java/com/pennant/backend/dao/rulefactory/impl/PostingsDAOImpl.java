@@ -172,9 +172,8 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, linkedTranId);
-		}, new ReturnDataSetRowMapper());
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, linkedTranId),
+				new ReturnDataSetRowMapper());
 	}
 
 	@Override
@@ -201,9 +200,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, postref);
-		}, new ReturnDataSetRowMapper());
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setString(1, postref), new ReturnDataSetRowMapper());
 	}
 
 	@Override
@@ -674,9 +671,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			ps.setString(index++, finReference);
 			ps.setDate(index++, JdbcUtil.getDate(valueDate));
 			ps.setString(index, AccountingEvent.AMZ);
-		}, (rs, rowNum) -> {
-			return rs.getLong(1);
-		});
+		}, (rs, rowNum) -> rs.getLong(1));
 	}
 
 	@Override

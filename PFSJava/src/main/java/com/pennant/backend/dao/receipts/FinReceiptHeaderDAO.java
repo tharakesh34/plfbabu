@@ -163,7 +163,7 @@ public interface FinReceiptHeaderDAO {
 
 	boolean isChequeExists(CreateReceiptUpload rud);
 
-	String getClosureTypeValue(Long finID, String receiptPurpose);
+	String getClosureTypeValue(Long finID);
 
 	FinReceiptHeader getReceiptById(long receiptId, String type);
 
@@ -172,4 +172,6 @@ public interface FinReceiptHeaderDAO {
 	FinanceType getRepayHierarchy(FinanceMain fm);
 
 	void updateClosureType(long receiptID, String closureType);
+
+	boolean isLoanEarlySetteled(String finReference);
 }

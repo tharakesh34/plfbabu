@@ -16,7 +16,7 @@ public class MiscellaneousPostingUpload extends UploadDetails {
 	private String batchPurpose;
 	private String debitGL;
 	private String creditGL;
-	private BigDecimal txnAmount = BigDecimal.ZERO;;
+	private BigDecimal txnAmount = BigDecimal.ZERO;
 	private Date valueDate;
 	private String narrLine1;
 	private String narrLine2;

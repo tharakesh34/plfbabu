@@ -1,6 +1,5 @@
 package com.pennant.pff.revwriteoffupload.dao.impl;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -8,9 +7,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.backend.model.finance.FinanceWriteoff;
 import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
@@ -77,9 +73,7 @@ public class RevWriteOffUploadDAOImpl extends SequenceDao<RevWriteOffUploadDetai
 			ps.setLong(++index, headerID);
 			ps.setInt(++index, ReceiptDetailStatus.SUCCESS.getValue());
 
-		}, (rs, roNum) -> {
-			return rs.getString(1);
-		});
+		}, (rs, roNum) -> rs.getString(1));
 	}
 
 	@Override
@@ -170,43 +164,27 @@ public class RevWriteOffUploadDAOImpl extends SequenceDao<RevWriteOffUploadDetai
 	}
 
 	@Override
-	public long saveLog(RevWriteOffUploadDetail detail, FileUploadHeader header) {
+	public void saveLog(RevWriteOffUploadDetail detail, FileUploadHeader header) {
 		StringBuilder sql = new StringBuilder("Insert into WRITE_OFF_UPLOAD_LOG");
 		sql.append(" (FinId, FinReference, Remarks, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, Event");
 		sql.append(") Values(?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		KeyHolder keyHolder = new GeneratedKeyHolder();
+		this.jdbcOperations.update(sql.toString(), ps -> {
 
-		this.jdbcOperations.update(new PreparedStatementCreator() {
+			int index = 0;
 
-			@Override
-			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-				PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
+			ps.setObject(++index, detail.getReferenceID());
+			ps.setString(++index, detail.getReference());
+			ps.setString(++index, detail.getRemarks());
+			ps.setLong(++index, header.getCreatedBy());
+			ps.setTimestamp(++index, header.getCreatedOn());
+			ps.setLong(++index, header.getLastMntBy());
+			ps.setTimestamp(++index, header.getLastMntOn());
+			ps.setString(++index, detail.getEvent());
 
-				int index = 0;
-
-				ps.setObject(++index, detail.getReferenceID());
-				ps.setString(++index, detail.getReference());
-				ps.setString(++index, detail.getRemarks());
-				ps.setLong(++index, header.getCreatedBy());
-				ps.setTimestamp(++index, header.getCreatedOn());
-				ps.setLong(++index, header.getLastMntBy());
-				ps.setTimestamp(++index, header.getLastMntOn());
-				ps.setString(++index, detail.getEvent());
-
-				return ps;
-			}
-		}, keyHolder);
-
-		Number key = keyHolder.getKey();
-
-		if (key == null) {
-			return 0;
-		}
-
-		return key.longValue();
+		});
 	}
 
 	@Override
@@ -289,7 +267,7 @@ public class RevWriteOffUploadDAOImpl extends SequenceDao<RevWriteOffUploadDetai
 				return Long.MIN_VALUE;
 			}
 
-			return (long) receiptID;
+			return receiptID;
 		} catch (EmptyResultDataAccessException dae) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return Long.MIN_VALUE;

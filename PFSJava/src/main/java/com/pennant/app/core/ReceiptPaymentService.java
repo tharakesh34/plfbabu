@@ -94,10 +94,14 @@ public class ReceiptPaymentService {
 		} else {
 			List<FinExcessMovement> excessMovements = pd.getExcessMovements();
 
+			if (!excessMovements.isEmpty()) {
+				receiptDTO.getEmiInAdvance().clear();
+			}
+
 			for (FinExcessMovement fem : excessMovements) {
 				FinExcessAmount fea = new FinExcessAmount();
 
-				fea.setExcessID(fem.getReceiptID());
+				fea.setExcessID(fem.getExcessID());
 				fea.setBalanceAmt(fem.getAmount());
 
 				receiptDTO.getEmiInAdvance().add(fea);
@@ -181,7 +185,8 @@ public class ReceiptPaymentService {
 			try {
 				repaymentProcessUtil.calcualteAndPayReceipt(receiptDTO);
 			} catch (Exception e) {
-				throw new AppException();
+				logger.error(Literal.EXCEPTION, e);
+				throw new AppException(e.getMessage());
 			}
 
 			dueAmount = dueAmount.subtract(advanceAmt);

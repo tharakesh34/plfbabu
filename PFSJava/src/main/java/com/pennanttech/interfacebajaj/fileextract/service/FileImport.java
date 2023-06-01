@@ -149,7 +149,7 @@ public class FileImport {
 		setFile(file);
 	}
 
-	public void setMediaOnly(Media media) throws Exception {
+	public void setMediaOnly(Media media) {
 		this.media = media;
 	}
 
@@ -242,7 +242,7 @@ public class FileImport {
 		}
 	}
 
-	public void setDefaultDirectory(String filePath) throws Exception {
+	public void setDefaultDirectory(String filePath) {
 		File file = new File(filePath);
 
 		if (!file.exists()) {

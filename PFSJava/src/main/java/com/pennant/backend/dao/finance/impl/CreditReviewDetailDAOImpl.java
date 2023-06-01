@@ -187,9 +187,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcOperations.update(sql.toString(), ps -> {
-				ps.setLong(1, finID);
-			});
+			jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, finID));
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

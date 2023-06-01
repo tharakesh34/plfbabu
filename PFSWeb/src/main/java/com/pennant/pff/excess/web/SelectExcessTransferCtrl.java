@@ -1,6 +1,5 @@
 package com.pennant.pff.excess.web;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -60,7 +58,6 @@ public class SelectExcessTransferCtrl extends GFCBaseCtrl<Object> {
 	protected JdbcSearchObject<FinanceMain> searchObject;
 	private Customer customer;
 	private FinanceMain financeMain;
-	private String module;
 	private FinExcessTransfer finExcessTransfer;
 	private ExcessTransferListCtrl excessTransferListCtrl;
 	private FinanceMainService financeMainService;
@@ -78,7 +75,7 @@ public class SelectExcessTransferCtrl extends GFCBaseCtrl<Object> {
 		super.pageRightName = "ExcessTransferMaker";
 	}
 
-	public void onCreate$window_SelectExcessTransfer(Event event) throws Exception {
+	public void onCreate$window_SelectExcessTransfer(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// Set the page level components.
@@ -97,9 +94,6 @@ public class SelectExcessTransferCtrl extends GFCBaseCtrl<Object> {
 	 * 
 	 */
 	private void doSetFieldProperties() {
-
-		this.module = getArgument("module");
-
 		this.finReference.setButtonDisabled(false);
 		this.finReference.setTextBoxWidth(155);
 		this.finReference.setMandatoryStyle(true);
@@ -135,9 +129,8 @@ public class SelectExcessTransferCtrl extends GFCBaseCtrl<Object> {
 	 * When user changes textbox "custCIF"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$custCIF(Event event) throws Exception {
+	public void onChange$custCIF(Event event) {
 		customer = fetchCustomerDataByCIF();
 		addFilter(customer);
 	}
@@ -146,9 +139,8 @@ public class SelectExcessTransferCtrl extends GFCBaseCtrl<Object> {
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		validateReference();
@@ -161,7 +153,7 @@ public class SelectExcessTransferCtrl extends GFCBaseCtrl<Object> {
 		logger.debug("Leaving " + event.toString());
 	}
 
-	private void validateReference() throws Exception {
+	private void validateReference() {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -233,10 +225,8 @@ public class SelectExcessTransferCtrl extends GFCBaseCtrl<Object> {
 	 * When user clicks on button "btnSearchCustCIF Search" button
 	 * 
 	 * @param event
-	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
+	public void onClick$btnSearchCustCIF(Event event) {
 		logger.debug("Entering " + event.toString());
 		this.finReference.setValue("");
 		doClearMessage();
@@ -250,17 +240,14 @@ public class SelectExcessTransferCtrl extends GFCBaseCtrl<Object> {
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws ParseException
 	 */
-	public void onClick$btnClose(Event event) throws InterruptedException, ParseException {
+	public void onClick$btnClose(Event event) {
 		logger.debug("Entering" + event.toString());
 		this.window_SelectExcessTransfer.onClose();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
-			throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) {
 		logger.debug("Entering");
 
 		this.custCIF.clearErrorMessage();
@@ -335,7 +322,7 @@ public class SelectExcessTransferCtrl extends GFCBaseCtrl<Object> {
 		logger.debug("Leaving " + event.toString());
 	}
 
-	public void doWriteComponentsToBean() throws Exception {
+	public void doWriteComponentsToBean() {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {

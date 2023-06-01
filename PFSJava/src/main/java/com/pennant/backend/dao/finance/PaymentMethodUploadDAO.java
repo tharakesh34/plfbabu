@@ -30,4 +30,6 @@ public interface PaymentMethodUploadDAO {
 
 	boolean isMandateIdExists(long mandateId);
 
+	boolean isValidMandate(PaymentMethodUpload pmu);
+
 }

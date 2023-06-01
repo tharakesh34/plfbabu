@@ -33,9 +33,11 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.CrossLoanKnockOff;
 import com.pennant.backend.model.finance.CrossLoanTransfer;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -122,6 +124,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 	private transient ReceiptService receiptService;
 	private transient WorkFlowDetails workFlowDetails = null;
 	private transient CrossLoanKnockOffService crossLoanKnockOffService;
+	private FinExcessAmountDAO finExcessAmountDAO;
 
 	public CrossLoanKnockOffListCtrl() {
 		super();
@@ -583,10 +586,18 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 			rch.setKnockOffRefId(rch.getReceiptDetails().get(0).getPayAgainstID());
 			rch.setUserDetails(getUserWorkspace().getLoggedInUser());
 
+			clk.setExcessValueDate(clk.getValueDate());
+			clt.setExcessValueDate(clk.getValueDate());
+
+			FinExcessAmount fea = finExcessAmountDAO.getFinExcessByID(rch.getKnockOffRefId());
+			if (fea != null && fea.getValueDate() != null) {
+				clk.setExcessValueDate(fea.getValueDate());
+				clt.setExcessValueDate(fea.getValueDate());
+			}
+
 			if (rch.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 				rch.setWorkflowId(workFlowDetails.getWorkFlowId());
 			}
-
 		}
 
 		if (PennantConstants.RCD_STATUS_SAVED.equals(clk.getRecordStatus())
@@ -756,6 +767,11 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 	@Autowired
 	public void setCrossLoanKnockOffService(CrossLoanKnockOffService crossLoanKnockOffService) {
 		this.crossLoanKnockOffService = crossLoanKnockOffService;
+	}
+
+	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
 }

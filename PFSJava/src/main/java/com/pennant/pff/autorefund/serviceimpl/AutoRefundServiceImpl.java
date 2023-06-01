@@ -260,7 +260,7 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 			doProcessPayment(arl);
 		}
 
-		if (arl.getError().getCode() != null) {
+		if (arl.getError().getCode() == null) {
 			logRefund(arl);
 		}
 

@@ -242,7 +242,7 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 						mandateId = obj.toString();
 					}
 
-					logMandateHistory(new Long(mandateId), id);
+					logMandateHistory(Long.parseLong(mandateId), id);
 					return id;
 				}
 			});
@@ -415,9 +415,9 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 	public List<Long> getMandateList(String entityCode) {
 		String sql = "Select MandateID from MANDATES Where Entitycode = ?";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL.concat(sql));
 
-		return jdbcOperations.queryForList(sql.toString(), Long.class, entityCode);
+		return jdbcOperations.queryForList(sql, Long.class, entityCode);
 	}
 
 	@Override

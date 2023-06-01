@@ -57,7 +57,7 @@ public class PathUtil {
 	public static final String FINANCE_INTERESTCERTIFICATE = "Agreements/InterestCertificate";
 	public static final String FINANCE_LOANCLOSURE = "Agreements/LoanClosureLetter";
 	public static final String COVENANT_STATUS_REPORT = "Agreements/LOD";
-	public static final String BalanceConfirmation = "Agreements/BalanceConfirmation";
+	public static final String BALANCE_CONFIRMATION = "Agreements/BalanceConfirmation";
 	public static final String NOC_LETTER = "Agreements/NocLetter";
 	public static final String CLOUSER_LETTER = "Agreements/LoanClosureLetter";
 	public static final String CANCELLED_LETTER = "Agreements/LoanCancelationLetter";

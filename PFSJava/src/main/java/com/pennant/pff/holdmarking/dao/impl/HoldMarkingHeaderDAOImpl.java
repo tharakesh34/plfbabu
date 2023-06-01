@@ -1,5 +1,6 @@
 package com.pennant.pff.holdmarking.dao.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.pennant.pff.holdmarking.model.HoldMarkingHeader;
@@ -60,7 +61,7 @@ public class HoldMarkingHeaderDAOImpl extends SequenceDao<HoldMarkingHeader> imp
 	@Override
 	public List<HoldMarkingHeader> getHoldByFinId(long finId, String accNum) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" hmh.Id, hmh.HoldID, hmd.FinID, hmd.FinReference, hmh.HoldReference");
+		sql.append(" hmh.Id, hmh.HoldID, hmh.FinID, hmh.FinReference, hmh.HoldReference");
 		sql.append(", hmh.AccountNumber, hmh.HoldAmount, hmh.ReleaseAmount, hmh.Balance");
 		sql.append(" From HOLD_MARKING_HEADER hmh");
 		sql.append(" Where  hmh.FinId = ? and hmh.AccountNumber = ? ");
@@ -82,7 +83,7 @@ public class HoldMarkingHeaderDAOImpl extends SequenceDao<HoldMarkingHeader> imp
 			hmh.setBalance(rs.getBigDecimal(("Balance")));
 
 			return hmh;
-		}, accNum, finId, 0);
+		}, finId, accNum, 0);
 	}
 
 	@Override
@@ -153,7 +154,7 @@ public class HoldMarkingHeaderDAOImpl extends SequenceDao<HoldMarkingHeader> imp
 	public void updateHeader(HoldMarkingHeader hmh) {
 		String sql = "Update HOLD_MARKING_HEADER Set Balance = ?, ReleaseAmount = ? Where FinID = ? and HoldId = ?";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
 		int recordCount = this.jdbcOperations.update(sql, ps -> {
 			ps.setBigDecimal(1, hmh.getBalance());
@@ -165,6 +166,14 @@ public class HoldMarkingHeaderDAOImpl extends SequenceDao<HoldMarkingHeader> imp
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
+	}
+
+	@Override
+	public BigDecimal getHoldBalance(long finID, String accountNumber) {
+		String sql = "Select coalesce(sum(balance), 0) from Hold_Marking_Header  where FinID = ? and AccountNumber = ?";
+
+		logger.debug(Literal.SQL + sql);
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, accountNumber);
 	}
 
 }
