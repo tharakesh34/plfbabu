@@ -103,14 +103,12 @@ public class BatchFileUtil {
 		return file;
 	}
 
-	public static File getFile(String fileName) throws IOException {
-		File file = new File(PathUtil.getPath(PathUtil.EOD_FILE_FOLDER) + "/" + fileName);
-		return file;
+	public static File getFile(String fileName) {
+		return new File(PathUtil.getPath(PathUtil.EOD_FILE_FOLDER) + "/" + fileName);
 	}
 
 	public static FileWriter getFileWriter(File file) throws IOException {
-		FileWriter fileWriter = new FileWriter(file);
-		return fileWriter;
+		return new FileWriter(file);
 	}
 
 	public static void writeline(FileWriter fileWriter, String line) throws IOException {
