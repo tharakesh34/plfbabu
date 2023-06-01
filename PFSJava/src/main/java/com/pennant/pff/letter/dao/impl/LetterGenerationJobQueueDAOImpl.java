@@ -171,7 +171,7 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql.toString(), (rs, Num) -> {
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
 			BatchJobQueue jobQueue = new BatchJobQueue();
 			jobQueue.setId(rs.getLong("ID"));
 			jobQueue.setResetCounterId(rs.getLong("ResetCounterId"));

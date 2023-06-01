@@ -104,7 +104,6 @@ import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.RepaymentCancellationService;
 import com.pennant.backend.service.finance.impl.ManualAdviceUtil;
-import com.pennant.backend.service.finance.validation.FinanceCancelValidator;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.FinanceConstants;
@@ -240,7 +239,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient ReceiptUploadDetailDAO receiptUploadDetailDAO;
 	private transient FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private transient ExtendedFieldMaintenanceService extendedFieldMaintenanceService;
-	private FinanceCancelValidator financeCancelValidator;
 
 	/**
 	 * Default constructor
@@ -2191,7 +2189,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		String maintainSts = StringUtils.trimToEmpty(schdData.getFinanceMain().getRcdMaintainSts());
 
 		schdData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
-		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
 		fm.setFinSourceID(RequestSource.UI.name());
 
 		if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
@@ -4183,8 +4180,4 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.manualAdviseService = manualAdviseService;
 	}
 
-	@Autowired
-	public void setFinanceCancelValidator(FinanceCancelValidator financeCancelValidator) {
-		this.financeCancelValidator = financeCancelValidator;
-	}
 }

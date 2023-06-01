@@ -10,7 +10,7 @@ import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
 import com.pennant.backend.dao.systemmasters.PhoneTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.bulkAddressUpload.CustomerKycDetail;
+import com.pennant.backend.model.bulkaddressupload.CustomerKycDetail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.systemmasters.PhoneType;
 import com.pennant.backend.service.customermasters.CustomerPhoneNumberService;

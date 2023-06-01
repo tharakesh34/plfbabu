@@ -48,7 +48,7 @@ public interface CustomerPhoneNumberDAO {
 
 	List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomerPhoneType(final long id, String type, String phoneType);
 
-	List<CustomerPhoneNumber> getCustomerPhoneNumberById(long id, String type);
+	List<CustomerPhoneNumber> getCustPhoneNumberById(long id, String type);
 
 	int getVersion(long id, String typeCode);
 

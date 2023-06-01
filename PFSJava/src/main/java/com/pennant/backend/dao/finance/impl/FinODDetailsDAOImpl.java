@@ -1248,7 +1248,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
 			FinODDetails od = new FinODDetails();
 
 			od.setLppDueAmt(rs.getBigDecimal("LppDueAmt"));

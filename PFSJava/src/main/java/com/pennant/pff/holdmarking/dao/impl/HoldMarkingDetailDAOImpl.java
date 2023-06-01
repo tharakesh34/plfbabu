@@ -58,12 +58,12 @@ public class HoldMarkingDetailDAOImpl extends SequenceDao<HoldMarkingDetail> imp
 	}
 
 	@Override
-	public int getCountId(long Id) {
+	public int getCountId(long id) {
 		String sql = "Select Count(ID) From Hold_Marking_Details Where HoldID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.queryForObject(sql, Integer.class, Id);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, id);
 	}
 
 	@Override

@@ -96,7 +96,7 @@ public class ExtStagingDaoImpl implements ExtStagingDao {
 
 		logger.debug(Literal.SQL + sql);
 
-		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 
 			ps.setString(index++, baselOne.getAgreementId());
@@ -131,7 +131,7 @@ public class ExtStagingDaoImpl implements ExtStagingDao {
 
 		logger.debug(Literal.SQL + sql);
 
-		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 			ps.setString(index++, almExtract.getAlmReportType());
 			ps.setDate(index++, (Date) almExtract.getAlmReportDate());
@@ -201,7 +201,7 @@ public class ExtStagingDaoImpl implements ExtStagingDao {
 
 		logger.debug(Literal.SQL + sql);
 
-		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 			ps.setLong(index++, baselTwo.getAgreementId());
 			ps.setLong(index++, baselTwo.getCustomerId());
@@ -271,7 +271,7 @@ public class ExtStagingDaoImpl implements ExtStagingDao {
 
 		logger.debug(Literal.SQL + sql);
 
-		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 			ps.setLong(index++, rpmsExtract.getAgreementId());
 			ps.setLong(index++, rpmsExtract.getCustomerId());

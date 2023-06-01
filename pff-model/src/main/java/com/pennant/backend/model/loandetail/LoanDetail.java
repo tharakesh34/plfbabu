@@ -12,8 +12,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.GraceDetails.GraceDetails;
 import com.pennant.backend.model.emiholidays.EMIHolidays;
+import com.pennant.backend.model.gracedetails.GraceDetails;
 import com.pennant.backend.model.loanbranch.LoanBranch;
 import com.pennant.backend.model.loanschedules.LoanSchedules;
 import com.pennant.backend.model.loansummary.LoanSummary;

@@ -800,7 +800,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
 			AssetClassCode asc = new AssetClassCode();
 
 			asc.setId(rs.getLong("Id"));

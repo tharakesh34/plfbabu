@@ -400,9 +400,9 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 	public List<GenerateLetter> getLoanLetterInfo(long finID, String letterType) {
 		String sql = "Select DeliveryStatus From LOAN_LETTERS Where FinID = ? and LetterType = ? and Generated = ? order by ID Desc";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+		return jdbcOperations.query(sql, (rs, rowNum) -> {
 			GenerateLetter fm = new GenerateLetter();
 
 			fm.setDeliveryStatus(rs.getString("DeliveryStatus"));

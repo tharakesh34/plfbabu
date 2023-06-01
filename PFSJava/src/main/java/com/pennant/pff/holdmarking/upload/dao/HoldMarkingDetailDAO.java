@@ -10,7 +10,7 @@ public interface HoldMarkingDetailDAO {
 
 	HoldMarkingDetail getHoldByReference(long finId, String accNum);
 
-	int getCountId(long Id);
+	int getCountId(long id);
 
 	List<HoldMarkingDetail> getHoldDtlsByRefAndAcc(String reference, String accNumber);
 }

@@ -300,8 +300,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 
 	@Override
 	public Provision getProvisionDetail(long finID) {
-		Provision provision = provisionDao.getProvisionDetail(finID);
-		return provision;
+		return provisionDao.getProvisionDetail(finID);
 	}
 
 	@Override

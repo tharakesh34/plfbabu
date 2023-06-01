@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.dao.customermasters.KycDetailsUploadDAO;
-import com.pennant.backend.model.bulkAddressUpload.CustomerKycDetail;
+import com.pennant.backend.model.bulkaddressupload.CustomerKycDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;

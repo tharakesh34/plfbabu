@@ -154,7 +154,7 @@ public class HoldMarkingHeaderDAOImpl extends SequenceDao<HoldMarkingHeader> imp
 	public void updateHeader(HoldMarkingHeader hmh) {
 		String sql = "Update HOLD_MARKING_HEADER Set Balance = ?, ReleaseAmount = ? Where FinID = ? and HoldId = ?";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
 		int recordCount = this.jdbcOperations.update(sql, ps -> {
 			ps.setBigDecimal(1, hmh.getBalance());

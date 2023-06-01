@@ -269,7 +269,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			if (bps != null && bps.getEndTime() != null && "S".equals(bps.getStatus())) {
 				int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
 				if (days == 0) {
-					int timeBetween = Integer.valueOf(DateUtil.timeBetween(sysDate, bps.getEndTime(), "HH"));
+					int timeBetween = Integer.parseInt(DateUtil.timeBetween(sysDate, bps.getEndTime(), "HH"));
 
 					if (timeBetween > 20) {
 						this.btnStartJob.setDisabled(false);

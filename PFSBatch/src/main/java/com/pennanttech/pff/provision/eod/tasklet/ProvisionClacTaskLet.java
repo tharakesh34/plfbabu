@@ -30,7 +30,6 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.eod.step.StepUtil;
-import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.provision.ProvisionReversalStage;
 import com.pennanttech.pff.provision.model.Provision;
 import com.pennanttech.pff.provision.service.ProvisionService;
@@ -41,7 +40,6 @@ public class ProvisionClacTaskLet implements Tasklet {
 	private PlatformTransactionManager transactionManager;
 	private DataSource dataSource;
 	private ProvisionService provisionService;
-	private AssetClassificationService assetClassificationService;
 
 	private static final String QUEUE_QUERY = "Select FinID From Provision_Calc_Queue Where ThreadID = ? and Progress = ?";
 
@@ -280,11 +278,6 @@ public class ProvisionClacTaskLet implements Tasklet {
 	@Autowired
 	public void setProvisionService(ProvisionService provisionService) {
 		this.provisionService = provisionService;
-	}
-
-	@Autowired
-	public void setAssetClassificationService(AssetClassificationService assetClassificationService) {
-		this.assetClassificationService = assetClassificationService;
 	}
 
 }
