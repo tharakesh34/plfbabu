@@ -212,7 +212,7 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 		switch (letterType) {
 		case "CLOSURE":
 		case "NOC":
-		case "CANCELLATIONLETTER":
+		case "CANCELLATION":
 			return true;
 		default:
 			return false;
