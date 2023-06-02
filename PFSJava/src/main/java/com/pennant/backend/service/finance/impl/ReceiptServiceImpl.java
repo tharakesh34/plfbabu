@@ -3738,8 +3738,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		boolean autoReceipt = ReceiptUtil.isAutoReceipt(receiptMode, productCategory);
 
-		if (!isTerminationEvent(fsi) && (!(ReceiptMode.isValidReceiptMode(receiptMode)) && !fsi.isKnockOffReceipt()
-				&& !fsi.isLoanCancellation() || autoReceipt)) {
+		if (!(isTerminationEvent(fsi) || ReceiptMode.isValidReceiptMode(receiptMode) || fsi.isKnockOffReceipt()
+				|| fsi.isLoanCancellation() || autoReceipt)) {
 			setError(schdData, "90281", "Receipt mode", ReceiptMode.getValidReceiptModes());
 			return;
 		}
