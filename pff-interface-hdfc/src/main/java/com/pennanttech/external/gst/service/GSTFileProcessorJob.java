@@ -97,7 +97,7 @@ public class GSTFileProcessorJob extends AbstractJob
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.debug(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
 	}

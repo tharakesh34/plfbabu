@@ -86,7 +86,7 @@ public class ExtSFTPUtil {
 		try {
 			ftpClient = new SftpClient(host, port, accessKey, secretKey);
 		} catch (Exception e) {
-			e.printStackTrace();
+
 		}
 		return ftpClient;
 	}
