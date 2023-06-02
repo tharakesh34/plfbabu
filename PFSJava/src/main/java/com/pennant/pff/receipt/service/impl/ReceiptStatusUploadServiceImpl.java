@@ -135,13 +135,6 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 			return;
 		}
 
-		if (!FinServiceEvent.SCHDRPY.equals(receiptPurpose) && !RepayConstants.PAYSTATUS_REALIZED.equals(status)
-				&& realizedDate != null && (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(receiptmode)
-						|| DisbursementConstants.PAYMENT_TYPE_DD.equals(receiptmode))) {
-			setError(detail, ReceiptStatusUploadError.RU021);
-			return;
-		}
-
 		if (!RepayConstants.PAYSTATUS_BOUNCE.equals(status) && !RepayConstants.PAYSTATUS_CANCEL.equals(status)
 				&& !RepayConstants.PAYSTATUS_REALIZED.equals(status)) {
 			setError(detail, ReceiptStatusUploadError.RU05);
@@ -150,6 +143,14 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 
 		if (RepayConstants.PAYSTATUS_REALIZED.equals(receiptmodestatus) && receiptmodestatus.equals(status)) {
 			setError(detail, ReceiptStatusUploadError.RU06);
+			return;
+		}
+
+		if (!FinServiceEvent.SCHDRPY.equals(receiptPurpose) && !RepayConstants.PAYSTATUS_REALIZED.equals(status)
+				&& (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(receiptmode)
+						|| DisbursementConstants.PAYMENT_TYPE_DD.equals(receiptmode))
+				&& RepayConstants.PAYSTATUS_REALIZED.equals(receiptmodestatus)) {
+			setError(detail, ReceiptStatusUploadError.RU021);
 			return;
 		}
 
@@ -381,7 +382,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 
 		Map<String, String> map = new HashMap<>();
 		if (detail != null) {
-			FinReceiptData fdTemp = (FinReceiptData) auditHeader.getModelData();
+			FinReceiptData fdTemp = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 
 			ManualAdvise manualAdvise = fdTemp.getReceiptHeader().getManualAdvise();
 			if (manualAdvise != null) {

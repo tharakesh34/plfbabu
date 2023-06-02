@@ -44,7 +44,7 @@ public enum ReceiptStatusUploadError {
 
 	RU020(" NO DATA FOUND with specified receipt"),
 
-	RU021("REALIZATION DATE Should be empty when Status is B/C");
+	RU021("B/C status codes for already Realized receipts of ES/EP receipt modes's not ALLOWED");
 
 	private String description;
 
