@@ -382,7 +382,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 
 		Map<String, String> map = new HashMap<>();
 		if (detail != null) {
-			FinReceiptData fdTemp = (FinReceiptData) auditHeader.getModelData();
+			FinReceiptData fdTemp = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 
 			ManualAdvise manualAdvise = fdTemp.getReceiptHeader().getManualAdvise();
 			if (manualAdvise != null) {
