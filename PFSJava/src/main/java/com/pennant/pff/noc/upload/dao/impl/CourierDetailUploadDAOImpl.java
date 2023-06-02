@@ -131,13 +131,13 @@ public class CourierDetailUploadDAOImpl extends SequenceDao<CourierDetailUpload>
 	}
 
 	@Override
-	public Long isFileExist(String reference, String letterType, Date letterDate) {
-		String sql = "Select HeaderID From Courier_Details_Upload Where FinReference = ? And LetterType = ? And LetterDate = ?";
+	public Long isFileExist(Date letterDate) {
+		String sql = "select FinId from Loan_Letters where GeneratedDate = ? and DispatchDate is not null";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return jdbcOperations.queryForObject(sql, Long.class, reference, letterType, letterDate);
+			return jdbcOperations.queryForObject(sql, Long.class, letterDate);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
