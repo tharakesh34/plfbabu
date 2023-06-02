@@ -14,6 +14,7 @@ import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennanttech.external.app.config.dao.ExtStagingDao;
 import com.pennanttech.external.extractions.model.AlmExtract;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -26,6 +27,7 @@ public class ALMDumpService {
 		List<FinEODEvent> finEods = custEODEvent.getFinEODEvents();
 		for (FinEODEvent finEOD : finEods) {
 			FinanceProfitDetail fpd = finEOD.getFinProfitDetail();
+			List<FinanceScheduleDetail> fschd = finEOD.getFinanceScheduleDetails();
 			FinanceMain fm = finEOD.getFinanceMain();
 			AlmExtract almExtract = new AlmExtract();
 			almExtract.setAlmReportType("RD");// DEFAULT
@@ -50,7 +52,8 @@ public class ALMDumpService {
 				}
 			}
 
-			almExtract.setCurrentBalance((fpd.getTotalPriBal().subtract(excessBalance)));
+			almExtract.setCurrentBalance((fpd.getTotalPriBal().subtract(excessBalance)).abs());// negative values to be
+																								// resolved
 			almExtract.setDueDate(formatData(fpd.getNSchdDate()));
 			almExtract.setInitRate(fm.getRepayProfitRate());
 			almExtract.setLifeCeiling(fm.getRepayProfitRate());
@@ -58,7 +61,8 @@ public class ALMDumpService {
 			almExtract.setLoanType(fm.getFinType());
 			almExtract.setMaturity(formatData(fm.getMaturityDate()));
 			almExtract.setOriginalBalance(fm.getFinAmount());
-			almExtract.setOriginalTerm(fpd.getTotalTenor());
+			// almExtract.setOriginalTerm(fpd.getTotalTenor());// changed to below
+			almExtract.setOriginalTerm(fm.getNumberOfTerms());
 			almExtract.setOriginationDate(fm.getFinApprovedDate());
 			almExtract.setInstalment(fpd.getNSchdPri().add(fpd.getNSchdPft()));
 			almExtract.setPaymentFreq(fpd.getRepayFrq());
