@@ -4014,10 +4014,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			setError(schdData, "RU00060");
 			return;
 		}
-
-		if (StringUtils.isNotBlank(fsi.getClosureType())) {
-			rd.setForeClosure(true);
-		}
+		/*
+		 * if (StringUtils.isNotBlank(fsi.getClosureType())) { rd.setForeClosure(true); }
+		 */
 
 		// closure with full waiver
 		if (fsi != null && ("Post".equals(fsi.getReqType()) || "Inquiry".equals(fsi.getReqType()))
@@ -6834,8 +6833,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			if (!fsi.isClosureReceipt()) {
 				rcd.setPayOrder(rch.getReceiptDetails().size() + 1);
 				rch.getReceiptDetails().add(rcd);
+
 			}
-		} else {
+		}
+
+		if (CollectionUtils.isEmpty(rch.getXcessPayables())) {
 			if (rd.getTotalPastDues().compareTo(rch.getReceiptAmount()) >= 0) {
 				rcd.setDueAmount(rch.getReceiptAmount());
 				rd.setTotalPastDues(rd.getTotalPastDues().subtract(rch.getReceiptAmount()));
@@ -6843,6 +6845,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				rcd.setDueAmount(rd.getTotalPastDues());
 				rd.setTotalPastDues(BigDecimal.ZERO);
 			}
+
+			for (FinReceiptDetail detail : rch.getReceiptDetails()) {
+				detail.setDueAmount(rcd.getDueAmount());
+			}
+
 		}
 
 		fm.setReceiptPurpose(receiptPurpose.code());
