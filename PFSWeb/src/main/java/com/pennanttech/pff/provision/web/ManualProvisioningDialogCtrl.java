@@ -352,6 +352,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		this.newProvisionIntPercentage.setValue(p.getNewIntProvisionPer());
 		this.newProvisionIntAmount.setValue(PennantApplicationUtil.formateAmount(p.getNewIntProvisionAmt(), format));
 		this.overrideProvision.setChecked(p.isOverrideProvision());
+		this.overrideProvision.setDisabled(isReadOnly("ManualProvisioningDialog_ManProvsnPer"));
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -488,9 +489,9 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			this.manualProvision.setDisabled(true);
 		}
 
-		doWriteBeanToComponents(provision);
-
 		onCheckOverrideProvision();
+
+		doWriteBeanToComponents(provision);
 
 		onSelectManualAssetClassCode(provision.getManualAssetSubClassID());
 
