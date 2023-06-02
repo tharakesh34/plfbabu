@@ -39,7 +39,10 @@ public class InterfaceErrorCodeUtil {
 		}
 
 		InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(errorCode);
-		return interfaceErrorCode.getErrorMessage();
+		if (interfaceErrorCode != null && interfaceErrorCode.getErrorMessage() != null) {
+			return interfaceErrorCode.getErrorMessage();
+		}
+		return "";
 	}
 
 }

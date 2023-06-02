@@ -149,24 +149,17 @@ public class GSTFolderReaderJob extends AbstractJob
 
 	private List<String> prepareDataFromFile(File file) {
 		logger.debug(Literal.ENTERING);
-		int cnt = 0;
 		List<String> dataList = new ArrayList<String>();
 		try (Scanner sc = new Scanner(file)) {
 
 			while (sc.hasNextLine()) {
 				String lineData = sc.nextLine();
-
-				if (cnt == 0) {// Consider record after 2 lines.
-
-					if (lineData.contains(GST_COMP_RESPONSE_END)) { // End of the line for response data.
-						return dataList;
-					} else {
-						dataList.add(lineData);
-					}
-
+				if (lineData.contains(GST_COMP_RESPONSE_END)) { // End of the line for response data.
+					return dataList;
 				} else {
-					cnt = cnt + 1;
+					dataList.add(lineData);
 				}
+
 			}
 
 			return dataList;

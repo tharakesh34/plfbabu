@@ -80,8 +80,8 @@ public class GSTFileExtractionJob extends AbstractJob implements InterfaceConsta
 		GSTCompHeader header;
 		try {
 			while ((header = cursorItemReader.read()) != null) {
+				Scanner sc = null;
 				try {
-					Scanner sc = null;
 					// update the extract state as processing
 					extGSTDao.updateFileStatus(header.getId(), INPROCESS);
 
@@ -113,7 +113,6 @@ public class GSTFileExtractionJob extends AbstractJob implements InterfaceConsta
 							detailList.clear();
 						}
 					}
-					sc.close();
 					if (detailList.size() > 0) {
 						// save records remaining after bulk insert
 						extGSTDao.saveExtGSTCompRecordsData(detailList);
@@ -125,6 +124,10 @@ public class GSTFileExtractionJob extends AbstractJob implements InterfaceConsta
 					logger.debug(Literal.EXCEPTION, e);
 					// update the file extraction as completed
 					extGSTDao.updateFileStatus(header.getId(), EXCEPTION);
+				} finally {
+					if (sc != null) {
+						sc.close();
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -133,6 +136,7 @@ public class GSTFileExtractionJob extends AbstractJob implements InterfaceConsta
 			if (cursorItemReader != null) {
 				cursorItemReader.close();
 			}
+
 		}
 		logger.debug(Literal.LEAVING);
 	}

@@ -92,11 +92,8 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 
 		try {
 			while ((extReceiptHeader = cursorItemReader.read()) != null) {
-
+				Scanner sc = null;
 				try {
-
-					Scanner sc = null;
-					// try {
 					// update the file status as processing
 					extReceiptHeader.setExtraction(INPROCESS);
 					extCollectionReceiptDao.updateFileExtraction(extReceiptHeader);
@@ -170,8 +167,6 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 							extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(errorCode));
 						}
 					}
-
-					sc.close();
 
 					boolean isLastLineRemoved = false;
 
@@ -255,6 +250,10 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 					extReceiptHeader.setErrorCode(F702);
 					extReceiptHeader.setErrorMessage(e.getMessage());
 					extCollectionReceiptDao.updateFileExtraction(extReceiptHeader);
+				} finally {
+					if (sc != null) {
+						sc.close();
+					}
 				}
 			}
 

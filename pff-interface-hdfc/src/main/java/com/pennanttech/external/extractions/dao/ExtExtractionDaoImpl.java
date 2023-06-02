@@ -37,13 +37,14 @@ public class ExtExtractionDaoImpl extends SequenceDao implements ExtExtractionDa
 	public String executeSp(String spName) {
 		logger.info("SP Execution Started.");
 		String status = "FAIL";
+		String spCall = "{ call " + spName + "() }";
 		try {
 			mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
 
 				@Override
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
 
-					CallableStatement callableStatement = connection.prepareCall("{ call " + spName + "() }");
+					CallableStatement callableStatement = connection.prepareCall(spCall);
 					return callableStatement;
 
 				}
@@ -61,14 +62,15 @@ public class ExtExtractionDaoImpl extends SequenceDao implements ExtExtractionDa
 	public String executeSp(String spName, Date appDate) {
 		logger.info("SP Execution Started.");
 		String status = "FAIL";
+		String spCall = "{ call " + spName + "(?) }";
 		try {
 			mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
 
 				@Override
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
 
-					CallableStatement callableStatement = connection
-							.prepareCall("{ call " + spName + "(" + appDate + ") }");
+					CallableStatement callableStatement = connection.prepareCall(spCall);
+					callableStatement.setDate(1, (java.sql.Date) appDate);
 					return callableStatement;
 
 				}
@@ -85,14 +87,15 @@ public class ExtExtractionDaoImpl extends SequenceDao implements ExtExtractionDa
 	public String executeSp(String spName, String fileName) {
 		logger.info("File writing SP Execution Started");
 		String status = "FAIL";
+		String spCall = "{ call " + spName + "(?) }";
 		try {
 			this.mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
 
 				@Override
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
 
-					CallableStatement callableStatement = connection
-							.prepareCall("{ call " + spName + "('" + fileName + "') }");
+					CallableStatement callableStatement = connection.prepareCall(spCall);
+					callableStatement.setString(1, fileName);
 					return callableStatement;
 
 				}

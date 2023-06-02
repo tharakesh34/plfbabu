@@ -110,7 +110,7 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 
 	private void processUcicRequest() {
 		logger.debug(Literal.ENTERING);
-		String custDataExtrctstatus = null;
+		String custDataExtrctstatus = "";
 		try {
 			if (extUcicExtractData != null) {
 				custDataExtrctstatus = extUcicExtractData.extractCustomerData();

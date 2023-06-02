@@ -51,7 +51,9 @@ public class ExtSFTPUtil {
 		List<String> fileNames = new ArrayList<String>();
 		Vector filelist = null;
 		try {
-			filelist = ((ChannelSftp) channel).ls(remotePath);
+			if (channel != null) {
+				filelist = ((ChannelSftp) channel).ls(remotePath);
+			}
 		} catch (Exception e) {
 			throw new AppException(e.getMessage());
 		} finally {
