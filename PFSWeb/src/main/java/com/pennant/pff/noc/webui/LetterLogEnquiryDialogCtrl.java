@@ -213,6 +213,10 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 					requestType = "Manual";
 				}
 
+				if ("D".equals(requestType)) {
+					requestType = "Delink-Auto";
+				}
+
 				lc = new Listcell(data.getModeofTransfer());
 				lc.setSpan(1);
 				lc.setParent(item);

@@ -22,6 +22,7 @@ import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.mail.MailTemplateDAO;
+import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
@@ -297,11 +298,19 @@ public class LetterService {
 					"There is no FTP/SFTP/S-3 Storage details not configured with Data-Engine Name CSD_STORAGE");
 		}
 
-		String csdCode = serviceBranch.getCode();
 		String parentFolder = serviceBranch.getFolderPath();
+		String csdCode = serviceBranch.getCode();
 		Date appDate = letter.getBusinessDate();
 
 		String letterLocation = csdCode.concat(File.separator).concat(DateUtil.format(appDate, "ddMMyyyy"));
+
+		if ("A".equals(letter.getRequestType())) {
+			letterLocation = letterLocation.concat(File.separator).concat("Closure");
+		} else if ("M".equals(letter.getRequestType())) {
+			letterLocation = letterLocation.concat(File.separator).concat("Request");
+		} else if ("D".equals(letter.getRequestType())) {
+			letterLocation = letterLocation.concat(File.separator).concat("Delink");
+		}
 
 		String fileName = letter.getFileName();
 		String remotePath = parentFolder.concat(File.separator).concat(letterLocation);
@@ -328,6 +337,9 @@ public class LetterService {
 
 		letter.setGeneratedDate(letter.getBusinessDate());
 		letter.setGeneratedOn(new Timestamp(System.currentTimeMillis()));
+		letter.setApprovedBy(PFSBatchAdmin.loggedInUser.getUserId());
+		letter.setGeneratedBy(PFSBatchAdmin.loggedInUser.getUserId());
+		letter.setApprovedOn(new Timestamp(System.currentTimeMillis()));
 
 		autoLetterGenerationDAO.update(letter);
 

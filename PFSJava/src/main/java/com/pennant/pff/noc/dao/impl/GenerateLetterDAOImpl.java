@@ -262,7 +262,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		sql.append(", su.UsrLogin ApproverName");
 		sql.append(" From Loan_Letters ll");
 		sql.append(" Left Join SecUsers su on su.UsrId = ll.ApprovedBy");
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinID = ? and Generated = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -287,7 +287,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			letter.setApproverName(rs.getString("ApproverName"));
 
 			return letter;
-		}, finID);
+		}, finID, 1);
 	}
 
 	@Override
@@ -494,7 +494,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 
 	@Override
 	public List<GenerateLetter> getLoanLetterInfo(long finID, String letterType) {
-		String sql = "Select Status From Loan_Letters Where FinID = ? And LetterType = ?";
+		String sql = "Select Status From Loan_Letters Where FinID = ? And LetterType = ? and Generated = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -504,6 +504,6 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			letter.setStatus(rs.getString("Status"));
 
 			return letter;
-		}, finID, letterType);
+		}, finID, letterType, 1);
 	}
 }
