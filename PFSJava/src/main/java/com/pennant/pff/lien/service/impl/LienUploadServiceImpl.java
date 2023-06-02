@@ -312,6 +312,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 				if (lu != null) {
 					map.put("Lien ID", String.valueOf(lu.getLienID()));
 					lienup.setExtendedFields(map);
+					header.setExtendedFieldRequired(true);
 				}
 
 				transactionManager.commit(txStatus);

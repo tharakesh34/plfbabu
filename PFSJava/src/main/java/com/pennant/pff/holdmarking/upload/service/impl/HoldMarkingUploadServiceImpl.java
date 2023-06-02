@@ -141,7 +141,7 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 						setSuccesStatus(detail);
 
 						try {
-							processHoldMarking(detail);
+							processHoldMarking(detail, header);
 							setSuccesStatus(detail);
 						} catch (Exception e) {
 							setFailureStatus(detail, e.getMessage());
@@ -225,7 +225,7 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processHoldMarking(HoldMarkingUpload detail) {
+	private void processHoldMarking(HoldMarkingUpload detail, FileUploadHeader header) {
 		int count = 0;
 
 		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
@@ -267,6 +267,7 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 			if (hmd != null) {
 				map.put("Hold ID", String.valueOf(hmd.getHoldID()));
 				detail.setExtendedFields(map);
+				header.setExtendedFieldRequired(true);
 			}
 
 		} else {
