@@ -22,13 +22,13 @@ public class ExtCollectionReceiptData {
 	private BigDecimal lppAmount;
 	private BigDecimal bccAmount;
 	private BigDecimal excessAmount;
-	private long othercharge1;
+	private String othercharge1;
 	private BigDecimal otherAmt1;
-	private long OtherCharge2;
+	private String OtherCharge2;
 	private BigDecimal OtherAmt2;
-	private long OtherCharge3;
+	private String OtherCharge3;
 	private BigDecimal OtherAmt3;
-	private long OtherCharge4;
+	private String OtherCharge4;
 	private BigDecimal OtherAmt4;
 	private String remarks;
 	private long Batched;
@@ -188,11 +188,11 @@ public class ExtCollectionReceiptData {
 		this.excessAmount = excessAmount;
 	}
 
-	public long getOthercharge1() {
+	public String getOthercharge1() {
 		return othercharge1;
 	}
 
-	public void setOthercharge1(long othercharge1) {
+	public void setOthercharge1(String othercharge1) {
 		this.othercharge1 = othercharge1;
 	}
 
@@ -204,11 +204,11 @@ public class ExtCollectionReceiptData {
 		this.otherAmt1 = otherAmt1;
 	}
 
-	public long getOtherCharge2() {
+	public String getOtherCharge2() {
 		return OtherCharge2;
 	}
 
-	public void setOtherCharge2(long otherCharge2) {
+	public void setOtherCharge2(String otherCharge2) {
 		OtherCharge2 = otherCharge2;
 	}
 
@@ -220,11 +220,11 @@ public class ExtCollectionReceiptData {
 		OtherAmt2 = otherAmt2;
 	}
 
-	public long getOtherCharge3() {
+	public String getOtherCharge3() {
 		return OtherCharge3;
 	}
 
-	public void setOtherCharge3(long otherCharge3) {
+	public void setOtherCharge3(String otherCharge3) {
 		OtherCharge3 = otherCharge3;
 	}
 
@@ -236,11 +236,11 @@ public class ExtCollectionReceiptData {
 		OtherAmt3 = otherAmt3;
 	}
 
-	public long getOtherCharge4() {
+	public String getOtherCharge4() {
 		return OtherCharge4;
 	}
 
-	public void setOtherCharge4(long otherCharge4) {
+	public void setOtherCharge4(String otherCharge4) {
 		OtherCharge4 = otherCharge4;
 	}
 

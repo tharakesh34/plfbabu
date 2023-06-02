@@ -29,13 +29,13 @@ public interface CollectionReceiptDataSplit {
 		collectionData.setLppAmount(setBigDecimalData(dataArray, 17, collectionData));
 		collectionData.setBccAmount(setBigDecimalData(dataArray, 18, collectionData));
 		collectionData.setExcessAmount(setBigDecimalData(dataArray, 19, collectionData));
-		collectionData.setOthercharge1(setLongData(dataArray, 20, collectionData));
+		collectionData.setOthercharge1(setStringData(dataArray, 20, collectionData));
 		collectionData.setOtherAmt1(setBigDecimalData(dataArray, 21, collectionData));
-		collectionData.setOtherCharge2(setLongData(dataArray, 22, collectionData));
+		collectionData.setOtherCharge2(setStringData(dataArray, 22, collectionData));
 		collectionData.setOtherAmt2(setBigDecimalData(dataArray, 23, collectionData));
-		collectionData.setOtherCharge3(setLongData(dataArray, 24, collectionData));
+		collectionData.setOtherCharge3(setStringData(dataArray, 24, collectionData));
 		collectionData.setOtherAmt3(setBigDecimalData(dataArray, 25, collectionData));
-		collectionData.setOtherCharge4(setLongData(dataArray, 26, collectionData));
+		collectionData.setOtherCharge4(setStringData(dataArray, 26, collectionData));
 		collectionData.setOtherAmt4(setBigDecimalData(dataArray, 27, collectionData));
 		collectionData.setRemarks(setStringData(dataArray, 28, collectionData));
 		collectionData.setBatched(setLongData(dataArray, 29, collectionData));
