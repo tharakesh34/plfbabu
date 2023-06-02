@@ -134,6 +134,7 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 	private boolean invoiceReq;
 	private BigDecimal eligibleAmount;
 	private String payableLinkTo;
+	private String brReturnCode;
 
 	public String getFinSource() {
 		return finSource;
@@ -248,6 +249,7 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 		excludeFields.add("eligibleAmount");
 		excludeFields.add("payableLinkTo");
 		excludeFields.add("refundable");
+		excludeFields.add("brReturnCode");
 		return excludeFields;
 	}
 
@@ -701,6 +703,14 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 
 	public void setRefundable(boolean refundable) {
 		this.refundable = refundable;
+	}
+
+	public String getBrReturnCode() {
+		return brReturnCode;
+	}
+
+	public void setBrReturnCode(String brReturnCode) {
+		this.brReturnCode = brReturnCode;
 	}
 
 }

@@ -313,6 +313,11 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 		return feeTypeDAO.getApprovedFeeTypeByFeeCode(feeTyeCode);
 	}
 
+	@Override
+	public long getFeeTypeIdByCode(String code) {
+		return feeTypeDAO.getFeeTypeId(code);
+	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}

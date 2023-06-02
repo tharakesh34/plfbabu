@@ -31,6 +31,8 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
@@ -91,4 +93,7 @@ public interface ManualAdviseService {
 	List<ManualAdvise> getCancelledManualAdvise(long finID);
 
 	void cancelAdvises(long finID);
+
+	ManualAdvise getMAForBounce(FinReceiptHeader rch, FinReceiptDetail rcd, String bounceCode,
+			String remarks, String presentmentType, Date appDate);
 }

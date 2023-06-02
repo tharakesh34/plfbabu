@@ -41,6 +41,7 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -74,6 +75,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private CustomerDAO customerDAO;
 	private ReceiptAllocationDetailDAO receiptAllocationDetailDAO;
+	private ManualAdviseService manualAdviseService;
 
 	public ReceiptStatusUploadServiceImpl() {
 		super();
@@ -135,6 +137,13 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 			return;
 		}
 
+		if (!FinServiceEvent.SCHDRPY.equals(receiptPurpose) && !RepayConstants.PAYSTATUS_REALIZED.equals(status)
+				&& realizedDate == null && (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(receiptmode)
+						|| DisbursementConstants.PAYMENT_TYPE_DD.equals(receiptmode))) {
+			setError(detail, ReceiptStatusUploadError.RU021);
+			return;
+		}
+
 		if (!RepayConstants.PAYSTATUS_BOUNCE.equals(status) && !RepayConstants.PAYSTATUS_CANCEL.equals(status)
 				&& !RepayConstants.PAYSTATUS_REALIZED.equals(status)) {
 			setError(detail, ReceiptStatusUploadError.RU05);
@@ -143,14 +152,6 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 
 		if (RepayConstants.PAYSTATUS_REALIZED.equals(receiptmodestatus) && receiptmodestatus.equals(status)) {
 			setError(detail, ReceiptStatusUploadError.RU06);
-			return;
-		}
-
-		if (!FinServiceEvent.SCHDRPY.equals(receiptPurpose) && !RepayConstants.PAYSTATUS_REALIZED.equals(status)
-				&& (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(receiptmode)
-						|| DisbursementConstants.PAYMENT_TYPE_DD.equals(receiptmode))
-				&& RepayConstants.PAYSTATUS_REALIZED.equals(receiptmodestatus)) {
-			setError(detail, ReceiptStatusUploadError.RU021);
 			return;
 		}
 
@@ -263,7 +264,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 						setFailureStatus(detail);
 					} else {
 						prepareUserDetails(header, detail);
-						updateReceipt(detail);
+						updateReceipt(detail, header);
 						setSuccesStatus(detail);
 					}
 				}
@@ -283,7 +284,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		}).start();
 	}
 
-	private void updateReceipt(ReceiptStatusUpload detail) {
+	private void updateReceipt(ReceiptStatusUpload detail, FileUploadHeader header) {
 		FinReceiptData fd = new FinReceiptData();
 		AuditHeader auditHeader = null;
 
@@ -300,11 +301,18 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 			frh.setPartPayAmount(frh.getReceiptAmount());
 		}
 
+		if (RepayConstants.PAYSTATUS_BOUNCE.equals(detail.getStatusRM())) {
+			ManualAdvise ma = manualAdviseService.getMAForBounce(frh, frd.get(0), detail.getBounceReason(),
+					detail.getBounceRemarks(), "", frh.getValueDate());
+			frh.setBounceId(ma.getBounceID());
+		}
+
 		frh.setReceiptID(detail.getReceiptId());
 		frh.setReceiptModeStatus(detail.getStatusRM());
 		frh.setRealizationDate(detail.getRealizationDate());
 		frh.setReceiptDetails(frd);
 		frh.setUserDetails(detail.getUserDetails());
+
 		if (allocations != null) {
 			frh.setAllocations(allocations);
 		}
@@ -315,6 +323,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 
 		if (RepayConstants.PAYSTATUS_CANCEL.equals(detail.getStatusRM())) {
 			frh.setCancelReason(detail.getBounceReason());
+			frh.setCancelRemarks(detail.getBounceRemarks());
 		}
 
 		fd.setFinID(frh.getFinID());
@@ -388,6 +397,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 			if (manualAdvise != null) {
 				map.put("Bounce Charge", CurrencyUtil.format(manualAdvise.getAdviseAmount()));
 				detail.setExtendedFields(map);
+				header.setExtendedFieldRequired(true);
 			}
 		}
 	}
@@ -515,6 +525,11 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 	@Autowired
 	public void setReceiptAllocationDetailDAO(ReceiptAllocationDetailDAO receiptAllocationDetailDAO) {
 		this.receiptAllocationDetailDAO = receiptAllocationDetailDAO;
+	}
+
+	@Autowired
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
 	}
 
 }
