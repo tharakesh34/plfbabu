@@ -5068,7 +5068,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		String reference = rud.getReference();
 		String chequeNo = rud.getChequeNo();
 
-		Long finID = financeMainDAO.getFinIDByFinReference(reference, "", false);
+		Long finID = financeMainDAO.getFinID(reference, TableType.MAIN_TAB);
 
 		if (finID == null) {
 			setErrorToRUD(rud, "RU0004", reference);
@@ -5916,6 +5916,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rch.setFinType(fm.getFinType());
 		rch.setClosureType(fsi.getClosureType());
 		rch.setClosureWithFullWaiver(fsi.isClosureWithFullWaiver());
+		rch.setCancelRemarks(fsi.getCancelRemarks());
 
 		if (fsi.isKnockOffReceipt()) {
 			rch.setKnockOffType(fsi.getKnockoffType());

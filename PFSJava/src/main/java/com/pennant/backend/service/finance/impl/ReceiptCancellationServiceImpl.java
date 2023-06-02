@@ -569,9 +569,25 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			} else {
 				finReceiptHeaderDAO.save(rch, TableType.MAIN_TAB);
 				for (FinReceiptDetail finRecpt : rch.getReceiptDetails()) {
+					finRecpt.setReceiptID(rch.getReceiptID());
 					finReceiptDetailDAO.save(finRecpt, TableType.MAIN_TAB);
 				}
 
+				FinServiceInstruction fsi = rd.getFinanceDetail().getFinScheduleData().getFinServiceInstruction();
+				if ((fsi != null && fsi.isReceiptUpload())
+						&& RepayConstants.PAYSTATUS_BOUNCE.equals(rch.getReceiptModeStatus())) {
+					ManualAdvise ma = rch.getManualAdvise();
+					ma.setReceiptID(rch.getReceiptID());
+					ma.setPaidAmount(BigDecimal.ZERO);
+					ma.setFinID(finID);
+					ma.setVersion(1);
+					ma.setLastMntBy(rch.getLastMntBy());
+					ma.setLastMntOn(rch.getLastMntOn());
+					ma.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					manualAdviseDAO.save(ma, TableType.MAIN_TAB);
+				}
+
+				receiptID = rch.getReceiptID();
 				int i = 0;
 				for (ReceiptAllocationDetail alloc : rch.getAllocations()) {
 					alloc.setReceiptID(receiptID);
@@ -1070,6 +1086,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		long receiptID = rch.getReceiptID();
 		EventProperties eventProperties = fm.getEventProperties();
 		Date appDate = fm.getAppDate();
+
+		if (receiptID == 0) {
+			return null;
+		}
 
 		if (appDate == null) {
 			appDate = getAppDate(eventProperties);
@@ -3047,6 +3067,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		FinReceiptData rd = (FinReceiptData) ad.getModelData();
 		FinReceiptHeader rch = rd.getReceiptHeader();
 
+		if (rch.getReceiptID() == 0) {
+			return ad;
+		}
+
 		validate(ad, usrLanguage, method);
 
 		if (FinServiceEvent.FEEPAYMENT.equals(rch.getReceiptPurpose())
@@ -3054,11 +3078,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				&& !financeMainDAO.isFinReferenceExists(rch.getReference(), "_Temp", false)) {
 			ad.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60209", null)));
 		}
-		
-		if (rch.getReceiptID() == 0) {
-			return ad;
-		}
-		
+
 		if (isExcessUtilized(rch.getReceiptID())) {
 			ad.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60219", "", null)));
 		}

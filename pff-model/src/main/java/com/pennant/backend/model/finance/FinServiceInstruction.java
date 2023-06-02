@@ -370,6 +370,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private boolean loanCancellation;
 	private boolean closureReceipt;
 	private boolean closureWithFullWaiver;
+	private String cancelRemarks;
 
 	public FinServiceInstruction copyEntity() {
 		FinServiceInstruction fsi = new FinServiceInstruction();
@@ -1891,6 +1892,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 
 	public void setLoanCancellationType(String loanCancellationType) {
 		this.loanCancellationType = loanCancellationType;
+	}
+
+	public String getCancelRemarks() {
+		return cancelRemarks;
+	}
+
+	public void setCancelRemarks(String cancelRemarks) {
+		this.cancelRemarks = cancelRemarks;
 	}
 
 }

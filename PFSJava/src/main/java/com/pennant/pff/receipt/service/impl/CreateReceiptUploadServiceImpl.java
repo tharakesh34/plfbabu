@@ -232,6 +232,8 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 			fsi.setClosureType(detail.getClosureType());
 		}
 
+		fsi.setCancelRemarks(detail.getBounceRemarks());
+
 		FinanceDetail fd = null;
 
 		TransactionStatus txStatus = getTransactionStatus();
