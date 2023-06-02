@@ -644,9 +644,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 				return;
 			}
 
-			if ((RepayConstants.PAYSTATUS_REALIZED.equals(modeStatus)
-					|| RepayConstants.PAYSTATUS_CANCEL.equals(modeStatus)
-					|| RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus)) && realizedDate == null) {
+			if (RepayConstants.PAYSTATUS_REALIZED.equals(modeStatus) && realizedDate == null) {
 				setError(rud, "[REALIZATIONDATE] is Mandatory incase of 'CHEQUE' or 'DD' ");
 				return;
 			}
