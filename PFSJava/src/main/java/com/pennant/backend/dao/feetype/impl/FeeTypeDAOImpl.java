@@ -302,7 +302,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			ft.setIncomeOrExpenseAcTypeDesc(rs.getString("IncomeOrExpenseAcTypeDesc"));
 
 			ft.setWaiverOrRefundAcType(rs.getString("WaiverOrRefundAcType"));
-			ft.setIncomeOrExpenseAcTypeDesc(rs.getString("IncomeOrExpenseAcTypeDesc"));
+			ft.setWaiverOrRefundAcTypeDesc(rs.getString("WaiverOrRefundAcTypeDesc"));
 
 			ft.setCgstAcType(rs.getString("CgstAcType"));
 			ft.setCgstAcTypeDesc(rs.getString("CgstAcTypeDesc"));
