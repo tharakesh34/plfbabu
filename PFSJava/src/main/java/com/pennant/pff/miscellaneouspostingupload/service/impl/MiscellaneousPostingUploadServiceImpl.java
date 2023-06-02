@@ -181,7 +181,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 				}
 
 				header.getUploadDetails().addAll(mList);
-				process(mList);
+				process(mList, header);
 
 				try {
 					logger.info("Processed the File {}", header.getFileName());
@@ -200,7 +200,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 
 	}
 
-	private void process(List<MiscellaneousPostingUpload> mList) {
+	private void process(List<MiscellaneousPostingUpload> mList, FileUploadHeader header) {
 		Map<String, List<MiscellaneousPostingUpload>> map = new LinkedHashMap<>();
 
 		for (MiscellaneousPostingUpload mpus : mList) {
@@ -345,6 +345,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 						Map<String, String> extMap = new HashMap<>();
 						extMap.put("Unique Reference", String.valueOf(dtl.getBatchReference()));
 						dtl.setExtendedFields(extMap);
+						header.setExtendedFieldRequired(true);
 					}
 				});
 			}
