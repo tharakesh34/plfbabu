@@ -2353,7 +2353,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		if (MandateExtension.ALLOW_HOLD_MARKING && !FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			holdMarkingService.updateHoldRemoval(ReceiptUtil.getAllocatedAmount(rch.getAllocations()), fm.getFinID(),
-					fm.getFinReference());
+					false);
 		}
 
 		logger.debug(Literal.LEAVING);

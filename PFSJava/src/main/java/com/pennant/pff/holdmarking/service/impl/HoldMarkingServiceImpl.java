@@ -106,10 +106,16 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 	}
 
 	@Override
-	public void updateHoldRemoval(BigDecimal amount, long finId, String finReference) {
+	public void updateHoldRemoval(BigDecimal amount, long finId, boolean isFateCorrection) {
 		logger.debug(Literal.ENTERING);
 
-		List<HoldMarkingHeader> list = holdMarkingHeaderDAO.getHoldListByFinId(finId);
+		List<HoldMarkingHeader> list = new ArrayList<>();
+
+		if (isFateCorrection) {
+			list = holdMarkingHeaderDAO.getAutoHold(finId);
+		} else {
+			list = holdMarkingHeaderDAO.getHoldListByFinId(finId);
+		}
 
 		if (CollectionUtils.isNotEmpty(list)) {
 			list = list.stream().sorted((l1, l2) -> Long.compare(l1.getHoldID(), l2.getHoldID()))
@@ -121,16 +127,24 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 			return;
 		}
 
+		updateHold(amount, list);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void updateHold(BigDecimal amount, List<HoldMarkingHeader> list) {
 		for (HoldMarkingHeader headerList : list) {
 			if (amount.compareTo(BigDecimal.ZERO) > 0) {
 
 				if (amount.compareTo(headerList.getBalance()) > 0) {
+					amount = amount.subtract(headerList.getBalance());
+					headerList.setId(headerList.getId());
+					headerList.setHoldID(headerList.getHoldID());
+					headerList.setRemovalAmount(headerList.getBalance());
+
 					headerList.setBalance(BigDecimal.ZERO);
 					headerList.setReleaseAmount(headerList.getHoldAmount());
 
-					headerList.setId(headerList.getId());
-					headerList.setHoldID(headerList.getHoldID());
-					headerList.setRemovalAmount(headerList.getHoldAmount());
 					saveDetail(headerList);
 				} else {
 					headerList.setBalance(headerList.getBalance().subtract(amount));
@@ -140,15 +154,12 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 					headerList.setHoldID(headerList.getHoldID());
 					headerList.setRemovalAmount(amount);
 					saveDetail(headerList);
-				}
-				amount.subtract(headerList.getHoldAmount());
 
+					amount = BigDecimal.ZERO;
+				}
 				holdMarkingHeaderDAO.updateHeader(headerList);
 			}
-
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	private void saveDetail(HoldMarkingHeader hmh) {
@@ -180,14 +191,14 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 	}
 
 	@Override
-	public void updateFundRecovery(BigDecimal amount, String accNum, long finId, String finReference) {
+	public void updateFundRecovery(BigDecimal amount, String accNum, long finId) {
 		logger.debug(Literal.ENTERING);
 
 		HoldMarkingHeader hmh = new HoldMarkingHeader();
 		String repayMethod = financeMainDAO.getApprovedRepayMethod(finId, "");
 
 		if (!InstrumentType.isSI(repayMethod)) {
-			updateHoldRemoval(amount, finId, finReference);
+			updateHoldRemoval(amount, finId, false);
 			return;
 		}
 

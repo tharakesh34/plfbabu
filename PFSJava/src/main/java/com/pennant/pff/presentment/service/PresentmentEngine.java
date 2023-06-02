@@ -77,6 +77,7 @@ import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.extension.PresentmentExtension;
 import com.pennant.pff.holdmarking.model.HoldMarkingDetail;
 import com.pennant.pff.holdmarking.model.HoldMarkingHeader;
+import com.pennant.pff.holdmarking.service.HoldMarkingService;
 import com.pennant.pff.holdmarking.upload.dao.HoldMarkingDetailDAO;
 import com.pennant.pff.holdmarking.upload.dao.HoldMarkingHeaderDAO;
 import com.pennant.pff.mandate.ChequeSatus;
@@ -152,6 +153,7 @@ public class PresentmentEngine {
 	private PresentmentImportProcess presentmentImportProcess;
 	private FinMandateService finMandateService;
 	private EventPropertiesService eventPropertiesService;
+	private HoldMarkingService holdMarkingService;
 
 	public PresentmentEngine() {
 		super();
@@ -1453,6 +1455,11 @@ public class PresentmentEngine {
 			}
 		}
 
+		if (InstrumentType.SI.code().equals(pd.getMandateType()) && PresentmentStatus.SUCCESS.equals(clearingStatus)
+				&& "Y".equals(fateCorrection)) {
+			holdMarkingService.updateHoldRemoval(pd.getPresentmentAmt(), pd.getFinID(), true);
+		}
+
 		if ((InstrumentType.isPDC(mandateType) || InstrumentType.isIPDC(mandateType)) && checkStatus != null) {
 			presentmentDetailDAO.updateChequeStatus(mandateID, checkStatus);
 		}
@@ -2069,4 +2076,8 @@ public class PresentmentEngine {
 		this.holdMarkingHeaderDAO = holdMarkingHeaderDAO;
 	}
 
+	@Autowired
+	public void setHoldMarkingService(HoldMarkingService holdMarkingService) {
+		this.holdMarkingService = holdMarkingService;
+	}
 }
