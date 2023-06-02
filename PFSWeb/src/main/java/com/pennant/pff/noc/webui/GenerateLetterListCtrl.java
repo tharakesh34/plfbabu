@@ -15,6 +15,7 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -51,6 +52,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	protected Borderlayout blGenerateLetterList;
 	protected Paging pagingGenerateLetterList;
 	protected Listbox lbGenerateLetter;
+	protected Grid grid_generateLetterDetails;
 
 	protected Button btnNew;
 	protected Button btnSearch;
@@ -121,11 +123,15 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 		this.custCifSort.setModel(new ListModelList<>(new SearchOperators().getMultiStringOperators()));
 		this.custCifSort.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		this.blGenerateLetterList.setHeight(getBorderLayoutHeight());
+		this.lbGenerateLetter
+				.setHeight(getListBoxHeight(this.grid_generateLetterDetails.getRows().getVisibleItemCount() - 1));
+		this.pagingGenerateLetterList.setPageSize(getListRows());
+		this.pagingGenerateLetterList.setDetailed(true);
+
 		doSetFieldProperties();
 
 		fillListData();
-
-		doRenderPage();
 
 		logger.debug(Literal.LEAVING);
 	}
