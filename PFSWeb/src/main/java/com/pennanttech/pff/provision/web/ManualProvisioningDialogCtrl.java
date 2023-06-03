@@ -420,6 +420,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		int format = CurrencyUtil.getFormat(provision.getFinCcy());
 
 		if (this.overrideProvision.isChecked()) {
 			try {
@@ -428,7 +429,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 				wve.add(we);
 			}
 			try {
-				provision.setManProvsnAmt(this.manProvisionAmount.getActualValue());
+				provision.setManProvsnAmt(
+						PennantApplicationUtil.unFormateAmount(this.manProvisionAmount.getActualValue(), format));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
