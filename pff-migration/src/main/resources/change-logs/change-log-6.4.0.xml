@@ -19226,5 +19226,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#229119" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+   		     	DELETE FROM REPORTLIST WHERE CODE = 'Provision';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('Provision', 'Provision', 'listheader_CIFNo.label,listheader_CustName.label,listheader_FinReference.label,listheader_FinType.label,listheader_ManualProvisioning.label,listheader_LoanClassification.label,listheader_EffectiveClassification.label,label.RecordStatus,label.RecordType', 'CustCIF,CustShrtName,finReference,finType,manualProvision,LoanClassification,EffectiveClassification,RECORDSTATUS,RECORDTYPE', 'String,String,String,String,boolean,String,String,String,String,String', null, 'ReportList09', 'Manual Provision Details', 'Enquiry', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+        	 ]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog> 
