@@ -4014,9 +4014,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			setError(schdData, "RU00060");
 			return;
 		}
-		/*
-		 * if (StringUtils.isNotBlank(fsi.getClosureType())) { rd.setForeClosure(true); }
-		 */
+
+		if (StringUtils.isNotBlank(fsi.getClosureType()) && fsi.isClosureReceipt()) {
+			rd.setForeClosure(true);
+		}
 
 		// closure with full waiver
 		if (fsi != null && ("Post".equals(fsi.getReqType()) || "Inquiry".equals(fsi.getReqType()))
@@ -6504,6 +6505,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 						}
 					}
 				}
+
+				rd = receiptCalculator.recalAutoAllocation(rd, false);
 			}
 		}
 
@@ -6534,7 +6537,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 					&& receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
 				rd = validateAllocationsAmount(rd);
 			}
-			rd = updateAllocationsPaid(rd);
+
+			if (!fsi.isClosureReceipt()) {
+				rd = updateAllocationsPaid(rd);
+			}
 		}
 
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
@@ -7534,6 +7540,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rd.getReceiptHeader().setReceiptDetails(rcdList);
 		int receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(rch.getReceiptPurpose());
 
+		FinServiceInstruction fsi = rd.getFinanceDetail().getFinScheduleData().getFinServiceInstruction();
 		Map<String, BigDecimal> taxPercMap = null;
 
 		FinScheduleData schdData = rd.getFinanceDetail().getFinScheduleData();
@@ -7575,12 +7582,18 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 
 			rcd.setPayAgainstID(payable.getPayableID());
-			if (rd.getTotalPastDues().compareTo(payable.getTotPaidNow()) >= 0) {
+
+			if (fsi != null && fsi.isClosureReceipt()) {
 				rcd.setDueAmount(payable.getTotPaidNow());
 				rd.setTotalPastDues(rd.getTotalPastDues().subtract(payable.getPaidNow()));
 			} else {
-				rcd.setDueAmount(rd.getTotalPastDues());
-				rd.setTotalPastDues(BigDecimal.ZERO);
+				if (rd.getTotalPastDues().compareTo(payable.getTotPaidNow()) >= 0) {
+					rcd.setDueAmount(payable.getTotPaidNow());
+					rd.setTotalPastDues(rd.getTotalPastDues().subtract(payable.getPaidNow()));
+				} else {
+					rcd.setDueAmount(rd.getTotalPastDues());
+					rd.setTotalPastDues(BigDecimal.ZERO);
+				}
 			}
 
 			if (receiptPurposeCtg == 1) {

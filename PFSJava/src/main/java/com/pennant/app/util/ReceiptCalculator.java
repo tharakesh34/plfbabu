@@ -1665,6 +1665,8 @@ public class ReceiptCalculator {
 			}
 		}
 
+		int receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(rd.getReceiptHeader().getReceiptPurpose());
+
 		// write code to reduce Part Payments and Early Settlement balances from
 		// the allocation list
 
@@ -1698,8 +1700,6 @@ public class ReceiptCalculator {
 				rd = recalAutoAllocation(rd, rd.isPresentment());
 			}
 
-			int receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(rd.getReceiptHeader().getReceiptPurpose());
-
 			if (excess.compareTo(BigDecimal.ZERO) > 0) {
 				rph.setFinEvent(rch.getReceiptPurpose());
 				rph.setValueDate(rch.getValueDate());
@@ -1715,8 +1715,46 @@ public class ReceiptCalculator {
 					rph.setExcessAmount(excess);
 				}
 			}
-
 		}
+
+		BigDecimal excessBal = rch.getBalAmount();
+
+		if (receiptPurposeCtg == 2 && excessBal.compareTo(BigDecimal.ZERO) > 0) {
+			for (int i = rcdList.size() - 1; i >= 0; i--) {
+				if (excessBal.compareTo(BigDecimal.ZERO) <= 0) {
+					break;
+				}
+
+				FinReceiptDetail rcd = rcdList.get(i);
+
+				BigDecimal excess = BigDecimal.ZERO;
+				if (excessBal.compareTo(rcd.getDueAmount()) >= 0) {
+					excess = rcd.getDueAmount();
+					excessBal = excessBal.subtract(rcd.getDueAmount());
+				} else {
+					excess = excessBal;
+					excessBal = BigDecimal.ZERO;
+				}
+
+				FinRepayHeader repayHeader = rcd.getRepayHeader();
+
+				if (repayHeader == null) {
+					repayHeader = new FinRepayHeader();
+					rcd.setRepayHeader(repayHeader);
+				}
+
+				excess = excess.add(repayHeader.getExcessAmount());
+
+				repayHeader.setFinEvent(rch.getReceiptPurpose());
+				repayHeader.setValueDate(rch.getValueDate());
+				if (rd.isEarlySettle()) {
+					repayHeader.setEarlyPayDate(rch.getValueDate());
+				}
+				repayHeader.setRepayAmount(repayHeader.getRepayAmount().add(excess));
+				repayHeader.setExcessAmount(excess);
+			}
+		}
+
 		rch.setWaviedAmt(totWaived);
 		rd.setAdjSchedule(false);
 
@@ -3656,6 +3694,7 @@ public class ReceiptCalculator {
 		rch.setBalAmount(remainingBal);
 
 		receiptData.setRemBal(remainingBal);
+
 		receiptData.setTotReceiptAmount(rch.getReceiptAmount());
 		return receiptData;
 	}

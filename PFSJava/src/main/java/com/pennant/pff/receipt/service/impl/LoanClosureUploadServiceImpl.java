@@ -25,6 +25,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.customermasters.Customer;
@@ -84,6 +85,7 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 	private CustomerDAO customerDAO;
 	private FinODPenaltyRateDAO finODPenaltyRateDAO;
 	private FinFeeConfigDAO finFeeConfigDAO;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	protected LoanClosureUpload getDetail(Object object) {
 		if (object instanceof LoanClosureUpload detail) {
@@ -115,6 +117,13 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 
 		if (!fm.isFinIsActive()) {
 			setError(detail, LoanClosureUploadError.LCU_03);
+			return;
+		}
+
+		String exisClosureType = finReceiptHeaderDAO.getClosureTypeValue(fm.getFinID());
+
+		if (StringUtils.isNotEmpty(exisClosureType)) {
+			setError(detail, LoanClosureUploadError.LCU_06);
 			return;
 		}
 
@@ -502,6 +511,11 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 	@Autowired
 	public void setFinFeeConfigDAO(FinFeeConfigDAO finFeeConfigDAO) {
 		this.finFeeConfigDAO = finFeeConfigDAO;
+	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 
 }
