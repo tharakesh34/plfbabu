@@ -5,10 +5,9 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -58,9 +57,11 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.notification.email.EmailEngine;
+import com.pennanttech.pennapps.notification.email.configuration.AttachmentType;
 import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
 import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
+import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -259,9 +260,13 @@ public class LetterService {
 		address.setRecipientType(RecipientType.TO.getKey());
 		emailMessage.getAddressesList().add(address);
 
-		Map<String, byte[]> map = new HashMap<>();
-		map.put(letter.getFileName(), letter.getContent());
-		emailMessage.setAttachments(map);
+		List<MessageAttachment> attachments = new ArrayList<>();
+
+		MessageAttachment attachement = new MessageAttachment(letter.getFileName(), AttachmentType.TEXT);
+		attachement.setAttachment(letter.getContent());
+		attachments.add(attachement);
+		
+		emailMessage.setAttachmentList(attachments);
 
 		try {
 			emailEngine.sendEmail(emailMessage);

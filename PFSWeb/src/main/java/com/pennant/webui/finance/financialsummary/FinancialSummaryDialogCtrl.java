@@ -543,29 +543,29 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					// We are using UTF-8 character set to provide the compatibility of the existing data
 					this.customerBackground
 							.setValue(new String(financeDetail.getSynopsisDetails().getCustomerBackGround(),
-									NotificationConstants.UTF_EIGHT_CHARSET));
+									NotificationConstants.DEFAULT_CHARSET));
 				}
 				if (financeDetail.getSynopsisDetails().getDetailedBusinessProfile() != null) {
 					this.detailedBusinessProfile
 							.setValue(new String(financeDetail.getSynopsisDetails().getDetailedBusinessProfile(),
-									NotificationConstants.UTF_EIGHT_CHARSET));
+									NotificationConstants.DEFAULT_CHARSET));
 				}
 				if (financeDetail.getSynopsisDetails().getDetailsofGroupCompaniesIfAny() != null) {
 					this.detailsofGroupCompaniesIfAny
 							.setValue(new String(financeDetail.getSynopsisDetails().getDetailsofGroupCompaniesIfAny(),
-									NotificationConstants.UTF_EIGHT_CHARSET));
+									NotificationConstants.DEFAULT_CHARSET));
 				}
 				if (financeDetail.getSynopsisDetails().getPdDetails() != null) {
 					this.pdDetails.setValue(new String(financeDetail.getSynopsisDetails().getPdDetails(),
-							NotificationConstants.UTF_EIGHT_CHARSET));
+							NotificationConstants.DEFAULT_CHARSET));
 				}
 				if (financeDetail.getSynopsisDetails().getMajorProduct() != null) {
 					this.majorProduct.setValue(new String(financeDetail.getSynopsisDetails().getMajorProduct(),
-							NotificationConstants.UTF_EIGHT_CHARSET));
+							NotificationConstants.DEFAULT_CHARSET));
 				}
 				if (financeDetail.getSynopsisDetails().getOtherRemarks() != null) {
 					this.otherRemarks.setValue(new String(financeDetail.getSynopsisDetails().getOtherRemarks(),
-							NotificationConstants.UTF_EIGHT_CHARSET));
+							NotificationConstants.DEFAULT_CHARSET));
 				}
 				if (financeDetail.getSynopsisDetails().getCmtOnCollateralDtls() != null) {
 					// new requirement
@@ -844,16 +844,16 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		try {
 			synopsisDetails.setCustomerBackGround(
-					this.customerBackground.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+					this.customerBackground.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
 			synopsisDetails.setDetailedBusinessProfile(
-					this.detailedBusinessProfile.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+					this.detailedBusinessProfile.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
 			synopsisDetails.setDetailsofGroupCompaniesIfAny(
-					this.detailsofGroupCompaniesIfAny.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
-			synopsisDetails.setPdDetails(this.pdDetails.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+					this.detailsofGroupCompaniesIfAny.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
+			synopsisDetails.setPdDetails(this.pdDetails.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
 			synopsisDetails
-					.setMajorProduct(this.majorProduct.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+					.setMajorProduct(this.majorProduct.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
 			synopsisDetails
-					.setOtherRemarks(this.otherRemarks.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+					.setOtherRemarks(this.otherRemarks.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
 			synopsisDetails.setCmtOnCollateralDtls(
 					this.cmtOnCollateralDtls.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
 			synopsisDetails.setEndUse(this.endUse.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
