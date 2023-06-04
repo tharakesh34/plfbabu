@@ -254,18 +254,16 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> {
 			filePath = filePath.concat("/").concat(fileName);
 		}
 
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		try (ByteArrayOutputStream stream = new ByteArrayOutputStream();) {
+			try (InputStream inputStream = new FileInputStream(filePath)) {
+				int data;
+				while ((data = inputStream.read()) >= 0) {
+					stream.write(data);
+				}
 
-		InputStream inputStream = new FileInputStream(filePath);
-		int data;
-		while ((data = inputStream.read()) >= 0) {
-			stream.write(data);
+				Filedownload.save(stream.toByteArray(), "text/plain", fileName);
+			}
 		}
-
-		inputStream.close();
-		inputStream = null;
-		Filedownload.save(stream.toByteArray(), "text/plain", fileName);
-		stream.close();
 	}
 
 	private void downloadFromS3Bucket(String prefix, String fileName) {
