@@ -143,7 +143,7 @@ public class BranchMigrationDAOImpl extends SequenceDao<BranchChangeUpload> impl
 		sql.append(" Inner Join Accounts_By_FinReferences abf on abf.AccountID = acc.ID");
 		sql.append(" Inner Join RMTAccountTypes acct on acct.AcType = acc.AcType");
 		sql.append(" Inner Join AccountTypeGroup atg on atg.GroupId = acct.AcTypeGrpId");
-		sql.append(" Where atg.GroupCode in (?,?)");
+		sql.append(" Where atg.GroupCode in (?, ?)");
 		sql.append(" and abf.FinReference = ? and acc.AcBranch = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));

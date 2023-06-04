@@ -1,6 +1,5 @@
 package com.pennant.webui.hold.holdenquiry;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +92,7 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 
 			pagedListWrapper.initList(holdDetail, this.listBoxHold, this.paging);
 
-			doShowDialog(holdDetail, headerType);
+			doShowDialog(headerType);
 		} catch (Exception e) {
 			closeDialog();
 			MessageUtil.showError(e);
@@ -102,7 +101,7 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doShowDialog(List<HoldMarkingDetail> holdDetail, boolean headerType) {
+	private void doShowDialog(boolean headerType) {
 		try {
 			if (headerType) {
 				this.listheaderHoldReference
@@ -120,9 +119,7 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		doClose(false);
 	}
 
-	public class ListModelItemRenderer implements ListitemRenderer<HoldMarkingDetail>, Serializable {
-		private static final long serialVersionUID = 1L;
-
+	public class ListModelItemRenderer implements ListitemRenderer<HoldMarkingDetail> {
 		private boolean headerType;
 
 		public ListModelItemRenderer(boolean headerType) {

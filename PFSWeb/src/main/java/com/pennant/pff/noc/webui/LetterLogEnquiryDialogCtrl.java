@@ -1,6 +1,5 @@
 package com.pennant.pff.noc.webui;
 
-import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
@@ -53,7 +52,6 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 	protected Label finReference;
 	protected Label custName;
 	private String moduleDefiner = "";
-	private boolean enquiry;
 
 	private GenerateLetter generateLetter;
 	private transient GenerateLetterService generateLetterService;
@@ -83,10 +81,6 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 
 		if (arguments.containsKey("moduleDefiner")) {
 			moduleDefiner = (String) arguments.get("moduleDefiner");
-		}
-
-		if (arguments.containsKey("enquiry")) {
-			this.enquiry = (boolean) arguments.get("enquiry");
 		}
 
 		if (arguments.containsKey("financeEnquiryHeaderDialogCtrl")) {
@@ -175,9 +169,7 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 		logger.debug("Leaving");
 	}
 
-	private class LogLetterEnquiryModelItemRenderer implements ListitemRenderer<GenerateLetter>, Serializable {
-		private static final long serialVersionUID = 6056180845898696437L;
-
+	private class LogLetterEnquiryModelItemRenderer implements ListitemRenderer<GenerateLetter> {
 		public LogLetterEnquiryModelItemRenderer() {
 			super();
 		}
@@ -261,10 +253,7 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 		}
 	}
 
-	private class LogLetterEnquiryComparator implements Comparator<Object>, Serializable {
-
-		private static final long serialVersionUID = 9112640872865877333L;
-
+	private class LogLetterEnquiryComparator implements Comparator<Object> {
 		public LogLetterEnquiryComparator() {
 			super();
 		}

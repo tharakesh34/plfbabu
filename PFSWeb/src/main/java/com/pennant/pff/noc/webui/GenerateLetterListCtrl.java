@@ -1,6 +1,5 @@
 package com.pennant.pff.noc.webui;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Borderlayout;
@@ -302,9 +300,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 		return search;
 	}
 
-	private class GenerateLetterModelItemRenderer implements ListitemRenderer<GenerateLetter>, Serializable {
-		private static final long serialVersionUID = 6056180845898696437L;
-
+	private class GenerateLetterModelItemRenderer implements ListitemRenderer<GenerateLetter> {
 		public GenerateLetterModelItemRenderer() {
 			super();
 		}
@@ -338,16 +334,17 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 
 	}
 
-	public void onChange$custCIF(Event event) throws Exception {
+	public void onChange$custCIF(Event event) {
 		customer = fetchCustomerDataByCIF();
 		addFilter(customer);
 	}
 
-	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
+	public void onClick$btnSearchCustCIF(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
-		final Map<String, Object> map = new HashMap<String, Object>();
+
+		final Map<String, Object> map = new HashMap<>();
 		map.put("DialogCtrl", this);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 
@@ -381,7 +378,6 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	}
 
 	public Customer fetchCustomerDataByCIF() {
-
 		customer = new Customer();
 		this.custCIF.setConstraint("");
 		this.custCIF.setErrorMessage("");
