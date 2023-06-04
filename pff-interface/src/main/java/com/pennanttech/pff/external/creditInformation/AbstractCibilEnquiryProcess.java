@@ -1554,13 +1554,6 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		}
 	}
 
-	/**
-	 * Sends the Request through SocketIp
-	 * 
-	 * @param requestmessage
-	 * @return response
-	 * @throws Exception
-	 */
 	private String sendRequest(String requestMessage) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -1569,44 +1562,36 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		String socketIp = SysParamUtil.getValueAsString("CIBIL_SOCKET_IP");
 		int port = SysParamUtil.getValueAsInt("CIBIL_SOCKET_PORT");
 		int timeout = SysParamUtil.getValueAsInt("CIBIL_SOCKET_TIMEOUT");
-		/*
-		 * String socketIp = "192.168.150.140"; int port = 7506; int timeout =
-		 * SysParamUtil.getValueAsInt("CIBIL_SOCKET_TIMEOUT");
-		 */
-		try {
-			SocketAddress sockaddr = new InetSocketAddress(socketIp, port);
-			Socket socket = new Socket();
+
+		SocketAddress sockaddr = new InetSocketAddress(socketIp, port);
+
+		try (Socket socket = new Socket();) {
 			socket.setSoTimeout(timeout);
 			socket.connect(sockaddr);
 			logger.debug("Connected to CIBIL");
-			OutputStream out = socket.getOutputStream();
-			InputStream in = socket.getInputStream();
 
-			int i = 19;
-			char c = (char) i;
-			requestMessage = requestMessage + c;
-			out.write(requestMessage.getBytes(), 0, requestMessage.getBytes().length);
-			out.flush();
+			try (OutputStream out = socket.getOutputStream()) {
 
-			// Receive the same string back from the server
-			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+				try (InputStream in = socket.getInputStream()) {
+					int i = 19;
+					char c = (char) i;
+					requestMessage = requestMessage + c;
+					out.write(requestMessage.getBytes(), 0, requestMessage.getBytes().length);
+					out.flush();
 
-			String line;
-			while ((line = reader.readLine()) != null) {
-				builder.append(line);
+					// Receive the same string back from the server
+					BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+					String line;
+					while ((line = reader.readLine()) != null) {
+						builder.append(line);
+					}
+				}
+
 			}
 
-			socket.close();
-
-		} catch (Exception e) {
-			logger.debug(e.getMessage());
-			throw e;
-		} finally {
-
-			/*
-			 * if (socket != null && !socket.isClosed()) { socket.close(); }
-			 */
 		}
+
 		return builder.toString();
 	}
 
