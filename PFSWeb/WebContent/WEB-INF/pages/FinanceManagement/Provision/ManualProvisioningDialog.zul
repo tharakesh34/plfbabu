@@ -43,208 +43,210 @@
 					</hbox>
 				</div>
 			</north>
-			<center border="none" autoscroll="false">
-				<groupbox id="gb_basicDetails" sclass="gb-dialog">
-					<groupbox>
-						<caption label="${c:l('finSummaryDetails')}" />
-						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-							<columns>
-								<column width="20%" />
-								<column width="30%" />
-								<column width="20%" />
-								<column width="30%" />
-							</columns>
-							<rows>
-								<row id="row0">
-									<label id="label_FinReference"
-										value="${c:l('label_ManualProvisioningDialog_FinReference.value')}" />
-
-									<textbox id="finReference" maxlength="20" width="200px" visible="true"
-										disabled="true" />
-									<label id="label_Customer"
-										value="${c:l('label_ManualProvisioningDialog_Customer.value')}" />
-									<hbox>
-										<uppercasebox id="customer" width="150px" visible="true" disabled="true" />
-										<button id="btnSearchCustomer"
-											tooltiptext="${c:l('label_ManualProvisioningDialog_btnSearchCustomer.tooltiptext')}"
-											image="/images/icons/more.png" autodisable="btnSearchCustomer" />
-									</hbox>
-								</row>
-								<row id="row1">
-									<label id="label_FinType"
-										value="${c:l('label_ManualProvisioningDialog_FinType.value')}" />
-
-									<textbox id="finType" width="90px" maxlength="14" visible="true" disabled="true" />
-									<label id="label_FinAmount"
-										value="${c:l('label_AssetClassificationHeaderDialog_FinAmount.value')}" />
-									<currencyBox id="finAmount" width="175px" visible="true" disabled="true" removeSpace = "true"/>
-								</row>
-								<row>
-									<label id="label_FinStartDate"
-										value="${c:l('label_ManualProvisioningDialog_FinStartDate.value')}" />
-
-									<datebox id="finStartDate" width="155px" visible="true" disabled="true" />
-									<label id="label_MaturityDate"
-										value="${c:l('label_ManualProvisioningDialog_MaturityDate.value')}" />
-
-									<datebox id="maturityDate" width="155px" visible="true" disabled="true" />
-								</row>
-								<row>
-									<label id="label_PrincipalOutstanding"
-										value="${c:l('label_ManualProvisioningDialog_PrincipalOutstanding.value')}" />
-
-									<currencyBox id="principalOutstanding" width="90px" visible="true" disabled="true" />
-									<label id="label_TotalOutstanding"
-										value="${c:l('label_ManualProvisioningDialog_TotalOutstanding.value')}" />
-
-									<currencyBox id="totalOutstanding" width="90px" visible="true" disabled="true" removeSpace = "true"/>
-								</row>
-								<row>
-									<label id="label_PrincipalOverdue"
-										value="${c:l('label_ManualProvisioningDialog_PrincipalOverdue.value')}" />
-									<currencyBox id="pricipalOverDue" width="100px" visible="true" disabled="true" removeSpace = "true"/>
-
-									<label id="label_InterestOverdue"
-										value="${c:l('label_ManualProvisioningDialog_InterestOverdue.value')}" />
-									<currencyBox id="interestOverDue" width="100px" visible="true" disabled="true" removeSpace = "true"/>
-								</row>
-								<row>
-									<label id="label_LoanActualDPD"
-										value="${c:l('label_ManualProvisioningDialog_LoanActualDPD.value')}" />
-									<intbox id="actualDpd" width="100px" visible="true" disabled="true" />
-
-									<label id="label_EffectiveDPD"
-										value="${c:l('label_ManualProvisioningDialog_EffectiveDPD.value')}" />
-									<intbox id="effectiveDpd" width="100px" visible="true" disabled="true" />
-								</row>
-							</rows>
-						</grid>
-					</groupbox>
-					<groupbox>
-						<caption label="${c:l('assetclassification')}" />
-						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-							<columns>
-								<column width="20%" />
-								<column width="30%" />
-								<column width="20%" />
-								<column width="30%" />
-							</columns>
-							<rows>
-								<row>
-									<label id="label_LoanActualClassification"
-										value="${c:l('label_ManualProvisioningDialog_LoanActualClassification.value')}" />
-									<textbox id="loanActualClassification" width="90px" maxlength="14" visible="true"
-										disabled="true" />
-
-									<label id="label_EffectiveClassification"
-										value="${c:l('label_ManualProvisioningDialog_EffectiveClassification.value')}" />
-									<textbox id="effectiveClassification" width="90px" maxlength="14" visible="true"
-										disabled="true" />
-								</row>
-							</rows>
-						</grid>
-					</groupbox>
-					<groupbox>
-						<caption label="${c:l('provsion')}" />
-						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-							<columns>
-								<column width="20%" />
-								<column width="30%" />
-								<column width="20%" />
-								<column width="30%" />
-							</columns>
-							<rows>
-								<row>
-									<label id="label_RegProvisionPercentage"
-										value="${c:l('label_ManualProvisioningDialog_RegProvisionPercentage.value')}" />
-									<decimalbox id="regProvisionPercentage" width="90px" visible="true" disabled="true" />
-									<label id="label_RegProvisionAmount"
-										value="${c:l('label_ManualProvisioningDialog_RegProvisionAmount.value')}" />
-									<currencyBox id="regProvisionAmount" width="90px" visible="true" disabled="true"  removeSpace = "true"/>
-								</row>
-								<row>
-									<label id="label_IntProvisionPercentage"
-										value="${c:l('label_ManualProvisioningDialog_IntProvisionPercentage.value')}" />
-									<decimalbox id="intProvisionPercentage" width="100px" visible="true"
-										disabled="true" />
-									<label id="label_IntProvisionAmount"
-										value="${c:l('label_ManualProvisioningDialog_IntProvisionAmount.value')}" />
-									<currencyBox id="intProvisionAmount" width="100px" visible="true" disabled="true"  removeSpace = "true"/>
-								</row>
-							</rows>
-						</grid>
-					</groupbox>
-					<groupbox>
-						<caption label="${c:l('manualProvsion')}" />
-						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-							<columns>
-								<column width="20%" />
-								<column width="30%" />
-								<column width="20%" />
-								<column width="30%" />
-							</columns>
-							<rows>
-								<row>
-									<label id="label_ManualProvision"
-										value="${c:l('label_ManualProvisioningDialog_AllowManualProv.value')}" />
-									<checkbox id="manualProvision" checked="false" />
-								</row>
-								<row>
-									<label id="label_EffManualAssetClassification"
-										value="${c:l('label_ManualProvisioningDialog_EffManualAssetClassification.value')}" />
-									<combobox id="effManualAssetClassification" width="200px" disabled="true" />
-									<label id="label_EffManualAssetSubClassification"
-										value="${c:l('label_ManualProvisioningDialog_EffManualAssetSubClassification.value')}" />
-									<combobox id="effManualAssetSubClassification" width="200px" disabled="true" />
-								</row>
-								<row>
-									<label id="label_ProvisionRegPercentage"
-										value="${c:l('label_ManualProvisioningDialog_ProvisionRegPercentage.value')}" />
-
-									<decimalbox id="newProvisionRegPercentage" width="175px" disabled="true" />
-									<label id="label_ProvisionRegAmount"
-										value="${c:l('label_ManualProvisioningDialog_ProvisionRegAmount.value')}" />
-									<currencyBox id="newProvisionRegAmount" width="100px" disabled="true" removeSpace = "true"/>
-								</row>
-								<row>
-									<label id="label_ProvisionIntPercentage"
-										value="${c:l('label_ManualProvisioningDialog_ProvisionIntPercentage.value')}" />
-										
-									<decimalbox id="newProvisionIntPercentage" width="175px"  disabled="true" />
-									<label id="label_ProvisionIntAmount"
-										value="${c:l('label_ManualProvisioningDialog_ProvisionIntAmount.value')}" />
-
-									<currencyBox id="newProvisionIntAmount" width="100px" disabled="true" removeSpace = "true"/>
-								</row>
-								<row>
-									<label id="label_OverrideProvision"
-										value="${c:l('label_ManualProvisioningDialog_OverrideProvision.value')}" />
-									<checkbox id="overrideProvision" checked="false" />
-								</row>
-								<row>
-									<cell>
-										<label id="label_ManualProvisionPercentage"
-											value="${c:l('label_ManualProvisioningDialog_ManualProvisionPercentage.value')}" />
-									</cell>
-									<cell>
-										<decimalbox id="manProvisionPercentage" width="100px" visible="true"
+			<center border="none" autoscroll="true">
+				<div width="100%" height="100%">
+					<groupbox id="gb_basicDetails" sclass="gb-dialog">
+						<groupbox>
+							<caption label="${c:l('finSummaryDetails')}" />
+							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+								<columns>
+									<column width="20%" />
+									<column width="30%" />
+									<column width="20%" />
+									<column width="30%" />
+								</columns>
+								<rows>
+									<row id="row0">
+										<label id="label_FinReference"
+											value="${c:l('label_ManualProvisioningDialog_FinReference.value')}" />
+	
+										<textbox id="finReference" maxlength="20" width="200px" visible="true"
 											disabled="true" />
-									</cell>
-									<cell>
-										<label id="label_ManualProvisionAmount"
-											value="${c:l('label_ManualProvisioningDialog_ManualProvisionAmount.value')}" />
-									</cell>
-									<cell>
+										<label id="label_Customer"
+											value="${c:l('label_ManualProvisioningDialog_Customer.value')}" />
 										<hbox>
-											<currencyBox id="manProvisionAmount" width="100px" visible="true"
-												disabled="true" removeSpace = "true"/>
+											<uppercasebox id="customer" width="150px" visible="true" disabled="true" />
+											<button id="btnSearchCustomer"
+												tooltiptext="${c:l('label_ManualProvisioningDialog_btnSearchCustomer.tooltiptext')}"
+												image="/images/icons/more.png" autodisable="btnSearchCustomer" />
 										</hbox>
-									</cell>
-								</row>
-							</rows>
-						</grid>
+									</row>
+									<row id="row1">
+										<label id="label_FinType"
+											value="${c:l('label_ManualProvisioningDialog_FinType.value')}" />
+	
+										<textbox id="finType" width="90px" maxlength="14" visible="true" disabled="true" />
+										<label id="label_FinAmount"
+											value="${c:l('label_AssetClassificationHeaderDialog_FinAmount.value')}" />
+										<currencyBox id="finAmount" width="175px" visible="true" disabled="true" removeSpace = "true"/>
+									</row>
+									<row>
+										<label id="label_FinStartDate"
+											value="${c:l('label_ManualProvisioningDialog_FinStartDate.value')}" />
+	
+										<datebox id="finStartDate" width="155px" visible="true" disabled="true" />
+										<label id="label_MaturityDate"
+											value="${c:l('label_ManualProvisioningDialog_MaturityDate.value')}" />
+	
+										<datebox id="maturityDate" width="155px" visible="true" disabled="true" />
+									</row>
+									<row>
+										<label id="label_PrincipalOutstanding"
+											value="${c:l('label_ManualProvisioningDialog_PrincipalOutstanding.value')}" />
+	
+										<currencyBox id="principalOutstanding" width="90px" visible="true" disabled="true" />
+										<label id="label_TotalOutstanding"
+											value="${c:l('label_ManualProvisioningDialog_TotalOutstanding.value')}" />
+	
+										<currencyBox id="totalOutstanding" width="90px" visible="true" disabled="true" removeSpace = "true"/>
+									</row>
+									<row>
+										<label id="label_PrincipalOverdue"
+											value="${c:l('label_ManualProvisioningDialog_PrincipalOverdue.value')}" />
+										<currencyBox id="pricipalOverDue" width="100px" visible="true" disabled="true" removeSpace = "true"/>
+	
+										<label id="label_InterestOverdue"
+											value="${c:l('label_ManualProvisioningDialog_InterestOverdue.value')}" />
+										<currencyBox id="interestOverDue" width="100px" visible="true" disabled="true" removeSpace = "true"/>
+									</row>
+									<row>
+										<label id="label_LoanActualDPD"
+											value="${c:l('label_ManualProvisioningDialog_LoanActualDPD.value')}" />
+										<intbox id="actualDpd" width="100px" visible="true" disabled="true" />
+	
+										<label id="label_EffectiveDPD"
+											value="${c:l('label_ManualProvisioningDialog_EffectiveDPD.value')}" />
+										<intbox id="effectiveDpd" width="100px" visible="true" disabled="true" />
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox>
+							<caption label="${c:l('assetclassification')}" />
+							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+								<columns>
+									<column width="20%" />
+									<column width="30%" />
+									<column width="20%" />
+									<column width="30%" />
+								</columns>
+								<rows>
+									<row>
+										<label id="label_LoanActualClassification"
+											value="${c:l('label_ManualProvisioningDialog_LoanActualClassification.value')}" />
+										<textbox id="loanActualClassification" width="90px" maxlength="14" visible="true"
+											disabled="true" />
+	
+										<label id="label_EffectiveClassification"
+											value="${c:l('label_ManualProvisioningDialog_EffectiveClassification.value')}" />
+										<textbox id="effectiveClassification" width="90px" maxlength="14" visible="true"
+											disabled="true" />
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox>
+							<caption label="${c:l('provsion')}" />
+							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+								<columns>
+									<column width="20%" />
+									<column width="30%" />
+									<column width="20%" />
+									<column width="30%" />
+								</columns>
+								<rows>
+									<row>
+										<label id="label_RegProvisionPercentage"
+											value="${c:l('label_ManualProvisioningDialog_RegProvisionPercentage.value')}" />
+										<decimalbox id="regProvisionPercentage" width="90px" visible="true" disabled="true" />
+										<label id="label_RegProvisionAmount"
+											value="${c:l('label_ManualProvisioningDialog_RegProvisionAmount.value')}" />
+										<currencyBox id="regProvisionAmount" width="90px" visible="true" disabled="true"  removeSpace = "true"/>
+									</row>
+									<row>
+										<label id="label_IntProvisionPercentage"
+											value="${c:l('label_ManualProvisioningDialog_IntProvisionPercentage.value')}" />
+										<decimalbox id="intProvisionPercentage" width="100px" visible="true"
+											disabled="true" />
+										<label id="label_IntProvisionAmount"
+											value="${c:l('label_ManualProvisioningDialog_IntProvisionAmount.value')}" />
+										<currencyBox id="intProvisionAmount" width="100px" visible="true" disabled="true"  removeSpace = "true"/>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox>
+							<caption label="${c:l('manualProvsion')}" />
+							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+								<columns>
+									<column width="20%" />
+									<column width="30%" />
+									<column width="20%" />
+									<column width="30%" />
+								</columns>
+								<rows>
+									<row>
+										<label id="label_ManualProvision"
+											value="${c:l('label_ManualProvisioningDialog_AllowManualProv.value')}" />
+										<checkbox id="manualProvision" checked="false" />
+									</row>
+									<row>
+										<label id="label_EffManualAssetClassification"
+											value="${c:l('label_ManualProvisioningDialog_EffManualAssetClassification.value')}" />
+										<combobox id="effManualAssetClassification" width="200px" disabled="true" />
+										<label id="label_EffManualAssetSubClassification"
+											value="${c:l('label_ManualProvisioningDialog_EffManualAssetSubClassification.value')}" />
+										<combobox id="effManualAssetSubClassification" width="200px" disabled="true" />
+									</row>
+									<row>
+										<label id="label_ProvisionRegPercentage"
+											value="${c:l('label_ManualProvisioningDialog_ProvisionRegPercentage.value')}" />
+	
+										<decimalbox id="newProvisionRegPercentage" width="175px" disabled="true" />
+										<label id="label_ProvisionRegAmount"
+											value="${c:l('label_ManualProvisioningDialog_ProvisionRegAmount.value')}" />
+										<currencyBox id="newProvisionRegAmount" width="100px" disabled="true" removeSpace = "true"/>
+									</row>
+									<row>
+										<label id="label_ProvisionIntPercentage"
+											value="${c:l('label_ManualProvisioningDialog_ProvisionIntPercentage.value')}" />
+											
+										<decimalbox id="newProvisionIntPercentage" width="175px"  disabled="true" />
+										<label id="label_ProvisionIntAmount"
+											value="${c:l('label_ManualProvisioningDialog_ProvisionIntAmount.value')}" />
+	
+										<currencyBox id="newProvisionIntAmount" width="100px" disabled="true" removeSpace = "true"/>
+									</row>
+									<row>
+										<label id="label_OverrideProvision"
+											value="${c:l('label_ManualProvisioningDialog_OverrideProvision.value')}" />
+										<checkbox id="overrideProvision" checked="false" />
+									</row>
+									<row>
+										<cell>
+											<label id="label_ManualProvisionPercentage"
+												value="${c:l('label_ManualProvisioningDialog_ManualProvisionPercentage.value')}" />
+										</cell>
+										<cell>
+											<decimalbox id="manProvisionPercentage" width="100px" visible="true"
+												disabled="true" />
+										</cell>
+										<cell>
+											<label id="label_ManualProvisionAmount"
+												value="${c:l('label_ManualProvisioningDialog_ManualProvisionAmount.value')}" />
+										</cell>
+										<cell>
+											<hbox>
+												<currencyBox id="manProvisionAmount" width="100px" visible="true"
+													disabled="true" removeSpace = "true"/>
+											</hbox>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
 					</groupbox>
-				</groupbox>
+				</div>
 			</center>
 			<south sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">
