@@ -11,7 +11,7 @@ import com.pennanttech.external.collectionreceipt.service.FileProcessCollectionR
 import com.pennanttech.external.collectionreceipt.service.FileWriteCollectionRespJob;
 import com.pennanttech.external.presentment.service.ExtPresentmentTableReaderJob;
 import com.pennanttech.external.presentment.service.FileExtractPresentmentRespJob;
-import com.pennanttech.external.presentment.service.FileFetchPresentmentRespJob;
+import com.pennanttech.external.presentment.service.FetchFilePresentmentRespJob;
 import com.pennanttech.external.presentment.service.FileProcessPresentmentRespJob;
 import com.pennanttech.external.silien.service.LeinFileProcesserJob;
 import com.pennanttech.external.silien.service.LienFileReadingJob;
@@ -31,7 +31,7 @@ public class HDFCJobScheduler implements JobSchedulerExtension {
 		 * 29. EXT_PRMNT_RESPONSE_READING_JOB
 		 */
 		JobDataMap args = new JobDataMap();
-		JobData jobData = new JobData("EXT_PRMNT_RESPONSE_READING_JOB", FileFetchPresentmentRespJob.class, args);
+		JobData jobData = new JobData("EXT_PRMNT_RESPONSE_READING_JOB", FetchFilePresentmentRespJob.class, args);
 		jobDataList.add(jobData);
 
 		/**

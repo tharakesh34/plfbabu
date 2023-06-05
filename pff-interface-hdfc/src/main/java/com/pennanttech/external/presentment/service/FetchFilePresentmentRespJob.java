@@ -29,9 +29,9 @@ import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class FileFetchPresentmentRespJob extends AbstractJob
+public class FetchFilePresentmentRespJob extends AbstractJob
 		implements InterfaceConstants, ErrorCodesConstants, ExtIntfConfigConstants {
-	private static final Logger logger = LogManager.getLogger(FileFetchPresentmentRespJob.class);
+	private static final Logger logger = LogManager.getLogger(FetchFilePresentmentRespJob.class);
 
 	private ExtPresentmentDAO externalPresentmentDAO;
 
