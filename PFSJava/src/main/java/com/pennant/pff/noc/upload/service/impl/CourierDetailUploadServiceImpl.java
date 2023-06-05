@@ -80,12 +80,6 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 		}
 
 		Date letterGenDate = DateUtil.getSqlDate(detail.getLetterDate());
-		Long isExist = courierDetailUploadDAO.isFileExist(letterGenDate);
-		if (isExist != null) {
-			setFailureStatus(detail, "LCD_999", "Same data already exist with the Loan Reference : " + detail.getReference());
-			return;
-		}
-
 		if (courierDetailUploadDAO.isValidRecord(detail.getReferenceID(), letterType, letterGenDate)) {
 			setError(detail, CourierDetailUploadError.LCD_006);
 			return;
