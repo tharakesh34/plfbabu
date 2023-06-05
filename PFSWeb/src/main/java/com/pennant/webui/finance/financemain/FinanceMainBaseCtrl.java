@@ -19722,6 +19722,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (checkAction) {
 			this.oDIncGrcDays.setChecked(false);
+			if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+				this.odMinAmount.setValue(BigDecimal.ZERO);
+			}
 			this.oDChargeType.setSelectedIndex(0);
 			this.oDChargeCalOn.setSelectedIndex(0);
 			this.oDGraceDays.setValue(0);

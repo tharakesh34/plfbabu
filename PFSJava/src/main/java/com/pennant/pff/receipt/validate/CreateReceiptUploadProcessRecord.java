@@ -567,7 +567,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		String bankcode = rud.getBankCode();
 
 		if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
-			if (favourNumber.length() > 6) {
+			if (favourNumber != null && favourNumber.length() > 6) {
 				setError(rud, "[TRANCATIONNUMBER] with length more than 6");
 				return;
 			}
@@ -649,7 +649,8 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 				return;
 			}
 
-			if (DateUtil.compare(realizedDate, depositDate) < 0) {
+			if (RepayConstants.PAYSTATUS_REALIZED.equals(modeStatus) && realizedDate != null
+					&& DateUtil.compare(realizedDate, depositDate) < 0) {
 				setError(rud, "[REALIZATIONDATE]  Should  be greater than [DEPOSITDATE] ");
 				return;
 			}
