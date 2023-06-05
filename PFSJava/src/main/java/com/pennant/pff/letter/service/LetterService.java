@@ -136,7 +136,7 @@ public class LetterService {
 		loanLetter.setRequestType(requestType);
 
 		if (autoLetterGenerationDAO.getCountBlockedItems(gl.getFinID()) > 0
-				&& !LetterMode.OTC.name().equals(requestType)) {
+				&& !(LetterMode.OTC.name().equals(requestType) || "M".equals(requestType))) {
 			loanLetter.setBlocked(true);
 			return loanLetter;
 		}
@@ -265,7 +265,7 @@ public class LetterService {
 		MessageAttachment attachement = new MessageAttachment(letter.getFileName(), AttachmentType.TEXT);
 		attachement.setAttachment(letter.getContent());
 		attachments.add(attachement);
-		
+
 		emailMessage.setAttachmentList(attachments);
 
 		try {
