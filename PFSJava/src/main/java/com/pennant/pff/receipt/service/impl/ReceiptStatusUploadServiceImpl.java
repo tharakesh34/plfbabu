@@ -301,10 +301,12 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 			frh.setPartPayAmount(frh.getReceiptAmount());
 		}
 
+		String returnCode = bounceReasonDAO.getReturnCode(detail.getBounceReason());
 		if (RepayConstants.PAYSTATUS_BOUNCE.equals(detail.getStatusRM())) {
-			ManualAdvise ma = manualAdviseService.getMAForBounce(frh, frd.get(0), detail.getBounceReason(),
-					detail.getBounceRemarks(), "", frh.getValueDate());
+			ManualAdvise ma = manualAdviseService.getMAForBounce(frh, frd.get(0), returnCode, detail.getBounceRemarks(),
+					"", frh.getValueDate());
 			frh.setBounceId(ma.getBounceID());
+			frh.setManualAdvise(ma);
 		}
 
 		frh.setReceiptID(detail.getReceiptId());
