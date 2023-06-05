@@ -30,10 +30,11 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 	public void processRequestFile(FileInterfaceConfig reqConfig, FileInterfaceConfig doneConfig, Date appDate) {
 
 		// Dump GST Vouchers to create unique reference for each entry
-		extGSTDao.extractGSTVouchers();
+		extGSTDao.extractDetailsFromFinFeeDetail();
+		extGSTDao.extractDetailsFromManualadvise();
 
 		// Dump data as per the request file format
-		extGSTDao.saveGSTVouchersToRequestTable(UNPROCESSED, UNPROCESSED);
+		extGSTDao.saveExtractedDetailsToRequestTable();
 
 		// Write the file
 		List<GSTRequestDetail> gstComputationRecords = extGSTDao.fetchRecords(UNPROCESSED);

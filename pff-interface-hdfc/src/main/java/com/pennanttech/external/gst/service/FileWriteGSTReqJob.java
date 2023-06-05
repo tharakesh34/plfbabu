@@ -10,15 +10,15 @@ import org.quartz.JobExecutionException;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.constants.EXTIFConfigConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class GSTRequestWritingJob extends AbstractJob implements InterfaceConstants, EXTIFConfigConstants {
-	private static final Logger logger = LogManager.getLogger(GSTRequestWritingJob.class);
+public class FileWriteGSTReqJob extends AbstractJob implements InterfaceConstants, ExtIntfConfigConstants {
+	private static final Logger logger = LogManager.getLogger(FileWriteGSTReqJob.class);
 
 	private FileInterfaceConfig gstCompReqConfig;
 	private FileInterfaceConfig gstCompReqDoneConfig;

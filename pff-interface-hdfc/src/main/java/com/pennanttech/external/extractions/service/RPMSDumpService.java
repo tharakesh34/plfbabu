@@ -6,14 +6,14 @@ import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennanttech.external.app.config.dao.ExtStagingDao;
+import com.pennanttech.external.extractions.dao.ExtExtractionDao;
 import com.pennanttech.external.extractions.model.RPMSExtract;
 
 public class RPMSDumpService {
-	private ExtStagingDao extStageDao;
+	private ExtExtractionDao extExtractionDao;
 
-	public void setExtStageDao(ExtStagingDao extStageDao) {
-		this.extStageDao = extStageDao;
+	public void setExtExtractionDao(ExtExtractionDao extExtractionDao) {
+		this.extExtractionDao = extExtractionDao;
 	}
 
 	public void processRPMSDump(CustEODEvent custEODEvent) {
@@ -50,7 +50,7 @@ public class RPMSDumpService {
 			rpmsExtract.setTurnOverAmtYearTwo(null);// FIXME
 			rpmsExtract.setTurnOverInYearThree(null);// FIXME
 			rpmsExtract.setTurnOverAmtYearThree(null);// FIXME
-			extStageDao.saveRPMSExtractExtractionDataToTable(rpmsExtract);
+			extExtractionDao.saveRPMSExtractExtractionDataToTable(rpmsExtract);
 		}
 
 	}

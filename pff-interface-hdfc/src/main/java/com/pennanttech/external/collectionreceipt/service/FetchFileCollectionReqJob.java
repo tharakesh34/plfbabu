@@ -16,7 +16,7 @@ import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.constants.EXTIFConfigConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
@@ -28,9 +28,9 @@ import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtCollectionFolderReaderJob extends AbstractJob implements InterfaceConstants, EXTIFConfigConstants {
+public class FetchFileCollectionReqJob extends AbstractJob implements InterfaceConstants, ExtIntfConfigConstants {
 
-	private static final Logger logger = LogManager.getLogger(ExtCollectionFolderReaderJob.class);
+	private static final Logger logger = LogManager.getLogger(FetchFileCollectionReqJob.class);
 
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
 	private ApplicationContext applicationContext;

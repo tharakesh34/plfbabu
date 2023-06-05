@@ -13,7 +13,7 @@ import org.springframework.context.ApplicationContext;
 
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.constants.EXTIFConfigConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
@@ -22,7 +22,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class LienFileReadingJob extends AbstractJob implements InterfaceConstants, EXTIFConfigConstants {
+public class LienFileReadingJob extends AbstractJob implements InterfaceConstants, ExtIntfConfigConstants {
 
 	private static final Logger logger = LogManager.getLogger(LienFileReadingJob.class);
 

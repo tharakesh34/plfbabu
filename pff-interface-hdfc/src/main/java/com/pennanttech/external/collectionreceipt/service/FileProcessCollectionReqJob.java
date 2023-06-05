@@ -44,10 +44,10 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
-public class ExtCollectionFileProcessorJob extends AbstractJob
+public class FileProcessCollectionReqJob extends AbstractJob
 		implements InterfaceConstants, CollectionReceiptDataSplit, ErrorCodesConstants {
 
-	private static final Logger logger = LogManager.getLogger(ExtCollectionFileProcessorJob.class);
+	private static final Logger logger = LogManager.getLogger(FileProcessCollectionReqJob.class);
 
 	private static final String FETCH_QUERY = "Select * from COLL_RECEIPT_HEADER  Where STATUS=? AND EXTRACTION = ?";
 

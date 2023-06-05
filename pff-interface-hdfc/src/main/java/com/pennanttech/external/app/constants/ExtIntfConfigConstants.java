@@ -1,6 +1,6 @@
 package com.pennanttech.external.app.constants;
 
-public interface EXTIFConfigConstants {
+public interface ExtIntfConfigConstants {
 
 	String CONFIG_SI_REQ = "SI";
 	String CONFIG_SI_RESP = "SI_RESP";

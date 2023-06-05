@@ -6,15 +6,15 @@ import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennanttech.external.app.config.dao.ExtStagingDao;
+import com.pennanttech.external.extractions.dao.ExtExtractionDao;
 import com.pennanttech.external.extractions.model.BaselTwoExtract;
 
 public class BaselTwoDumpService {
 
-	private ExtStagingDao extStageDao;
+	private ExtExtractionDao extExtractionDao;
 
-	public void setExtStageDao(ExtStagingDao extStageDao) {
-		this.extStageDao = extStageDao;
+	public void setExtExtractionDao(ExtExtractionDao extExtractionDao) {
+		this.extExtractionDao = extExtractionDao;
 	}
 
 	public void processBaselTwoDump(CustEODEvent custEODEvent) {
@@ -73,7 +73,7 @@ public class BaselTwoDumpService {
 			baselTwo.setEligibility(null);
 			baselTwo.setObligations(null);
 			baselTwo.setObligationsn(null);
-			extStageDao.saveBaselTwoExtractionDataToTable(baselTwo);
+			extExtractionDao.saveBaselTwoExtractionDataToTable(baselTwo);
 		}
 
 	}

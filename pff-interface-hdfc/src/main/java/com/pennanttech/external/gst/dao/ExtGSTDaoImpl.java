@@ -1,4 +1,4 @@
-package com.pennanttech.external.gst.dao.daoimpl;
+package com.pennanttech.external.gst.dao;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -19,14 +19,15 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import com.pennanttech.external.gst.dao.ExtGSTDao;
+import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.gst.model.GSTCompDetail;
+import com.pennanttech.external.gst.model.GSTCompHeader;
 import com.pennanttech.external.gst.model.GSTInvoiceDetail;
 import com.pennanttech.external.gst.model.GSTRequestDetail;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtGSTDaoImpl extends SequenceDao implements ExtGSTDao {
+public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, InterfaceConstants {
 
 	private static final Logger logger = LogManager.getLogger(ExtGSTDaoImpl.class);
 
@@ -44,30 +45,39 @@ public class ExtGSTDaoImpl extends SequenceDao implements ExtGSTDao {
 	}
 
 	@Override
-	public void extractGSTVouchers() {
+	public void extractDetailsFromFinFeeDetail() {
+
+		String sql = "INSERT INTO GST_VOUCHER_DETAILS(FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
+				+ " REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE) "
+				+ " SELECT FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
+				+ " REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE FROM "
+				+ " (select  frh.reference FINREFERENCE,'FEE' AMOUNT_TYPE,ffr.feeid REFERENCE_FIELD1, "
+				+ " ffr.receiptid  REFERENCE_FIELD2,ffr.paidamount REFERENCE_AMOUNT,frh.receiptamount ACTUAL_AMOUNT, "
+				+ " to_date(substr(sysdate,1,10),'YYYY-MM-DD' ) AS CREATED_DATE  " + "   from finfeereceipts ffr  "
+				+ " inner join finfeedetail ffd on ffr.FEEID=ffd.FEEID  "
+				+ " inner join finreceiptheader frh on ffr.receiptid=frh.receiptid "
+				+ " where ffr.paidamount >0 and ffd.TAXAPPLICABLE=1) ";
+		// not exist with feeid and receipt id
+		logger.debug(Literal.SQL + sql);
+
+		mainNamedJdbcTemplate.getJdbcOperations().update(sql.toString());
+	}
+
+	@Override
+	public void extractDetailsFromManualadvise() {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" INSERT INTO GST_VOUCHER_DETAILS(FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
 				+ " REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE) "
 				+ "  SELECT FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
-				+ " REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE FROM( "
-
-				+ "   (select  frh.reference FINREFERENCE,'FEE' AMOUNT_TYPE,ffr.feeid REFERENCE_FIELD1, "
-				+ "   ffr.receiptid  REFERENCE_FIELD2,ffr.paidamount REFERENCE_AMOUNT,frh.receiptamount ACTUAL_AMOUNT, "
-				+ "   to_date(substr(sysdate,1,10),'YYYY-MM-DD' ) AS CREATED_DATE  " + "   from finfeereceipts ffr  "
-				+ "   inner join finfeedetail ffd on ffr.FEEID=ffd.FEEID  "
-				+ "   inner join finreceiptheader frh on ffr.receiptid=frh.receiptid "
-				+ "   where ffr.paidamount >0 and ffd.TAXAPPLICABLE=1) " + "   UNION  "
-
+				+ " REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE FROM "
 				+ "   (select mad.FINREFERENCE FINREFERENCE,'ADVISE' AMOUNTTYPE, MOVEMENTID REFERENCE_FIELD1, "
 				+ "   madm.RECEIPTID REFERENCE_FIELD2,madm.PAIDAMOUNT REFERENCE_AMOUNT,frh.receiptamount ACTUAL_AMOUNT, "
 				+ "   to_date(substr(sysdate,1,10),'YYYY-MM-DD' ) AS CREATED_DATE "
 				+ "   from manualadvisemovements madm "
 				+ "   inner join manualadvise mad on madm.ADVISEID=mad.ADVISEID "
-				+ "   inner join finreceiptheader frh on madm.RECEIPTID=frh.receiptid))T");
-
+				+ "   inner join finreceiptheader frh on madm.RECEIPTID=frh.receiptid)");
 		// not exist with feeid and receipt id
-
 		logger.debug(Literal.SQL + sql);
 
 		mainNamedJdbcTemplate.getJdbcOperations().update(sql.toString());
@@ -82,7 +92,7 @@ public class ExtGSTDaoImpl extends SequenceDao implements ExtGSTDao {
 	}
 
 	@Override
-	public void saveGSTVouchersToRequestTable(int processStatus, int req_file_id) {
+	public void saveExtractedDetailsToRequestTable() {
 		String sql = "";
 		sql = "INSERT INTO GST_REQUEST_DETAIL (REQUESTTYPE,CUSTOMERID,ACCOUNTID,GSTIN,HSN,"
 				+ " TRANSACTIONPRICEDCHARGE,CHARGEINCLUSIVEOFTAX,TRANSACTIONDATE,TRANSACTIONUID,"
@@ -99,8 +109,8 @@ public class ExtGSTDaoImpl extends SequenceDao implements ExtGSTDao {
 		logger.debug(Literal.SQL + sql);
 
 		mainNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
-			ps.setInt(1, processStatus);
-			ps.setInt(2, req_file_id);
+			ps.setInt(1, UNPROCESSED);// PROCESSED =?
+			ps.setInt(2, UNPROCESSED);// REQ_FILE_ID =?
 		});
 	}
 
@@ -159,8 +169,7 @@ public class ExtGSTDaoImpl extends SequenceDao implements ExtGSTDao {
 	}
 
 	@Override
-	public void saveResponseFile(String fileName, String fileLocation, int fileStatus, int extractStatus,
-			String errorCode, String errorMessage) {
+	public void saveResponseFile(GSTCompHeader compHeader) {
 		logger.info(Literal.ENTERING);
 		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
 		StringBuilder sql = new StringBuilder("INSERT INTO GSTCOMPHEADER");
@@ -171,13 +180,14 @@ public class ExtGSTDaoImpl extends SequenceDao implements ExtGSTDao {
 
 		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, fileName);
-			ps.setString(index++, fileLocation);
-			ps.setLong(index++, fileStatus);
-			ps.setLong(index++, extractStatus);
+			ps.setString(index++, compHeader.getFileName());
+			ps.setString(index++, compHeader.getFileLocation());
+			ps.setLong(index++, compHeader.getStatus());
+			ps.setLong(index++, compHeader.getExtraction());
 			ps.setTimestamp(index++, curTimeStamp);
-			ps.setString(index++, errorCode);
-			ps.setString(index, errorMessage);
+			ps.setString(index++, compHeader.getErrorCode());
+			ps.setString(index, compHeader.getErrorMessage());
+
 		});
 
 	}

@@ -24,8 +24,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennanttech.external.app.config.dao.ExtStagingDao;
-import com.pennanttech.external.app.config.dao.ExtStagingDaoImpl;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
@@ -43,7 +41,6 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 
 	private static final Logger logger = LogManager.getLogger(ExtPresentmentTableReaderJob.class);
 	private static final String FETCH_QUERY = "Select * from PDC_BATCH_D_STG  Where PICK_FINNONE = ?";
-	private ExtStagingDao extStageDao;
 	private ExtPresentmentDAO externalPresentmentDAO;
 	private DataSource stagingDataSource;
 	private PlatformTransactionManager transactionManager;
@@ -56,7 +53,6 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 		try {
 
 			applicationContext = ApplicationContextProvider.getApplicationContext();
-			extStageDao = applicationContext.getBean(ExtStagingDaoImpl.class);
 			externalPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
 			stagingDataSource = applicationContext.getBean("stagingDataSource", DataSource.class);
 			transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
@@ -156,7 +152,7 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 				txStatus = transactionManager.getTransaction(txDef);
 
 				// update the pick flag and date
-				extStageDao.updatePickupStatus("Y", extPresentmentFile.getAgreementId(),
+				externalPresentmentDAO.updatePickupStatus("Y", extPresentmentFile.getAgreementId(),
 						extPresentmentFile.getChequeSerialNo());
 
 				// validation extPresentment record if any error exists
@@ -164,7 +160,7 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 				if (extPresentmentFile != null && !"".equals(errorCode)) {
 
 					String errorMessage = extPresentmentFile.getErrorMessage();
-					extStageDao.updateErrorDetails(extPresentmentFile.getAgreementId(),
+					externalPresentmentDAO.updateErrorDetails(extPresentmentFile.getAgreementId(),
 							extPresentmentFile.getChequeSerialNo(), "Y", errorMessage);
 					// commit the transaction
 					transactionManager.commit(txStatus);
@@ -176,7 +172,7 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 						extPresentmentFile.getChequeDate());
 
 				if (data == null) {
-					extStageDao.updateErrorDetails(extPresentmentFile.getAgreementId(),
+					externalPresentmentDAO.updateErrorDetails(extPresentmentFile.getAgreementId(),
 							extPresentmentFile.getChequeSerialNo(), "Y", InterfaceErrorCodeUtil.getErrorMessage(F703));
 					// commit the transaction
 					transactionManager.commit(txStatus);
@@ -202,7 +198,7 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 				externalPresentmentDAO.savePresentment(data, prh.getHeaderId(), clearingStatus);
 
 				// update record status as completed
-				extStageDao.updateErrorDetails(extPresentmentFile.getAgreementId(),
+				externalPresentmentDAO.updateErrorDetails(extPresentmentFile.getAgreementId(),
 						extPresentmentFile.getChequeSerialNo(), "N", "");
 
 				// commit the transaction

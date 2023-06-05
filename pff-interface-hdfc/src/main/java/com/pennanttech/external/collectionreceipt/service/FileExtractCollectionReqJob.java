@@ -33,10 +33,10 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtCollectionFileExtractionJob extends AbstractJob
+public class FileExtractCollectionReqJob extends AbstractJob
 		implements InterfaceConstants, CollectionReceiptDataSplit, ErrorCodesConstants {
 
-	private static final Logger logger = LogManager.getLogger(ExtCollectionFileExtractionJob.class);
+	private static final Logger logger = LogManager.getLogger(FileExtractCollectionReqJob.class);
 
 	private static final String ROW1 = "'H'";
 	private static final String ROW2 = "H";

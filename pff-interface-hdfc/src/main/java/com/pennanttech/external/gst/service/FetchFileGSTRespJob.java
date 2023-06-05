@@ -16,22 +16,23 @@ import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.constants.EXTIFConfigConstants;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.gst.dao.ExtGSTDao;
+import com.pennanttech.external.gst.model.GSTCompHeader;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class GSTFolderReaderJob extends AbstractJob
-		implements InterfaceConstants, ErrorCodesConstants, EXTIFConfigConstants {
-	private static final Logger logger = LogManager.getLogger(GSTFolderReaderJob.class);
+public class FetchFileGSTRespJob extends AbstractJob
+		implements InterfaceConstants, ErrorCodesConstants, ExtIntfConfigConstants {
+	private static final Logger logger = LogManager.getLogger(FetchFileGSTRespJob.class);
 	private static final String GST_COMP_RESPONSE_END = "EOF";
 	private static final String ERR_RESP_CONFIG_MISSING = "Ext_GST: No configuration found for type GST response. So returning without reading the folder.";
 	private static final String ERR_RESP_LOCAL_PATH_CONFIG_MISSING = "Ext_GST:Invalid GST resp folder path configured, so returning.";
@@ -132,14 +133,23 @@ public class GSTFolderReaderJob extends AbstractJob
 					// Validating file Header and Footer. If not valid, mark file as 'File format mismatch'
 					boolean isValidFile = validateFile(responseFile, fileRecordsList.size());
 
+					GSTCompHeader header = new GSTCompHeader();
+
+					header.setFileName(respFileName);
+					header.setFileLocation(respConfig.getFileLocation());
+
 					if (!isValidFile) {
-						extGSTDao.saveResponseFile(respFileName, respConfig.getFileLocation(), FAILED, UNPROCESSED,
-								F607, InterfaceErrorCodeUtil.getErrorMessage(F607));
+						header.setStatus(FAILED);
+						header.setExtraction(UNPROCESSED);
+						header.setErrorCode(F607);
+						header.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F607));
+						extGSTDao.saveResponseFile(header);
 					}
 
 					// Add unprocessed files in to table
-					extGSTDao.saveResponseFile(respFileName, respConfig.getFileLocation(), UNPROCESSED, UNPROCESSED, "",
-							"");
+					header.setStatus(UNPROCESSED);
+					header.setExtraction(UNPROCESSED);
+					extGSTDao.saveResponseFile(header);
 				}
 			}
 		}

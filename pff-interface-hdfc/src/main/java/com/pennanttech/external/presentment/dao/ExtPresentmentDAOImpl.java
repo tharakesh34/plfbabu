@@ -41,6 +41,7 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 
 	private NamedParameterJdbcTemplate mainNamedJdbcTemplate;
 	private NamedParameterJdbcTemplate extNamedJdbcTemplate;
+	private NamedParameterJdbcTemplate stageNamedJdbcTemplate;
 
 	public ExtPresentmentDAOImpl() {
 		super();
@@ -742,7 +743,8 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 	}
 
 	@Override
-	public Presentment getPDCStagingPresentmentDetails(String finReference, String chequeNo, java.util.Date chequeDate) {
+	public Presentment getPDCStagingPresentmentDetails(String finReference, String chequeNo,
+			java.util.Date chequeDate) {
 
 		logger.debug(Literal.ENTERING);
 
@@ -797,14 +799,6 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
-	}
-
-	public void setExtDataSource(DataSource extDataSource) {
-		this.extNamedJdbcTemplate = new NamedParameterJdbcTemplate(extDataSource);
-	}
-
-	public void setMainDataSource(DataSource mainDataSource) {
-		this.mainNamedJdbcTemplate = new NamedParameterJdbcTemplate(mainDataSource);
 	}
 
 	@Override
@@ -879,6 +873,51 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 		});
 
 		return pres.getTxnReference();
+	}
+
+	@Override
+	public void updatePickupStatus(String pickFlag, long agreementId, String chequeSno) {
+		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
+		StringBuilder sql = new StringBuilder("UPDATE PDC_BATCH_D_STG");
+		sql.append(" SET PICK_FINNONE = ?, FINNONE_PICK_DATE = ? WHERE AGREEMENTID= ? AND CHEQUESNO=?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		stageNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, pickFlag);
+			ps.setTimestamp(index++, curTimeStamp);
+			ps.setLong(index++, agreementId);
+			ps.setString(index, chequeSno);
+		});
+	}
+
+	@Override
+	public void updateErrorDetails(long agreementId, String chequeSno, String errorFlag, String errorDesc) {
+		StringBuilder sql = new StringBuilder("UPDATE PDC_BATCH_D_STG");
+		sql.append(" SET EXCEPTION_FLAG = ?, EXCEPTION_DESC = ? WHERE AGREEMENTID= ? AND CHEQUESNO=?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		stageNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, errorFlag);
+			ps.setString(index++, errorDesc);
+			ps.setLong(index++, agreementId);
+			ps.setString(index, chequeSno);
+		});
+	}
+
+	public void setExtDataSource(DataSource extDataSource) {
+		this.extNamedJdbcTemplate = new NamedParameterJdbcTemplate(extDataSource);
+	}
+
+	public void setMainDataSource(DataSource mainDataSource) {
+		this.mainNamedJdbcTemplate = new NamedParameterJdbcTemplate(mainDataSource);
+	}
+
+	public void setStagingDataSource(DataSource stagingDataSource) {
+		this.stageNamedJdbcTemplate = new NamedParameterJdbcTemplate(stagingDataSource);
 	}
 
 }

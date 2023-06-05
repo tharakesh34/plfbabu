@@ -24,7 +24,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.constants.EXTIFConfigConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
@@ -39,10 +39,10 @@ import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtCollectionResponseFileJob extends AbstractJob
-		implements InterfaceConstants, ErrorCodesConstants, EXTIFConfigConstants {
+public class FileWriteCollectionRespJob extends AbstractJob
+		implements InterfaceConstants, ErrorCodesConstants, ExtIntfConfigConstants {
 
-	private static final Logger logger = LogManager.getLogger(ExtCollectionResponseFileJob.class);
+	private static final Logger logger = LogManager.getLogger(FileWriteCollectionRespJob.class);
 
 	private static final String FETCH_QUERY = "Select * from COLL_RECEIPT_HEADER  Where WRITE_RESPONSE = ? AND RESP_FILE_STATUS =?";
 

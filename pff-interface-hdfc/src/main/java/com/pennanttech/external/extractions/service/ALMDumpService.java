@@ -14,20 +14,18 @@ import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennanttech.external.app.config.dao.ExtStagingDao;
+import com.pennanttech.external.extractions.dao.ExtExtractionDao;
 import com.pennanttech.external.extractions.model.AlmExtract;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ALMDumpService {
 	private static final Logger logger = LogManager.getLogger(ALMDumpService.class);
-	private ExtStagingDao extStageDao;
+	private ExtExtractionDao extExtractionDao;
 
 	public void processALM(CustEODEvent custEODEvent) {
 		List<FinEODEvent> finEods = custEODEvent.getFinEODEvents();
 		for (FinEODEvent finEOD : finEods) {
 			FinanceProfitDetail fpd = finEOD.getFinProfitDetail();
-			List<FinanceScheduleDetail> fschd = finEOD.getFinanceScheduleDetails();
 			FinanceMain fm = finEOD.getFinanceMain();
 			AlmExtract almExtract = new AlmExtract();
 			almExtract.setAlmReportType("RD");// DEFAULT
@@ -84,7 +82,7 @@ public class ALMDumpService {
 			almExtract.setPslctgid(0l);// FIXME
 			almExtract.setNpaStageId("");// FIXME
 			almExtract.setWeakerSectionDesc("");// FIXME TBD
-			extStageDao.saveAlmExtractionDataToTable(almExtract);
+			extExtractionDao.saveAlmExtractionDataToTable(almExtract);
 		}
 	}
 
@@ -99,8 +97,8 @@ public class ALMDumpService {
 		return null;
 	}
 
-	public void setExtStageDao(ExtStagingDao extStageDao) {
-		this.extStageDao = extStageDao;
+	public void setExtExtractionDao(ExtExtractionDao extExtractionDao) {
+		this.extExtractionDao = extExtractionDao;
 	}
 
 }

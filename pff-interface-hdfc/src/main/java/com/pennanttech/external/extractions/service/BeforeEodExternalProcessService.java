@@ -4,11 +4,11 @@ import java.util.Date;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.BeforeEodExternalProcessHook;
-import com.pennanttech.external.app.config.dao.ExtStagingDao;
+import com.pennanttech.external.extractions.dao.ExtExtractionDao;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class BeforeEodExternalProcessService implements BeforeEodExternalProcessHook {
-	private ExtStagingDao extStageDao;
+	private ExtExtractionDao extExtractionDao;
 
 	@Override
 	public void truncateExtractionTables() {
@@ -16,15 +16,14 @@ public class BeforeEodExternalProcessService implements BeforeEodExternalProcess
 		Date appDate = SysParamUtil.getAppDate();
 
 		if (appDate.compareTo(DateUtil.getMonthEnd(appDate)) == 0) {
-			extStageDao.truncateTable("EXT_BASEL_ONE");
-			extStageDao.truncateTable("ALM_REPORT");
-			extStageDao.truncateTable("BASELTWO");
-			extStageDao.truncateTable("RPMSEXTRACT");
+			extExtractionDao.truncateStageTable("EXT_BASEL_ONE");
+			extExtractionDao.truncateStageTable("ALM_REPORT");
+			extExtractionDao.truncateStageTable("BASELTWO");
+			extExtractionDao.truncateStageTable("RPMSEXTRACT");
 		}
-
 	}
 
-	public void setExtStageDao(ExtStagingDao extStageDao) {
-		this.extStageDao = extStageDao;
+	public void setExtExtractionDao(ExtExtractionDao extExtractionDao) {
+		this.extExtractionDao = extExtractionDao;
 	}
 }

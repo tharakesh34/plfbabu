@@ -29,9 +29,9 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class GSTFileExtractionJob extends AbstractJob implements InterfaceConstants {
+public class FileExtractGSTRespJob extends AbstractJob implements InterfaceConstants {
 
-	private static final Logger logger = LogManager.getLogger(GSTFileExtractionJob.class);
+	private static final Logger logger = LogManager.getLogger(FileExtractGSTRespJob.class);
 	private static final String GST_COMP_RESPONSE_START = "G";
 	private static final String FETCH_QUERY = "Select * from GSTCOMPHEADER  Where STATUS=? AND EXTRACTION=?";
 

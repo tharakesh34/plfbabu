@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennanttech.external.app.constants.EXTIFConfigConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
@@ -31,9 +31,9 @@ import com.pennanttech.external.gst.model.GSTRespDetail;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class GSTFileProcessorJob extends AbstractJob
-		implements EXTIFConfigConstants, InterfaceConstants, ErrorCodesConstants {
-	private static final Logger logger = LogManager.getLogger(GSTFileProcessorJob.class);
+public class FileProcessGSTRespJob extends AbstractJob
+		implements ExtIntfConfigConstants, InterfaceConstants, ErrorCodesConstants {
+	private static final Logger logger = LogManager.getLogger(FileProcessGSTRespJob.class);
 	private static final String FETCH_GSTCOMPHEADER_QUERY = "Select * from GSTCOMPHEADER  Where STATUS = ?  AND EXTRACTION= ?";
 	private static final String FETCH_GSTCOMPDETAILS_QUERY = "Select * from GSTCOMPDETAILS  Where STATUS = ? AND HEADER_ID = ?";
 	private DataSource dataSource;

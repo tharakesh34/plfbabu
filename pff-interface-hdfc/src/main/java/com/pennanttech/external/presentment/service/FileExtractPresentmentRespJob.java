@@ -26,7 +26,7 @@ import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennanttech.external.app.constants.EXTIFConfigConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
@@ -36,8 +36,8 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtPresentmentFileExtractionJob extends AbstractJob implements InterfaceConstants, EXTIFConfigConstants {
-	private static final Logger logger = LogManager.getLogger(ExtPresentmentFileExtractionJob.class);
+public class FileExtractPresentmentRespJob extends AbstractJob implements InterfaceConstants, ExtIntfConfigConstants {
+	private static final Logger logger = LogManager.getLogger(FileExtractPresentmentRespJob.class);
 	private static final String FETCH_QUERY = "Select * from PRMNT_HEADER  Where EXTRACTION = ? AND STATUS = ?";
 
 	private DataSource dataSource;

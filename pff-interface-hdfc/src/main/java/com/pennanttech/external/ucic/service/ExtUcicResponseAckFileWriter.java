@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.io.Files;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.constants.EXTIFConfigConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
@@ -23,7 +23,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtUcicResponseAckFileWriter extends TextFileUtil implements InterfaceConstants, EXTIFConfigConstants {
+public class ExtUcicResponseAckFileWriter extends TextFileUtil implements InterfaceConstants, ExtIntfConfigConstants {
 
 	private static final Logger logger = LogManager.getLogger(ExtUcicResponseAckFileWriter.class);
 

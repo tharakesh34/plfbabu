@@ -39,6 +39,7 @@
 	<bean id="externalPresentmentDAO" class="com.pennanttech.external.presentment.dao.ExtPresentmentDAOImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
+		<property name="stagingDataSource" ref="stagingDataSource" />
 	</bean>
 
 	<bean id="extGenericDao" class="com.pennanttech.external.app.config.dao.ExtGenericDaoImpl">
@@ -144,19 +145,19 @@
 
 
 	<bean id="baselOneDumpService" class="com.pennanttech.external.extractions.service.BaselOneDumpService">
-		<property name="extStageDao" ref="extStageDao" />
+		<property name="extExtractionDao" ref="extExtractionDao" />
 	</bean>
 
 	<bean id="almDumpService" class="com.pennanttech.external.extractions.service.ALMDumpService">
-		<property name="extStageDao" ref="extStageDao" />
+		<property name="extExtractionDao" ref="extExtractionDao" />
 	</bean>
 
 	<bean id="baselTwoDumpService" class="com.pennanttech.external.extractions.service.BaselTwoDumpService">
-		<property name="extStageDao" ref="extStageDao" />
+		<property name="extExtractionDao" ref="extExtractionDao" />
 	</bean>
 
 	<bean id="rpmsDumpService" class="com.pennanttech.external.extractions.service.RPMSDumpService">
-		<property name="extStageDao" ref="extStageDao" />
+		<property name="extExtractionDao" ref="extExtractionDao" />
 	</bean>
 
 	<bean id="microEodExternalProcessHook"
@@ -169,7 +170,7 @@
 
 	<bean id="beforeEodExternalProcessHook"
 		class="com.pennanttech.external.extractions.service.BeforeEodExternalProcessService">
-		<property name="extStageDao" ref="extStageDao" />
+		<property name="extExtractionDao" ref="extExtractionDao" />
 	</bean>
 
 	<bean id="collectionFileService"

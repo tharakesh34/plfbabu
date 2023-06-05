@@ -6,12 +6,12 @@ import java.util.List;
 import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennanttech.external.app.config.dao.ExtStagingDao;
+import com.pennanttech.external.extractions.dao.ExtExtractionDao;
 import com.pennanttech.external.extractions.model.BaselOne;
 
 public class BaselOneDumpService {
 
-	private ExtStagingDao extStageDao;
+	private ExtExtractionDao extExtractionDao;
 
 	public void processBaselOne(CustEODEvent custEODEvent) {
 		List<FinEODEvent> finEods = custEODEvent.getFinEODEvents();
@@ -34,12 +34,12 @@ public class BaselOneDumpService {
 			baselOne.setAnnualTurnover(new BigDecimal("0"));
 			baselOne.setExptype("R");
 			baselOne.setTenure(fpd.getTotalTenor());
-			extStageDao.saveBaselOneExtractionDataToTable(baselOne);
+			extExtractionDao.saveBaselOneExtractionDataToTable(baselOne);
 		}
 	}
 
-	public void setExtStageDao(ExtStagingDao extStageDao) {
-		this.extStageDao = extStageDao;
+	public void setExtExtractionDao(ExtExtractionDao extExtractionDao) {
+		this.extExtractionDao = extExtractionDao;
 	}
 
 }

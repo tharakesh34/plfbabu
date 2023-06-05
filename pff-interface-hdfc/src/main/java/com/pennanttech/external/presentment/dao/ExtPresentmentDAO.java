@@ -68,4 +68,8 @@ public interface ExtPresentmentDAO {
 
 	void saveExtPresentment(ExtPresentment extPresentment);
 
+	void updatePickupStatus(String pickFlag, long agreementId, String chequeSno);
+
+	public void updateErrorDetails(long agreementId, String chequeSno, String errorFlag, String errorDesc);
+
 }

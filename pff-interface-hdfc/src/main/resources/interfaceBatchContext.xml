@@ -36,6 +36,7 @@
 	<bean id="externalPresentmentDAO" class="com.pennanttech.external.presentment.dao.ExtPresentmentDAOImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
+		<property name="stagingDataSource" ref="stagingDataSource" />
 	</bean>
 
 	<bean id="extExtractionHook" class="com.pennanttech.external.extractions.service.EODExtractionsService">
