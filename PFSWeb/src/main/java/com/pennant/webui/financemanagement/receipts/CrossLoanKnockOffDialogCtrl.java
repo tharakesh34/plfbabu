@@ -1272,7 +1272,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		receiptData.setAccruedTillLBD(schData.getFinanceMain().getLovDescAccruedTillLBD());
 
 		// Allocation Process start
-		if (StringUtils.equals(allocateMthd, RepayConstants.ALLOCTYPE_AUTO)) {
+		if (StringUtils.equals(allocateMthd, AllocationType.AUTO)) {
 			receiptData = receiptCalculator.recalAutoAllocation(receiptData, false);
 		}
 
