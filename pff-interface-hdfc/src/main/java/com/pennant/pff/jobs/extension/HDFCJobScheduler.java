@@ -5,14 +5,14 @@ import java.util.List;
 
 import org.quartz.JobDataMap;
 
-import com.pennanttech.external.collectionreceipt.service.ExtCollectionFileExtractionJob;
-import com.pennanttech.external.collectionreceipt.service.ExtCollectionFileProcessorJob;
-import com.pennanttech.external.collectionreceipt.service.ExtCollectionFolderReaderJob;
-import com.pennanttech.external.collectionreceipt.service.ExtCollectionResponseFileJob;
-import com.pennanttech.external.presentment.service.ExtPresentmentFileExtractionJob;
-import com.pennanttech.external.presentment.service.ExtPresentmentFileProcessorJob;
-import com.pennanttech.external.presentment.service.ExtPresentmentFolderReaderJob;
+import com.pennanttech.external.collectionreceipt.service.FetchFileCollectionReqJob;
+import com.pennanttech.external.collectionreceipt.service.FileExtractCollectionReqJob;
+import com.pennanttech.external.collectionreceipt.service.FileProcessCollectionReqJob;
+import com.pennanttech.external.collectionreceipt.service.FileWriteCollectionRespJob;
 import com.pennanttech.external.presentment.service.ExtPresentmentTableReaderJob;
+import com.pennanttech.external.presentment.service.FileExtractPresentmentRespJob;
+import com.pennanttech.external.presentment.service.FileFetchPresentmentRespJob;
+import com.pennanttech.external.presentment.service.FileProcessPresentmentRespJob;
 import com.pennanttech.external.silien.service.LeinFileProcesserJob;
 import com.pennanttech.external.silien.service.LienFileReadingJob;
 import com.pennanttech.external.silien.service.LienFileWritingJob;
@@ -31,21 +31,21 @@ public class HDFCJobScheduler implements JobSchedulerExtension {
 		 * 29. EXT_PRMNT_RESPONSE_READING_JOB
 		 */
 		JobDataMap args = new JobDataMap();
-		JobData jobData = new JobData("EXT_PRMNT_RESPONSE_READING_JOB", ExtPresentmentFolderReaderJob.class, args);
+		JobData jobData = new JobData("EXT_PRMNT_RESPONSE_READING_JOB", FileFetchPresentmentRespJob.class, args);
 		jobDataList.add(jobData);
 
 		/**
 		 * 30. EXT_PRMNT_FILE_EXTRACTOR_JOB
 		 */
 		args = new JobDataMap();
-		jobData = new JobData("EXT_PRMNT_FILE_EXTRACTOR_JOB", ExtPresentmentFileExtractionJob.class, args);
+		jobData = new JobData("EXT_PRMNT_FILE_EXTRACTOR_JOB", FileExtractPresentmentRespJob.class, args);
 		jobDataList.add(jobData);
 
 		/**
 		 * 34. EXT_PRMNT_FILE_PROCESSOR_JOB
 		 */
 		args = new JobDataMap();
-		jobData = new JobData("EXT_PRMNT_FILE_PROCESSOR_JOB", ExtPresentmentFileProcessorJob.class, args);
+		jobData = new JobData("EXT_PRMNT_FILE_PROCESSOR_JOB", FileProcessPresentmentRespJob.class, args);
 		jobDataList.add(jobData);
 
 		/**
@@ -87,28 +87,28 @@ public class HDFCJobScheduler implements JobSchedulerExtension {
 		 * 41. EXT_COLLECTION_FOLDER_READER_JOB
 		 */
 		args = new JobDataMap();
-		jobData = new JobData("EXT_COLLECTION_FOLDER_READER_JOB", ExtCollectionFolderReaderJob.class, args);
+		jobData = new JobData("EXT_COLLECTION_FOLDER_READER_JOB", FetchFileCollectionReqJob.class, args);
 		jobDataList.add(jobData);
 
 		/**
 		 * 42. EXT_COLLECTION_FILE_EXTRACTION_JOB
 		 */
 		args = new JobDataMap();
-		jobData = new JobData("EXT_COLLECTION_FILE_EXTRACTION_JOB", ExtCollectionFileExtractionJob.class, args);
+		jobData = new JobData("EXT_COLLECTION_FILE_EXTRACTION_JOB", FileExtractCollectionReqJob.class, args);
 		jobDataList.add(jobData);
 
 		/**
 		 * 43. EXT_COLLECTION_FILE_PROCESSOR_JOB
 		 */
 		args = new JobDataMap();
-		jobData = new JobData("EXT_COLLECTION_FILE_PROCESSOR_JOB", ExtCollectionFileProcessorJob.class, args);
+		jobData = new JobData("EXT_COLLECTION_FILE_PROCESSOR_JOB", FileProcessCollectionReqJob.class, args);
 		jobDataList.add(jobData);
 
 		/**
 		 * 44. EXT_COLLECTION_RESPONSE_FILE_JOB
 		 */
 		args = new JobDataMap();
-		jobData = new JobData("EXT_COLLECTION_RESPONSE_FILE_JOB", ExtCollectionResponseFileJob.class, args);
+		jobData = new JobData("EXT_COLLECTION_RESPONSE_FILE_JOB", FileWriteCollectionRespJob.class, args);
 		jobDataList.add(jobData);
 
 		/**
