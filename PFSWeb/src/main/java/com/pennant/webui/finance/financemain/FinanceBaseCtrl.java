@@ -34,10 +34,8 @@
 
 package com.pennant.webui.finance.financemain;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -1582,8 +1580,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		appendRecommendDetailTab(false);
 	}
 
-	public void onSelectCheckListDetailsTab(ForwardEvent event)
-			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void onSelectCheckListDetailsTab(ForwardEvent event) {
 		this.doWriteComponentsToBean(getFinanceDetail().getFinScheduleData(), new ArrayList<WrongValueException>());
 
 		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getCustomerDetails() != null) {
@@ -1868,8 +1865,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onSelectCollateralTab(ForwardEvent event)
-			throws IllegalAccessException, InvocationTargetException, InterruptedException {
+	public void onSelectCollateralTab(ForwardEvent event) {
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
 			getCollateralHeaderDialogCtrl().doSetLabels(getFinBasicDetails());
 		} else {
