@@ -175,7 +175,7 @@ public class HoldMarkingHeaderDAOImpl extends SequenceDao<HoldMarkingHeader> imp
 		sql.append(" hmh.Id, hmh.HoldID, hmh.FinID, hmh.FinReference, hmh.HoldReference");
 		sql.append(" , hmh.AccountNumber, hmh.HoldAmount, hmh.ReleaseAmount, hmh.Balance");
 		sql.append(" From HOLD_MARKING_HEADER hmh");
-		sql.append(" Left Join HOLD_MARKING_HEADER hmh on hmd.HoldID = hmh.HoldID");
+		sql.append(" Left Join HOLD_MARKING_DETAIL hmd on hmd.HoldID = hmd.HoldID");
 		sql.append(" Where  hmh.FinId = ? and hmd.HoldType = ? and hmd.Marking = ? and hmh.Balance > ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
