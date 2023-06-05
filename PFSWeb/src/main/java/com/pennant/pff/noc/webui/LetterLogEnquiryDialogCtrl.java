@@ -197,6 +197,12 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 
 				String requestType = data.getRequestType();
 
+				String approverName = data.getApproverName();
+
+				if ("A".equals(requestType)) {
+					approverName = "Auto";
+				}
+
 				if ("A".equals(requestType)) {
 					requestType = "Auto";
 				}
@@ -216,11 +222,6 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 				lc = new Listcell(requestType);
 				lc.setSpan(1);
 				lc.setParent(item);
-
-				String approverName = data.getApproverName();
-				if ("A".equals(requestType)) {
-					approverName = "Auto";
-				}
 
 				lc = new Listcell(StringUtils.trimToEmpty(approverName));
 				lc.setSpan(1);
