@@ -37,7 +37,8 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	@Override
 	public void processFinconGLExtraction() {
 		Date appDate = SysParamUtil.getAppDate();
-		String finconSPStatus = extExtractionDao.executeSp(SP_FINCON_GL, appDate);
+		String spCall = "{ call " + SP_FINCON_GL + "(?) }";
+		String finconSPStatus = extExtractionDao.executeSp(spCall, appDate);
 		if (!"SUCCESS".equals(finconSPStatus)) {
 			logger.debug("EXT_FINCONGL: SP extraction failed.");
 			return;
@@ -54,7 +55,8 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 				+ finconGLConfig.getFileExtension();
 
 		// write the file in DB server
-		String status = extExtractionDao.executeSp(SP_FINCON_WRITE_FILE, fileName);
+		String spQuery = "{ call " + SP_FINCON_WRITE_FILE + "(?) }";
+		String status = extExtractionDao.executeSp(spQuery, fileName);
 
 		if (!"SUCCESS".equals(status)) {
 			logger.debug("EXT_FINCONGL: Fincon File writing SP failed.");
@@ -179,17 +181,20 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 
 	@Override
 	public void processBaselOneExtarction() {
-		extExtractionDao.executeSp(SP_BASEL_ONE);
+		String spCall = "{ call " + SP_BASEL_ONE + "() }";
+		extExtractionDao.executeSp(spCall);
 	}
 
 	@Override
 	public void processALMReportExtarction() {
-		extExtractionDao.executeSp(SP_ALM_REPORT);
+		String spCall = "{ call " + SP_ALM_REPORT + "() }";
+		extExtractionDao.executeSp(spCall);
 	}
 
 	@Override
 	public void processExtRBIADFExtarction() {
-		extExtractionDao.executeSp(SP_RBIADF);
+		String spCall = "{ call " + SP_RBIADF + "() }";
+		extExtractionDao.executeSp(spCall);
 
 	}
 
