@@ -54,12 +54,6 @@
 		<constructor-arg ref="extGenericDao" />
 	</bean>
 
-
-
-	<bean id="extStageDao" class="com.pennanttech.external.app.config.dao.ExtStagingDaoImpl">
-		<property name="stagingDataSource" ref="stagingDataSource" />
-	</bean>
-
 	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.ExtUcicDaoImpl">
 		<property name="mainDataSource" ref="dataSource" />
 	</bean>

@@ -45,10 +45,6 @@
 		<property name="extUcicRequestFile" ref="extUcicRequestFile" />
 	</bean>
 
-	<bean id="extStageDao" class="com.pennanttech.external.app.config.dao.ExtStagingDaoImpl">
-		<property name="stagingDataSource" ref="stagingDataSource" />
-	</bean>
-
 	<bean id="siService" class="com.pennanttech.external.presentment.service.SIService">
 		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
 	</bean>
