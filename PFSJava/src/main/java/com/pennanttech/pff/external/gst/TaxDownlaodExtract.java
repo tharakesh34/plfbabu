@@ -116,7 +116,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		}
 	}
 
-	private void processTaxDownloadData(final long id) throws SQLException {
+	private void processTaxDownloadData(final long id) {
 		setGstTranasactioRecords();
 		processTrnExtractionTypeData(id);
 		processSumExtractionTypeData(id);

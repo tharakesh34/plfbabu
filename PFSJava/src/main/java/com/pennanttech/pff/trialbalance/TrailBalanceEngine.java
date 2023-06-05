@@ -782,7 +782,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		return seqNo;
 	}
 
-	private void initilize() throws Exception {
+	private void initilize() {
 		loadParameters();
 		clearTables();
 	}

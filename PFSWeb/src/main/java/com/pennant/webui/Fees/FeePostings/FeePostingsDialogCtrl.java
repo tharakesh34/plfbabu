@@ -243,9 +243,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * when the "delete" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException {
+	public void onClick$btnDelete(Event event) {
 		logger.debug("Entering" + event.toString());
 		doDelete();
 		logger.debug("Leaving" + event.toString());
@@ -277,9 +276,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * when the "help" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnHelp(Event event) throws InterruptedException {
+	public void onClick$btnHelp(Event event) {
 		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_feePostingsDialog);
 		logger.debug("Leaving" + event.toString());
@@ -899,10 +897,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 	/**
 	 * Deletes a JVPosting object from database.<br>
-	 * 
-	 * @throws InterruptedException
 	 */
-	private void doDelete() throws InterruptedException {
+	private void doDelete() {
 
 	}
 
@@ -937,7 +933,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 	}
 
-	public void onFulfill$partnerBankID(Event event) throws InterruptedException {
+	public void onFulfill$partnerBankID(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		Object dataObject = partnerBankID.getObject();

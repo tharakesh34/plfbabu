@@ -227,7 +227,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 	}
 
-	private void tuffFormat(File cibilFile, String entity) throws Exception, IOException {
+	private void tuffFormat(File cibilFile, String entity) throws IOException {
 		try (final BufferedWriter writer = new BufferedWriter(new FileWriter(cibilFile))) {
 			new HeaderSegment(writer).write();
 			MapSqlParameterSource parameterSource = new MapSqlParameterSource();
@@ -280,7 +280,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 		}
 	}
 
-	private void xlsxFormat(File cibilFile, String entity) throws Exception, IOException {
+	private void xlsxFormat(File cibilFile, String entity) throws IOException {
 		try (FileOutputStream outputStream = new FileOutputStream(cibilFile)) {
 			try (BufferedOutputStream bos = new BufferedOutputStream(outputStream)) {
 				try (Workbook workbook = new XSSFWorkbook()) {
@@ -1077,14 +1077,14 @@ public class RetailCibilReport extends BasicDao<Object> {
 	}
 
 	private void createHeading(Sheet sheet, int rowIndex) {
-		Row row = sheet.createRow((int) rowIndex);
+		Row row = sheet.createRow(rowIndex);
 		Cell cella = row.createCell(0);
 		cella.setCellValue("CIBIL HEADING");
 		sheet.addMergedRegion(CellRangeAddress.valueOf("A1:E1"));
 	}
 
 	private void createFields(Workbook workbook, Sheet sheet, int rowIndex, String header) {
-		Row row = sheet.createRow((int) rowIndex);
+		Row row = sheet.createRow(rowIndex);
 		int cellIndex = 0;
 		final Font font = workbook.createFont();
 		final CellStyle style = workbook.createCellStyle();
@@ -1102,7 +1102,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 	}
 
 	private void createFields(Sheet sheet, int rowIndex, String header) {
-		Row row = sheet.createRow((int) rowIndex);
+		Row row = sheet.createRow(rowIndex);
 		int cellIndex = 0;
 		for (String fieldName : header.split(",")) {
 			createCell(row, cellIndex++, fieldName.trim());
@@ -1114,7 +1114,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 		cell.setCellValue(cellValue);
 	}
 
-	private File createFile() throws Exception {
+	private File createFile() throws IOException {
 		logger.debug("Creating the file");
 		File reportName = null;
 		String reportLocation = memberDetails.getFilePath();
@@ -1138,7 +1138,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 		return reportName;
 	}
 
-	private File createXlsFile() throws Exception {
+	private File createXlsFile() throws IOException {
 		logger.debug("Creating the file");
 		File reportName = null;
 		String reportLocation = memberDetails.getFilePath();
@@ -1175,7 +1175,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			this.writer = writer;
 		}
 
-		public void write() throws Exception {
+		public void write() throws IOException {
 			StringBuilder builder = new StringBuilder();
 			writeValue(builder, "TUDF");
 			writeValue(builder, "12");
@@ -1236,7 +1236,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			this.documents = documents;
 		}
 
-		public void write() throws Exception {
+		public void write() {
 			int i = 0;
 			for (CustomerDocument document : documents) {
 				String docCode = document.getCustDocCategory();
@@ -1283,7 +1283,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			this.phoneNumbers = phoneNumbers;
 		}
 
-		public void write() throws Exception {
+		public void write() {
 
 			if (phoneNumbers == null || phoneNumbers.isEmpty()) {
 				return;
@@ -1321,7 +1321,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			this.emails = emails;
 		}
 
-		public void write() throws Exception {
+		public void write() {
 
 			if (emails == null || emails.isEmpty()) {
 				return;
@@ -1402,7 +1402,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			this.loan = loan;
 		}
 
-		public void write() throws Exception {
+		public void write() {
 			writeValue(builder, "TL", "T001", "04");
 			writeValue(builder, "01", StringUtils.rightPad(memberDetails.getMemberCode(), 10, ""), "10");
 			writeValue(builder, "02", memberDetails.getMemberShortName(), 16, "TL");
@@ -1510,7 +1510,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			this.loans = loans;
 		}
 
-		public void write() throws Exception {
+		public void write() {
 			int i = 0;
 			for (FinanceEnquiry loan : loans) {
 
@@ -1537,7 +1537,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			this.builder = writer;
 		}
 
-		public void write() throws IOException {
+		public void write() {
 			builder.append("ES02**");
 		}
 	}
@@ -1549,7 +1549,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			this.writer = writer;
 		}
 
-		public void write() throws Exception {
+		public void write() throws IOException {
 			writer.write("TRLR");
 		}
 	}
@@ -1611,8 +1611,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 	}
 
-	private void writeValue(StringBuilder builder, String fieldTag, BigDecimal amount, int maxLength, String segment)
-			throws IOException {
+	private void writeValue(StringBuilder builder, String fieldTag, BigDecimal amount, int maxLength, String segment) {
 		if (amount == null) {
 			return;
 		}
@@ -1711,7 +1710,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 		}
 	}
 
-	private void writeCustomerAddress(StringBuilder writer, CustomerAddres custAddr) throws IOException {
+	private void writeCustomerAddress(StringBuilder writer, CustomerAddres custAddr) {
 		StringBuilder builder = new StringBuilder();
 
 		if (custAddr.getCustAddrHNbr() != null) {
@@ -1918,7 +1917,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 	private void setDasAndDmaData(FinanceMain financeMain) {
 		logger.debug(Literal.ENTERING);
-		List<Long> dealerIds = new ArrayList<Long>();
+		List<Long> dealerIds = new ArrayList<>();
 		long dsaCode = 0;
 		long dmaCode = 0;
 		long connectorCode = 0;
