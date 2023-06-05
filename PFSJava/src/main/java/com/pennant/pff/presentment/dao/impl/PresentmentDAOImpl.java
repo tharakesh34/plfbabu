@@ -1967,4 +1967,12 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	}
 
+	@Override
+	public int getQueueCount() {
+		String sql = "Select Coalesce(count(Id), 0) From PRMNT_EXTRACTION_STAGE";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class);
+	}
 }
