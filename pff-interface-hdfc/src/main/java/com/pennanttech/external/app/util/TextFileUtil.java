@@ -2,6 +2,7 @@ package com.pennanttech.external.app.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,7 +15,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class TextFileUtil {
 	private static final Logger logger = LogManager.getLogger(TextFileUtil.class);
 
-	public void writeDataToFile(String fileName, List<StringBuilder> builders) throws Exception {
+	public void writeDataToFile(String fileName, List<StringBuilder> builders) throws IOException {
 		logger.debug(Literal.ENTERING);
 
 		if (builders == null || builders.isEmpty()) {
@@ -53,7 +54,7 @@ public class TextFileUtil {
 				sb.append(sc.nextLine());
 				dataList.add(sb);
 			}
-			
+
 			logger.debug(Literal.LEAVING);
 			return dataList;
 		} catch (Exception e) {

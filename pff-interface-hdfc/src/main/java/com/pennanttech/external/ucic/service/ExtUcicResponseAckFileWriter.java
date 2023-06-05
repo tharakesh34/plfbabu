@@ -29,7 +29,7 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 
 	private ExtUcicDao extUcicDao;
 
-	public void processUcicResponseAckFile(Date appDate) throws Exception {
+	public void processUcicResponseAckFile(Date appDate) throws IOException {
 		logger.debug(Literal.ENTERING);
 
 		FileInterfaceConfig ucicAckConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_ACK);
@@ -89,7 +89,7 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 	}
 
 	private void uploadFilesToClientLocation(Date appDate, FileInterfaceConfig ucicAckConfig,
-			FileInterfaceConfig ucicAckConfConfig, String baseFilePath, String fileName) throws Exception, IOException {
+			FileInterfaceConfig ucicAckConfConfig, String baseFilePath, String fileName) throws IOException {
 		FtpClient ftpClient;
 		// Now upload file to SFTP of client location as per configuration
 		File mainFile = new File(baseFilePath + File.separator + fileName);
@@ -130,13 +130,13 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 	}
 
 	private String writeCompleteFile(Date appDate, FileInterfaceConfig ucicReqCompleteConfig,
-			FileInterfaceConfig ucicAckConfConfig) throws Exception {
+			FileInterfaceConfig ucicAckConfConfig) throws IOException {
 		String baseFilePath = App.getResourcePath(ucicAckConfConfig.getFileLocation());
 		String completeFileName = baseFilePath + File.separator + ucicAckConfConfig.getFilePrepend()
 				+ new SimpleDateFormat(ucicReqCompleteConfig.getDateFormat()).format(appDate)
 				+ ucicReqCompleteConfig.getFileExtension();
 
-		List<StringBuilder> emptyList = new ArrayList<StringBuilder>();
+		List<StringBuilder> emptyList = new ArrayList<>();
 		emptyList.add(new StringBuilder(""));
 		super.writeDataToFile(completeFileName, emptyList);
 		return completeFileName;
