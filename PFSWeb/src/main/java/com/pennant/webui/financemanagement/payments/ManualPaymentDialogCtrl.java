@@ -1852,8 +1852,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	}
 
-	public void onSelectAgreementDetailTab(ForwardEvent event)
-			throws IllegalAccessException, InvocationTargetException, InterruptedException {
+	public void onSelectAgreementDetailTab(ForwardEvent event) {
 		this.doWriteComponentsToBean(false);
 
 		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getCustomerDetails() != null) {

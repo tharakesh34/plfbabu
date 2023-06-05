@@ -206,7 +206,7 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		closeDialog(true);
 	}
 
-	public void onCheck$downLoad(Event event) throws Exception {
+	public void onCheck$downLoad(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
@@ -420,7 +420,7 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		filePath = filePath.concat(File.separator).concat("FeeWaiverUpload");
 	}
 
-	public FeeWaiverUpload validateUploadDetails(List<String> row, int formatter) throws ParseException {
+	public FeeWaiverUpload validateUploadDetails(List<String> row, int formatter) {
 		FeeWaiverUpload waiverUpload = new FeeWaiverUpload();
 
 		String reason = validate(row, waiverUpload);
@@ -1034,7 +1034,7 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processCSVUploadDetails(FeeWaiverUploadHeader uploadHeader) throws IOException, Exception {
+	private void processCSVUploadDetails(FeeWaiverUploadHeader uploadHeader) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		BufferedReader br = null;
@@ -1112,7 +1112,7 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processExcelUploadDetails(FeeWaiverUploadHeader uploadHeader) throws Exception {
+	private void processExcelUploadDetails(FeeWaiverUploadHeader uploadHeader) {
 		logger.debug(Literal.ENTERING);
 
 		List<FeeWaiverUpload> waiverUploads = new ArrayList<FeeWaiverUpload>();
