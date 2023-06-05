@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +101,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 		}
 
 		detail.setReferenceID(fm.getFinID());
+		List<LoanTypeLetterMapping> ltrmap = loanTypeLetterMappingDAO.getLetterMapping(fm.getFinType());
 
 		LetterType letterType = LetterType.getType(detail.getLetterType());
 		if ((LetterType.NOC != letterType) && (LetterType.CLOSURE != letterType)
@@ -108,7 +110,21 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 			return;
 		}
 
+		if (!ltrmap.stream().anyMatch(l -> l.getLetterType().equals(detail.getLetterType()))) {
+			setError(detail, LoanLetterUploadError.LOAN_LTR_08);
+			return;
+		}
+
 		String mode = detail.getModeOfTransfer();
+		if (StringUtils.isBlank(mode)) {
+			LoanTypeLetterMapping ltlm = ltrmap.stream().filter(l -> l.getLetterType().equals(detail.getLetterType()))
+					.findFirst().orElse(null);
+			if (ltlm != null) {
+				detail.setModeOfTransfer(ltlm.getLetterMode());
+			}
+
+		}
+
 		if (!NOCConstants.MODE_COURIER.equals(mode) && !NOCConstants.MODE_EMAIL.equals(mode)) {
 			setError(detail, LoanLetterUploadError.LOAN_LTR_03);
 			return;
@@ -122,12 +138,6 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 
 		if (fm.isFinIsActive() && fm.getClosingStatus() == null) {
 			setError(detail, LoanLetterUploadError.LOAN_LTR_05);
-			return;
-		}
-
-		List<LoanTypeLetterMapping> ltrmap = loanTypeLetterMappingDAO.getLetterMapping(fm.getFinType());
-		if (!ltrmap.stream().anyMatch(l -> l.getLetterType().equals(detail.getLetterType()))) {
-			setError(detail, LoanLetterUploadError.LOAN_LTR_08);
 			return;
 		}
 
@@ -279,7 +289,6 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 						if (ltlp.getLetterType().equals(gl.getLetterType())) {
 							gl.setAgreementTemplate(ltlp.getAgreementCodeId());
 							gl.setEmailTemplate(ltlp.getEmailTemplateId());
-							gl.setModeofTransfer(ltlp.getLetterMode());
 						}
 					}
 
