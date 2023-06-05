@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicant.ApplicantDetails;
+import com.pennant.backend.model.chargedetails.ChargeDetails;
 import com.pennant.backend.model.customerdata.CustomerData;
 import com.pennant.backend.model.loandetail.LoanDetail;
 import com.pennant.backend.model.paymentmode.PaymentMode;
@@ -29,6 +30,8 @@ public class LoanEnquiryResponse {
 	List<ApplicantDetails> applicantDetails;
 	@XmlElement
 	List<PaymentMode> paymentModes;
+	@XmlElement
+	List<ChargeDetails> chargeDetails;
 	@XmlElement
 	private WSReturnStatus returnStatus;
 
@@ -90,5 +93,13 @@ public class LoanEnquiryResponse {
 
 	public void setPaymentModes(List<PaymentMode> paymentModes) {
 		this.paymentModes = paymentModes;
+	}
+
+	public List<ChargeDetails> getChargeDetails() {
+		return chargeDetails;
+	}
+
+	public void setChargeDetails(List<ChargeDetails> chargeDetails) {
+		this.chargeDetails = chargeDetails;
 	}
 }

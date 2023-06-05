@@ -78,6 +78,8 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 	private String toCcy;
 	private boolean marginDeviation = false;
 	private String inputSource;
+	@XmlElement
+	private BigDecimal grossIncome;
 
 	private boolean jointCust = false;
 	private int custType;
@@ -114,6 +116,7 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 		excludeFields.add("incomeTypeDesc");
 		excludeFields.add("inputSource");
 		excludeFields.add("custType");
+		excludeFields.add("grossIncome");
 		return excludeFields;
 	}
 
@@ -329,6 +332,14 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 			return income.multiply(margin.divide(new BigDecimal(100), RoundingMode.HALF_UP)).divide(new BigDecimal(100),
 					RoundingMode.HALF_UP);
 		}
+	}
+
+	public BigDecimal getGrossIncome() {
+		return grossIncome;
+	}
+
+	public void setGrossIncome(BigDecimal grossIncome) {
+		this.grossIncome = grossIncome;
 	}
 
 }

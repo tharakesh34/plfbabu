@@ -7080,7 +7080,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
 			sql.append(" From FinanceMain fm");
 			sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
-			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Left Join PSLDetail pd on pd.FinID = fm.FinID");
 			sql.append(" Where fm.FinID = ? ");
 			break;
 		case TEMP_TAB:
@@ -7093,7 +7093,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" Select CustID, CustRO1 From Customers c ");
 			sql.append(" Where not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
 			sql.append(" )) c on  c.CustID = fm.CustID");
-			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Left Join PSLDetail pd on pd.FinID = fm.FinID");
 			sql.append(" Where fm.FinID = ?");
 			break;
 		case BOTH_TAB:
@@ -7101,7 +7101,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
 			sql.append(" From FinanceMain fm");
 			sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
-			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Left Join PSLDetail pd on pd.FinID = fm.FinID");
 			sql.append(" Where fm.FinID = ? ");
 			sql.append(" Union All");
 			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
@@ -7113,7 +7113,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" Select CustID, CustRO1 From Customers c ");
 			sql.append(" Where not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
 			sql.append(" )) c on  c.CustID = fm.CustID");
-			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Left Join PSLDetail pd on pd.FinID = fm.FinID");
 			sql.append(" Where fm.FinID = ?");
 			sql.append(" Where not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
 		default:

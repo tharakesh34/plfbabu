@@ -1903,4 +1903,19 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		return this.jdbcOperations.queryForObject(sql, Integer.class, finReference, FinServiceEvent.EARLYRPY,
 				FinServiceEvent.EARLYSETTLE, RepayConstants.PAYSTATUS_REALIZED) > 0;
 	}
+
+	@Override
+	public BigDecimal getForeClosureAmount(long finID) {
+		String sql = "Select ReceiptAmount from FinReceiptHeader where FinID = ? and ReceiptPurpose = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, FinServiceEvent.EARLYSETTLE);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+
+	}
 }
