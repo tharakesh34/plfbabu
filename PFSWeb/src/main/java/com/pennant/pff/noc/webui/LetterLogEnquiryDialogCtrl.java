@@ -226,7 +226,7 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 				lc.setSpan(1);
 				lc.setParent(item);
 
-				lc = new Listcell(data.getCourierAgencyName());
+				lc = new Listcell(data.getCourierAgency());
 				lc.setSpan(1);
 				lc.setParent(item);
 
