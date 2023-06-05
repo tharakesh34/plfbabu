@@ -221,13 +221,14 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 
 					GenerateLetter gl = new GenerateLetter();
 					long finID = fm.getFinID();
-					List<GenerateLetter> loanLetterInfo = generateLetterDAO.getLoanLetterInfo(finID,
+					List<GenerateLetter> letterInfo = generateLetterDAO.getLoanLetterInfo(fm.getFinID(),
 							gl.getLetterType());
 
-					if (CollectionUtils.isNotEmpty(loanLetterInfo)) {
+					if (CollectionUtils.isNotEmpty(letterInfo)) {
 						long custID = fm.getCustID();
 						List<FinTypeFees> list = finTypeFeesDAO.getFinTypeFeesList(fm.getFinType(),
-								detail.getLetterType(), "_AView", false, FinanceConstants.MODULEID_FINTYPE);
+								NOCConstants.getLetterType(detail.getLetterType()), "_AView", false,
+								FinanceConstants.MODULEID_FINTYPE);
 
 						FinanceDetail fd = new FinanceDetail();
 						FinScheduleData fsd = new FinScheduleData();
@@ -249,7 +250,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 						gl.setLetterType(gl.getLetterType());
 						gl.setFinanceDetail(fd);
 
-						setMapDetails(gl, loanLetterInfo);
+						setMapDetails(gl, letterInfo);
 
 						FinReceiptHeader frh = new FinReceiptHeader();
 						FinReceiptData rd = new FinReceiptData();
@@ -289,6 +290,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 						if (ltlp.getLetterType().equals(gl.getLetterType())) {
 							gl.setAgreementTemplate(ltlp.getAgreementCodeId());
 							gl.setEmailTemplate(ltlp.getEmailTemplateId());
+							gl.setModeofTransfer(ltlp.getLetterMode());
 						}
 					}
 
@@ -332,7 +334,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 
 		if (CollectionUtils.isNotEmpty(letterInfo)) {
 			letter.setSequenceNo(letterInfo.size());
-			letter.setStatusOfpreviousletters(letterInfo.get(0).getDeliveryStatus());
+			letter.setStatusOfpreviousletters(letterInfo.get(0).getStatus());
 		}
 
 		fm.setLoanLetter(letter);

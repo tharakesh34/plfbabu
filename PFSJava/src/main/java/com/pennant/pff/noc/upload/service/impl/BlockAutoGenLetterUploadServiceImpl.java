@@ -234,7 +234,7 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 
 		List<LoanTypeLetterMapping> letterMapping = loanTypeLetterMappingDAO.getLetterMapping(fm.getFinType());
 
-		String closureType = fm.getClosureType();
+		String closureType = getClosureType(fm.getClosingStatus());
 
 		for (LoanTypeLetterMapping ltlp : letterMapping) {
 
@@ -260,6 +260,23 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 				}
 			}
 		}
+	}
+
+	private String getClosureType(String closingStatus) {
+		String closureType = "";
+		switch (closingStatus) {
+		case FinanceConstants.CLOSE_STATUS_MATURED, FinanceConstants.CLOSE_STATUS_EARLYSETTLE: {
+			closureType = ClosureType.CLOSURE.code();
+			break;
+		}
+		case FinanceConstants.CLOSE_STATUS_CANCELLED: {
+			closureType = ClosureType.CANCEL.code();
+			break;
+		}
+
+		default:
+		}
+		return closureType;
 	}
 
 	private void validateAction(BlockAutoGenLetterUpload detail, String action) {

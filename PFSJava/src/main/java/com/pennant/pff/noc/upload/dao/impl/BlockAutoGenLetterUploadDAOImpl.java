@@ -10,7 +10,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.noc.upload.dao.BlockAutoGenLetterUploadDAO;
 import com.pennant.pff.noc.upload.model.BlockAutoGenLetterUpload;
@@ -19,7 +18,6 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
-import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLetterUpload>
@@ -209,24 +207,19 @@ public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLet
 
 	@Override
 	public FinanceMain getFinanceMain(long finID, TableType tabeType) {
-		StringBuilder sql = new StringBuilder("Select fm.FinType, ClosingStatus, rh.ClosureType");
-		sql.append(" From FinanceMain".concat(tabeType.getSuffix()).concat(" fm"));
-		sql.append(" Inner join finreceiptheader rh on rh.reference = fm.finreference and ReceiptPurpose = ?");
-		sql.append(" and ReceiptModeStatus = ? and fm.FinID = ?");
+		String sql = "Select FinType, ClosingStatus From FinanceMain Where FinID = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
 				FinanceMain fm = new FinanceMain();
 
 				fm.setFinType(rs.getString("FinType"));
 				fm.setClosingStatus(rs.getString("ClosingStatus"));
-				fm.setClosureType(rs.getString("ClosureType"));
 
 				return fm;
-
-			}, FinServiceEvent.EARLYSETTLE, RepayConstants.PAYSTATUS_REALIZED, finID);
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
