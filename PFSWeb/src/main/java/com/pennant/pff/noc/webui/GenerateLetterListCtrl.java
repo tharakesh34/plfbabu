@@ -127,6 +127,8 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 		this.pagingGenerateLetterList.setPageSize(getListRows());
 		this.pagingGenerateLetterList.setDetailed(true);
 
+		checkRights();
+
 		doSetFieldProperties();
 
 		fillListData();
