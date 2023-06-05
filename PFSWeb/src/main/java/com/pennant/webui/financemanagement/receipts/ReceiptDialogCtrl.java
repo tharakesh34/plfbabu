@@ -731,6 +731,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				receiptData.getReceiptHeader().setDedupCheckRequired(false);
 			}
 
+			if (!btnCalcReceipts.isDisabled()) {
+				this.btnReceipt.setDisabled(true);
+			}
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_ReceiptDialog.onClose();
