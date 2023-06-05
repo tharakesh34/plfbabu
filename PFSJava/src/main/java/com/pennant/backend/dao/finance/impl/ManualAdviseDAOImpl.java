@@ -851,11 +851,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		Object obj = new Object[] { finID, AdviseType.RECEIVABLE.id(), valueDate,
-				PennantConstants.MANUALADVISE_MAINTAIN };
-
 		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, obj);
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, AdviseType.RECEIVABLE.id(),
+					JdbcUtil.getDate(valueDate), PennantConstants.MANUALADVISE_MAINTAIN);
 		} catch (Exception e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return BigDecimal.ZERO;
