@@ -1120,7 +1120,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onSelectAgreementDetailTab(ForwardEvent event) throws InterruptedException, ParseException {
+	public void onSelectAgreementDetailTab(ForwardEvent event) {
 		this.doWriteComponentsToBean(getFinanceDetail().getFinScheduleData(), new ArrayList<WrongValueException>());
 
 		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getCustomerDetails() != null) {
@@ -1291,8 +1291,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public void onSelectTab(ForwardEvent event)
-			throws IllegalAccessException, InvocationTargetException, InterruptedException, ParseException,
-			WrongValueException, IllegalArgumentException, NoSuchMethodException, SecurityException {
+			throws WrongValueException, IllegalArgumentException, SecurityException {
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		logger.debug(tab.getId() + " --> " + "Entering");
 		String module = getIDbyTab(tab.getId());
@@ -1585,7 +1584,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	public void onSelectCheckListDetailsTab(ForwardEvent event)
 			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
-
 		this.doWriteComponentsToBean(getFinanceDetail().getFinScheduleData(), new ArrayList<WrongValueException>());
 
 		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getCustomerDetails() != null) {
@@ -1598,7 +1596,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			getFinanceCheckListReferenceDialogCtrl().doWriteBeanToComponents(getFinanceDetail().getCheckList(),
 					getFinanceDetail().getFinanceCheckList(), false);
 		}
-
 	}
 
 	public boolean isAssetAvailable() {
@@ -3418,12 +3415,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method to calculate rates based on given base and special rate codes
-	 * 
-	 * @throws InterruptedException
 	 **/
 	protected void calculateRate(ExtendedCombobox baseRate, ExtendedCombobox splRate, ExtendedCombobox lovFieldTextBox,
-			Decimalbox margin, Decimalbox effectiveRate, Decimalbox minAllowedRate, Decimalbox maxAllowedRate)
-			throws InterruptedException {
+			Decimalbox margin, Decimalbox effectiveRate, Decimalbox minAllowedRate, Decimalbox maxAllowedRate) {
 		logger.debug("Entering");
 
 		RateDetail rateDetail = RateUtil.rates(baseRate.getValue(), this.finCcy.getValue(), splRate.getValue(),
@@ -3444,7 +3438,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 */
-	protected boolean doValidation(AuditHeader auditHeader) throws InterruptedException {
+	protected boolean doValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -5129,8 +5123,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		return aFinanceSchData;
 	}
 
-	public boolean processCustomerDetails(FinanceDetail financeDetail, boolean validatePhone)
-			throws ParseException, InterruptedException {
+	public boolean processCustomerDetails(FinanceDetail financeDetail, boolean validatePhone) {
 		logger.debug("Entering");
 		if (getCustomerDialogCtrl().getCustomerDetails() != null) {
 			return getCustomerDialogCtrl().doSave_CustomerDetail(financeDetail, custDetailTab, validatePhone);
@@ -5139,7 +5132,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		return true;
 	}
 
-	public boolean doCustomerValidation() throws ParseException, InterruptedException {
+	public boolean doCustomerValidation() {
 		logger.debug("Entering");
 		if (getCustomerDialogCtrl() != null) {
 			return processCustomerDetails(getFinanceDetail(), true);
@@ -6522,9 +6515,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param aFinanceDetail
 	 * @return
-	 * @throws InterruptedException
 	 */
-	protected boolean doValidateCommitment(FinanceDetail aFinanceDetail) throws InterruptedException {
+	protected boolean doValidateCommitment(FinanceDetail aFinanceDetail) {
 		logger.debug("Entering");
 
 		FinanceMain finMain = aFinanceDetail.getFinScheduleData().getFinanceMain();

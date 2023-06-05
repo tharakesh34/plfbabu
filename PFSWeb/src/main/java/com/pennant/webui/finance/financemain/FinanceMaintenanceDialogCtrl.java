@@ -1111,7 +1111,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 */
-	public boolean doValidation(AuditHeader auditHeader) throws InterruptedException {
+	public boolean doValidation(AuditHeader auditHeader) {
 		return super.doValidation(auditHeader);
 	}
 
