@@ -2352,8 +2352,13 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		if (MandateExtension.ALLOW_HOLD_MARKING && !FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
-			holdMarkingService.updateHoldRemoval(ReceiptUtil.getAllocatedAmount(rch.getAllocations()), fm.getFinID(),
-					false);
+			List<ReceiptAllocationDetail> list = new ArrayList<>();
+			list = rch.getAllocations();
+			ReceiptAllocationDetail rcd = list.stream().filter(l1 -> l1.getAllocationType().equals(Allocation.EMI))
+					.findFirst().get();
+			list.remove(rcd);
+
+			holdMarkingService.updateHoldRemoval(ReceiptUtil.getAllocatedAmount(list), fm.getFinID(), false);
 		}
 
 		logger.debug(Literal.LEAVING);
