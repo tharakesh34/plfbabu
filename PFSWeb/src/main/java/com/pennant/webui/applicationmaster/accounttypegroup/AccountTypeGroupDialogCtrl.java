@@ -408,7 +408,7 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 		if (!this.groupDescription.isReadonly()) {
 			this.groupDescription.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AccounTypeGroupDialog_GroupDescription.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, false));
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.parentGroupId.isReadonly()) {
 			if (this.acctTypeLevel.getValue() > 1) {
