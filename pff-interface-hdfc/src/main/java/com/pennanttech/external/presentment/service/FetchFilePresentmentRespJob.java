@@ -24,7 +24,6 @@ import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentment;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -356,8 +355,7 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 				for (String fileName : fileNames) {
 					fileTransferUtil.downloadFromSFTP(fileName, localFolderPath);
 					moveToBackup(externalRespConfig, localFolderPath, fileName);
-					new SftpClient(host, port, accessKey, secretKey)
-							.deleteFile(remoteFilePath + File.separator + fileName);
+					fileTransferUtil.deleteFileFromSFTP(fileName);
 				}
 
 			} catch (Exception e) {
