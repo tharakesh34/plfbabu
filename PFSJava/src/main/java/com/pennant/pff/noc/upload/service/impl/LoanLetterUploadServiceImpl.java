@@ -115,8 +115,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 			return;
 		}
 
-		String mode = detail.getModeOfTransfer();
-		if (StringUtils.isBlank(mode)) {
+		if (StringUtils.isBlank(detail.getModeOfTransfer())) {
 			LoanTypeLetterMapping ltlm = ltrmap.stream().filter(l -> l.getLetterType().equals(detail.getLetterType()))
 					.findFirst().orElse(null);
 			if (ltlm != null) {
@@ -125,6 +124,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 
 		}
 
+		String mode = detail.getModeOfTransfer();
 		if (!NOCConstants.MODE_COURIER.equals(mode) && !NOCConstants.MODE_EMAIL.equals(mode)) {
 			setError(detail, LoanLetterUploadError.LOAN_LTR_03);
 			return;
