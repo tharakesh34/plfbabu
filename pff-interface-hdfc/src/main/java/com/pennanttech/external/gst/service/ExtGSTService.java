@@ -54,15 +54,15 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 		// DETAIL ITEM FOR REQUEST FILE
 		for (GSTRequestDetail data : gstRequestDetailList) {
 
-			append(item, data.getRequestType(), false);
-			append(item, data.getCustomerId(), true);
-			append(item, data.getAccountId(), true);
-			append(item, data.getGstin(), true);
-			append(item, data.getServiceCode(), true);
-			append(item, data.getHsn(), true);
-			append(item, data.getTransactionCode(), true);
-			append(item, data.getTransactionVolume(), true);
-			append(item, data.getTransactionValue(), true);
+			append(item, data.getRequestType());
+			appendSeperator(item, data.getCustomerId());
+			appendSeperator(item, data.getAccountId());
+			appendSeperator(item, data.getGstin());
+			appendSeperator(item, data.getServiceCode());
+			appendSeperator(item, data.getHsn());
+			appendSeperator(item, data.getTransactionCode());
+			appendSeperator(item, data.getTransactionVolume());
+			appendSeperator(item, data.getTransactionValue());
 
 			item.append(pipeSeperator);
 			item.append(data.getTransactionPricedCharge());
@@ -295,11 +295,12 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void append(StringBuilder item, Object data, boolean sepeater) {
+	private void append(StringBuilder item, Object data) {
+		item.append(data);
+	}
 
-		if (sepeater) {
-			item.append(pipeSeperator);
-		}
+	private void appendSeperator(StringBuilder item, Object data) {
+		item.append(pipeSeperator);
 		item.append(data);
 
 	}
