@@ -1,8 +1,6 @@
 package com.pennanttech.service.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -55,7 +53,6 @@ import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
-import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
@@ -159,6 +156,8 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	private LimitDetailService limitDetailService;
 	private CustomerIncomeDAO customerIncomeDAO;
 
+	private static final String ERR_90101 = "90101";
+
 	@Override
 	public CustomerDetails createCustomer(CustomerDetails cd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
@@ -221,7 +220,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			BlackListCustomers balckListData = doSetBlackListCustomerData(cd);
 			List<DedupParm> dedupParmList = dedupParmDAO.getDedupParmByModule(FinanceConstants.DEDUP_BLACKLIST,
 					balckListData.getCustCtgCode(), "");
-			// TO Check black List customer in Local database
+
 			for (DedupParm dedupParm : dedupParmList) {
 				List<BlackListCustomers> list = blacklistCustomerDAO.fetchBlackListedCustomers(balckListData,
 						dedupParm.getSQLQuery());
@@ -258,16 +257,10 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		String mobileNumber = "";
 
 		List<CustomerPhoneNumber> phoneNumberList = customerDetails.getCustomerPhoneNumList();
-		if (phoneNumberList != null && !phoneNumberList.isEmpty()) {
-			if (phoneNumberList.size() > 1) {
-				Collections.sort(phoneNumberList, new Comparator<CustomerPhoneNumber>() {
-					@Override
-					public int compare(CustomerPhoneNumber detail1, CustomerPhoneNumber detail2) {
-						return detail2.getPhoneTypePriority() - detail1.getPhoneTypePriority();
-					}
-				});
-			}
-			CustomerPhoneNumber custPhone = phoneNumberList.get(0);
+		if (CollectionUtils.isNotEmpty(phoneNumberList)) {
+			CustomerPhoneNumber custPhone = phoneNumberList.stream()
+					.sorted((pt1, pt2) -> Long.compare(pt1.getPhoneTypePriority(), pt2.getPhoneTypePriority())).toList()
+					.get(0);
 			mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
 					custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
 		}
@@ -385,7 +378,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customer == null) {
 			response = new CustomerDetails();
 			doEmptyResponseObject(response);
-			response.setReturnStatus(getFailedStatus("90101", custCIF));
+			response.setReturnStatus(getFailedStatus(ERR_90101, custCIF));
 
 			return response;
 		}
@@ -409,7 +402,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 
 		if (customer == null) {
-			return getFailedStatus("90101", custCIF);
+			return getFailedStatus(ERR_90101, custCIF);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -430,7 +423,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (customer == null) {
 			CustomerDetails response = new CustomerDetails();
-			response.setReturnStatus(getFailedStatus("90101", custCIF));
+			response.setReturnStatus(getFailedStatus(ERR_90101, custCIF));
 			return response;
 		}
 
@@ -466,7 +459,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customer == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = cd.getCustCIF();
-			return getFailedStatus("90101", valueParm);
+			return getFailedStatus(ERR_90101, valueParm);
 		}
 
 		if (!StringUtils.equals(cd.getCustCtgCode(), customer.getCustCtgCode())) {
@@ -528,7 +521,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				String[] valueParm = new String[1];
 				valueParm[0] = employmentDetail.getCif();
 				EmploymentDetail customerEmpDetail = new EmploymentDetail();
-				customerEmpDetail.setReturnStatus(getFailedStatus("90101", valueParm));
+				customerEmpDetail.setReturnStatus(getFailedStatus(ERR_90101, valueParm));
 				return customerEmpDetail;
 			}
 		}
@@ -573,7 +566,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 
 		if (customer == null) {
-			response.setReturnStatus(getFailedStatus("90101", custCIF));
+			response.setReturnStatus(getFailedStatus(ERR_90101, custCIF));
 			response.setCustomer(null);
 		} else {
 			response = customerController.getCustomerEmployment(custCIF);
@@ -602,7 +595,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", ed.getCif());
+			return getFailedStatus(ERR_90101, ed.getCif());
 		}
 
 		logReference(ed.getCif());
@@ -624,7 +617,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		ced = customerEmploymentDetailService.getApprovedCustomerEmploymentDetailByCustEmpId(custEmpId);
 
 		if (ced == null || ced.getCustID() != (customer.getCustID())) {
-			return getFailedStatus("90104", String.valueOf(custEmpId), ed.getCif());
+			return getFailedStatus(ERR_90101, String.valueOf(custEmpId), ed.getCif());
 		}
 
 		WSReturnStatus response = customerController.updateCustomerEmployment(ced, ed.getCif());
@@ -646,7 +639,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", ed.getCif());
+			return getFailedStatus(ERR_90101, ed.getCif());
 		}
 
 		long custID = customer.getCustID();
@@ -690,7 +683,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			response.setReturnStatus(getFailedStatus("90101", cif));
+			response.setReturnStatus(getFailedStatus(ERR_90101, cif));
 			return response;
 		}
 
@@ -737,7 +730,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customer == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = custCIF;
-			response.setReturnStatus(getErrorDetails("90101", valueParm));
+			response.setReturnStatus(getErrorDetails(ERR_90101, valueParm));
 		} else {
 			if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 				String[] valueParm = new String[2];
@@ -769,7 +762,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", cdd.getCif());
+			return getFailedStatus(ERR_90101, cdd.getCif());
 		}
 
 		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
@@ -826,7 +819,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", cdd.getCif());
+			return getFailedStatus(ERR_90101, cdd.getCif());
 		}
 
 		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
@@ -869,7 +862,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", cpn.getCif());
+			return getFailedStatus(ERR_90101, cpn.getCif());
 		}
 
 		logReference(cpn.getCif());
@@ -911,7 +904,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", cpn.getCif());
+			return getFailedStatus(ERR_90101, cpn.getCif());
 		}
 
 		logReference(cpn.getCif());
@@ -955,7 +948,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 
 		if (customer == null) {
-			response.setReturnStatus(getFailedStatus("90101", custCIF));
+			response.setReturnStatus(getFailedStatus(ERR_90101, custCIF));
 			response.setCustomer(null);
 		}
 
@@ -978,7 +971,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customer == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = cpn.getCif();
-			return getFailedStatus("90101", valueParm);
+			return getFailedStatus(ERR_90101, valueParm);
 		}
 
 		long custID = customer.getCustID();
@@ -1021,7 +1014,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", ca.getCif());
+			return getFailedStatus(ERR_90101, ca.getCif());
 
 		}
 
@@ -1063,7 +1056,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", ca.getCif());
+			return getFailedStatus(ERR_90101, ca.getCif());
 		}
 
 		logReference(ca.getCif());
@@ -1109,7 +1102,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 
 		if (customer == null) {
-			response.setReturnStatus(getFailedStatus("90101", custCIF));
+			response.setReturnStatus(getFailedStatus(ERR_90101, custCIF));
 			response.setCustomer(null);
 		}
 
@@ -1131,7 +1124,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", ca.getCif());
+			return getFailedStatus(ERR_90101, ca.getCif());
 		}
 
 		long custID = customer.getCustID();
@@ -1171,7 +1164,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customer == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = custEMail.getCif();
-			return getFailedStatus("90101", valueParm);
+			return getFailedStatus(ERR_90101, valueParm);
 
 		}
 
@@ -1213,7 +1206,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", custEMail.getCif());
+			return getFailedStatus(ERR_90101, custEMail.getCif());
 		}
 
 		logReference(custEMail.getCif());
@@ -1258,7 +1251,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (customer == null) {
 			CustomerDetails response = new CustomerDetails();
-			response.setReturnStatus(getFailedStatus("90101", custCIF));
+			response.setReturnStatus(getFailedStatus(ERR_90101, custCIF));
 			response.setCustomer(null);
 
 			return response;
@@ -1284,7 +1277,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", custCIF);
+			return getFailedStatus(ERR_90101, custCIF);
 		}
 
 		long custID = customer.getCustID();
@@ -1330,7 +1323,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", custCIF);
+			return getFailedStatus(ERR_90101, custCIF);
 
 		}
 
@@ -1380,7 +1373,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", custCIF);
+			return getFailedStatus(ERR_90101, custCIF);
 		}
 
 		custIncome.setCustId(customer.getCustID());
@@ -1434,7 +1427,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 
 		if (customer == null) {
-			response.setReturnStatus(getFailedStatus("90101", custCIF));
+			response.setReturnStatus(getFailedStatus(ERR_90101, custCIF));
 			response.setCustomer(null);
 
 			return response;
@@ -1459,7 +1452,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", custCIF);
+			return getFailedStatus(ERR_90101, custCIF);
 		}
 
 		CustomerIncome custIncome = new CustomerIncome();
@@ -1506,7 +1499,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (customer == null) {
 			cbd = new CustomerBankInfoDetail();
-			cbd.setReturnStatus(getFailedStatus("90101", custCIF));
+			cbd.setReturnStatus(getFailedStatus(ERR_90101, custCIF));
 			return cbd;
 		}
 
@@ -1551,7 +1544,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", custCIF);
+			return getFailedStatus(ERR_90101, custCIF);
 		}
 
 		logReference(custCIF);
@@ -1595,7 +1588,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (customer == null) {
 			CustomerDetails response = new CustomerDetails();
-			response.setReturnStatus(getFailedStatus("90101", custCIF));
+			response.setReturnStatus(getFailedStatus(ERR_90101, custCIF));
 			response.setCustomer(null);
 		}
 
@@ -1621,7 +1614,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customer == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = custCIF;
-			return getFailedStatus("90101", valueParm);
+			return getFailedStatus(ERR_90101, valueParm);
 		}
 
 		CustomerBankInfo customerBankInfo = new CustomerBankInfo();
@@ -1665,7 +1658,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (customer == null) {
 			custGST = new CustomerGstInfoDetail();
-			custGST.setReturnStatus(getFailedStatus("90101", custCIF));
+			custGST.setReturnStatus(getFailedStatus(ERR_90101, custCIF));
 			return custGST;
 		}
 
@@ -1712,7 +1705,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			return getFailedStatus("90101", custCIF);
+			return getFailedStatus(ERR_90101, custCIF);
 		}
 
 		logReference(custCIF);
@@ -1756,7 +1749,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (customer == null) {
 			CustomerDetails response = new CustomerDetails();
-			response.setReturnStatus(getFailedStatus("90101", custCIF));
+			response.setReturnStatus(getFailedStatus(ERR_90101, custCIF));
 			response.setCustomer(null);
 
 			return response;
@@ -1783,7 +1776,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		if (customer == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = custCIF;
-			return getFailedStatus("90101", valueParm);
+			return getFailedStatus(ERR_90101, valueParm);
 		}
 
 		CustomerGST customerGST = new CustomerGST();
@@ -1829,7 +1822,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		if (customer == null) {
 			ccsid = new CustomerCardSaleInfoDetails();
-			ccsid.setReturnStatus(getFailedStatus("90101", custCIF));
+			ccsid.setReturnStatus(getFailedStatus(ERR_90101, custCIF));
 			return ccsid;
 		}
 
@@ -1854,227 +1847,169 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 	}
 
-	// FIXME >> MURTHY
-
 	@Override
 	public CustomerDetails getCardSalesInformation(String custCIF) throws ServiceException {
 		logger.debug(Literal.ENTERING);
-		// Mandatory validation
+
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
-		// for logging purpose
+
 		logReference(custCIF);
-		CustomerDetails response = new CustomerDetails();
-		// validation
+
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 		if (customer == null) {
+			CustomerDetails response = new CustomerDetails();
+
 			String[] valueParm = new String[1];
 			valueParm[0] = custCIF;
-			response.setReturnStatus(getErrorDetails("90101", valueParm));
+			response.setReturnStatus(getErrorDetails(ERR_90101, valueParm));
 			response.setCustomer(null);
-		} else {
-			response = customerDetailsController.getCardSalesInformation(custCIF);
-		}
-		logger.debug(Literal.LEAVING);
 
-		return response;
+			return response;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return customerDetailsController.getCardSalesInformation(custCIF);
 	}
 
 	@Override
-	public WSReturnStatus updateCardSaleInformation(CustomerCardSaleInfoDetails customerCardSaleInfoDetails)
-			throws ServiceException {
+	public WSReturnStatus updateCardSaleInformation(CustomerCardSaleInfoDetails cardSalesInfo) throws ServiceException {
 		logger.debug(Literal.ENTERING);
-		// bean validations
-		validationUtility.validate(customerCardSaleInfoDetails, UpdateValidationGroup.class);
-		if (customerCardSaleInfoDetails.getCustCardSales() == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "customerCardSalesInfo";
-			return getFailedStatus("90502", valueParm);
+
+		validationUtility.validate(cardSalesInfo, UpdateValidationGroup.class);
+
+		CustCardSales custCardSales = cardSalesInfo.getCustCardSales();
+
+		if (custCardSales == null) {
+			return getFailedStatus("90502", "customerCardSalesInfo");
 		}
-		// customer validations
-		Customer customer = null;
-		if (StringUtils.isNotBlank(customerCardSaleInfoDetails.getCif())) {
-			customer = customerDetailsService.getCustomerByCIF(customerCardSaleInfoDetails.getCif());
-			if (customer == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = customerCardSaleInfoDetails.getCif();
-				return getFailedStatus("90101", valueParm);
-			}
+
+		String custCIF = cardSalesInfo.getCif();
+
+		if (StringUtils.isNotBlank(custCIF) && customerDetailsService.getCustomerByCIF(custCIF) == null) {
+			return getFailedStatus(ERR_90101, custCIF);
 		}
-		// for logging purpose
-		logReference(customerCardSaleInfoDetails.getCif());
-		AuditHeader auditHeader = getAuditHeader(customerCardSaleInfoDetails.getCustCardSales(),
-				PennantConstants.TRAN_WF);
 
-		// validate customer details as per the API specification
-		AuditDetail auditDetail = customerCardSalesInfoService
-				.doValidations(customerCardSaleInfoDetails.getCustCardSales(), PennantConstants.RECORD_TYPE_UPD);
+		logReference(custCIF);
+		AuditHeader ah = getAuditHeader(custCardSales, PennantConstants.TRAN_WF);
+		AuditDetail ad = customerCardSalesInfoService.doValidations(custCardSales, PennantConstants.RECORD_TYPE_UPD);
 
-		auditHeader.setAuditDetail(auditDetail);
-		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		ah.setAuditDetail(ad);
+		ah.setErrorList(ad.getErrorDetails());
 
-		if (CollectionUtils.isNotEmpty(auditHeader.getErrorMessage())) {
-			ErrorDetail ed = auditHeader.getErrorMessage().get(0);
-
+		if (CollectionUtils.isNotEmpty(ah.getErrorMessage())) {
+			ErrorDetail ed = ah.getErrorMessage().get(0);
 			return getFailedStatus(ed.getCode(), ed.getError());
 		}
 
-		WSReturnStatus response = null;
-		// validate Customer with given CustCIF
-		CustCardSales custCardSalesInfo = customerCardSalesInfoService
-				.getCustomerCardSalesInfoById(customerCardSaleInfoDetails.getCustCardSales().getId());
+		long custID = custCardSales.getCustID();
+		long cardSalesID = custCardSales.getId();
+
+		CustCardSales custCardSalesInfo = customerCardSalesInfoService.getCustomerCardSalesInfoById(cardSalesID);
 
 		if (custCardSalesInfo != null) {
-			// call update customer if there is no errors
-			response = customerDetailsController.updateCardSalestInformation(
-					customerCardSaleInfoDetails.getCustCardSales(), customerCardSaleInfoDetails.getCif());
-		} else {
-			String[] valueParm = new String[2];
-			valueParm[0] = String.valueOf(customerCardSaleInfoDetails.getCustCardSales().getCustID());
-			valueParm[1] = customerCardSaleInfoDetails.getCif();
-			return getFailedStatus("90116", valueParm);
+			return customerDetailsController.updateCardSalestInformation(custCardSales, custCIF);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return response;
-
+		return getFailedStatus("90116", String.valueOf(custID), custCIF);
 	}
 
-	/**
-	 * delete CustomerGstInfoDetail.
-	 * 
-	 * @param CustomerGstInfoDetail
-	 */
 	@Override
-	public WSReturnStatus deleteCardSaleInformation(CustomerCardSaleInfoDetails customerCardSaleInfoDetails)
-			throws ServiceException {
-
-		logger.debug(Literal.ENTERING);
-		// bean validations
-		validationUtility.validate(customerCardSaleInfoDetails, DeleteValidationGroup.class);
-
-		// customer validations
-		CustCardSales custCardSales = null;
-		if (StringUtils.isNotBlank(customerCardSaleInfoDetails.getCif())) {
-			Customer customerDetails = customerDetailsService.getCustomerByCIF(customerCardSaleInfoDetails.getCif());
-			if (customerDetails == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = customerCardSaleInfoDetails.getCif();
-				return getFailedStatus("90101", valueParm);
-			} else {
-				custCardSales = new CustCardSales();
-				custCardSales.setCustID(customerDetails.getCustID());
-				custCardSales.setId(customerCardSaleInfoDetails.getId());
-				// for logging purpose
-				logReference(customerCardSaleInfoDetails.getCif());
-			}
-		}
-		WSReturnStatus response = null;
-		// validate Customer with given CustCIF
-
-		CustCardSales custCardSalesInfo = customerCardSalesInfoService
-				.getCustomerCardSalesInfoById(customerCardSaleInfoDetails.getId());
-
-		if (custCardSalesInfo != null) {
-			// call delete customer service
-			response = customerDetailsController.deleteCardSaleInformation(custCardSalesInfo);
-		} else {
-			String[] valueParm = new String[2];
-			valueParm[0] = String.valueOf(customerCardSaleInfoDetails.getId());
-			valueParm[1] = customerCardSaleInfoDetails.getCif();
-			return getFailedStatus("90116", valueParm);
-		}
-		logger.debug(Literal.LEAVING);
-		return response;
-	}
-
-	/**
-	 * Method for create CustomerAccountBehaviour in PLF system.
-	 * 
-	 * @param customerChequeInfoDetail
-	 * @throws ServiceException
-	 */
-	@Override
-	public CustomerChequeInfoDetail addCustomerAccountBehaviour(CustomerChequeInfoDetail customerChequeInfoDetail)
-			throws ServiceException {
+	public WSReturnStatus deleteCardSaleInformation(CustomerCardSaleInfoDetails cardSalesInfo) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
-		validationUtility.validate(customerChequeInfoDetail, SaveValidationGroup.class);
+		validationUtility.validate(cardSalesInfo, DeleteValidationGroup.class);
 
-		if (customerChequeInfoDetail.getCustomerChequeInfo() == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "accountBehaviour";
-			CustomerChequeInfoDetail custChequeInfoDetail = new CustomerChequeInfoDetail();
-			custChequeInfoDetail.setReturnStatus(getFailedStatus("90502", valueParm));
-			return custChequeInfoDetail;
-		}
-		if (StringUtils.isNotBlank(customerChequeInfoDetail.getCif())) {
-			Customer customerDetails = customerDetailsService.getCustomerByCIF(customerChequeInfoDetail.getCif());
-			if (customerDetails == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = customerChequeInfoDetail.getCif();
-				CustomerChequeInfoDetail custChequeInfoDetail = new CustomerChequeInfoDetail();
-				custChequeInfoDetail.setReturnStatus(getFailedStatus("90101", valueParm));
-				return custChequeInfoDetail;
-			}
-		}
-		// for logging purpose
-		logReference(customerChequeInfoDetail.getCif());
-		// call add Customer Employment method in case of no errors
-		CustomerChequeInfoDetail response = customerDetailsController.addCustomerAccountBehaviour(
-				customerChequeInfoDetail.getCustomerChequeInfo(), customerChequeInfoDetail.getCif());
-		logger.debug(Literal.LEAVING);
-		return response;
-	}
+		long cardSalesID = cardSalesInfo.getId();
+		String custCIF = cardSalesInfo.getCif();
 
-	/**
-	 * Method for update CustomerAccountBehaviour in PLF system.
-	 * 
-	 * @param customerChequeInfoDetail
-	 * @throws ServiceException
-	 */
-	@Override
-	public WSReturnStatus updateCustomerAccountBehaviour(CustomerChequeInfoDetail customerChequeInfoDetail)
-			throws ServiceException {
-		logger.debug(Literal.ENTERING);
-		// bean validations
-		validationUtility.validate(customerChequeInfoDetail, UpdateValidationGroup.class);
-		if (customerChequeInfoDetail.getCustomerChequeInfo() == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "accountBehaviour";
-			return getFailedStatus("90502", valueParm);
-		}
-		// customer validations
-		Customer customer = null;
-		if (StringUtils.isNotBlank(customerChequeInfoDetail.getCif())) {
-			customer = customerDetailsService.getCustomerByCIF(customerChequeInfoDetail.getCif());
+		if (StringUtils.isNotBlank(custCIF)) {
+			Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 			if (customer == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = customerChequeInfoDetail.getCif();
-				return getFailedStatus("90101", valueParm);
+				return getFailedStatus(ERR_90101, custCIF);
+			}
+
+			CustCardSales custCardSales = new CustCardSales();
+			custCardSales.setCustID(customer.getCustID());
+			custCardSales.setId(cardSalesID);
+			logReference(custCIF);
+		}
+
+		CustCardSales custCardSalesInfo = customerCardSalesInfoService.getCustomerCardSalesInfoById(cardSalesID);
+
+		if (custCardSalesInfo != null) {
+			return customerDetailsController.deleteCardSaleInformation(custCardSalesInfo);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return getFailedStatus("90116", String.valueOf(cardSalesID), custCIF);
+	}
+
+	@Override
+	public CustomerChequeInfoDetail addCustomerAccountBehaviour(CustomerChequeInfoDetail chequeInfo)
+			throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		validationUtility.validate(chequeInfo, SaveValidationGroup.class);
+
+		CustomerChequeInfo custChequeInfo = chequeInfo.getCustomerChequeInfo();
+		if (custChequeInfo == null) {
+			CustomerChequeInfoDetail response = new CustomerChequeInfoDetail();
+			response.setReturnStatus(getFailedStatus("90502", "accountBehaviour"));
+			return response;
+		}
+
+		String custCIF = chequeInfo.getCif();
+		if (StringUtils.isNotBlank(custCIF)) {
+			Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
+			if (customer == null) {
+				CustomerChequeInfoDetail response = new CustomerChequeInfoDetail();
+				response.setReturnStatus(getFailedStatus(ERR_90101, custCIF));
+				return response;
 			}
 		}
-		// for logging purpose
-		logReference(customerChequeInfoDetail.getCif());
-		WSReturnStatus response = null;
-		// validate Customer with given CustCIF
-		CustomerChequeInfo customerChequeInfo = customerChequeInfoDAO.getCustomerChequeInfoById(customer.getCustID(),
-				customerChequeInfoDetail.getCustomerChequeInfo().getChequeSeq(), "");
-		if (customerChequeInfo != null) {
-			// call update customer if there is no errors
-			response = customerDetailsController.updateCustomerAccountBehaviour(
-					customerChequeInfoDetail.getCustomerChequeInfo(), customerChequeInfoDetail.getCif());
-		} else {
+
+		logReference(custCIF);
+		logger.debug(Literal.LEAVING);
+		return customerDetailsController.addCustomerAccountBehaviour(custChequeInfo, custCIF);
+	}
+
+	@Override
+	public WSReturnStatus updateCustomerAccountBehaviour(CustomerChequeInfoDetail chequeInfo) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		validationUtility.validate(chequeInfo, UpdateValidationGroup.class);
+
+		CustomerChequeInfo customerChequeInfo = chequeInfo.getCustomerChequeInfo();
+		if (customerChequeInfo == null) {
+			return getFailedStatus("90502", "accountBehaviour");
+		}
+
+		Customer customer = null;
+		if (StringUtils.isNotBlank(chequeInfo.getCif())) {
+			customer = customerDetailsService.getCustomerByCIF(chequeInfo.getCif());
+		}
+
+		if (customer == null) {
+			return getFailedStatus(ERR_90101, chequeInfo.getCif());
+		}
+
+		logReference(chequeInfo.getCif());
+
+		int chequeSeq = customerChequeInfo.getChequeSeq();
+		CustomerChequeInfo custCheqInfo = customerChequeInfoDAO.getCustomerChequeInfoById(customer.getCustID(),
+				chequeSeq, "");
+
+		if (custCheqInfo == null) {
 			String[] valueParm = new String[2];
-			valueParm[0] = String.valueOf(customerChequeInfoDetail.getCustomerChequeInfo().getChequeSeq());
-			valueParm[1] = customerChequeInfoDetail.getCif();
+			valueParm[0] = String.valueOf(chequeSeq);
+			valueParm[1] = chequeInfo.getCif();
 			return getFailedStatus("90117", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return response;
+		return customerDetailsController.updateCustomerAccountBehaviour(customerChequeInfo, chequeInfo.getCif());
 	}
 
 	@Override
@@ -2087,17 +2022,16 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		logReference(custCIF);
 
-		CustomerDetails response = new CustomerDetails();
-
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 
 		if (customer == null) {
-			response.setReturnStatus(getFailedStatus("90101", custCIF));
+			CustomerDetails response = new CustomerDetails();
+			response.setReturnStatus(getFailedStatus(ERR_90101, custCIF));
 			response.setCustomer(null);
+			return response;
 		}
 
 		logger.debug(Literal.LEAVING);
-
 		return customerDetailsController.getCustomerAccountBehaviour(custCIF);
 	}
 
@@ -2105,704 +2039,515 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 	public WSReturnStatus deleteCustomerAccountBehaviour(CustomerChequeInfoDetail ccd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
 		validationUtility.validate(ccd, DeleteValidationGroup.class);
 
-		// customer validations
-		CustomerChequeInfo customerChequeInfo = null;
-		if (StringUtils.isNotBlank(ccd.getCif())) {
-			Customer customerDetails = customerDetailsService.getCustomerByCIF(ccd.getCif());
-			if (customerDetails == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = ccd.getCif();
-				return getFailedStatus("90101", valueParm);
-			} else {
-				customerChequeInfo = new CustomerChequeInfo();
-				customerChequeInfo.setCustID(customerDetails.getCustID());
-				customerChequeInfo.setChequeSeq(ccd.getChequeSeq());
-				// for logging purpose
-				logReference(ccd.getCif());
-			}
+		Customer customer = null;
+		String custCIF = ccd.getCif();
+
+		if (StringUtils.isNotBlank(custCIF)) {
+			customer = customerDetailsService.getCustomerByCIF(custCIF);
 		}
-		WSReturnStatus response = null;
-		// validate Customer with given CustCIF
-		CustomerChequeInfo custChequeInfo = customerChequeInfoDAO
-				.getCustomerChequeInfoById(customerChequeInfo.getCustID(), customerChequeInfo.getChequeSeq(), "");
-		if (custChequeInfo != null) {
-			// call delete customer service
-			response = customerDetailsController.deleteCustomerAccountBehaviour(customerChequeInfo);
-		} else {
-			String[] valueParm = new String[2];
-			valueParm[0] = String.valueOf(ccd.getChequeSeq());
-			valueParm[1] = ccd.getCif();
-			return getFailedStatus("90117", valueParm);
+
+		if (customer == null) {
+			return getFailedStatus(ERR_90101, custCIF);
 		}
+
+		long custID = customer.getCustID();
+
+		CustomerChequeInfo custCheque = new CustomerChequeInfo();
+		custCheque.setCustID(custID);
+		custCheque.setChequeSeq(ccd.getChequeSeq());
+
+		logReference(custCIF);
+
+		CustomerChequeInfo custChequeInfo = customerChequeInfoDAO.getCustomerChequeInfoById(custID,
+				custCheque.getChequeSeq(), "");
+
+		if (custChequeInfo == null) {
+			return getFailedStatus("90117", String.valueOf(ccd.getChequeSeq()), custCIF);
+		}
+
 		logger.debug(Literal.LEAVING);
-		return response;
+		return customerDetailsController.deleteCustomerAccountBehaviour(custCheque);
 	}
 
-	/**
-	 * Method for create CustomerExternalLiability in PLF system.
-	 * 
-	 * @param liability
-	 * @throws ServiceException
-	 */
 	@Override
-	public CustomerExtLiabilityDetail addCustomerExternalLiability(CustomerExtLiabilityDetail customerLiability)
+	public CustomerExtLiabilityDetail addCustomerExternalLiability(CustomerExtLiabilityDetail liabilityDetail)
 			throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
-		validationUtility.validate(customerLiability, SaveValidationGroup.class);
-		if (customerLiability.getExternalLiability() == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "customerExtLiability";
-			CustomerExtLiabilityDetail aCustomerExtLiabilityDetail = new CustomerExtLiabilityDetail();
-			aCustomerExtLiabilityDetail.setReturnStatus(getFailedStatus("90502", valueParm));
-			return aCustomerExtLiabilityDetail;
-		}
-		if (StringUtils.isNotBlank(customerLiability.getCif())) {
-			Customer customerDetails = customerDetailsService.getCustomerByCIF(customerLiability.getCif());
-			if (customerDetails == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = customerLiability.getCif();
-				CustomerExtLiabilityDetail custExtLiabilityDetail = new CustomerExtLiabilityDetail();
-				custExtLiabilityDetail.setReturnStatus(getFailedStatus("90101", valueParm));
-				return custExtLiabilityDetail;
-			}
-		}
-		// for logging purpose
-		logReference(customerLiability.getCif());
-		AuditHeader auditHeader = getAuditHeader(customerLiability.getExternalLiability(), PennantConstants.TRAN_WF);
-		// validate customer details as per the API specification
-		CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
-		AuditDetail auditDetail = validation.doValidations(customerLiability.getExternalLiability());
+		validationUtility.validate(liabilityDetail, SaveValidationGroup.class);
 
-		auditHeader.setAuditDetail(auditDetail);
-		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		CustomerExtLiability liability = liabilityDetail.getExternalLiability();
+		if (liability == null) {
+			CustomerExtLiabilityDetail response = new CustomerExtLiabilityDetail();
+			response.setReturnStatus(getFailedStatus("90502", "customerExtLiability"));
+			return response;
+		}
 
-		CustomerExtLiabilityDetail response = null;
-		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				response = new CustomerExtLiabilityDetail();
-				response.setReturnStatus(getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+		String custCIF = liabilityDetail.getCif();
+
+		if (StringUtils.isNotBlank(custCIF)) {
+			Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
+			if (customer == null) {
+				CustomerExtLiabilityDetail response = new CustomerExtLiabilityDetail();
+				response.setReturnStatus(getFailedStatus(ERR_90101, custCIF));
 				return response;
 			}
 		}
 
-		// call add Customer Employment method in case of no errors
-		response = customerDetailsController.addCustomerExternalLiability(customerLiability.getExternalLiability(),
-				customerLiability.getCif());
+		logReference(custCIF);
+
+		AuditHeader ah = getAuditHeader(liability, PennantConstants.TRAN_WF);
+		CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
+		AuditDetail ad = validation.doValidations(liability);
+
+		ah.setAuditDetail(ad);
+		ah.setErrorList(ad.getErrorDetails());
+
+		if (CollectionUtils.isNotEmpty(ah.getErrorMessage())) {
+			CustomerExtLiabilityDetail response = new CustomerExtLiabilityDetail();
+			ErrorDetail ed = ah.getErrorMessage().get(0);
+			response.setReturnStatus(getFailedStatus(ed.getCode(), ed.getError()));
+			return response;
+		}
 
 		logger.debug(Literal.LEAVING);
-		return response;
-
+		return customerDetailsController.addCustomerExternalLiability(liability, custCIF);
 	}
 
-	/**
-	 * Method for update CustomerExternalLiability in PLF system.
-	 * 
-	 * @param customerExtLiabilityDetail
-	 * @throws ServiceException
-	 */
 	@Override
-	public WSReturnStatus updateCustomerExternalLiability(CustomerExtLiabilityDetail customerExtLiabilityDetail)
+	public WSReturnStatus updateCustomerExternalLiability(CustomerExtLiabilityDetail liabilityDetail)
 			throws ServiceException {
 		logger.debug(Literal.ENTERING);
-		// bean validations
-		validationUtility.validate(customerExtLiabilityDetail, UpdateValidationGroup.class);
-		if (customerExtLiabilityDetail.getExternalLiability() == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "customerExtLiability";
-			return getFailedStatus("90502", valueParm);
+
+		validationUtility.validate(liabilityDetail, UpdateValidationGroup.class);
+
+		CustomerExtLiability externalLiability = liabilityDetail.getExternalLiability();
+		if (externalLiability == null) {
+			return getFailedStatus("90502", "customerExtLiability");
 		}
-		// customer validations
+
 		Customer customer = null;
-		if (StringUtils.isNotBlank(customerExtLiabilityDetail.getCif())) {
-			customer = customerDetailsService.getCustomerByCIF(customerExtLiabilityDetail.getCif());
-			if (customer == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = customerExtLiabilityDetail.getCif();
-				return getFailedStatus("90101", valueParm);
-			}
+		if (StringUtils.isNotBlank(liabilityDetail.getCif())) {
+			customer = customerDetailsService.getCustomerByCIF(liabilityDetail.getCif());
 		}
-		// for logging purpose
-		logReference(customerExtLiabilityDetail.getCif());
-		AuditHeader auditHeader = getAuditHeader(customerExtLiabilityDetail.getExternalLiability(),
-				PennantConstants.TRAN_WF);
 
-		// validate customer details as per the API specification
+		if (customer == null) {
+			return getFailedStatus(ERR_90101, liabilityDetail.getCif());
+		}
+
+		logReference(liabilityDetail.getCif());
+		AuditHeader ah = getAuditHeader(externalLiability, PennantConstants.TRAN_WF);
+
 		CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
-		AuditDetail auditDetail = validation.doValidations(customerExtLiabilityDetail.getExternalLiability());
+		AuditDetail ad = validation.doValidations(externalLiability);
 
-		auditHeader.setAuditDetail(auditDetail);
-		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		ah.setAuditDetail(ad);
+		ah.setErrorList(ad.getErrorDetails());
 
-		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
-			}
+		if (CollectionUtils.isNotEmpty(ah.getErrorMessage())) {
+			ErrorDetail ed = ah.getErrorMessage().get(0);
+			return getFailedStatus(ed.getCode(), ed.getError());
 		}
-
-		WSReturnStatus response = null;
-		// validate Customer with given CustCIF
 
 		CustomerExtLiability liability = new CustomerExtLiability();
 		liability.setCustId(customer.getCustID());
-		liability.setSeqNo(customerExtLiabilityDetail.getExternalLiability().getSeqNo());
+		liability.setSeqNo(externalLiability.getSeqNo());
 		liability.setLinkId(customerExtLiabilityDAO.getLinkId(customer.getCustID()));
 		liability = customerExtLiabilityService.getLiability(liability);
 
-		if (liability != null) {
-			customerExtLiabilityDetail.getExternalLiability().setId(liability.getId());
-
-			// call update customer if there is no errors
-			response = customerDetailsController.updateCustomerExternalLiability(
-					customerExtLiabilityDetail.getExternalLiability(), customerExtLiabilityDetail.getCif());
-		} else {
-			String[] valueParm = new String[2];
-			valueParm[0] = String.valueOf(customerExtLiabilityDetail.getExternalLiability().getSeqNo());
-			valueParm[1] = customerExtLiabilityDetail.getCif();
-			return getFailedStatus("90118", valueParm);
+		if (liability == null) {
+			return getFailedStatus("90118", String.valueOf(externalLiability.getSeqNo()), liabilityDetail.getCif());
 		}
 
-		logger.debug(Literal.LEAVING);
-		return response;
+		externalLiability.setId(liability.getId());
 
+		logger.debug(Literal.LEAVING);
+		return customerDetailsController.updateCustomerExternalLiability(externalLiability, liabilityDetail.getCif());
 	}
 
-	/**
-	 * get CustomerExternalLiabilities by the given customer cif.
-	 * 
-	 * @param custCIF
-	 */
 	@Override
 	public CustomerDetails getCustomerExternalLiabilities(String custCIF) throws ServiceException {
 		logger.debug(Literal.ENTERING);
-		// Mandatory validation
+
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
-		// for logging purpose
+
 		logReference(custCIF);
-		CustomerDetails response = new CustomerDetails();
-		// validation
-		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
-		if (customer == null) {
+
+		if (customerDetailsService.getCustomerByCIF(custCIF) == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = custCIF;
-			response.setReturnStatus(getErrorDetails("90101", valueParm));
-			response.setCustomer(null);
-		} else {
-			response = customerDetailsController.getCustomerExternalLiabilities(custCIF);
-		}
-		logger.debug(Literal.LEAVING);
 
-		return response;
+			CustomerDetails response = new CustomerDetails();
+			response.setReturnStatus(getErrorDetails(ERR_90101, valueParm));
+			response.setCustomer(null);
+
+			return response;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return customerDetailsController.getCustomerExternalLiabilities(custCIF);
 	}
 
-	/**
-	 * delete CustomerExternalLiability.
-	 * 
-	 * @param customerExtLiabilityDetail
-	 */
 	@Override
-	public WSReturnStatus deleteCustomerExternalLiability(CustomerExtLiabilityDetail customerExtLiabilityDetail)
+	public WSReturnStatus deleteCustomerExternalLiability(CustomerExtLiabilityDetail liabilityDetail)
 			throws ServiceException {
 		logger.debug(Literal.ENTERING);
-		// bean validations
-		validationUtility.validate(customerExtLiabilityDetail, DeleteValidationGroup.class);
 
-		// customer validations
-		CustomerExtLiability customerExtLiability = null;
-		if (StringUtils.isNotBlank(customerExtLiabilityDetail.getCif())) {
-			Customer customerDetails = customerDetailsService.getCustomerByCIF(customerExtLiabilityDetail.getCif());
-			if (customerDetails == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = customerExtLiabilityDetail.getCif();
-				return getFailedStatus("90101", valueParm);
-			} else {
-				customerExtLiability = new CustomerExtLiability();
-				customerExtLiability.setCustId(customerDetails.getCustID());
-				customerExtLiability.setSeqNo(customerExtLiabilityDetail.getLiabilitySeq());
-				// for logging purpose
-				logReference(customerExtLiabilityDetail.getCif());
-			}
+		validationUtility.validate(liabilityDetail, DeleteValidationGroup.class);
+
+		String custCIF = liabilityDetail.getCif();
+
+		Customer customer = null;
+		if (StringUtils.isNotBlank(custCIF)) {
+			customer = customerDetailsService.getCustomerByCIF(custCIF);
 		}
-		WSReturnStatus response = null;
-		// validate Customer with given CustCIF
+
+		if (customer == null) {
+			return getFailedStatus(ERR_90101, custCIF);
+		}
+
+		CustomerExtLiability extLiability = new CustomerExtLiability();
+		extLiability.setCustId(customer.getCustID());
+		extLiability.setSeqNo(liabilityDetail.getLiabilitySeq());
+		logReference(custCIF);
 
 		CustomerExtLiability liability = new CustomerExtLiability();
-		liability.setCustId(customerExtLiability.getCustId());
-		liability.setSeqNo(customerExtLiabilityDetail.getLiabilitySeq());
-		liability.setLinkId(customerExtLiabilityDAO.getLinkId(customerExtLiability.getCustId()));
-
-		// liability = customerExtLiabilityService.getLiability(liability);
+		liability.setCustId(extLiability.getCustId());
+		liability.setSeqNo(liabilityDetail.getLiabilitySeq());
+		liability.setLinkId(customerExtLiabilityDAO.getLinkId(extLiability.getCustId()));
 
 		CustomerExtLiability custExtLiability = customerExtLiabilityService.getLiability(liability);
 
-		if (custExtLiability != null) {
-			// call delete customer service
-			response = customerDetailsController.deleteCustomerExternalLiability(liability);
-		} else {
-			String[] valueParm = new String[2];
-			valueParm[0] = String.valueOf(customerExtLiabilityDetail.getLiabilitySeq());
-			valueParm[1] = customerExtLiabilityDetail.getCif();
-			return getFailedStatus("90118", valueParm);
+		if (custExtLiability == null) {
+			return getFailedStatus("90118", String.valueOf(liabilityDetail.getLiabilitySeq()), custCIF);
 		}
+
 		logger.debug(Literal.LEAVING);
-		return response;
+		return customerDetailsController.deleteCustomerExternalLiability(liability);
 	}
 
-	/**
-	 * Method for create Customer Document in PLF system.
-	 * 
-	 * @param customerDocumentDetail
-	 * @throws ServiceException
-	 */
 	@Override
-	public WSReturnStatus addCustomerDocument(CustomerDocumentDetail customerDocumentDetail) throws ServiceException {
+	public WSReturnStatus addCustomerDocument(CustomerDocumentDetail cdd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
-		// bean validations
-		validationUtility.validate(customerDocumentDetail, SaveValidationGroup.class);
-		if (customerDocumentDetail.getCustomerDocument() == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "document";
-			return getFailedStatus("90502", valueParm);
+
+		validationUtility.validate(cdd, SaveValidationGroup.class);
+
+		if (cdd.getCustomerDocument() == null) {
+			return getFailedStatus("90502", "document");
 		}
+
 		Customer customer = null;
-		if (StringUtils.isNotBlank(customerDocumentDetail.getCif())) {
-			customer = customerDetailsService.getCustomerByCIF(customerDocumentDetail.getCif());
-			if (customer == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = customerDocumentDetail.getCif();
-				return getFailedStatus("90101", valueParm);
-
-			}
+		String custCIF = cdd.getCif();
+		if (StringUtils.isNotBlank(custCIF)) {
+			customer = customerDetailsService.getCustomerByCIF(custCIF);
 		}
-		// for logging purpose
-		logReference(customerDocumentDetail.getCif());
-		AuditHeader auditHeader = getAuditHeader(customerDocumentDetail.getCustomerDocument(),
-				PennantConstants.TRAN_WF);
-		// validate customer details as per the API specification
-		AuditDetail auditDetail = customerDocumentService
-				.validateCustomerDocuments(customerDocumentDetail.getCustomerDocument(), customer);
 
-		auditHeader.setAuditDetail(auditDetail);
-		auditHeader.setErrorList(auditDetail.getErrorDetails());
-
-		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
-			}
+		if (customer == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = custCIF;
+			return getFailedStatus(ERR_90101, valueParm);
 		}
-		// call add Customer Employment method in case of no errors
-		WSReturnStatus returnStatus = customerDetailsController
-				.addCustomerDocument(customerDocumentDetail.getCustomerDocument(), customerDocumentDetail.getCif());
+
+		logReference(custCIF);
+
+		AuditHeader ah = getAuditHeader(cdd.getCustomerDocument(), PennantConstants.TRAN_WF);
+		AuditDetail ad = customerDocumentService.validateCustomerDocuments(cdd.getCustomerDocument(), customer);
+
+		ah.setAuditDetail(ad);
+		ah.setErrorList(ad.getErrorDetails());
+
+		if (CollectionUtils.isNotEmpty(ah.getErrorMessage())) {
+			ErrorDetail ed = ah.getErrorMessage().get(0);
+			return getFailedStatus(ed.getCode(), ed.getError());
+		}
 
 		logger.debug(Literal.LEAVING);
-		return returnStatus;
-
+		return customerDetailsController.addCustomerDocument(cdd.getCustomerDocument(), custCIF);
 	}
 
-	/**
-	 * Method for update CustomerDocument in PLF system.
-	 * 
-	 * @param customerDocumentDetail
-	 * @throws ServiceException
-	 */
 	@Override
-	public WSReturnStatus updateCustomerDocument(CustomerDocumentDetail customerDocumentDetail)
-			throws ServiceException {
+	public WSReturnStatus updateCustomerDocument(CustomerDocumentDetail cdd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
-		// bean validations
-		validationUtility.validate(customerDocumentDetail, UpdateValidationGroup.class);
-		if (customerDocumentDetail.getCustomerDocument() == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "document";
-			return getFailedStatus("90502", valueParm);
+
+		validationUtility.validate(cdd, UpdateValidationGroup.class);
+
+		CustomerDocument document = cdd.getCustomerDocument();
+		if (document == null) {
+			return getFailedStatus("90502", "document");
 		}
-		// customer validations
+
+		String custCIF = cdd.getCif();
+
 		Customer customer = null;
-		if (StringUtils.isNotBlank(customerDocumentDetail.getCif())) {
-			customer = customerDetailsService.getCustomerByCIF(customerDocumentDetail.getCif());
-			if (customer == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = customerDocumentDetail.getCif();
-				return getFailedStatus("90101", valueParm);
-			}
-		}
-		// for logging purpose
-		logReference(customerDocumentDetail.getCif());
-		AuditHeader auditHeader = getAuditHeader(customerDocumentDetail.getCustomerDocument(),
-				PennantConstants.TRAN_WF);
-		AuditDetail auditDetail = customerDocumentService
-				.validateCustomerDocuments(customerDocumentDetail.getCustomerDocument(), customer);
-		auditHeader.setAuditDetail(auditDetail);
-		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
-		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				return getFailedStatus(errorDetail.getCode(), errorDetail.getError());
-			}
+		if (StringUtils.isNotBlank(custCIF)) {
+			customer = customerDetailsService.getCustomerByCIF(custCIF);
 		}
 
-		// validate Customer with given CustCIF
-		CustomerDocument customerDocument = customerDocumentService.getApprovedCustomerDocumentById(
-				customer.getCustID(), customerDocumentDetail.getCustomerDocument().getCustDocCategory());
-		WSReturnStatus returnStatus = null;
-		if (customerDocument != null) {
-			// call update customer if there is no errors
-			customerDocumentDetail.getCustomerDocument().setID(customerDocument.getID());
-			returnStatus = customerDetailsController.updateCustomerDocument(
-					customerDocumentDetail.getCustomerDocument(), customerDocumentDetail.getCif());
-		} else {
-			String[] valueParm = new String[2];
-			valueParm[0] = customerDocumentDetail.getCustomerDocument().getCustDocCategory();
-			valueParm[1] = customerDocumentDetail.getCif();
-			return getFailedStatus("90119", valueParm);
+		if (customer == null) {
+			return getFailedStatus(ERR_90101, custCIF);
 		}
+
+		long custID = customer.getCustID();
+		logReference(custCIF);
+
+		AuditHeader ah = getAuditHeader(document, PennantConstants.TRAN_WF);
+		AuditDetail ad = customerDocumentService.validateCustomerDocuments(document, customer);
+
+		ah.setAuditDetail(ad);
+		ah.setErrorList(ad.getErrorDetails());
+
+		if (CollectionUtils.isNotEmpty(ah.getErrorMessage())) {
+			ErrorDetail ed = ah.getErrorMessage().get(0);
+			return getFailedStatus(ed.getCode(), ed.getError());
+		}
+
+		String custDocCategory = document.getCustDocCategory();
+		CustomerDocument custDoc = customerDocumentService.getApprovedCustomerDocumentById(custID, custDocCategory);
+
+		if (custDoc == null) {
+			return getFailedStatus("90119", custDocCategory, custCIF);
+		}
+
 		logger.debug(Literal.LEAVING);
-		return returnStatus;
+		document.setID(custDoc.getID());
+		return customerDetailsController.updateCustomerDocument(document, custCIF);
 	}
 
-	/**
-	 * get CustomerDocuments by the given customer cif.
-	 * 
-	 * @param custCIF
-	 */
 	@Override
 	public CustomerDetails getCustomerDocuments(String custCIF) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		// Mandatory validation
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
 		}
-		// for logging purpose
+
 		logReference(custCIF);
-		CustomerDetails response = new CustomerDetails();
-		// validation
-		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
-		if (customer == null) {
+
+		if (customerDetailsService.getCustomerByCIF(custCIF) == null) {
+			CustomerDetails response = new CustomerDetails();
+
 			String[] valueParm = new String[1];
 			valueParm[0] = custCIF;
-			response.setReturnStatus(getErrorDetails("90101", valueParm));
+			response.setReturnStatus(getErrorDetails(ERR_90101, valueParm));
 			response.setCustomer(null);
-		} else {
-			response = customerDetailsController.getCustomerDocuments(custCIF);
+
+			return response;
 		}
 
 		logger.debug(Literal.LEAVING);
-
-		return response;
+		return customerDetailsController.getCustomerDocuments(custCIF);
 	}
 
-	/**
-	 * delete CustomerDocument.
-	 * 
-	 * @param customerDocumentDetail
-	 */
 	@Override
-	public WSReturnStatus deleteCustomerDocument(CustomerDocumentDetail customerDocumentDetail)
-			throws ServiceException {
+	public WSReturnStatus deleteCustomerDocument(CustomerDocumentDetail cdd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
-		validationUtility.validate(customerDocumentDetail, DeleteValidationGroup.class);
+		validationUtility.validate(cdd, DeleteValidationGroup.class);
 
-		// customer validations
-		CustomerDocument customerDocument = null;
-		if (StringUtils.isNotBlank(customerDocumentDetail.getCif())) {
-			Customer customer = customerDetailsService.getCustomerByCIF(customerDocumentDetail.getCif());
-			if (customer == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = customerDocumentDetail.getCif();
-				return getFailedStatus("90101", valueParm);
-			} else {
-				customerDocument = new CustomerDocument();
-				customerDocument.setCustID(customer.getCustID());
-				customerDocument.setCustDocCategory(customerDocumentDetail.getCustDocCategory());
-				// for logging purpose
-				logReference(customerDocumentDetail.getCif());
-			}
+		Customer customer = null;
+		String custCIF = cdd.getCif();
+
+		if (StringUtils.isNotBlank(custCIF)) {
+			customer = customerDetailsService.getCustomerByCIF(custCIF);
 		}
-		WSReturnStatus response = null;
-		// validate Customer with given CustCIF
-		CustomerDocument prvCustomerDocument = customerDocumentService
-				.getApprovedCustomerDocumentById(customerDocument.getCustID(), customerDocument.getCustDocCategory());
-		if (prvCustomerDocument != null) {
-			// call delete customer service
-			response = customerDetailsController.deleteCustomerDocument(customerDocument);
-		} else {
-			String[] valueParm = new String[2];
-			valueParm[0] = customerDocumentDetail.getCustDocCategory();
-			valueParm[1] = customerDocumentDetail.getCif();
-			return getFailedStatus("90119", valueParm);
+
+		if (customer == null) {
+			return getFailedStatus(ERR_90101, custCIF);
 		}
+
+		CustomerDocument cd = new CustomerDocument();
+		cd.setCustID(customer.getCustID());
+		String docCategory = cdd.getCustDocCategory();
+		cd.setCustDocCategory(docCategory);
+		logReference(custCIF);
+
+		CustomerDocument prvCD = customerDocumentService.getApprovedCustomerDocumentById(cd.getCustID(),
+				cd.getCustDocCategory());
+		if (prvCD == null) {
+			return getFailedStatus("90119", docCategory, custCIF);
+		}
+
 		logger.debug(Literal.LEAVING);
-		return response;
+		return customerDetailsController.deleteCustomerDocument(cd);
 	}
 
-	private CustomerDedup doSetCustomerDedup(CustomerDetails customerDetails) {
+	private CustomerDedup doSetCustomerDedup(CustomerDetails cd) {
 		logger.debug(Literal.ENTERING);
+
 		String mobileNumber = "";
 		String mailId = "";
-		Customer customer = customerDetails.getCustomer();
-		List<CustomerPhoneNumber> phoneNumberList = customerDetails.getCustomerPhoneNumList();
-		List<CustomerEMail> mailIdList = customerDetails.getCustomerEMailList();
+		Customer customer = cd.getCustomer();
+		List<CustomerPhoneNumber> phones = cd.getCustomerPhoneNumList();
+		List<CustomerEMail> mails = cd.getCustomerEMailList();
 
-		if (phoneNumberList != null && !phoneNumberList.isEmpty()) {
-			if (phoneNumberList.size() > 1) {
-				Collections.sort(phoneNumberList, new Comparator<CustomerPhoneNumber>() {
-					@Override
-					public int compare(CustomerPhoneNumber detail1, CustomerPhoneNumber detail2) {
-						return detail2.getPhoneTypePriority() - detail1.getPhoneTypePriority();
-					}
-				});
-			}
-			CustomerPhoneNumber custPhone = phoneNumberList.get(0);
-			mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
-					custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+		if (CollectionUtils.isNotEmpty(phones)) {
+			CustomerPhoneNumber phone = phones.stream()
+					.sorted((p1, p2) -> Integer.compare(p1.getPhoneTypePriority(), p2.getPhoneTypePriority())).toList()
+					.get(0);
+
+			mobileNumber = PennantApplicationUtil.formatPhoneNumber(phone.getPhoneCountryCode(),
+					phone.getPhoneAreaCode(), phone.getPhoneNumber());
 		}
 
-		if (mailIdList != null && !mailIdList.isEmpty()) {
-			if (mailIdList.size() > 1) {
-				Collections.sort(mailIdList, new Comparator<CustomerEMail>() {
-					@Override
-					public int compare(CustomerEMail detail1, CustomerEMail detail2) {
-						return detail2.getCustEMailPriority() - detail1.getCustEMailPriority();
-					}
-				});
-			}
-			CustomerEMail custMail = mailIdList.get(0);
+		if (CollectionUtils.isNotEmpty(mails)) {
+			CustomerEMail custMail = mails.stream()
+					.sorted((m1, m2) -> Integer.compare(m1.getCustEMailPriority(), m2.getCustEMailPriority())).toList()
+					.get(0);
+
 			mailId = custMail.getCustEMail();
 		}
 
-		List<CustomerDocument> customerDocumentsList = customerDetails.getCustomerDocumentsList();
-		String panNumber = PennantApplicationUtil.getPanNumber(customerDocumentsList);
+		String panNumber = PennantApplicationUtil.getPanNumber(cd.getCustomerDocumentsList());
+
 		if (StringUtils.isNotBlank(panNumber)) {
-			customerDetails.getCustomer().setCustCRCPR(panNumber);
+			cd.getCustomer().setCustCRCPR(panNumber);
 		}
-		CustomerDedup customerDedup = new CustomerDedup();
-		customerDedup.setCustFName(customer.getCustFName());
-		customerDedup.setCustLName(customer.getCustLName());
-		customerDedup.setCustShrtName(customer.getCustShrtName());
-		customerDedup.setCustDOB(customer.getCustDOB());
-		customerDedup.setCustCRCPR(customer.getCustCRCPR());
-		customerDedup.setCustCtgCode(customer.getCustCtgCode());
-		customerDedup.setCustDftBranch(customer.getCustDftBranch());
-		customerDedup.setCustSector(customer.getCustSector());
-		customerDedup.setCustSubSector(customer.getCustSubSector());
-		customerDedup.setCustNationality(customer.getCustNationality());
-		customerDedup.setCustPassportNo(customer.getCustPassportNo());
-		customerDedup.setCustTradeLicenceNum(customer.getCustTradeLicenceNum());
-		customerDedup.setCustVisaNum(customer.getCustVisaNum());
-		customerDedup.setCustPOB(customer.getCustPOB());
-		customerDedup.setCustResdCountry(customer.getCustResdCountry());
-		customerDedup.setMobileNumber(mobileNumber);
-		customerDedup.setCustEMail(mailId);
+
+		CustomerDedup dedup = new CustomerDedup();
+		dedup.setCustFName(customer.getCustFName());
+		dedup.setCustLName(customer.getCustLName());
+		dedup.setCustShrtName(customer.getCustShrtName());
+		dedup.setCustDOB(customer.getCustDOB());
+		dedup.setCustCRCPR(customer.getCustCRCPR());
+		dedup.setCustCtgCode(customer.getCustCtgCode());
+		dedup.setCustDftBranch(customer.getCustDftBranch());
+		dedup.setCustSector(customer.getCustSector());
+		dedup.setCustSubSector(customer.getCustSubSector());
+		dedup.setCustNationality(customer.getCustNationality());
+		dedup.setCustPassportNo(customer.getCustPassportNo());
+		dedup.setCustTradeLicenceNum(customer.getCustTradeLicenceNum());
+		dedup.setCustVisaNum(customer.getCustVisaNum());
+		dedup.setCustPOB(customer.getCustPOB());
+		dedup.setCustResdCountry(customer.getCustResdCountry());
+		dedup.setMobileNumber(mobileNumber);
+		dedup.setCustEMail(mailId);
 
 		if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
-			setUCIC(customerDetails, customerDedup);
+			setUCIC(cd, dedup);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return customerDedup;
-
+		return dedup;
 	}
 
 	@Override
 	public AgreementData getCustomerAgreement(AgreementRequest agrRequest) throws ServiceException {
-
 		logger.debug(Literal.ENTERING);
-		AgreementData agrData = null;
+
 		try {
-			// Mandatory validation
 			if (StringUtils.isBlank(agrRequest.getCif())) {
-				agrData = new AgreementData();
-				String[] valueParm = new String[1];
-				valueParm[0] = "CIF";
-				agrData.setReturnStatus(getFailedStatus("90502", valueParm));
+				AgreementData agrData = new AgreementData();
+				agrData.setReturnStatus(getFailedStatus("90502", "CIF"));
+
 				return agrData;
 			}
 
 			if (StringUtils.isBlank(agrRequest.getAgreementType())) {
-				agrData = new AgreementData();
-				String[] valueParm = new String[1];
-				valueParm[0] = "AgreementType";
-				agrData.setReturnStatus(getFailedStatus("90502", valueParm));
+				AgreementData agrData = new AgreementData();
+				agrData.setReturnStatus(getFailedStatus("90502", "AgreementType"));
+
 				return agrData;
 			}
-			// for logging purpose
+
 			logReference(agrRequest.getCif());
-			if (!StringUtils.equals(agrRequest.getAgreementType(), APIConstants.CUST_AGR_NAME)) {
-				agrData = new AgreementData();
-				String[] valueParm = new String[2];
-				valueParm[0] = APIConstants.CUST_AGR_NAME;
-				valueParm[1] = "AgreementType";
-				agrData.setReturnStatus(getFailedStatus("90298", valueParm));
+
+			if (!APIConstants.CUST_AGR_NAME.equals(agrRequest.getAgreementType())) {
+				AgreementData agrData = new AgreementData();
+				agrData.setReturnStatus(getFailedStatus("90298", APIConstants.CUST_AGR_NAME, "AgreementType"));
+
 				return agrData;
 			}
-			// validate Customer with given CustCIF
+
 			Customer customer = customerDetailsService.getCustomerByCIF(agrRequest.getCif());
-			if (customer != null) {
-				agrData = customerController.getCustomerAgreement(customer.getCustID());
-			} else {
-				agrData = new AgreementData();
-				String[] valueParm = new String[1];
-				valueParm[0] = agrRequest.getCif();
-				agrData.setReturnStatus(getFailedStatus("90101", valueParm));
+			if (customer == null) {
+				AgreementData agrData = new AgreementData();
+				agrData.setReturnStatus(getFailedStatus(ERR_90101, agrRequest.getCif()));
+
+				return agrData;
 			}
+
+			return customerController.getCustomerAgreement(customer.getCustID());
 		} catch (Exception e) {
 			APIErrorHandlerService.logUnhandledException(e);
-			agrData = new AgreementData();
+			AgreementData agrData = new AgreementData();
 			agrData.setReturnStatus(getFailedStatus());
-		}
-		logger.debug(Literal.LEAVING);
 
-		return agrData;
+			return agrData;
+		}
 	}
 
 	@Override
 	public ProspectCustomerDetails getDedupCustomer(ProspectCustomerDetails customer) {
 		logger.debug(Literal.ENTERING);
 
-		ProspectCustomerDetails response = null;
-		// bean validations
 		validationUtility.validate(customer, ProspectCustDetailsGroup.class);
 
-		// validate Customer category code
-		boolean isExist = customerCategoryDAO.isCustCtgExist(customer.getCustCtgCode(), "");
-		if (!isExist) {
-			response = new ProspectCustomerDetails();
+		String custCtgCode = customer.getCustCtgCode();
+
+		if (!customerCategoryDAO.isCustCtgExist(custCtgCode, "")) {
+			ProspectCustomerDetails response = new ProspectCustomerDetails();
 			String[] valueParm = new String[2];
 			valueParm[0] = "CustCtg";
-			valueParm[1] = customer.getCustCtgCode();
+			valueParm[1] = custCtgCode;
 			response.setReturnStatus(getErrorDetails("90224", valueParm));
 			return response;
 		}
 
-		response = customerController.getDedupCustomer(customer);
-
 		logger.debug(Literal.LEAVING);
-		return response;
+		return customerController.getDedupCustomer(customer);
 	}
 
-	/**
-	 * add CreditReviewDetails.
-	 * 
-	 * @param finCreditReviewDetailsData
-	 */
 	@Override
-	public WSReturnStatus addCreditReviewDetails(FinCreditReviewDetailsData finCreditReviewDetailsData) {
+	public WSReturnStatus addCreditReviewDetails(FinCreditReviewDetailsData fcrd) {
 		logger.debug(Literal.ENTERING);
-		WSReturnStatus response = null;
-		Customer customer = null;
-		if (StringUtils.isBlank(finCreditReviewDetailsData.getCif())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "Cif";
-			return getFailedStatus("90502", valueParm);
-		} else {
-			customer = customerDetailsService.getCustomerByCIF(finCreditReviewDetailsData.getCif());
 
-			if (customer == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = finCreditReviewDetailsData.getCif();
-				getFailedStatus("90101", valueParm);
-			}
+		Customer customer = null;
+
+		if (StringUtils.isBlank(fcrd.getCif())) {
+			return getFailedStatus("90502", "Cif");
 		}
-		for (FinCreditReviewDetails detail : finCreditReviewDetailsData.getFinCreditReviewDetails()) {
-			if (customer != null) {
-				detail.setCreditRevCode(customer.getCustCtgCode());
-				detail.setCustomerId(customer.getCustID());
-			}
+
+		customer = customerDetailsService.getCustomerByCIF(fcrd.getCif());
+
+		if (customer == null) {
+			return getFailedStatus(ERR_90101, fcrd.getCif());
+		}
+
+		for (FinCreditReviewDetails detail : fcrd.getFinCreditReviewDetails()) {
+			detail.setCreditRevCode(customer.getCustCtgCode());
+			detail.setCustomerId(customer.getCustID());
+
 			if (StringUtils.isBlank(detail.getCurrency())) {
 				detail.setCurrency("INR");
 			}
-			if (StringUtils.isBlank(detail.getAuditYear())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Audit Year";
-				return getFailedStatus("90502", valueParm);
-			}
-			if (StringUtils.isBlank(detail.getBankName())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Bank Name";
-				return getFailedStatus("90502", valueParm);
-			}
-			if (StringUtils.isBlank(detail.getAuditors())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Auditors";
-				return getFailedStatus("90502", valueParm);
-			}
-			if (StringUtils.isBlank(detail.getLocation())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Location";
-				return getFailedStatus("90502", valueParm);
-			}
-			if (StringUtils.isBlank(String.valueOf(detail.getAuditedDate()))) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Audited Date";
-				return getFailedStatus("90502", valueParm);
-			}
-			if (StringUtils.isBlank(String.valueOf(detail.isQualified()))) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Qualified";
-				return getFailedStatus("90502", valueParm);
-			}
-			if (StringUtils.isBlank(detail.getAuditType())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "AuditType";
-				return getFailedStatus("90502", valueParm);
-			} else if (!StringUtils.equals(detail.getAuditType(), FacilityConstants.CREDITREVIEW_AUDITED)
-					&& !StringUtils.equals(detail.getAuditType(), FacilityConstants.CREDITREVIEW_UNAUDITED)
-					&& !StringUtils.equals(detail.getAuditType(), FacilityConstants.CREDITREVIEW_MNGRACNTS)) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "AuditType";
-				valueParm[1] = FacilityConstants.CREDITREVIEW_AUDITED + "," + FacilityConstants.CREDITREVIEW_UNAUDITED
-						+ "," + FacilityConstants.CREDITREVIEW_MNGRACNTS;
-				return getFailedStatus("90281", valueParm);
 
-			}
-			for (FinCreditReviewSummary summaryDetail : detail.getCreditReviewSummaryEntries()) {
-				if (StringUtils.isBlank(String.valueOf(summaryDetail.getSubCategoryCode()))) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "SubCategory Code";
-					return getFailedStatus("90502", valueParm);
-				} else {
-					FinCreditRevSubCategory finCreditRevSubCategory = finCreditRevSubCategoryDAO
-							.getFinCreditRevSubCategoryById(summaryDetail.getSubCategoryCode(), "");
-					if (finCreditRevSubCategory == null) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "SubCategory Code " + summaryDetail.getSubCategoryCode();
-						return getFailedStatus("90501", valueParm);
-					}
-					if (finCreditRevSubCategory != null
-							&& StringUtils.endsWithIgnoreCase(finCreditRevSubCategory.getSubCategoryItemType(),
-									FacilityConstants.CREDITREVIEW_CALCULATED_FIELD)) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "SubCategory Code " + summaryDetail.getSubCategoryCode();
-						return getFailedStatus("90501", valueParm);
-					}
-				}
-				if (StringUtils.isBlank(String.valueOf(summaryDetail.getItemValue()))) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "Item Value";
-					return getFailedStatus("90502", valueParm);
-				}
+			WSReturnStatus wsReturnStatus = validateCRDetails(detail);
+
+			if (wsReturnStatus != null) {
+				return wsReturnStatus;
 			}
 
+			if (!isValidAuditType(detail.getAuditType())) {
+				String errorDesc = FacilityConstants.CREDITREVIEW_AUDITED + ","
+						+ FacilityConstants.CREDITREVIEW_UNAUDITED + "," + FacilityConstants.CREDITREVIEW_MNGRACNTS;
+				return getFailedStatus("90281", "AuditType", errorDesc);
+			}
+
+			wsReturnStatus = validateCRSummaryEntries(detail);
+
+			if (wsReturnStatus != null) {
+				return wsReturnStatus;
+			}
 		}
-		response = customerController.doAddCreditReviewDetails(finCreditReviewDetailsData);
-		logger.debug(Literal.LEAVING);
-		return response;
-	}
 
-	/**
-	 * getCustDedup
-	 * 
-	 * @param custDedupDetails
-	 */
+		logger.debug(Literal.LEAVING);
+		return customerController.doAddCreditReviewDetails(fcrd);
+	}
 
 	@Override
 	public CustDedupResponse getCustDedup(CustDedupDetails custDedupDetails) throws ServiceException {
@@ -2810,23 +2555,11 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		CustDedupResponse response = new CustDedupResponse();
 		CustomerDedup dedup = new CustomerDedup();
-		List<CustomerDedup> duplicateList = new ArrayList<CustomerDedup>();
 		List<CustDedupRequest> dedupList = custDedupDetails.getDedupList();
 
-		if (CollectionUtils.isEmpty(dedupList)) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "Request";
-			valueParm[1] = " two fields";
-			response.setReturnStatus(getFailedStatus("30507", valueParm));
+		if (CollectionUtils.isEmpty(dedupList) || dedupList.size() < 2) {
+			response.setReturnStatus(getFailedStatus("30507", "Request", " two fields"));
 			return response;
-		} else {
-			if (dedupList.size() < 2) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "Request";
-				valueParm[1] = " two fields";
-				response.setReturnStatus(getFailedStatus("30507", valueParm));
-				return response;
-			}
 		}
 
 		String custCtgCode = null;
@@ -2836,138 +2569,78 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				break;
 			}
 		}
-		if (StringUtils.isBlank(custCtgCode)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "CategoryCode";
-			response.setReturnStatus(getFailedStatus("90502", valueParm));
-			return response;
-		} else {
 
-			// validate Customer category code
-			boolean isExist = customerCategoryDAO.isCustCtgExist(custCtgCode, "");
-			if (!isExist) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "CustCtg";
-				valueParm[1] = custCtgCode;
-				response.setReturnStatus(getErrorDetails("90224", valueParm));
-				return response;
-			}
+		if (StringUtils.isBlank(custCtgCode)) {
+			response.setReturnStatus(getFailedStatus("90502", "CategoryCode"));
+			return response;
 		}
+
+		if (!customerCategoryDAO.isCustCtgExist(custCtgCode, "")) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "CustCtg";
+			valueParm[1] = custCtgCode;
+			response.setReturnStatus(getErrorDetails("90224", valueParm));
+
+			return response;
+		}
+
 		List<BuilderTable> fieldList = dedupFieldsDAO.getFieldList(custCtgCode.concat("Customer"));
 		List<String> fieldNamesList = fieldList.stream().map(d -> d.getFieldName()).collect(Collectors.toList());
 
 		for (CustDedupRequest feild : dedupList) {
-			// mandatory validation
 			if (StringUtils.isBlank(feild.getName())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "name";
-				response.setReturnStatus(getFailedStatus("90502", valueParm));
+				response.setReturnStatus(getFailedStatus("90502", "name"));
 				return response;
 			}
+
 			if (StringUtils.isBlank(String.valueOf(feild.getValue()))) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "value";
-				response.setReturnStatus(getFailedStatus("90502", valueParm));
+				response.setReturnStatus(getFailedStatus("90502", "value"));
 				return response;
 			}
 
-			boolean fieldFound = false;
-			for (String dbField : fieldNamesList) {
+			validateFieldNames(response, dedup, fieldNamesList, feild);
 
-				if (StringUtils.equalsIgnoreCase(dbField, feild.getName())) {
-					fieldFound = true;
-					if (feild.getName().equalsIgnoreCase("CustCtgCode")) {
-						dedup.setCustCtgCode(String.valueOf(feild.getValue()));
-					}
-					if (feild.getName().equalsIgnoreCase("CustShrtName")) {
-						dedup.setCustShrtName(String.valueOf(feild.getValue()));
-					}
-					if (feild.getName().equalsIgnoreCase("CustFName")) {
-						dedup.setCustFName(String.valueOf(feild.getValue()));
-					}
-					if (feild.getName().equalsIgnoreCase("CustLName")) {
-						dedup.setCustLName(String.valueOf(feild.getValue()));
-					}
-					if (feild.getName().equalsIgnoreCase("MobileNumber")) {
-						dedup.setMobileNumber(String.valueOf(feild.getValue()));
-					}
-					if (feild.getName().equalsIgnoreCase("CustEMail")) {
-						dedup.setCustEMail(String.valueOf(feild.getValue()));
-					}
-					if (feild.getName().equalsIgnoreCase("CustCIF")) {
-						dedup.setCustCIF(String.valueOf(feild.getValue()));
-					}
-					if (feild.getName().equalsIgnoreCase("CustCRCPR")) {
-						dedup.setCustCRCPR(String.valueOf(feild.getValue()));
-					}
-					if (feild.getName().equalsIgnoreCase("AadharNumber")) {
-						dedup.setAadharNumber((String.valueOf(feild.getValue())));
-					}
-					if (feild.getName().equalsIgnoreCase("CustDOB")) {
-						try {
-							String fieldValue = Objects.toString(feild.getValue(), "");
-							dedup.setCustDOB(DateUtil.parse(fieldValue, PennantConstants.APIDateFormatter));
-						} catch (Exception e) {
-							String[] valueParm = new String[2];
-							valueParm[0] = feild.getName();
-							valueParm[1] = "Date";
-							response.setReturnStatus(getFailedStatus("41002", valueParm));
-							return response;
-						}
-					}
-					if (feild.getName().equalsIgnoreCase("CustNationality")) {
-						dedup.setCustNationality(String.valueOf(feild.getValue()));
-					}
-					if (feild.getName().equalsIgnoreCase("CustPassportNo")) {
-						dedup.setCustPassportNo(String.valueOf(feild.getValue()));
-					}
-					if (feild.getName().equalsIgnoreCase("VoterID")) {
-						dedup.setVoterID(String.valueOf(feild.getValue()));
-					}
-					if (feild.getName().equalsIgnoreCase("DrivingLicence")) {
-						dedup.setDrivingLicenceNo(String.valueOf(feild.getValue()));
-					}
-				}
-			}
-			if (!fieldFound) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "field name";
-				response.setReturnStatus(getFailedStatus("41002", valueParm));
+			if (response.getReturnStatus() != null) {
 				return response;
 			}
-
 		}
 
-		List<CustomerDedup> resDedupList = new ArrayList<CustomerDedup>();
-		List<DedupParm> dedupParmList = dedupParmDAO.getDedupParmByModule(FinanceConstants.DEDUP_CUSTOMER, custCtgCode,
-				"");
-		// TO Check duplicate customer in Local database
-		for (DedupParm dedupParm : dedupParmList) {
-			List<CustomerDedup> list = customerDedupDAO.fetchCustomerDedupDetails(dedup, dedupParm.getSQLQuery());
-			if (list != null && !list.isEmpty()) {
-				duplicateList.addAll(list);
-				if (!CollectionUtils.isEmpty(resDedupList)) {
-					for (CustomerDedup customerDedup : resDedupList) {
-						for (CustomerDedup dupCustDedup : duplicateList) {
-							if (StringUtils.equalsIgnoreCase(customerDedup.getCustCIF(), dupCustDedup.getCustCIF())) {
-								list.remove(dupCustDedup);
-							}
-						}
-					}
-				}
-				resDedupList.addAll(list);
-				duplicateList.clear();
-			}
-		}
+		List<CustomerDedup> resDedupList = getCustomerDedupList(dedup, custCtgCode);
+
 		if (CollectionUtils.isNotEmpty(resDedupList)) {
 			response.setDedupList(resDedupList);
 			response.setReturnStatus(getSuccessStatus());
-
 		} else {
 			response.setReturnStatus(getSuccessStatus());
 		}
+
 		logger.debug(Literal.LEAVING);
 		return response;
+	}
+
+	private List<CustomerDedup> getCustomerDedupList(CustomerDedup dedup, String custCtgCode) {
+		List<CustomerDedup> duplicateList = new ArrayList<>();
+
+		List<CustomerDedup> resDedupList = new ArrayList<>();
+		List<DedupParm> dedupParmList = dedupParmDAO.getDedupParmByModule(FinanceConstants.DEDUP_CUSTOMER, custCtgCode,
+				"");
+
+		for (DedupParm dedupParm : dedupParmList) {
+			List<CustomerDedup> list = customerDedupDAO.fetchCustomerDedupDetails(dedup, dedupParm.getSQLQuery());
+			duplicateList.addAll(list);
+
+			for (CustomerDedup customerDedup : resDedupList) {
+				for (CustomerDedup dupCustDedup : duplicateList) {
+					if (StringUtils.equalsIgnoreCase(customerDedup.getCustCIF(), dupCustDedup.getCustCIF())) {
+						list.remove(dupCustDedup);
+					}
+				}
+			}
+
+			resDedupList.addAll(list);
+			duplicateList.clear();
+		}
+		return resDedupList;
 	}
 
 	@Override
@@ -2980,20 +2653,9 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		List<CustDedupRequest> dedupList = cdd.getDedupList();
 
-		if (CollectionUtils.isEmpty(dedupList)) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "Request";
-			valueParm[1] = " two fields";
-			response.setReturnStatus(getFailedStatus("30507", valueParm));
+		if (CollectionUtils.isEmpty(dedupList) || dedupList.size() < 2) {
+			response.setReturnStatus(getFailedStatus("30507", "Request", " two fields"));
 			return response;
-		} else {
-			if (dedupList.size() < 2) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "Request";
-				valueParm[1] = " two fields";
-				response.setReturnStatus(getFailedStatus("30507", valueParm));
-				return response;
-			}
 		}
 
 		String custCtgCode = null;
@@ -3003,59 +2665,55 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				break;
 			}
 		}
-		if (StringUtils.isBlank(custCtgCode)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "CategoryCode";
-			response.setReturnStatus(getFailedStatus("90502", valueParm));
-			return response;
-		} else {
 
-			// validate Customer category code
-			boolean isExist = customerCategoryDAO.isCustCtgExist(custCtgCode, "");
-			if (!isExist) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "CustCtg";
-				valueParm[1] = custCtgCode;
-				response.setReturnStatus(getErrorDetails("90224", valueParm));
-				return response;
-			}
+		if (StringUtils.isBlank(custCtgCode)) {
+			response.setReturnStatus(getFailedStatus("90502", "CategoryCode"));
+			return response;
+		}
+
+		if (!customerCategoryDAO.isCustCtgExist(custCtgCode, "")) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "CustCtg";
+			valueParm[1] = custCtgCode;
+			response.setReturnStatus(getErrorDetails("90224", valueParm));
+			return response;
 		}
 
 		List<BuilderTable> fieldList = dedupFieldsDAO.getFieldList(custCtgCode.concat("BlackList"));
 		List<String> fieldNamesList = fieldList.stream().map(d -> d.getFieldName()).collect(Collectors.toList());
 
 		for (CustDedupRequest feild : dedupList) {
-			// mandatory validation
 			if (StringUtils.isBlank(feild.getName())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "name";
-				response.setReturnStatus(getFailedStatus("90502", valueParm));
+				response.setReturnStatus(getFailedStatus("90502", "name"));
 				return response;
 			}
+
 			if (StringUtils.isBlank(String.valueOf(feild.getValue()))) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "value";
-				response.setReturnStatus(getFailedStatus("90502", valueParm));
+				response.setReturnStatus(getFailedStatus("90502", "value"));
 				return response;
 			}
+
 			boolean fieldFound = false;
 			for (String dbField : fieldNamesList) {
-
 				if (StringUtils.equalsIgnoreCase(dbField, feild.getName())) {
 					fieldFound = true;
 
 					if (feild.getName().equalsIgnoreCase("CustCIF")) {
 						blackListCustomers.setCustCIF(String.valueOf(feild.getValue()));
 					}
+
 					if (feild.getName().equalsIgnoreCase("CustFName")) {
 						blackListCustomers.setCustFName(String.valueOf(feild.getValue()));
 					}
+
 					if (feild.getName().equalsIgnoreCase("CustLName")) {
 						blackListCustomers.setCustLName(String.valueOf(feild.getValue()));
 					}
+
 					if (feild.getName().equalsIgnoreCase("CustShrtName")) {
 						blackListCustomers.setCustShrtName(String.valueOf(feild.getValue()));
 					}
+
 					if (feild.getName().equalsIgnoreCase("CustDOB")) {
 						try {
 							String fieldValue = Objects.toString(feild.getValue(), "");
@@ -3067,24 +2725,29 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 							valueParm[1] = "Date";
 							response.setReturnStatus(getFailedStatus("41002", valueParm));
 							return response;
-
 						}
 					}
+
 					if (feild.getName().equalsIgnoreCase("MobileNumber")) {
 						blackListCustomers.setMobileNumber(String.valueOf(feild.getValue()));
 					}
+
 					if (feild.getName().equalsIgnoreCase("CustNationality")) {
 						blackListCustomers.setCustNationality(String.valueOf(feild.getValue()));
 					}
+
 					if (feild.getName().equalsIgnoreCase("CustCRCPR")) {
 						blackListCustomers.setCustCRCPR(String.valueOf(feild.getValue()));
 					}
+
 					if (feild.getName().equalsIgnoreCase("CustAadhaar")) {
 						blackListCustomers.setCustAadhaar(String.valueOf(feild.getValue()));
 					}
+
 					if (feild.getName().equalsIgnoreCase("CustCtgCode")) {
 						blackListCustomers.setCustCtgCode(String.valueOf(feild.getValue()));
 					}
+
 					if (feild.getName().equalsIgnoreCase("CustPassportNo")) {
 						blackListCustomers.setCustPassportNo(String.valueOf(feild.getValue()));
 					}
@@ -3096,20 +2759,19 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			}
 
 			if (!fieldFound) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "field name";
-				response.setReturnStatus(getFailedStatus("41002", valueParm));
+				response.setReturnStatus(getFailedStatus("41002", "field name"));
 				return response;
 			}
-
 		}
 
 		List<BlackListCustomers> negativeList = new ArrayList<>();
 		List<DedupParm> dedupParmList = dedupParmDAO.getDedupParmByModule(FinanceConstants.DEDUP_BLACKLIST, custCtgCode,
 				"");
+
 		for (DedupParm dedupParm : dedupParmList) {
 			List<BlackListCustomers> list = blacklistCustomerDAO.fetchBlackListedCustomers(blackListCustomers,
 					dedupParm.getSQLQuery());
+
 			if (list != null && !list.isEmpty()) {
 				duplicateList.addAll(list);
 				if (!CollectionUtils.isEmpty(negativeList)) {
@@ -3122,6 +2784,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 						}
 					}
 				}
+
 				negativeList.addAll(list);
 				duplicateList.clear();
 			}
@@ -3130,102 +2793,95 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				blc.setResult("1");
 			}
 		}
+
 		if (CollectionUtils.isNotEmpty(negativeList)) {
 			response.setBlackList(negativeList);
 			response.setReturnStatus(getSuccessStatus());
-
 		} else {
 			response.setReturnStatus(getSuccessStatus());
 		}
 
 		logger.debug(Literal.LEAVING);
-
 		return response;
 	}
 
 	@Override
-	public List<CustomerDetails> getSRMCustDetails(SRMCustRequest srmCustRequest) throws ServiceException {
+	public List<CustomerDetails> getSRMCustDetails(SRMCustRequest srmCust) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		List<CustomerDetails> customerDetailsList = new ArrayList<>();
+		List<CustomerDetails> cdDetails = new ArrayList<>();
 		CustomerDetails response = new CustomerDetails();
 		response.setCustomer(null);
 
-		// Mandatory validation
-		if (StringUtils.isBlank(srmCustRequest.getSource())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "Source";
-			response.setReturnStatus(getFailedStatus("90502", valueParm));
-			customerDetailsList.add(response);
-			return customerDetailsList;
+		String srmSource = srmCust.getSource();
+		if (StringUtils.isBlank(srmSource)) {
+			response.setReturnStatus(getFailedStatus("90502", "Source"));
+			cdDetails.add(response);
+
+			return cdDetails;
 		}
 
-		if (!StringUtils.equals(srmCustRequest.getSource(), APIConstants.SRM_SOURCE)
-				&& !StringUtils.equalsIgnoreCase(srmCustRequest.getSource(), APIConstants.COB_SOURCE)) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "SOURCE";
-			valueParm[1] = "SRM or COB";
-			response.setReturnStatus(getFailedStatus("90337", valueParm));
-			customerDetailsList.add(response);
-			return customerDetailsList;
+		if (!APIConstants.SRM_SOURCE.equals(srmSource) && !APIConstants.COB_SOURCE.equalsIgnoreCase(srmSource)) {
+			response.setReturnStatus(getFailedStatus("90337", "SOURCE", "SRM or COB"));
+			cdDetails.add(response);
+
+			return cdDetails;
 		}
 
-		if (APIConstants.SRM_SOURCE.equals(srmCustRequest.getSource())) {
-			// Mandatory validation
-			if (StringUtils.isBlank(srmCustRequest.getCustCif()) && StringUtils.isBlank(srmCustRequest.getPhoneNumber())
-					&& StringUtils.isBlank(srmCustRequest.getFinReference())
-					&& StringUtils.isBlank(srmCustRequest.getCustCRCPR())
-					&& StringUtils.isBlank(srmCustRequest.getCustShrtName()) && srmCustRequest.getCustDOB() == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Any one field value";
-				response.setReturnStatus(getFailedStatus("90502", valueParm));
-				customerDetailsList.add(response);
-				return customerDetailsList;
-			}
+		if (APIConstants.SRM_SOURCE.equals(srmSource) && fieldValueNotProvided(srmCust)) {
+			response.setReturnStatus(getFailedStatus("90502", "Any one field value"));
+			cdDetails.add(response);
+
+			return cdDetails;
 		}
-		if (APIConstants.COB_SOURCE.equals(srmCustRequest.getSource())) {
-			// Mandatory validation
-			if (StringUtils.isBlank(srmCustRequest.getCustCRCPR())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "panNumber";
-				response.setReturnStatus(getFailedStatus("90502", valueParm));
-				customerDetailsList.add(response);
-				return customerDetailsList;
-			}
+
+		if (APIConstants.COB_SOURCE.equals(srmSource) && StringUtils.isBlank(srmCust.getCustCRCPR())) {
+			response.setReturnStatus(getFailedStatus("90502", "panNumber"));
+			cdDetails.add(response);
+
+			return cdDetails;
 		}
-		List<Long> custIdList = customerDAO.getCustomerDetailsBySRM(srmCustRequest);
-		if (!CollectionUtils.isEmpty(custIdList)) {
-			for (Long custId : custIdList) {
-				response = customerController.getCustomerDetails(custId);
-				List<CustomerFinanceDetail> customerFinanceDetail = approvalStatusEnquiryDAO
-						.getListOfCustomerFinanceDetailById(custId, "_AView", false);
-				if (response.getCustomerFinanceDetailList() != null) {
-					response.getCustomerFinanceDetailList().addAll(customerFinanceDetail);
+
+		List<Long> custIdList = customerDAO.getCustomerDetailsBySRM(srmCust);
+		if (CollectionUtils.isEmpty(custIdList)) {
+			response.setReturnStatus(getFailedStatus("90266", "given request"));
+			cdDetails.add(response);
+
+			return cdDetails;
+		}
+
+		for (Long custId : custIdList) {
+			response = customerController.getCustomerDetails(custId);
+
+			List<CustomerFinanceDetail> custFD = approvalStatusEnquiryDAO.getListOfCustomerFinanceDetailById(custId,
+					"_AView", false);
+
+			List<CustomerFinanceDetail> finances = response.getCustomerFinanceDetailList();
+			if (finances != null) {
+				finances.addAll(custFD);
+			}
+
+			if (CollectionUtils.isNotEmpty(finances)) {
+				finances.forEach(cfd -> cfd.setJointAccountDetails(
+						jointAccountDetailDAO.getJointAccountDetailByFinRef(cfd.getFinID(), "_View")));
+
+				for (CustomerFinanceDetail cfd : finances) {
+					cfd.setStage(cfd.getNextRoleCode());
+					cfd.setCurOddays(financeProfitDetailDAO.getCurOddays(cfd.getFinID()));
 				}
-				if (CollectionUtils.isNotEmpty(response.getCustomerFinanceDetailList())) {
-					response.getCustomerFinanceDetailList().forEach(cfd -> {
-						List<JointAccountDetail> jointAccountDetailList = jointAccountDetailDAO
-								.getJointAccountDetailByFinRef(cfd.getFinID(), "_View");
-						cfd.setJointAccountDetails(jointAccountDetailList);
-					});
-
-					for (CustomerFinanceDetail cfd : response.getCustomerFinanceDetailList()) {
-						cfd.setStage(cfd.getNextRoleCode());
-						cfd.setCurOddays(financeProfitDetailDAO.getCurOddays(cfd.getFinID()));
-					}
-				}
-				customerDetailsList.add(response);
 			}
-			logger.debug(Literal.LEAVING);
-			return customerDetailsList;
-		} else {
-			String[] valueParm = new String[1];
-			valueParm[0] = "given request";
-			response.setReturnStatus(getFailedStatus("90266", valueParm));
-			customerDetailsList.add(response);
-			return customerDetailsList;
+
+			cdDetails.add(response);
 		}
 
+		logger.debug(Literal.LEAVING);
+		return cdDetails;
+	}
+
+	private boolean fieldValueNotProvided(SRMCustRequest srmCust) {
+		return StringUtils.isBlank(srmCust.getCustCif()) && StringUtils.isBlank(srmCust.getPhoneNumber())
+				&& StringUtils.isBlank(srmCust.getFinReference()) && StringUtils.isBlank(srmCust.getCustCRCPR())
+				&& StringUtils.isBlank(srmCust.getCustShrtName()) && srmCust.getCustDOB() == null;
 	}
 
 	@Override
@@ -3236,93 +2892,83 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			validationUtility.fieldLevelException();
 		}
 
-		CustValidationResponse response = null;
-		boolean status = customerDetailsService.getCustomerByCoreBankId(coreBankId);
-
-		if (!status) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "coreBank";
-			response = new CustValidationResponse();
-			response.setReturnStatus(getFailedStatus("90266", valueParm));
+		if (!customerDetailsService.getCustomerByCoreBankId(coreBankId)) {
+			CustValidationResponse response = new CustValidationResponse();
+			response.setReturnStatus(getFailedStatus("90266", "coreBank"));
 			return response;
 		}
 
-		response = new CustValidationResponse();
+		CustValidationResponse response = new CustValidationResponse();
 		Customer cust = customerDAO.getCustomerByCoreBankId(coreBankId, "");
 
-		LimitHeader headerDetail = null;
-		if (cust != null) {
-			response.setCustomerPhoneNumber(
-					customerPhoneNumberService.getApprovedCustomerPhoneNumberById(cust.getCustID()));
-			response.setCustomerName(cust.getCustShrtName());
-			response.setCif(cust.getCustCIF());
-
-			headerDetail = limitDetailService.getLimitHeaderByCustomer(cust.getCustID());
+		if (cust == null) {
+			return new CustValidationResponse();
 		}
 
-		if (headerDetail != null) {
-			for (LimitDetails detail : headerDetail.getCustomerLimitDetailsList()) {
-				if (LimitConstants.LIMIT_ITEM_TOTAL.equals(detail.getGroupCode())) {
-					response.setActualLimit(PennantApplicationUtil.formateAmount(
-							detail.getLimitSanctioned().subtract(detail.getUtilisedLimit()),
-							CurrencyUtil.getFormat(headerDetail.getLimitCcy())));
-					response.setExpiryDate(detail.getExpiryDate());
-				}
-				response.setBlocklimit(headerDetail.isBlocklimit());
+		response.setCustomerPhoneNumber(
+				customerPhoneNumberService.getApprovedCustomerPhoneNumberById(cust.getCustID()));
+		response.setCustomerName(cust.getCustShrtName());
+		response.setCif(cust.getCustCIF());
 
+		LimitHeader headerDetail = limitDetailService.getLimitHeaderByCustomer(cust.getCustID());
+
+		if (headerDetail == null) {
+			return response;
+		}
+
+		List<LimitDetails> limits = headerDetail.getCustomerLimitDetailsList();
+
+		for (LimitDetails detail : limits) {
+			if (LimitConstants.LIMIT_ITEM_TOTAL.equals(detail.getGroupCode())) {
+				response.setActualLimit(PennantApplicationUtil.formateAmount(
+						detail.getLimitSanctioned().subtract(detail.getUtilisedLimit()),
+						CurrencyUtil.getFormat(headerDetail.getLimitCcy())));
+				response.setExpiryDate(detail.getExpiryDate());
 			}
-			response.setReturnStatus(getSuccessStatus());
+
+			response.setBlocklimit(headerDetail.isBlocklimit());
 		}
+
+		response.setReturnStatus(getSuccessStatus());
 		logger.debug(Literal.LEAVING);
 		return response;
-
 	}
 
 	@Override
 	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(
-			CustomerExtendedFieldDetails customerExtendedFieldDetails) throws ServiceException {
+			CustomerExtendedFieldDetails custExtendedDetails) throws ServiceException {
 		logger.debug(Literal.ENTERING);
-		Customer customerDetails = null;
 		CustomerExtendedFieldDetails response = new CustomerExtendedFieldDetails();
-		// bean validations
-		validationUtility.validate(customerExtendedFieldDetails, SaveValidationGroup.class);
-		if (CollectionUtils.isEmpty(customerExtendedFieldDetails.getExtendedDetails())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "extendedDetails";
-			response.setReturnStatus(getFailedStatus("90502", valueParm));
+
+		validationUtility.validate(custExtendedDetails, SaveValidationGroup.class);
+
+		if (CollectionUtils.isEmpty(custExtendedDetails.getExtendedDetails())) {
+			response.setReturnStatus(getFailedStatus("90502", "extendedDetails"));
 			return response;
-		}
-		if (StringUtils.isBlank(customerExtendedFieldDetails.getCif())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "cif";
-			response.setReturnStatus(getFailedStatus("90502", valueParm));
-			return response;
-		} else {
-			customerDetails = customerDetailsService.getCustomerByCIF(customerExtendedFieldDetails.getCif());
-			if (customerDetails == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = customerExtendedFieldDetails.getCif();
-				response.setReturnStatus(getFailedStatus("90101", valueParm));
-				return response;
-			}
 		}
 
-		// validate customer details as per the API specification
+		if (StringUtils.isBlank(custExtendedDetails.getCif())) {
+			response.setReturnStatus(getFailedStatus("90502", "cif"));
+			return response;
+		}
+
+		Customer customerDetails = customerDetailsService.getCustomerByCIF(custExtendedDetails.getCif());
+		if (customerDetails == null) {
+			response.setReturnStatus(getFailedStatus(ERR_90101, custExtendedDetails.getCif()));
+			return response;
+		}
+
 		List<ErrorDetail> errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(
-				customerExtendedFieldDetails.getExtendedDetails(), ExtendedFieldConstants.MODULE_CUSTOMER,
+				custExtendedDetails.getExtendedDetails(), ExtendedFieldConstants.MODULE_CUSTOMER,
 				customerDetails.getCustCtgCode(), "");
-		if (errorDetails.isEmpty()) {
-			// call add Customer Employment method in case of no errors
-			response = customerDetailsController.addCustomerExtendedFields(customerExtendedFieldDetails,
-					customerDetails);
-		} else {
+
+		if (!errorDetails.isEmpty()) {
 			response.setErrorDetails(errorDetails);
 			return getErrorMessage(response);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return response;
-
+		return customerDetailsController.addCustomerExtendedFields(custExtendedDetails, customerDetails);
 	}
 
 	private CustomerExtendedFieldDetails getErrorMessage(CustomerExtendedFieldDetails cefd) {
@@ -3333,9 +2979,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		ErrorDetail ed = cefd.getErrorDetails().get(0);
-
 		response.setReturnStatus(getFailedStatus(ed.getCode(), ed.getError()));
-
 		return response;
 	}
 
@@ -3354,13 +2998,6 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				aCustomerPhoneNumber.getUserDetails(), new HashMap<>());
 	}
 
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aCustomerEmploymentDetail
-	 * @param tranType
-	 * @return AuditHeader
-	 */
 	private AuditHeader getAuditHeader(CustomerEmploymentDetail aCustomerEmploymentDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerEmploymentDetail.getBefImage(),
 				aCustomerEmploymentDetail);
@@ -3369,52 +3006,24 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				aCustomerEmploymentDetail.getUserDetails(), new HashMap<>());
 	}
 
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aCustomerAddres
-	 * @param tranType
-	 * @return AuditHeader
-	 */
 	private AuditHeader getAuditHeader(CustomerAddres aCustomerAddres, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerAddres.getBefImage(), aCustomerAddres);
 		return new AuditHeader(String.valueOf(aCustomerAddres.getCustID()), String.valueOf(aCustomerAddres.getCustID()),
 				null, null, auditDetail, aCustomerAddres.getUserDetails(), new HashMap<>());
 	}
 
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aCustomerEMail
-	 * @param tranType
-	 * @return AuditHeader
-	 */
 	private AuditHeader getAuditHeader(CustomerEMail aCustomerEMail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerEMail.getBefImage(), aCustomerEMail);
 		return new AuditHeader(String.valueOf(aCustomerEMail.getCustID()), String.valueOf(aCustomerEMail.getCustID()),
 				null, null, auditDetail, aCustomerEMail.getUserDetails(), new HashMap<>());
 	}
 
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aCustomerIncome
-	 * @param tranType
-	 * @return AuditHeader
-	 */
 	private AuditHeader getAuditHeader(CustomerIncome aCustomerIncome, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerIncome.getBefImage(), aCustomerIncome);
 		return new AuditHeader(String.valueOf(aCustomerIncome.getCustId()), String.valueOf(aCustomerIncome.getCustId()),
 				null, null, auditDetail, aCustomerIncome.getUserDetails(), new HashMap<>());
 	}
 
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aCustomerBankInfo
-	 * @param tranType
-	 * @return AuditHeader
-	 */
 	private AuditHeader getAuditHeader(CustomerBankInfo aCustomerBankInfo, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerBankInfo.getBefImage(), aCustomerBankInfo);
 		return new AuditHeader(String.valueOf(aCustomerBankInfo.getCustID()),
@@ -3422,39 +3031,18 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				aCustomerBankInfo.getUserDetails(), new HashMap<>());
 	}
 
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aCustomerBankInfo
-	 * @param tranType
-	 * @return AuditHeader
-	 */
 	private AuditHeader getAuditHeader(CustCardSales aCustCardSales, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustCardSales.getBefImage(), aCustCardSales);
 		return new AuditHeader(String.valueOf(aCustCardSales.getCustID()), String.valueOf(aCustCardSales.getCustID()),
 				null, null, auditDetail, aCustCardSales.getUserDetails(), new HashMap<>());
 	}
 
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aCustomerBankInfo
-	 * @param tranType
-	 * @return AuditHeader
-	 */
 	private AuditHeader getAuditHeader(CustomerGST aCustomerGST, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerGST.getBefImage(), aCustomerGST);
 		return new AuditHeader(String.valueOf(aCustomerGST.getCustId()), String.valueOf(aCustomerGST.getCustId()), null,
 				null, auditDetail, aCustomerGST.getUserDetails(), new HashMap<>());
 	}
 
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aCustomerExtLiability
-	 * @param tranType
-	 * @return AuditHeader
-	 */
 	private AuditHeader getAuditHeader(CustomerExtLiability externalLiability, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, externalLiability.getBefImage(), externalLiability);
 		return new AuditHeader(String.valueOf(externalLiability.getCustId()),
@@ -3462,13 +3050,6 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				externalLiability.getUserDetails(), new HashMap<>());
 	}
 
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aCustomerDocument
-	 * @param tranType
-	 * @return AuditHeader
-	 */
 	private AuditHeader getAuditHeader(CustomerDocument aCustomerDocument, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDocument.getBefImage(), aCustomerDocument);
 		return new AuditHeader(String.valueOf(aCustomerDocument.getCustID()),
@@ -3476,43 +3057,24 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				aCustomerDocument.getUserDetails(), new HashMap<>());
 	}
 
-	/**
-	 * 
-	 * @param directorDetail
-	 * @param tranType
-	 * @return AuditHeader
-	 */
 	private AuditHeader getAuditHeader(DirectorDetail directorDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, directorDetail.getBefImage(), directorDetail);
 		return new AuditHeader(String.valueOf(directorDetail.getCustID()), String.valueOf(directorDetail.getCustID()),
 				null, null, auditDetail, directorDetail.getUserDetails(), new HashMap<>());
 	}
 
-	/**
-	 * Method for prepare response object with errorDetails.
-	 * 
-	 * @param errorCode
-	 * @param valueParm
-	 * @return
-	 */
 	public WSReturnStatus getErrorDetails(String errorCode, String[] valueParm) {
 		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus response = getFailedStatus(errorCode, valueParm);
 
 		if (StringUtils.isBlank(response.getReturnCode())) {
-			response = getFailedStatus(APIConstants.RES_FAILED_CODE, APIConstants.RES_FAILED_DESC);
+			return getFailedStatus(APIConstants.RES_FAILED_CODE, APIConstants.RES_FAILED_DESC);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
-	/**
-	 * Nullify the un-necessary objects to prepare response in a structured format specified in API.
-	 * 
-	 * @param response
-	 */
 	private void doEmptyResponseObject(CustomerDetails response) {
 		response.setCustomer(null);
 		response.setEmploymentDetailsList(null);
@@ -3526,14 +3088,9 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		response.setBlackListReq(null);
 	}
 
-	/**
-	 * Method for fetch the basic log fields from the given request.
-	 * 
-	 * @param customerDetails
-	 * @return
-	 */
 	private String[] getCustomerLogDetails(CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
+
 		String[] logFields = null;
 		if (customerDetails != null) {
 			logFields = new String[3];
@@ -3541,60 +3098,42 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			logFields[1] = customerDetails.getCustDftBranch();
 
 			List<CustomerPhoneNumber> customerPhoneNumbers = customerDetails.getCustomerPhoneNumList();
-			if (customerPhoneNumbers != null && !customerPhoneNumbers.isEmpty()) {
-				CustomerPhoneNumber custPhoneNumber = customerPhoneNumbers.get(0);
-				logFields[2] = custPhoneNumber.getPhoneNumber();
+			if (CollectionUtils.isNotEmpty(customerPhoneNumbers)) {
+				logFields[2] = customerPhoneNumbers.get(0).getPhoneNumber();
 			}
 		}
+
 		logger.debug(Literal.LEAVING);
 		return logFields;
 	}
 
-	/**
-	 * Method for validate customer CIF
-	 * 
-	 * @param custCIF
-	 * @return
-	 */
 	private WSReturnStatus validateCustomerCIF(String custCIF) {
-		WSReturnStatus returnStatus = null;
 		if (StringUtils.isNotBlank(custCIF)) {
-			int mainCount = customerDetailsService.getCustomerCountByCIF(custCIF, "");
-			if (mainCount == 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = custCIF;
-				return getFailedStatus("90101", valueParm);
+			if (customerDetailsService.getCustomerCountByCIF(custCIF, "") == 0) {
+				return getFailedStatus(ERR_90101, custCIF);
 			}
 
-			int tempCount = customerDetailsService.getCustomerCountByCIF(custCIF, "_Temp");
-			if (tempCount > 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = custCIF;
-				return getFailedStatus("90248", valueParm);
+			if (customerDetailsService.getCustomerCountByCIF(custCIF, "_Temp") > 0) {
+				return getFailedStatus("90248", custCIF);
 			}
 		}
-		return returnStatus;
+
+		return null;
 	}
 
-	/**
-	 * Method for validate customer Catageory
-	 * 
-	 * @param customerDetails
-	 * @return
-	 */
 	private WSReturnStatus validateCustomerCatageory(CustomerDetails customerDetails) {
 		WSReturnStatus returnStatus = null;
+
 		Customer customer = customerDetailsService.getCustomerByCIF(customerDetails.getCustCIF());
+
 		if (customer != null) {
-			if (StringUtils.isBlank(customerDetails.getCustCtgCode())) {
-				customerDetails.setCustCtgCode(customer.getCustCtgCode());
-			} else {
-				String[] valueParm = new String[2];
-				valueParm[0] = "categoryCode";
-				valueParm[1] = "update Customer";
-				return getFailedStatus("90329", valueParm);
+			if (StringUtils.isNotEmpty(customerDetails.getCustCtgCode())) {
+				return getFailedStatus("90329", "categoryCode", "update Customer");
 			}
+
+			customerDetails.setCustCtgCode(customer.getCustCtgCode());
 		}
+
 		return returnStatus;
 	}
 
@@ -3624,6 +3163,151 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 			execptions[0] = error;
 			throw new ServiceException(execptions);
+		}
+	}
+
+	private WSReturnStatus validateCRDetails(FinCreditReviewDetails detail) {
+		if (StringUtils.isBlank(detail.getAuditYear())) {
+			return getFailedStatus("90502", "Audit Year");
+		}
+
+		if (StringUtils.isBlank(detail.getBankName())) {
+			return getFailedStatus("90502", "Bank Name");
+		}
+
+		if (StringUtils.isBlank(detail.getAuditors())) {
+			return getFailedStatus("90502", "Auditors");
+		}
+
+		if (StringUtils.isBlank(detail.getLocation())) {
+			return getFailedStatus("90502", "Location");
+		}
+
+		if (StringUtils.isBlank(String.valueOf(detail.getAuditedDate()))) {
+			return getFailedStatus("90502", "Audited Date");
+		}
+
+		if (StringUtils.isBlank(String.valueOf(detail.isQualified()))) {
+			return getFailedStatus("90502", "Qualified");
+		}
+
+		if (StringUtils.isBlank(detail.getAuditType())) {
+			return getFailedStatus("90502", "AuditType");
+		}
+
+		return null;
+	}
+
+	private boolean isValidAuditType(String auditType) {
+		return FacilityConstants.CREDITREVIEW_AUDITED.equals(auditType)
+				|| FacilityConstants.CREDITREVIEW_UNAUDITED.equals(auditType)
+				|| FacilityConstants.CREDITREVIEW_MNGRACNTS.equals(auditType);
+	}
+
+	private WSReturnStatus validateCRSummaryEntries(FinCreditReviewDetails detail) {
+		for (FinCreditReviewSummary fcrs : detail.getCreditReviewSummaryEntries()) {
+			String subCategoryCode = fcrs.getSubCategoryCode();
+
+			if (StringUtils.isBlank(String.valueOf(subCategoryCode))) {
+				return getFailedStatus("90502", "SubCategory Code");
+			}
+
+			FinCreditRevSubCategory category = finCreditRevSubCategoryDAO
+					.getFinCreditRevSubCategoryById(subCategoryCode, "");
+
+			if (category == null) {
+				return getFailedStatus("90501", "SubCategory Code " + subCategoryCode);
+			}
+
+			if (StringUtils.endsWithIgnoreCase(category.getSubCategoryItemType(),
+					FacilityConstants.CREDITREVIEW_CALCULATED_FIELD)) {
+				return getFailedStatus("90501", "SubCategory Code " + subCategoryCode);
+			}
+
+			if (StringUtils.isBlank(String.valueOf(fcrs.getItemValue()))) {
+				return getFailedStatus("90502", "Item Value");
+			}
+		}
+
+		return null;
+	}
+
+	private void validateFieldNames(CustDedupResponse response, CustomerDedup dedup, List<String> fieldNamesList,
+			CustDedupRequest feild) {
+		boolean fieldFound = false;
+
+		for (String dbField : fieldNamesList) {
+			if (StringUtils.equalsIgnoreCase(dbField, feild.getName())) {
+				fieldFound = true;
+				prepareDedupByRBFields(response, dedup, feild);
+			}
+		}
+
+		if (!fieldFound) {
+			response.setReturnStatus(getFailedStatus("41002", "field name"));
+		}
+	}
+
+	private void prepareDedupByRBFields(CustDedupResponse response, CustomerDedup dedup, CustDedupRequest feild) {
+		if (feild.getName().equalsIgnoreCase("CustCtgCode")) {
+			dedup.setCustCtgCode(String.valueOf(feild.getValue()));
+		}
+
+		if (feild.getName().equalsIgnoreCase("CustShrtName")) {
+			dedup.setCustShrtName(String.valueOf(feild.getValue()));
+		}
+
+		if (feild.getName().equalsIgnoreCase("CustFName")) {
+			dedup.setCustFName(String.valueOf(feild.getValue()));
+		}
+
+		if (feild.getName().equalsIgnoreCase("CustLName")) {
+			dedup.setCustLName(String.valueOf(feild.getValue()));
+		}
+
+		if (feild.getName().equalsIgnoreCase("MobileNumber")) {
+			dedup.setMobileNumber(String.valueOf(feild.getValue()));
+		}
+
+		if (feild.getName().equalsIgnoreCase("CustEMail")) {
+			dedup.setCustEMail(String.valueOf(feild.getValue()));
+		}
+
+		if (feild.getName().equalsIgnoreCase("CustCIF")) {
+			dedup.setCustCIF(String.valueOf(feild.getValue()));
+		}
+
+		if (feild.getName().equalsIgnoreCase("CustCRCPR")) {
+			dedup.setCustCRCPR(String.valueOf(feild.getValue()));
+		}
+
+		if (feild.getName().equalsIgnoreCase("AadharNumber")) {
+			dedup.setAadharNumber((String.valueOf(feild.getValue())));
+		}
+
+		if (feild.getName().equalsIgnoreCase("CustDOB")) {
+			try {
+				String fieldValue = Objects.toString(feild.getValue(), "");
+				dedup.setCustDOB(DateUtil.parse(fieldValue, PennantConstants.APIDateFormatter));
+			} catch (Exception e) {
+				response.setReturnStatus(getFailedStatus("41002", feild.getName(), "Date"));
+			}
+		}
+
+		if (feild.getName().equalsIgnoreCase("CustNationality")) {
+			dedup.setCustNationality(String.valueOf(feild.getValue()));
+		}
+
+		if (feild.getName().equalsIgnoreCase("CustPassportNo")) {
+			dedup.setCustPassportNo(String.valueOf(feild.getValue()));
+		}
+
+		if (feild.getName().equalsIgnoreCase("VoterID")) {
+			dedup.setVoterID(String.valueOf(feild.getValue()));
+		}
+
+		if (feild.getName().equalsIgnoreCase("DrivingLicence")) {
+			dedup.setDrivingLicenceNo(String.valueOf(feild.getValue()));
 		}
 	}
 
