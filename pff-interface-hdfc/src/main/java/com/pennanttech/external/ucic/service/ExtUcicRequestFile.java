@@ -19,7 +19,6 @@ import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstants, ExtIntfConfigConstants {
@@ -56,7 +55,6 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 
 		if ("SUCCESS".equals(status)) {
 
-			FtpClient ftpClient = null;
 			String remoteFilePath = null;
 
 			// Fetch request file from DB Server location and store it in client SFTP

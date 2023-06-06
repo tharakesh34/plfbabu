@@ -288,7 +288,6 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setReason(detail.getReason());
 		rud.setRemarks(detail.getRemarks());
 		rud.setChequeNo(detail.getChequeNumber());
-		rud.setChequeNo(detail.getChequeAccountNumber());
 		rud.setBankCode(detail.getBankCode());
 		rud.setPaymentRef(detail.getPaymentRef());
 		rud.setPanNumber(detail.getPanNumber());
