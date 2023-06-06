@@ -14,8 +14,8 @@ import com.google.common.io.Files;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
-import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
@@ -75,12 +75,11 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 			}
 
 			// Create FTP connection
-			ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(serverConfig);
-			ftpClient = extSFTPUtil.getSFTPConnection();
+			FileTransferUtil fileTransferUtil = new FileTransferUtil(serverConfig);
 
 			try {
 				// Download file from DB server to local location
-				ftpClient.download(remoteFilePath, baseFilePath, fileName);
+				fileTransferUtil.downloadFromSFTP(fileName, baseFilePath);
 				logger.debug("File Download Sucessful from DB Server to local path");
 			} catch (Exception e) {
 				logger.debug("Unable to download file from DB Server to local path.", e);
@@ -101,26 +100,23 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 	}
 
 	private void uploadToClientLocation(Date appDate, String fileName, String baseFilePath) {
-		FtpClient ftpClient;
 		FileInterfaceConfig serverConfig;
 		serverConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_REQ);
 		if (serverConfig == null) {
 			logger.debug("EXT_UCIC: CONFIG_UCIC_REQ Configuration not found, so returning.");
 			return;
 		}
-		ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(serverConfig);
-		ftpClient = extSFTPUtil.getSFTPConnection();
+		FileTransferUtil fileTransferUtil = new FileTransferUtil(serverConfig);
 		try {
 			// Now upload file to SFTP of client location as per configuration
 			File mainFile = new File(baseFilePath + File.separator + fileName);
-			ftpClient.upload(mainFile, ucicReqConfig.getFileSftpLocation());
+			fileTransferUtil.uploadToSFTP(baseFilePath, fileName);
 			logger.debug("EXT_UCIC:ReqFile upload Successful to Destination");
 
 			// Now upload complete file to SFTP of client location as per configuration
-			ftpClient = extSFTPUtil.getSFTPConnection();
 			String completeFilePathWithName = writeCompleteFile(appDate);
 			File completeFileToUpload = new File(completeFilePathWithName);
-			ftpClient.upload(completeFileToUpload, ucicReqConfig.getFileSftpLocation());
+			fileTransferUtil.uploadToSFTP(baseFilePath, completeFilePathWithName);
 			logger.debug("EXT_UCIC:Completefile upload Sucessful to Destination");
 			// Deleting mainFile and CompleteFile post uploading
 			fileBackup(serverConfig, mainFile, completeFileToUpload);
@@ -155,11 +151,9 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 	protected void fileDeletion(FileInterfaceConfig serverConfig, File mainFile, File completeFileToUpload)
 			throws IOException {
 		logger.debug(Literal.ENTERING);
-		FtpClient ftpClient;
-		ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(serverConfig);
-		ftpClient = extSFTPUtil.getSFTPConnection();
-		ftpClient.deleteFile(mainFile.getPath());
-		ftpClient.deleteFile(completeFileToUpload.getPath());
+		FileTransferUtil fileTransferUtil = new FileTransferUtil(serverConfig);
+		fileTransferUtil.deleteFileFromSFTP(mainFile.getName());
+		fileTransferUtil.deleteFileFromSFTP(completeFileToUpload.getName());
 		logger.debug("MainFile & Completefile deletion Successful");
 		logger.debug(Literal.LEAVING);
 	}

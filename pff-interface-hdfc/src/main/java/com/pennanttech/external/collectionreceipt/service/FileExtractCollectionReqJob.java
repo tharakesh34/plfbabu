@@ -199,17 +199,12 @@ public class FileExtractCollectionReqJob extends AbstractJob
 
 							gTotalChk = gTotalChk + Integer.parseInt(qualifiedChk);
 
-							logger.debug(dataValid + "ROWCHKSUM:::: qualifiedChk:" + qualifiedChk
-									+ ", collectionData.getChecksum():" + collectionData.getChecksum());
-
 							if (!qualifiedChk.equals(collectionData.getChecksum())) {
 								dataValid = false;
 								errorCode = F400;
 								break;
 							}
 						}
-						logger.debug(dataValid + "MAINCHKSUM:::: mainChksum:" + mainChksum + ", gTotalChk:"
-								+ (dataRows - 1) + "" + gTotalChk);
 
 						if (dataValid && !mainChksum.equals((dataRows - 1) + "" + gTotalChk)) {
 							dataValid = false;

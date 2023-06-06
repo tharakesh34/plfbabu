@@ -16,17 +16,16 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
-import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.external.ucic.model.ExtUcicFile;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCodesConstants, ExtIntfConfigConstants {
@@ -104,11 +103,10 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 				extUcicDao.updateResponseFileProcessingFlag(ucicFile.getId(), INPROCESS, "", "");
 
 				// Connect to SFTP..
-				ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(ucicDBServerConfig);
-				FtpClient ftpClient = extSFTPUtil.getSFTPConnection();
+				FileTransferUtil fileTransferUtil = new FileTransferUtil(ucicDBServerConfig);
 
 				// Upload the response file to DB Server to read by ORACLE Database
-				ftpClient.upload(file, remoteFilePath);
+				fileTransferUtil.uploadToSFTP(localFolderPath, ucicFile.getFileName());
 
 				// Now Run SP here to read file by ORACLE
 				String stat = extUcicDao.executeUcicResponseFileSP(file.getName());

@@ -14,17 +14,16 @@ import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
-import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentment;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -334,7 +333,6 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 			String accessKey = externalRespConfig.getAccessKey();
 			String secretKey = externalRespConfig.getSecretKey();
 
-			FtpClient ftpClient = null;
 			try {
 				String remoteFilePath = externalRespConfig.getFileSftpLocation();
 
@@ -350,14 +348,13 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 					return;
 				}
 
-				ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(externalRespConfig);
-				ftpClient = extSFTPUtil.getSFTPConnection();
+				FileTransferUtil fileTransferUtil = new FileTransferUtil(externalRespConfig);
 
 				// Get list of files in SFTP.
-				List<String> fileNames = extSFTPUtil.getFileListFromSFTP(remoteFilePath);
+				List<String> fileNames = fileTransferUtil.fetchFileNamesListFromSFTP();
 
 				for (String fileName : fileNames) {
-					ftpClient.download(remoteFilePath, localFolderPath, fileName);
+					fileTransferUtil.downloadFromSFTP(fileName, localFolderPath);
 					moveToBackup(externalRespConfig, localFolderPath, fileName);
 					new SftpClient(host, port, accessKey, secretKey)
 							.deleteFile(remoteFilePath + File.separator + fileName);
@@ -365,10 +362,6 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 
 			} catch (Exception e) {
 				logger.debug(Literal.EXCEPTION, e);
-			} finally {
-				if (ftpClient != null) {
-					ftpClient.disconnect();
-				}
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -381,18 +374,11 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 			return;
 		}
 
-		FtpClient sftpClient = null;
 		try {
-			ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(externalRespConfig);
-			sftpClient = extSFTPUtil.getSFTPConnection();
-			sftpClient.upload(new File(localFolderPath + File.separator + fileName),
-					externalRespConfig.getFileBackupLocation());
+			FileTransferUtil fileTransferUtil = new FileTransferUtil(externalRespConfig);
+			fileTransferUtil.uploadToSFTP(localFolderPath, fileName);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
-		} finally {
-			if (sftpClient != null) {
-				sftpClient.disconnect();
-			}
 		}
 		logger.debug(Literal.LEAVING);
 	}

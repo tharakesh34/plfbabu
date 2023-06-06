@@ -25,8 +25,7 @@ public class RPMSDumpService {
 			RPMSExtract rpmsExtract = new RPMSExtract();
 			rpmsExtract.setAgreementId(Long.parseLong(fpd.getFinReference()));
 			rpmsExtract.setCustomerId(fpd.getCustId());
-			rpmsExtract.setStatus(fm.getClosingStatus());
-
+			rpmsExtract.setStatus(fm.isFinIsActive() ? "A" : "C"); // FINISACTIVE is 1-A or C
 			rpmsExtract.setMultiLinkLoanFlag(null); // FIXME
 			rpmsExtract.setParentLoanNo(0); // FIXME
 			rpmsExtract.setCustomerSegment(null);// FIXME

@@ -20,13 +20,12 @@ import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
-import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.gst.dao.ExtGSTDao;
 import com.pennanttech.external.gst.model.GSTCompHeader;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -69,14 +68,11 @@ public class FetchFileGSTRespJob extends AbstractJob
 
 		// Check if file is in SFTP location, then get the file.
 		if ("Y".equals(StringUtils.stripToEmpty(respConfig.getIsSftp()))) {
-			ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(respConfig);
-			String remoteFilePath = respConfig.getFileSftpLocation();
+			FileTransferUtil fileTransferUtil = new FileTransferUtil(respConfig);
 			// Get list of files in SFTP.
-			List<String> fileNames = extSFTPUtil.getFileListFromSFTP(remoteFilePath);
-
+			List<String> fileNames = fileTransferUtil.fetchFileNamesListFromSFTP();
 			for (String fileName : fileNames) {
-				FtpClient ftpClient = extSFTPUtil.getSFTPConnection();
-				ftpClient.download(remoteFilePath, localFolderPath, fileName);
+				fileTransferUtil.downloadFromSFTP(fileName, localFolderPath);
 			}
 		}
 

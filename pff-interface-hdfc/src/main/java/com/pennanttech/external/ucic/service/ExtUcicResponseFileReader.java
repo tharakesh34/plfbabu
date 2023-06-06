@@ -10,15 +10,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
-import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtUcicResponseFileReader implements InterfaceConstants, ErrorCodesConstants, ExtIntfConfigConstants {
@@ -53,14 +52,12 @@ public class ExtUcicResponseFileReader implements InterfaceConstants, ErrorCodes
 		// Check if file is in SFTP location, then get the file.
 		if ("Y".equals(StringUtils.stripToEmpty(ucicRespConfig.getIsSftp()))) {
 
-			String remoteFilePath = ucicRespConfig.getFileSftpLocation();
 			// Get list of files in SFTP.
-			ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(ucicRespConfig);
-			List<String> fileNames = extSFTPUtil.getFileListFromSFTP(remoteFilePath);
+			FileTransferUtil fileTransferUtil = new FileTransferUtil(ucicRespConfig);
+			List<String> fileNames = fileTransferUtil.fetchFileNamesListFromSFTP();
 
 			for (String fileName : fileNames) {
-				FtpClient ftpClient = extSFTPUtil.getSFTPConnection();
-				ftpClient.download(remoteFilePath, localFolderPath, fileName);
+				fileTransferUtil.downloadFromSFTP(fileName, localFolderPath);
 			}
 		}
 

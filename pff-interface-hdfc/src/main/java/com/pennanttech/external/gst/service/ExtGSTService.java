@@ -14,12 +14,11 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.io.Files;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
-import com.pennanttech.external.app.util.ExtSFTPUtil;
+import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.gst.dao.ExtGSTDao;
 import com.pennanttech.external.gst.model.GSTRequestDetail;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
@@ -53,17 +52,23 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 		StringBuilder item = new StringBuilder();
 		// DETAIL ITEM FOR REQUEST FILE
 		for (GSTRequestDetail data : gstRequestDetailList) {
-
-			append(item, data.getRequestType());
-			appendSeperator(item, data.getCustomerId());
-			appendSeperator(item, data.getAccountId());
-			appendSeperator(item, data.getGstin());
-			appendSeperator(item, data.getServiceCode());
-			appendSeperator(item, data.getHsn());
-			appendSeperator(item, data.getTransactionCode());
-			appendSeperator(item, data.getTransactionVolume());
-			appendSeperator(item, data.getTransactionValue());
-
+			item.append(data.getRequestType());
+			item.append(pipeSeperator);
+			item.append(data.getCustomerId());
+			item.append(pipeSeperator);
+			item.append(data.getAccountId());
+			item.append(pipeSeperator);
+			item.append(data.getGstin());
+			item.append(pipeSeperator);
+			item.append(data.getServiceCode());
+			item.append(pipeSeperator);
+			item.append(data.getHsn());
+			item.append(pipeSeperator);
+			item.append(data.getTransactionCode());
+			item.append(pipeSeperator);
+			item.append(data.getTransactionVolume());
+			item.append(pipeSeperator);
+			item.append(data.getTransactionValue());
 			item.append(pipeSeperator);
 			item.append(data.getTransactionPricedCharge());
 			item.append(pipeSeperator);
@@ -295,16 +300,6 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void append(StringBuilder item, Object data) {
-		item.append(data);
-	}
-
-	private void appendSeperator(StringBuilder item, Object data) {
-		item.append(pipeSeperator);
-		item.append(data);
-
-	}
-
 	private String writeDoneFile(FileInterfaceConfig doneConfig, String fileName) throws Exception {
 		String completeFileName = fileName + doneConfig.getFilePostpend();
 		List<StringBuilder> emptyList = new ArrayList<StringBuilder>();
@@ -315,28 +310,24 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 	}
 
 	private void uploadToClientLocation(FileInterfaceConfig reqConfig, String fileName, String baseFilePath,
-			String CompleteFileName) {
-		ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(reqConfig);
-		FtpClient ftpClient = extSFTPUtil.getSFTPConnection();
+			String completeFileName) {
+		FileTransferUtil fileTransferUtil = new FileTransferUtil(reqConfig);
 		try {
 			// Now upload file to SFTP of client
-			File mainFile = new File(baseFilePath + File.separator + fileName);
-			ftpClient.upload(mainFile, reqConfig.getFileSftpLocation());
+			fileTransferUtil.uploadToSFTP(baseFilePath, fileName);
 			logger.debug("Ext_GST:ReqFile upload Successful to Destination");
 
 			// Now upload done file to SFTP of client location as per configuration
-			ftpClient = extSFTPUtil.getSFTPConnection();
-			File completeFileToUpload = new File(CompleteFileName);
-			ftpClient.upload(completeFileToUpload, reqConfig.getFileSftpLocation());
+			fileTransferUtil.uploadToSFTP(baseFilePath, completeFileName);
 			logger.debug("Ext_GST:Completefile upload Sucessful to Destination");
-			fileBackup(reqConfig, mainFile, completeFileToUpload);
+			fileBackup(reqConfig, fileName, completeFileName);
 		} catch (Exception e) {
 			logger.debug("Ext_GST:Unable to upload files from local path to destination.", e);
 			return;
 		}
 	}
 
-	private void fileBackup(FileInterfaceConfig serverConfig, File mainFile, File completeFileToUpload)
+	private void fileBackup(FileInterfaceConfig serverConfig, String mainFilePath, String completeFilePath)
 			throws IOException {
 		logger.debug(Literal.ENTERING);
 
@@ -345,6 +336,9 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 			logger.debug("Ext_GST: Local backup location not configured, so returning.");
 			return;
 		}
+		File mainFile = new File(mainFilePath);
+		File completeFileToUpload = new File(completeFilePath);
+
 		String localBackupLocation = App.getResourcePath(serverConfig.getFileLocalBackupLocation());
 		File mainFileBkp = new File(localBackupLocation + File.separator + mainFile.getName());
 		File completeFileBkp = new File(localBackupLocation + File.separator + completeFileToUpload.getName());

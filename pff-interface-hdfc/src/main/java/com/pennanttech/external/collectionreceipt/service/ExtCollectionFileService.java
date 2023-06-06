@@ -1,7 +1,5 @@
 package com.pennanttech.external.collectionreceipt.service;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,14 +8,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ibm.icu.text.SimpleDateFormat;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
-import com.pennanttech.external.app.util.ExtSFTPUtil;
+import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.external.collectionreceipt.model.ExtCollectionReceiptData;
-import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtCollectionFileService extends TextFileUtil implements InterfaceConstants, CollectionReceiptDataSplit {
@@ -153,18 +151,14 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 
 	private void uploadToClientLocation(Date appDate, FileInterfaceConfig respConfig, String fileName,
 			String baseFilePath) {
-		FtpClient ftpClient;
 		if (respConfig == null) {
 			logger.debug("EXT_COLLECTION: CONFIG_COLLECTION_RESP Configuration not found, so returning.");
 			return;
 		}
-		ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(respConfig);
-		ftpClient = extSFTPUtil.getSFTPConnection();
+		FileTransferUtil fileTransferUtil = new FileTransferUtil(respConfig);
 		try {
 			// Now upload file to SFTP of client location as per configuration
-			File mainFile = new File(fileName);
-			String remPath = respConfig.getFileSftpLocation();
-			ftpClient.upload(mainFile, remPath);
+			fileTransferUtil.uploadToSFTP(baseFilePath, fileName);
 			logger.debug("EXT_COLLECTION:Resp File upload Successful to Destination");
 		} catch (Exception e) {
 			logger.debug("EXT_COLLECTION:Unable to upload files from local path to destination.", e);
@@ -308,7 +302,7 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 		item.append(pipeSeperator);
 		item.append(detail.getRemarks());
 		item.append(pipeSeperator);
-		item.append("1000");// FIXEM USER ID
+		item.append("1000");// USING Admin UserId
 		item.append(pipeSeperator);
 		item.append(new SimpleDateFormat("dd-MMM-yy").format(appDate));
 		item.append(pipeSeperator);
@@ -457,7 +451,7 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 		item.append(pipeSeperator);
 		item.append(detail.getRemarks());
 		item.append(pipeSeperator);
-		item.append("1000");// FIXME USER ID
+		item.append("1000");// System Admin Id
 		item.append(pipeSeperator);
 		item.append(new SimpleDateFormat("dd-MMM-yy").format(appDate));
 		item.append(pipeSeperator);

@@ -15,12 +15,11 @@ import com.google.common.io.Files;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
-import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtUcicResponseAckFileWriter extends TextFileUtil implements InterfaceConstants, ExtIntfConfigConstants {
@@ -29,7 +28,7 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 
 	private ExtUcicDao extUcicDao;
 
-	public void processUcicResponseAckFile(Date appDate) throws IOException {
+	public void processUcicResponseAckFile(Date appDate) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		FileInterfaceConfig ucicAckConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_ACK);
@@ -66,9 +65,8 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 			}
 
 			try {
-				ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(dbServerConfig);
-				FtpClient ftpClient = extSFTPUtil.getSFTPConnection();
-				ftpClient.download(remoteFilePath, baseFilePath, fileName);
+				FileTransferUtil fileTransferUtil = new FileTransferUtil(dbServerConfig);
+				fileTransferUtil.downloadFromSFTP(fileName, baseFilePath);
 			} catch (Exception e) {
 				logger.debug("Unable to download file from DB Server to local path.");
 				return;
@@ -89,21 +87,15 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 	}
 
 	private void uploadFilesToClientLocation(Date appDate, FileInterfaceConfig ucicAckConfig,
-			FileInterfaceConfig ucicAckConfConfig, String baseFilePath, String fileName) throws IOException {
-		FtpClient ftpClient;
+			FileInterfaceConfig ucicAckConfConfig, String baseFilePath, String fileName) throws Exception, IOException {
 		// Now upload file to SFTP of client location as per configuration
 		File mainFile = new File(baseFilePath + File.separator + fileName);
-		ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(ucicAckConfig);
-		ftpClient = extSFTPUtil.getSFTPConnection();
-		ftpClient.upload(mainFile, ucicAckConfig.getFileSftpLocation());
-
+		FileTransferUtil fileTransferUtil = new FileTransferUtil(ucicAckConfig);
+		fileTransferUtil.uploadToSFTP(baseFilePath, fileName);
 		// Now upload complete file to SFTP of client location as per configuration
 		String completeFilePathWithName = writeCompleteFile(appDate, ucicAckConfig, ucicAckConfConfig);
 		File completeFileToUpload = new File(completeFilePathWithName);
-
-		ftpClient = extSFTPUtil.getSFTPConnection();
-		ftpClient.upload(completeFileToUpload, ucicAckConfig.getFileSftpLocation());
-
+		fileTransferUtil.uploadToSFTP(baseFilePath, completeFilePathWithName);
 		fileBackup(ucicAckConfig, mainFile, completeFileToUpload);
 	}
 
@@ -130,13 +122,13 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 	}
 
 	private String writeCompleteFile(Date appDate, FileInterfaceConfig ucicReqCompleteConfig,
-			FileInterfaceConfig ucicAckConfConfig) throws IOException {
+			FileInterfaceConfig ucicAckConfConfig) throws Exception {
 		String baseFilePath = App.getResourcePath(ucicAckConfConfig.getFileLocation());
 		String completeFileName = baseFilePath + File.separator + ucicAckConfConfig.getFilePrepend()
 				+ new SimpleDateFormat(ucicReqCompleteConfig.getDateFormat()).format(appDate)
 				+ ucicReqCompleteConfig.getFileExtension();
 
-		List<StringBuilder> emptyList = new ArrayList<>();
+		List<StringBuilder> emptyList = new ArrayList<StringBuilder>();
 		emptyList.add(new StringBuilder(""));
 		super.writeDataToFile(completeFileName, emptyList);
 		return completeFileName;

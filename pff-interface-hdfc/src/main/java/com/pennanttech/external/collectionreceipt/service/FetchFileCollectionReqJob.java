@@ -19,12 +19,11 @@ import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
-import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -78,10 +77,10 @@ public class FetchFileCollectionReqJob extends AbstractJob implements InterfaceC
 			return;
 		}
 
-		ExtSFTPUtil requestSFTPUtil = new ExtSFTPUtil(collectionReqConfig);
+		FileTransferUtil fileTransferUtil = new FileTransferUtil(collectionReqConfig);
 
 		// Get list of files in SFTP.
-		List<String> fileNames = requestSFTPUtil.getFileListFromSFTP(remoteFilePath);
+		List<String> fileNames = fileTransferUtil.fetchFileNamesListFromSFTP();
 
 		String localFolderPath = App.getResourcePath(baseFilePath);
 
@@ -95,8 +94,7 @@ public class FetchFileCollectionReqJob extends AbstractJob implements InterfaceC
 
 			try {
 				// Download file from remote location
-				FtpClient ftpClient = requestSFTPUtil.getSFTPConnection();
-				ftpClient.download(remoteFilePath, localFolderPath, fileName);
+				fileTransferUtil.downloadFromSFTP(fileName, localFolderPath);
 
 				// Changing file to inproc in local folder
 				String procName = fileName.substring(0, fileName.indexOf(collectionReqConfig.getFileExtension()));
@@ -108,14 +106,12 @@ public class FetchFileCollectionReqJob extends AbstractJob implements InterfaceC
 				Files.copy(srcPath, destPath, StandardCopyOption.COPY_ATTRIBUTES);
 
 				// Push .inproc file to SFTP
-				FtpClient sftpClient = requestSFTPUtil.getSFTPConnection();
-				sftpClient.upload(localFolderPath, collectionReqConfig.getFileSftpLocation(), procName);
+				fileTransferUtil.uploadToSFTP(localFolderPath, procName);
 
 				// Checksum for file
 
 				// Delete original file in SFTP
-				String remFilePath = collectionReqConfig.getFileSftpLocation();
-				requestSFTPUtil.deleteFile(remFilePath + "/" + fileName);
+				fileTransferUtil.deleteFileFromSFTP(fileName);
 				filteredFileNames.add(fileName);
 			} catch (Exception e) {
 				logger.debug(Literal.EXCEPTION, e);

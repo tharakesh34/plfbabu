@@ -24,18 +24,17 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
-import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -131,14 +130,10 @@ public class FileWriteCollectionRespJob extends AbstractJob
 
 					if ("Y".equals(StringUtils.stripToEmpty(respConfig.getIsSftp()))) {
 						try {
-							ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(respConfig);
+							FileTransferUtil fileTransferUtil = new FileTransferUtil(respConfig);
 							String localReqFileName = extReceiptHeader.getRequestFileName();
 
-							// Backup now local file to SFTP backup location
-							File localFile = new File(App.getResourcePath(reqConfig.getFileLocation()) + File.separator
-									+ localReqFileName);
-							FtpClient ftpClient = extSFTPUtil.getSFTPConnection();
-							ftpClient.upload(localFile, reqConfig.getFileBackupLocation());
+							fileTransferUtil.backupToSFTP(reqConfig.getFileLocation(), localReqFileName);
 
 							String reqFileTB = localReqFileName.substring(0,
 									localReqFileName.indexOf(reqConfig.getFileExtension()));
@@ -146,7 +141,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 							String deleteInproc = reqConfig.getFileSftpLocation().concat("/") + finalFile;
 
 							// Delete .inproc file
-							extSFTPUtil.deleteFile(deleteInproc);
+							fileTransferUtil.deleteFileFromSFTP(deleteInproc);
 
 						} catch (Exception e) {
 							logger.debug(Literal.EXCEPTION, e);

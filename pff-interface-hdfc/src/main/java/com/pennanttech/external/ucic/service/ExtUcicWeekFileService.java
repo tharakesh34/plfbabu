@@ -12,12 +12,11 @@ import com.google.common.io.Files;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
-import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceConstants, ExtIntfConfigConstants {
@@ -47,7 +46,6 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 		String status = extUcicDao.executeUcicRequestFileSP(fileName);
 
 		if ("SUCCESS".equals(status)) {
-			FtpClient ftpClient = null;
 			// Fetch request file from DB Server location and store it in client SFTP
 			FileInterfaceConfig serverConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_PLF_DB_SERVER);
 
@@ -58,21 +56,19 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 						"EXT_UCIC: No configuration found for type UCIC Weekly request file. So returning without generating the request file.");
 				return;
 			}
-			ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(ucicWeeklyConfig);
-			ftpClient = extSFTPUtil.getSFTPConnection();
+			FileTransferUtil fileTransferUtil = new FileTransferUtil(ucicWeeklyConfig);
 			try {
-				ftpClient.download(remoteFilePath, baseFilePath, fileName);
+				fileTransferUtil.downloadFromSFTP(fileName, baseFilePath);
 			} catch (Exception e) {
 				logger.debug("Unable to download file from DB Server to local path.");
 				return;
 			}
 
 			if ("Y".equals(ucicWeeklyConfig.getIsSftp())) {
-				ExtSFTPUtil extSFTPUtil1 = new ExtSFTPUtil(serverConfig);
-				ftpClient = extSFTPUtil1.getSFTPConnection();
+				FileTransferUtil sFileTransferUtil = new FileTransferUtil(serverConfig);
 				// Now upload file to SFTP of client location as per configuration
 				File mainFile = new File(baseFilePath + File.separator + fileName);
-				ftpClient.upload(mainFile, ucicWeeklyConfig.getFileSftpLocation());
+				sFileTransferUtil.uploadToSFTP(baseFilePath, fileName);
 
 				fileBackup(ucicWeeklyConfig, mainFile);
 			}
