@@ -222,7 +222,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 					GenerateLetter gl = new GenerateLetter();
 					long finID = fm.getFinID();
 					List<GenerateLetter> letterInfo = generateLetterDAO.getLoanLetterInfo(fm.getFinID(),
-							gl.getLetterType());
+							detail.getLetterType());
 
 					if (CollectionUtils.isNotEmpty(letterInfo)) {
 						long custID = fm.getCustID();
@@ -247,7 +247,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 
 						gl.setFinReference(detail.getReference());
 						gl.setFinID(detail.getReferenceID());
-						gl.setLetterType(gl.getLetterType());
+						gl.setLetterType(detail.getLetterType());
 						gl.setFinanceDetail(fd);
 
 						setMapDetails(gl, letterInfo);

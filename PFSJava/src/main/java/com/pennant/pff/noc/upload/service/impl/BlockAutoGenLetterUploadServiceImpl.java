@@ -230,6 +230,10 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 	private void saveLetterGenarationDetails(Long referenceID) {
 		FinanceMain fm = blockAutoGenLetterUploadDAO.getFinanceMain(referenceID, TableType.MAIN_TAB);
 
+		if (fm.getClosingStatus() == null) {
+			return;
+		}
+
 		Date appDate = SysParamUtil.getAppDate();
 
 		List<LoanTypeLetterMapping> letterMapping = loanTypeLetterMappingDAO.getLetterMapping(fm.getFinType());
