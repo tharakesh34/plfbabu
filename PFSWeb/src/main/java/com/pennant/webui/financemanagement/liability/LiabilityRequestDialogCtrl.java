@@ -24,7 +24,6 @@
  */
 package com.pennant.webui.financemanagement.liability;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -34,8 +33,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -1081,12 +1078,11 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * @param aFinanceMain financeMain
 	 * @throws ParseException
 	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws AccountNotFoundException
+	 * @throws InterfaceException
 	 */
-	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
+	@Override
+	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess)
+			throws ParseException, InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();

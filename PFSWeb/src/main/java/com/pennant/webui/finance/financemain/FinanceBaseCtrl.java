@@ -1574,7 +1574,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onSelectRecommendDetailTab(ForwardEvent event) throws InterruptedException {
+	public void onSelectRecommendDetailTab(ForwardEvent event) {
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		tab.removeForward(Events.ON_SELECT, (Tab) null, "onSelectRecommendDetailTab");
 		appendRecommendDetailTab(false);
