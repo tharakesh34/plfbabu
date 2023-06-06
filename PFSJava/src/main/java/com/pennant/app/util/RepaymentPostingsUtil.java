@@ -1075,7 +1075,7 @@ public class RepaymentPostingsUtil {
 				if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
 					fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 					pftDetail.setSvnAcrTillLBD(pftDetail.getTotalSvnAmount());
-				} else {
+				} else if (rch != null) {
 					rch.setClosureType(ClosureType.CLOSURE.code());
 				}
 
