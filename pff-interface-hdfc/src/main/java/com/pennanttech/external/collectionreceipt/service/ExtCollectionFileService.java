@@ -1,6 +1,7 @@
 package com.pennanttech.external.collectionreceipt.service;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -307,9 +308,9 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 		item.append(pipeSeperator);
 		item.append(detail.getRemarks());
 		item.append(pipeSeperator);
-		item.append("PLF");// FIXEM USER ID
+		item.append("1000");// FIXEM USER ID
 		item.append(pipeSeperator);
-		item.append(appDate);
+		item.append(new SimpleDateFormat("dd-MMM-yy").format(appDate));
 		item.append(pipeSeperator);
 		item.append("");// Reason
 		item.append(pipeSeperator);
@@ -456,9 +457,9 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 		item.append(pipeSeperator);
 		item.append(detail.getRemarks());
 		item.append(pipeSeperator);
-		item.append("PLF");// FIXME USER ID
+		item.append("1000");// FIXME USER ID
 		item.append(pipeSeperator);
-		item.append(appDate);
+		item.append(new SimpleDateFormat("dd-MMM-yy").format(appDate));
 		item.append(pipeSeperator);
 
 		String reason = "";
