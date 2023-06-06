@@ -4,7 +4,6 @@ public class InterfaceErrorCode {
 
 	private String errorCode;
 	private String errorMessage;
-	private String errorTag;
 
 	public String getErrorCode() {
 		return errorCode;
@@ -20,14 +19,6 @@ public class InterfaceErrorCode {
 
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
-	}
-
-	public String getErrorTag() {
-		return errorTag;
-	}
-
-	public void setErrorTag(String errorTag) {
-		this.errorTag = errorTag;
 	}
 
 }

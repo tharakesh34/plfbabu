@@ -28,14 +28,12 @@ public class ExtGenericDaoImpl implements ExtGenericDao {
 
 		List<InterfaceErrorCode> list = new ArrayList<InterfaceErrorCode>();
 
-		queryStr = "SELECT ERROR_CODE,ERROR_MESSAGE,ERROR_DESC FROM INTERFACE_ERROR_CODES";
+		queryStr = "SELECT ERROR_CODE,ERROR_MESSAGE FROM INTERFACE_ERROR_CODES";
 
 		extNamedJdbcTemplate.getJdbcOperations().query(queryStr, rs -> {
 			InterfaceErrorCode errorCode = new InterfaceErrorCode();
 			errorCode.setErrorCode(rs.getString("ERROR_CODE"));
 			errorCode.setErrorMessage(rs.getString("ERROR_MESSAGE"));
-			errorCode.setErrorTag(rs.getString("ERROR_DESC"));
-
 			list.add(errorCode);
 		});
 		logger.debug(Literal.LEAVING);
