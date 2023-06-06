@@ -709,9 +709,24 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			return;
 		}
 
+		if (RepayConstants.PAYSTATUS_DEPOSITED.equals(modeStatus) && realizedDate != null) {
+			setError(rud, "[REALIZATIONDATE] is Mandatory only when STATUS is 'R' ");
+			return;
+		}
+
 		if (RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus)) {
 			if (bounceDate == null) {
 				setError(rud, "[BOUNCEDATE] is Mandatory  ");
+				return;
+			}
+
+			if (DateUtil.compare(bounceDate, depositDate) < 0) {
+				setError(rud, "[BOUNCEDATE] Should not be less than the DEPOSITDATE ");
+				return;
+			}
+
+			if (DateUtil.compare(bounceDate, realizedDate) < 0) {
+				setError(rud, "[BOUNCEDATE] Should not be less than the REALIZATIONDATE ");
 				return;
 			}
 
