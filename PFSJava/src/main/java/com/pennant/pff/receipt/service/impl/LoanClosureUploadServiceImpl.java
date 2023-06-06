@@ -435,6 +435,10 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 			code = "ODC";
 		}
 
+		if (code.equalsIgnoreCase("FC")) {
+			code = "FEE";
+		}
+
 		return code;
 	}
 

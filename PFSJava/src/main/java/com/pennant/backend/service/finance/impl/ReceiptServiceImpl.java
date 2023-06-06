@@ -4248,7 +4248,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 					return;
 				}
 
-				if (StringUtils.isNotBlank(referenceCode) && feeTypeDAO.getFeeTypeId(referenceCode) == null) {
+				if (!fsi.isClosureReceipt() && StringUtils.isNotBlank(referenceCode)
+						&& feeTypeDAO.getFeeTypeId(referenceCode) == null) {
 					setError(schdData, "90501", "referenceCode :" + referenceCode);
 					logger.info(Literal.LEAVING);
 					return;
