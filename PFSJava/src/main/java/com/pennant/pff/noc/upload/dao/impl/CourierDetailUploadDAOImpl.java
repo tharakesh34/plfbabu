@@ -156,7 +156,7 @@ public class CourierDetailUploadDAOImpl extends SequenceDao<CourierDetailUpload>
 
 	@Override
 	public String isValidCourierMode(long finID, String letterType, Date letterDate) {
-		String sql = "Select ModeOfTransfer From LOAN_LETTERS Where FinID = ? and LetterType = ? and GeneratedOn = ?";
+		String sql = "Select ModeOfTransfer From LOAN_LETTERS Where FinID = ? and LetterType = ? and GeneratedDate = ?";
 		logger.debug(Literal.SQL.concat(sql));
 		try {
 			return jdbcOperations.queryForObject(sql, String.class, finID, letterType, letterDate);
