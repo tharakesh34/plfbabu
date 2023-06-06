@@ -1950,8 +1950,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	protected void doFillTabs(FinanceDetail aFinanceDetail, boolean onLoad, boolean isReqToLoad)
-			throws ParseException, InterruptedException {
+	protected void doFillTabs(FinanceDetail aFinanceDetail, boolean onLoad, boolean isReqToLoad) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceType financeType = aFinanceDetail.getFinScheduleData().getFinanceType();
@@ -2621,10 +2620,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
-	 * 
-	 * @throws InterruptedException
 	 */
-	protected void appendFeeDetailTab(boolean onLoad) throws InterruptedException {
+	protected void appendFeeDetailTab(boolean onLoad) {
 		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {
@@ -2707,7 +2704,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	protected void appendAgreementFieldsTab(boolean onLoad) throws InterruptedException {
+	protected void appendAgreementFieldsTab(boolean onLoad) {
 		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {
@@ -2727,10 +2724,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
-	 * 
-	 * @throws InterruptedException
 	 */
-	protected void appendAdvancePaymentsDetailTab(boolean onLoad) throws InterruptedException {
+	protected void appendAdvancePaymentsDetailTab(boolean onLoad) {
 		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {
@@ -2758,10 +2753,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
-	 * 
-	 * @throws InterruptedException
 	 */
-	protected void appendCovenantTab(boolean onLoad) throws InterruptedException {
+	protected void appendCovenantTab(boolean onLoad) {
 		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {
@@ -2791,10 +2784,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
-	 * 
-	 * @throws InterruptedException
 	 */
-	protected void appendPutCallTab(boolean onLoad) throws InterruptedException {
+	protected void appendPutCallTab(boolean onLoad) {
 		logger.debug(Literal.ENTERING);
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_PUTCALL, true);
@@ -3544,12 +3535,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain financeMain
-	 * @throws ParseException
-	 * @throws InterruptedException
 	 * @throws InterfaceException
 	 */
-	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess)
-			throws ParseException, InterruptedException, InterfaceException {
+	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -5490,7 +5478,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onPostWinCreation(Event event) throws ParseException, InterruptedException {
+	public void onPostWinCreation(Event event) {
 		doFillTabs(getFinanceDetail(), false, false);
 	}
 
@@ -9810,7 +9798,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	// FinanceMain Details Tab ---> 1. Basic Details
 
 	// On Change Event for Finance Start Date
-	public void onChange$finStartDate(Event event) throws ParseException {
+	public void onChange$finStartDate(Event event) {
 
 		if (this.finStartDate.getValue() != null) {
 			// ####_0.2
@@ -9954,7 +9942,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	// Auto Build Schedule after Loan Start Date has changed
-	private void autoBuildSchedule() throws ParseException {
+	private void autoBuildSchedule() {
 		logger.debug(Literal.ENTERING);
 
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALW_AUTO_SCHD_BUILD)
@@ -10227,8 +10215,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		return null;
 	}
 
-	public void onChange$gracePeriodEndDate(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onChange$gracePeriodEndDate(Event event) throws SuspendNotAllowedException {
+		logger.debug(Literal.ENTERING);
 		if (StringUtils.isNotEmpty(moduleDefiner) && !StringUtils.equals(moduleDefiner, FinServiceEvent.CHGGRCEND)) {
 
 			return;
@@ -10265,7 +10253,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	// Change all the Frequencies
@@ -11440,10 +11428,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * when clicks on button "GraceSpecialRate"
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onFulfill$graceRate(Event event) throws InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onFulfill$graceRate(Event event) {
+		logger.debug(Literal.ENTERING);
 
 		clearErrMsg();
 
@@ -11520,7 +11507,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.graceRate
 					.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 		}
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -11858,8 +11845,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	public void onFulfill$repayRate(Event event) throws InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onFulfill$repayRate(Event event) {
+		logger.debug(Literal.ENTERING);
 
 		Clients.clearWrongValue(this.numberOfTerms);
 		this.numberOfTerms.clearErrorMessage();
@@ -11937,7 +11924,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 
 		}
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**********************************/
@@ -15496,7 +15483,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -17732,8 +17719,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param event
 	 */
-	public void onFulfill$downPayBank(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onFulfill$downPayBank(Event event) throws SuspendNotAllowedException {
+		logger.debug(Literal.ENTERING);
 		this.downPayBank.clearErrorMessage();
 		Clients.clearWrongValue(this.downPayBank);
 		setDownpayAmount();
@@ -17741,7 +17728,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		onChangeFinAndDownpayAmount();
 		setDownPayPercentage();
 		setNetFinanceAmount(false);
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void onChangeFinAndDownpayAmount() {
@@ -18427,8 +18414,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		super.closeDialog();
 	}
 
-	public void onChange$custCIF(Event event) throws InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onChange$custCIF(Event event) {
+		logger.debug(Literal.ENTERING);
 
 		this.custCIF.clearErrorMessage();
 		Customer customer = (Customer) PennantAppUtil.getCustomerObject(this.custCIF.getValue(), null);
@@ -18438,7 +18425,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			doSetCustomer(customer, null);
 		}
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$viewCustInfo(Event event) {
@@ -18463,8 +18450,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
-			throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) {
 		logger.debug(Literal.ENTERING);
 		this.custCIF.clearErrorMessage();
 		setCustomerData((Customer) nCustomer);
@@ -18940,9 +18926,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								String tablename = extendedFieldHeader.getModuleName() + "_" + cust.getCustCtgCode()
 										+ "_ed";
 								list.add(customerDetailsService.getCrifScorevalue(tablename,
-										jointAccountDetail.getCustCIF().toString()));
+										jointAccountDetail.getCustCIF()));
 								derogeList.add(customerDetailsService.isCrifDeroge(tablename,
-										jointAccountDetail.getCustCIF().toString()));
+										jointAccountDetail.getCustCIF()));
 							}
 						}
 					}
@@ -19500,9 +19486,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		return idNumber;
 	}
 
-	public void validateAssetValue() throws ParseException, InterruptedException {
+	public void validateAssetValue() {
 		logger.debug(Literal.ENTERING);
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		ArrayList<WrongValueException> wve = new ArrayList<>();
 		this.finAmount.setErrorMessage("");
 		if (!this.finAmount.isReadonly()) {
 			this.finAmount.setConstraint(
@@ -20952,9 +20938,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method for manual Schedule In Finance
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$manualSchedule(Event event) throws Exception {
+	public void onCheck$manualSchedule(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		onCheckmanualSchedule();
@@ -21087,7 +21072,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onSelect$manualSchdType(Event event) throws Exception {
+	public void onSelect$manualSchdType(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		onChangeScheduleTypeProp();
@@ -21095,7 +21080,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void onChangeScheduleTypeProp() throws ParseException {
+	private void onChangeScheduleTypeProp() {
 		logger.debug(Literal.ENTERING);
 		String manualschdType = getComboboxValue(this.manualSchdType);
 
@@ -21111,7 +21096,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void appendManualSchedule(boolean onLoad) throws ParseException {
+	private void appendManualSchedule(boolean onLoad) {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -21134,7 +21119,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void appendVariableScheduleTab(boolean onLoad) throws ParseException {
+	private void appendVariableScheduleTab(boolean onLoad) {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -21157,7 +21142,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void appendIsraDetailsTab(boolean onLoad) throws ParseException {
+	private void appendIsraDetailsTab(boolean onLoad) {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -23108,7 +23093,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
-	private void appendDMSInterfaceTab(boolean onLoad) throws InterruptedException {
+	private void appendDMSInterfaceTab(boolean onLoad) {
 		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {
@@ -23127,7 +23112,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	protected void appendComm360Tab(boolean onLoad) throws InterruptedException {
+	protected void appendComm360Tab(boolean onLoad) {
 		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {

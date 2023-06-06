@@ -26,7 +26,6 @@ package com.pennant.webui.financemanagement.liability;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1076,13 +1075,10 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain financeMain
-	 * @throws ParseException
-	 * @throws InterruptedException
 	 * @throws InterfaceException
 	 */
 	@Override
-	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess)
-			throws ParseException, InterruptedException, InterfaceException {
+	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws InterfaceException {
 		logger.debug("Entering");
 
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();

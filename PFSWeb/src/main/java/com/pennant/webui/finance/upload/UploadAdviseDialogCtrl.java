@@ -560,7 +560,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processCSVUploadDetails(UploadHeader uploadHeader) throws IOException, Exception {
+	private void processCSVUploadDetails(UploadHeader uploadHeader) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		BufferedReader br = null;
@@ -1127,7 +1127,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -1135,7 +1135,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onFulfill$downloadEntity(Event event) throws Exception {
+	public void onFulfill$downloadEntity(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doClearMessage();

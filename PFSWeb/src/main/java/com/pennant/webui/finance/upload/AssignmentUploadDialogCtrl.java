@@ -607,7 +607,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processCSVUploadDetails(UploadHeader uploadHeader) throws IOException, Exception {
+	private void processCSVUploadDetails(UploadHeader uploadHeader) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		BufferedReader br = null;

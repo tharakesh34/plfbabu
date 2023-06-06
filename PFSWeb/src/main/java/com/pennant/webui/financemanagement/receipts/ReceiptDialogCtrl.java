@@ -34,7 +34,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,8 +44,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
@@ -780,12 +777,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * 
 	 * @param event
 	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException {
+		logger.debug(Literal.ENTERING);
 
-		final Map<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<>();
 		CustomerDetails customerDetails = getCustomerDetailsService()
 				.getCustomerById(getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
 		String pageName = PennantAppUtil.getCustomerPageName();
@@ -796,7 +792,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		map.put("CustomerEnq", "CustomerEnq");
 		Executions.createComponents(pageName, null, map);
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -804,10 +800,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * 
 	 * @param event
 	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchFinreference(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onClick$btnSearchFinreference(Event event) throws SuspendNotAllowedException {
+		logger.debug(Literal.ENTERING);
 
 		// Preparation of Finance Enquiry Data
 		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -836,7 +831,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
 				this.window_ReceiptDialog, map);
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onSelectAccountTab(ForwardEvent event) {
@@ -1547,11 +1542,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method to fill finance data.
 	 * 
 	 * @param isChgReceipt
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
 	 */
-	private boolean setSummaryData(boolean isChgReceipt) throws IllegalAccessException, InvocationTargetException {
+	private boolean setSummaryData(boolean isChgReceipt) {
 		logger.debug(Literal.ENTERING);
 		receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(receiptData.getReceiptHeader().getReceiptPurpose());
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
@@ -1706,13 +1698,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for calculation of Schedule Repayment details List of data
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws AccountNotFoundException
 	 * @throws WrongValueException
+	 * @throws InterfaceException
 	 */
-	public void onClick$btnCalcReceipts(Event event)
-			throws InterruptedException, WrongValueException, InterfaceException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onClick$btnCalcReceipts(Event event) throws WrongValueException, InterfaceException {
+		logger.debug(Literal.ENTERING);
 		if (!isValidateData(true)) {
 			return;
 		}
@@ -1771,16 +1761,15 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(orgScheduleList);
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Processing Calculation button visible , if amount modified
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onFulfill$receiptAmount(Event event) throws InterruptedException {
+	public void onFulfill$receiptAmount(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		this.btnChangeReceipt.setDisabled(true);
@@ -2342,11 +2331,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		receiptData = getReceiptCalculator().setTotals(receiptData, 0);
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
 		receiptData.getReceiptHeader().setAllocationsSummary(allocationList);
-		try {
-			setSummaryData(true);
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
+		setSummaryData(true);
 		setBalances();
 		doFillAllocationDetail();
 	}
@@ -2355,9 +2340,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for Schedule Modifications with Effective Schedule Method
 	 * 
 	 * @param receiptData
-	 * @throws InterruptedException
 	 */
-	public boolean recalEarlyPaySchd(boolean isRecal) throws InterruptedException {
+	public boolean recalEarlyPaySchd(boolean isRecal) {
 		logger.debug(Literal.ENTERING);
 		// Schedule Recalculation Depends on Earlypay Effective Schedule method
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
@@ -2962,12 +2946,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for event of Changing Repayments Amount
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnChangeReceipt(Event event)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnChangeReceipt(Event event) {
 		doClearMessage();
 		doSetValidation();
 		doWriteComponentsToBean();
@@ -5398,8 +5378,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	/**
 	 * Method for Processing Checklist Details when Check list Tab selected
 	 */
-	public void onSelectCheckListDetailsTab(ForwardEvent event)
-			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void onSelectCheckListDetailsTab(ForwardEvent event) {
 		this.doWriteComponentsToBean();
 
 		if (getFinanceCheckListReferenceDialogCtrl() != null) {
@@ -5414,8 +5393,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	/**
 	 * Method for Processing Agreement Details when Agreement list Tab selected
 	 */
-	public void onSelectAgreementDetailTab(ForwardEvent event)
-			throws IllegalAccessException, InvocationTargetException, InterruptedException, ParseException {
+	public void onSelectAgreementDetailTab(ForwardEvent event) {
 		this.doWriteComponentsToBean();
 
 		// refresh template tab
@@ -6911,10 +6889,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method to validate data
 	 * 
 	 * @return
-	 * @throws InterruptedException
-	 * @throws AccountNotFoundException
+	 * @throws InterfaceException
 	 */
-	private boolean isValidateData(boolean isCalProcess) throws InterruptedException, InterfaceException {
+	private boolean isValidateData(boolean isCalProcess) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		// Validate Field Details
@@ -7402,7 +7379,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	// Linked Loans
 
-	public void onClick$btn_LinkedLoan(Event event) throws InterruptedException {
+	public void onClick$btn_LinkedLoan(Event event) {
 		logger.debug(Literal.ENTERING); // FIXME: PV: CODE
 		// REVIEW PENDING
 		isLinkedBtnClick = true;
@@ -7490,7 +7467,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/** new code to display chart by skipping jsps code start */
-	public void onSelectDashboardTab(Event event) throws InterruptedException {
+	public void onSelectDashboardTab(Event event) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		for (ChartDetail chartDetail : chartDetailList) {
