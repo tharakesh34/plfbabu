@@ -236,6 +236,13 @@ public class LetterService {
 			return;
 		}
 
+		if (letter.getEmailID() == null) {
+			letter.setLetterMode(LetterMode.COURIER.name());
+			letter.setModeofTransfer(LetterMode.COURIER.name());
+			letter.setRemarks("Since Email ID is not available for the customer, Hence letter is send through courier.");
+			return;
+		}
+
 		try {
 			notificationService.parseMail(mailTemplate, letter.getDeclaredFieldValues());
 		} catch (Exception e) {
