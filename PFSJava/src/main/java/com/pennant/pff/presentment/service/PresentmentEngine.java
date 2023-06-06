@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -429,20 +430,40 @@ public class PresentmentEngine {
 
 		Map<String, Integer> batchMap = presentmentDAO.batchSizeByInstrumentType();
 
-		List<String> instrumentTypes = presentmentDAO.getInstrumentTypes(batchID);
+		List<PresentmentHeader> list = presentmentDAO.getInstrumentTypes(batchID);
 
-		List<PresentmentDetail> list = new ArrayList<>();
+		Map<String, List<PresentmentHeader>> map = new HashMap<>();
+		for (PresentmentHeader ph : list) {
+			String key = ph.getMandateType().concat(DateUtil.formatToLongDate(ph.getSchdate()));
 
-		for (String instrumentType : instrumentTypes) {
-			Map<Long, Integer> headerMap = new LinkedHashMap<>();
-			Integer batchSize = batchMap.get(instrumentType);
+			List<PresentmentHeader> subList = map.get(key);
 
-			presentmentDAO.groupByInclude(batchID, instrumentType, this, headerMap, batchSize, list);
-
-			if (!list.isEmpty()) {
-				presentmentDAO.updateHeaderByInclude(list);
-				list.clear();
+			if (subList == null) {
+				subList = new ArrayList<>();
+				map.put(key, subList);
 			}
+
+			subList.add(ph);
+		}
+
+		for (Entry<String, List<PresentmentHeader>> entry : map.entrySet()) {
+			List<PresentmentDetail> pdList = new ArrayList<>();
+
+			for (PresentmentHeader ph : entry.getValue()) {
+				Map<Long, Integer> headerMap = new LinkedHashMap<>();
+				Integer batchSize = batchMap.get(ph.getMandateType());
+
+				presentmentDAO.groupByInclude(batchID, ph, this, headerMap, batchSize, pdList);
+
+				if (!pdList.isEmpty()) {
+					presentmentDAO.updateHeaderByInclude(pdList);
+					pdList.clear();
+				}
+			}
+		}
+
+		for (PresentmentHeader ph : list) {
+			presentmentDAO.deleteHeader(batchID, ph.getSchdate());
 		}
 
 		logger.debug(Literal.ENTERING);
