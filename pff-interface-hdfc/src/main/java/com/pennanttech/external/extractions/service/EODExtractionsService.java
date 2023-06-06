@@ -18,12 +18,11 @@ import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.extractions.dao.ExtExtractionDao;
 import com.pennanttech.external.ucic.service.ExtUcicDataExtractor;
 import com.pennanttech.external.ucic.service.ExtUcicRequestFile;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.ftp.FtpClient;
-import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class EODExtractionsService implements EODExtractionsHook, InterfaceConstants, ExtIntfConfigConstants {
@@ -80,21 +79,10 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 			return;
 		}
 
-		FtpClient ftpClient = null;
-		String host = dbServerConfig.getHostName();
-		int port = dbServerConfig.getPort();
-		String accessKey = dbServerConfig.getAccessKey();
-		String secretKey = dbServerConfig.getSecretKey();
-		try {
-			ftpClient = new SftpClient(host, port, accessKey, secretKey);
-		} catch (Exception e) {
-			logger.debug("Unable to connect to SFTP.");
-			return;
-		}
+		FileTransferUtil fileTransferUtil = new FileTransferUtil(dbServerConfig);
 		// Now get remote file to local base location using SERVER config
-		String remoteFilePath = dbServerConfig.getFileSftpLocation();
 		try {
-			ftpClient.download(remoteFilePath, baseFilePath, fileName);
+			fileTransferUtil.downloadFromSFTP(fileName, baseFilePath);
 		} catch (Exception e) {
 			logger.debug("Unable to download file from DB Server to local path.");
 			return;
@@ -103,7 +91,8 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 		if ("Y".equals(finconGLConfig.getIsSftp())) {
 			// Now upload file to SFTP of client location as per configuration
 			File mainFile = new File(baseFilePath + File.separator + fileName);
-			ftpClient.upload(mainFile, finconGLConfig.getFileSftpLocation());
+			FileTransferUtil fTransferUtil = new FileTransferUtil(finconGLConfig);
+			fTransferUtil.uploadToSFTP(baseFilePath, fileName);
 			fileBackup(finconGLConfig, mainFile);
 			mainFile.delete();
 		}
