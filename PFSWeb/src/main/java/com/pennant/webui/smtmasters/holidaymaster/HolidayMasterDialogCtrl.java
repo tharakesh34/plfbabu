@@ -71,6 +71,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.masters.calendar.model.HolidayCalendarModelRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -145,7 +146,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	 * @param event
 	 */
 	public void onCreate$window_HolidayMasterDialog(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window_HolidayMasterDialog);
@@ -194,7 +195,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 			MessageUtil.showError(e);
 			this.window_HolidayMasterDialog.onClose();
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -246,9 +247,9 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		doSave();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -257,21 +258,20 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		doEdit();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * when the "help" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+	public void onClick$btnHelp(Event event) {
+		logger.debug(Literal.ENTERING);
 		MessageUtil.showHelpWindow(event, window_HolidayMasterDialog);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -280,9 +280,9 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		doCancel();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -300,25 +300,25 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	 * @param event
 	 */
 	public void onFulfill$holidayCode(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		if (this.holidayYear.getValue() != null) {
 			showCalendar();
 		}
 		if (this.holidayYear.isReadonly()) {
 			this.holidayYear.setReadonly(false);
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * when the "New" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnNew_HolidayDet(Event event) throws InterruptedException {
+	public void onClick$btnNew_HolidayDet(Event event) {
+		logger.debug(Literal.ENTERING);
+
 		doSetValidation();
-		logger.debug("Entering" + event.toString());
 		HolidayDetail aHolidayDetail = new HolidayDetail();
 		aHolidayDetail.setNewRecord(true);
 		aHolidayDetail.setHolidayCode(this.holidayCode.getValue());
@@ -336,7 +336,8 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving" + event.toString());
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -345,7 +346,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	 * @param event
 	 */
 	public void onChange$holidayYear(Event event) {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		showCalendar();
 		holidayDetails.clear();
 		if (this.holidayCode.getValue() != null && !StringUtils.equals(this.holidayCode.getValue(), "")) {
@@ -353,15 +354,16 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 					&& (this.holidayYear.getValue().compareTo(BigDecimal.valueOf(1950)) < 0)
 					|| this.holidayYear.getValue().compareTo(BigDecimal.valueOf(
 							Long.valueOf(DateUtil.getYear(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))))) > 0) {
-				throw new WrongValueException(this.holidayYear, Labels.getLabel("DATE_ALLOWED_RANGE", new String[] {
-						Labels.getLabel("label_HolidayMasterDialog_HolidayYear.value"), "1950",
-						String.valueOf(DateUtil.getYear(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) }));
+				throw new WrongValueException(this.holidayYear,
+						Labels.getLabel("DATE_ALLOWED_RANGE", new String[] {
+								Labels.getLabel("label_HolidayMasterDialog_HolidayYear.value"), "1950",
+								String.valueOf(DateUtil.getYear(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) }));
 			}
 			holidayDetails = BusinessCalendar.getWeekendList(this.holidayCode.getValue(), this.holidayYear.intValue());
 			showHoliday();
 		}
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -961,11 +963,11 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 
 	}
 
-	public void onEventCreatecalendars(CalendarsEvent event) throws InterruptedException {
+	public void onEventCreatecalendars(CalendarsEvent event) {
 		doOnClickProcess(event, false);
 	}
 
-	public void onEventEditcalendars(CalendarsEvent event) throws InterruptedException {
+	public void onEventEditcalendars(CalendarsEvent event) {
 		doOnClickProcess(event, true);
 	}
 
