@@ -863,4 +863,13 @@
 		<dropTable tableName="UCIC_RESP_FILE_DATA" />
 	</changeSet>
 	
+	<changeSet id="24.1" author="sreeram.r">
+		<modifyDataType tableName="FINCON_GL_STG" columnName="PERIOD"
+			newDataType="VARCHAR(50)" />
+	</changeSet>
+	
+	<changeSet id="34" author="goutham.ch">
+		<dropTable tableName="EXTAPILOG" />
+	</changeSet>
+		
 </databaseChangeLog>
