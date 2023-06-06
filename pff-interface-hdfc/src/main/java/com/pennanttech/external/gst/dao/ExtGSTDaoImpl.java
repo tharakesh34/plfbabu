@@ -24,6 +24,7 @@ import com.pennanttech.external.gst.model.GSTCompDetail;
 import com.pennanttech.external.gst.model.GSTCompHeader;
 import com.pennanttech.external.gst.model.GSTInvoiceDetail;
 import com.pennanttech.external.gst.model.GSTRequestDetail;
+import com.pennanttech.external.gst.model.GSTVoucherDetails;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -315,16 +316,27 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 	}
 
 	@Override
-	public boolean isVoucherFound(long transactionUID) {
+	public GSTVoucherDetails fetchVoucherDetails(long transactionUID) {
 		logger.debug(Literal.ENTERING);
-		String sql = "Select count(1) from GST_VOUCHER_DETAILS Where GST_VOUCHER_ID= ?";
-		logger.debug(Literal.SQL + sql);
-		try {
-			return extNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, Integer.class, transactionUID) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			logger.debug(Literal.EXCEPTION, e);
-			return false;
-		}
+		String sql = "Select GST_VOUCHER_ID,FINREFERENCE,AMOUNT_TYPE,ACTUAL_AMOUNT,"
+				+ "REFERENCE_AMOUNT,REFERENCE_FIELD1,REFERENCE_FIELD2 "
+				+ " from GST_VOUCHER_DETAILS Where GST_VOUCHER_ID= ?";
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			GSTVoucherDetails gvd = new GSTVoucherDetails();
+
+			gvd.setGstVoucherId(rs.getLong("GST_VOUCHER_ID"));
+			gvd.setFinreference(rs.getString("FINREFERENCE"));
+			gvd.setAmountType(rs.getString("AMOUNT_TYPE"));
+			gvd.setActualAmount(rs.getBigDecimal("ACTUAL_AMOUNT"));
+			gvd.setReferenceAmount(rs.getBigDecimal("REFERENCE_AMOUNT"));
+			gvd.setReferenceField1(rs.getLong("REFERENCE_FIELD1"));
+			gvd.setReferenceField2(rs.getLong("REFERENCE_FIELD2"));
+
+			return gvd;
+		}, transactionUID);
 	}
 
 	@Override

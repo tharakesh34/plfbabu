@@ -15,7 +15,6 @@ import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
@@ -28,6 +27,7 @@ import com.pennanttech.external.gst.model.GSTCompDetail;
 import com.pennanttech.external.gst.model.GSTCompHeader;
 import com.pennanttech.external.gst.model.GSTInvoiceDetail;
 import com.pennanttech.external.gst.model.GSTRespDetail;
+import com.pennanttech.external.gst.model.GSTVoucherDetails;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -134,9 +134,6 @@ public class FileProcessGSTRespJob extends AbstractJob
 		ExecutionContext executionContext = new ExecutionContext();
 		dataCursorReader.open(executionContext);
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
-
 		GSTCompDetail detail;
 
 		try {
@@ -150,11 +147,11 @@ public class FileProcessGSTRespJob extends AbstractJob
 					responseBean = convertRecordToBean(detail);
 
 					if (responseBean != null) {
-						// FIXME process in PLF
 
 						// Fetch GST VOUCHER from GST_VOUCHER_DETAILS based on ID, If not found error.
-						boolean isGstVoucherFound = extGSTDao.isVoucherFound(responseBean.getTransactionUID());
-						if (!isGstVoucherFound) {
+						GSTVoucherDetails gstVoucherDetails = extGSTDao
+								.fetchVoucherDetails(responseBean.getTransactionUID());
+						if (gstVoucherDetails == null) {
 							// save record with error mentioning as GST voucher not found in PLF
 							detail.setStatus(FAILED);
 							detail.setErrorCode(F405);
@@ -167,16 +164,15 @@ public class FileProcessGSTRespJob extends AbstractJob
 						GSTInvoiceDetail invoiceDetail = getInvoiceDetail(responseBean);
 						extGSTDao.saveGSTInvoiceDetails(invoiceDetail);
 
+						// FIXME Process GST amounts into Taxheader and Postings
+						saveTaxDetails(responseBean);
+
 						// Update GST VOUCHER ID in Response detail record for successful transaction
 						detail.setGstVoucherId(responseBean.getTransactionUID());
 					}
 
 					detail.setStatus(COMPLETED);
 					extGSTDao.updateGSTRecordDetailStatus(detail);
-
-					// if (gstRespBeanList.size() == BULK_RECORD_COUNT) {
-					//
-					// }
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 					detail.setStatus(EXCEPTION);
@@ -194,6 +190,11 @@ public class FileProcessGSTRespJob extends AbstractJob
 			}
 		}
 		logger.debug(Literal.LEAVING);
+
+	}
+
+	private void saveTaxDetails(GSTRespDetail responseBean) {
+		// TODO Auto-generated method stub
 
 	}
 

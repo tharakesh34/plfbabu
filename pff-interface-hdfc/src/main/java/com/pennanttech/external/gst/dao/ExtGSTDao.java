@@ -6,6 +6,7 @@ import com.pennanttech.external.gst.model.GSTCompDetail;
 import com.pennanttech.external.gst.model.GSTCompHeader;
 import com.pennanttech.external.gst.model.GSTInvoiceDetail;
 import com.pennanttech.external.gst.model.GSTRequestDetail;
+import com.pennanttech.external.gst.model.GSTVoucherDetails;
 
 public interface ExtGSTDao {
 
@@ -33,7 +34,7 @@ public interface ExtGSTDao {
 
 	int updateGSTVoucherWithReqHeaderId(List<Long> txnUidList, long headerId);
 
-	boolean isVoucherFound(long transactionUID);
+	public GSTVoucherDetails fetchVoucherDetails(long transactionUID);
 
 	long saveGSTInvoiceDetails(GSTInvoiceDetail gstInvoiceDetail);
 
