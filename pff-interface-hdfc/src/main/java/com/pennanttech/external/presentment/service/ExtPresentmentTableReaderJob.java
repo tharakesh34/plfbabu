@@ -205,7 +205,7 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 				transactionManager.commit(txStatus);
 
 			} catch (Exception e) {
-				logger.debug("Exception:", e);
+				logger.debug(Literal.EXCEPTION, e);
 				if (txStatus != null) {
 					transactionManager.rollback(txStatus);
 				}

@@ -168,75 +168,41 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 
 	private StringBuilder getRejectEndItem(int rejectRowNum, int totalRChecksum) {
 		StringBuilder item = new StringBuilder();
-		item.append(rejectRowNum);
-		item.append(pipeSeperator);
-		item.append(rejectRowNum + "" + totalRChecksum);
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
+		append(item, rejectRowNum);
+		appendSeperator(item, rejectRowNum + "" + totalRChecksum);
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
 		return item;
 
 	}
@@ -244,217 +210,118 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 	private StringBuilder getSuccessItem(ExtCollectionReceiptData detail, Long receiptId, Date appDate,
 			int successRowNum, String qualifiedChk) {
 		StringBuilder item = new StringBuilder();
-		item.append(detail.getAgreementNumber());
-		item.append(pipeSeperator);
-		item.append(receiptId);
-		item.append(pipeSeperator);
-		item.append(detail.getReceiptChannel());
-		item.append(pipeSeperator);
-		item.append(detail.getAgencyId());
-		item.append(pipeSeperator);
-		item.append(detail.getChequeNumber());
-		item.append(pipeSeperator);
-		item.append(detail.getDealingBankId());
-		item.append(pipeSeperator);
-		item.append(detail.getDrawnOn());
-		item.append(pipeSeperator);
-		item.append(detail.getTowards());
-		item.append(pipeSeperator);
-		item.append(detail.getGrandTotal());
-		item.append(pipeSeperator);
-		item.append(detail.getChequeDate());
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append(detail.getReceiptDate());
-		item.append(pipeSeperator);
-		item.append(detail.getReceiptType());
-		item.append(pipeSeperator);
-		item.append(detail.getReceiptNumber());
-		item.append(pipeSeperator);
-		item.append(detail.getChequeStatus());
-		item.append(pipeSeperator);
-		item.append(detail.getAutoAlloc());
-		item.append(pipeSeperator);
-		item.append(detail.getEmiAmount());
-		item.append(pipeSeperator);
-		item.append(detail.getLppAmount());
-		item.append(pipeSeperator);
-		item.append(detail.getBccAmount());
-		item.append(pipeSeperator);
-		item.append(detail.getExcessAmount());
-		item.append(pipeSeperator);
-		item.append(detail.getOthercharge1());
-		item.append(pipeSeperator);
-		item.append(detail.getOtherAmt1());
-		item.append(pipeSeperator);
-		item.append(detail.getOtherCharge2());
-		item.append(pipeSeperator);
-		item.append(detail.getOtherAmt2());
-		item.append(pipeSeperator);
-		item.append(detail.getOtherCharge3());
-		item.append(pipeSeperator);
-		item.append(detail.getOtherAmt3());
-		item.append(pipeSeperator);
-		item.append(detail.getOtherCharge4());
-		item.append(pipeSeperator);
-		item.append(detail.getOtherAmt4());
-		item.append(pipeSeperator);
-		item.append(detail.getRemarks());
-		item.append(pipeSeperator);
-		item.append("1000");// USING Admin UserId
-		item.append(pipeSeperator);
-		item.append(new SimpleDateFormat("dd-MMM-yy").format(appDate));
-		item.append(pipeSeperator);
-		item.append("");// Reason
-		item.append(pipeSeperator);
-		item.append("");// Redepositing flag
-		item.append(pipeSeperator);
-		item.append(successRowNum);
-		item.append(pipeSeperator);
-		item.append(qualifiedChk);// Checksum
+		append(item, detail.getAgreementNumber());
+		appendSeperator(item, receiptId);
+		appendSeperator(item, detail.getReceiptChannel());
+		appendSeperator(item, detail.getAgencyId());
+		appendSeperator(item, detail.getChequeNumber());
+		appendSeperator(item, detail.getDealingBankId());
+		appendSeperator(item, detail.getDrawnOn());
+		appendSeperator(item, detail.getTowards());
+		appendSeperator(item, detail.getGrandTotal());
+		appendSeperator(item, detail.getChequeDate());
+		appendSeperator(item, "");
+		appendSeperator(item, detail.getReceiptDate());
+		appendSeperator(item, detail.getReceiptType());
+		appendSeperator(item, detail.getReceiptNumber());
+		appendSeperator(item, detail.getChequeStatus());
+		appendSeperator(item, detail.getAutoAlloc());
+		appendSeperator(item, detail.getEmiAmount());
+		appendSeperator(item, detail.getLppAmount());
+		appendSeperator(item, detail.getBccAmount());
+		appendSeperator(item, detail.getExcessAmount());
+		appendSeperator(item, detail.getOthercharge1());
+		appendSeperator(item, detail.getOtherAmt1());
+		appendSeperator(item, detail.getOtherCharge2());
+		appendSeperator(item, detail.getOtherAmt2());
+		appendSeperator(item, detail.getOtherCharge3());
+		appendSeperator(item, detail.getOtherAmt3());
+		appendSeperator(item, detail.getOtherCharge4());
+		appendSeperator(item, detail.getOtherAmt4());
+		appendSeperator(item, detail.getRemarks());
+		appendSeperator(item, "1000");// USING Admin UserId
+		appendSeperator(item, new SimpleDateFormat("dd-MMM-yy").format(appDate));
+		appendSeperator(item, "");// Reason
+		appendSeperator(item, "");// Redepositing flag
+		appendSeperator(item, successRowNum);
+		appendSeperator(item, qualifiedChk);// Checksum
 		return item;
 	}
 
 	private StringBuilder getSuccessEndItem(int rows, int chksum) {
 		StringBuilder item = new StringBuilder();
-		item.append(rows);
-		item.append(pipeSeperator);
-		item.append(rows + "" + chksum);
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append("");
+		append(item, rows);
+		appendSeperator(item, rows + "" + chksum);
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
+		appendSeperator(item, "");
 		return item;
 	}
 
 	private StringBuilder getRejectItem(ExtCollectionReceiptData detail, Date appDate, String rejectReason,
 			int rejectRowNum, CollReceiptHeader errorReceiptHeader) {
 		StringBuilder item = new StringBuilder();
-		item.append(detail.getAgreementNumber());
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append(detail.getReceiptChannel());
-		item.append(pipeSeperator);
-		item.append(detail.getAgencyId());
-		item.append(pipeSeperator);
-		item.append(detail.getChequeNumber());
-		item.append(pipeSeperator);
-		item.append(detail.getDealingBankId());
-		item.append(pipeSeperator);
-		item.append(detail.getDrawnOn());
-		item.append(pipeSeperator);
-		item.append(detail.getTowards());
-		item.append(pipeSeperator);
-		item.append(detail.getGrandTotal());
-		item.append(pipeSeperator);
-		item.append(detail.getChequeDate());
-		item.append(pipeSeperator);
-		item.append("");
-		item.append(pipeSeperator);
-		item.append(detail.getReceiptDate());
-		item.append(pipeSeperator);
-		item.append(detail.getReceiptType());
-		item.append(pipeSeperator);
-		item.append(detail.getReceiptNumber());
-		item.append(pipeSeperator);
-		item.append(detail.getChequeStatus());
-		item.append(pipeSeperator);
-		item.append(detail.getAutoAlloc());
-		item.append(pipeSeperator);
-		item.append(detail.getEmiAmount());
-		item.append(pipeSeperator);
-		item.append(detail.getLppAmount());
-		item.append(pipeSeperator);
-		item.append(detail.getBccAmount());
-		item.append(pipeSeperator);
-		item.append(detail.getExcessAmount());
-		item.append(pipeSeperator);
-		item.append(detail.getOthercharge1());
-		item.append(pipeSeperator);
-		item.append(detail.getOtherAmt1());
-		item.append(pipeSeperator);
-		item.append(detail.getOtherCharge2());
-		item.append(pipeSeperator);
-		item.append(detail.getOtherAmt2());
-		item.append(pipeSeperator);
-		item.append(detail.getOtherCharge3());
-		item.append(pipeSeperator);
-		item.append(detail.getOtherAmt3());
-		item.append(pipeSeperator);
-		item.append(detail.getOtherCharge4());
-		item.append(pipeSeperator);
-		item.append(detail.getOtherAmt4());
-		item.append(pipeSeperator);
-		item.append(detail.getRemarks());
-		item.append(pipeSeperator);
-		item.append("1000");// System Admin Id
-		item.append(pipeSeperator);
-		item.append(new SimpleDateFormat("dd-MMM-yy").format(appDate));
-		item.append(pipeSeperator);
+		append(item, detail.getAgreementNumber());
+		appendSeperator(item, "");
+		appendSeperator(item, detail.getReceiptChannel());
+		appendSeperator(item, detail.getAgencyId());
+		appendSeperator(item, detail.getChequeNumber());
+		appendSeperator(item, detail.getDealingBankId());
+		appendSeperator(item, detail.getDrawnOn());
+		appendSeperator(item, detail.getTowards());
+		appendSeperator(item, detail.getGrandTotal());
+		appendSeperator(item, detail.getChequeDate());
+		appendSeperator(item, "");
+		appendSeperator(item, detail.getReceiptDate());
+		appendSeperator(item, detail.getReceiptType());
+		appendSeperator(item, detail.getReceiptNumber());
+		appendSeperator(item, detail.getChequeStatus());
+		appendSeperator(item, detail.getAutoAlloc());
+		appendSeperator(item, detail.getEmiAmount());
+		appendSeperator(item, detail.getLppAmount());
+		appendSeperator(item, detail.getBccAmount());
+		appendSeperator(item, detail.getExcessAmount());
+		appendSeperator(item, detail.getOthercharge1());
+		appendSeperator(item, detail.getOtherAmt1());
+		appendSeperator(item, detail.getOtherCharge2());
+		appendSeperator(item, detail.getOtherAmt2());
+		appendSeperator(item, detail.getOtherCharge3());
+		appendSeperator(item, detail.getOtherAmt3());
+		appendSeperator(item, detail.getOtherCharge4());
+		appendSeperator(item, detail.getOtherAmt4());
+		appendSeperator(item, detail.getRemarks());
+		appendSeperator(item, "1000");// System Admin Id
+		appendSeperator(item, new SimpleDateFormat("dd-MMM-yy").format(appDate));
 
 		String reason = "";
 		if (!"".equals(StringUtils.stripToEmpty(errorReceiptHeader.getErrorMessage()))) {
@@ -463,12 +330,9 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 			reason = rejectReason;
 		}
 		reason = StringUtils.stripToEmpty(reason);
-		item.append(reason);// Reason
-		item.append(pipeSeperator);
-		item.append("");// Redepositing flag
-		item.append(pipeSeperator);
-		item.append(rejectRowNum);
-		item.append(pipeSeperator);
+		appendSeperator(item, reason);// Reason
+		appendSeperator(item, "");// Redepositing flag
+		appendSeperator(item, rejectRowNum);
 
 		int agreementCHK = generateChecksum(String.valueOf(detail.getAgreementNumber()));
 		int grTotalCHK = generateChecksum(String.valueOf(detail.getGrandTotal()));
@@ -481,6 +345,16 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 
 		item.append(qualifiedChk);// Checksum
 		return item;
+	}
+
+	private void append(StringBuilder item, Object data) {
+		item.append(data);
+	}
+
+	private void appendSeperator(StringBuilder item, Object data) {
+		item.append(pipeSeperator);
+		item.append(data);
+
 	}
 
 	private int generateChecksum(String data) {
