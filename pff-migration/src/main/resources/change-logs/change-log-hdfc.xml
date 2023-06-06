@@ -2967,7 +2967,7 @@
 		'File 1: Closing TB' AS JOURNAL_CATEGORY,
 		PERIOD,
 		ACC_DATE,
-		'PNFile 1: Closing TB'||'BATCH_NAME',
+		'PNFile 1: Closing TB'||BATCH_NAME,
 		AM.HOSTACCOUNT AS
 		SOURCE_GL_CODE,
 		'1' AS BOOKS,

@@ -871,5 +871,10 @@
 	<changeSet id="34" author="goutham.ch">
 		<dropTable tableName="EXTAPILOG" />
 	</changeSet>
+	
+	<changeSet id="24.2" author="sreeram.r">
+		<modifyDataType tableName="FINCON_GL_STG" columnName="JOURNAL_NAME"
+			newDataType="VARCHAR(100)" />
+	</changeSet>
 		
 </databaseChangeLog>
