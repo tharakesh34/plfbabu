@@ -19,6 +19,7 @@
 	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.ExtExtractionDaoImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
+		<property name="stagingDataSource" ref="stagingDataSource" />
 	</bean>
 
 	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.ExtUcicDaoImpl">
