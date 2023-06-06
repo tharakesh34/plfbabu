@@ -430,21 +430,16 @@ public class MiscellaneousWebServiceImpl extends ExtendedTestClass
 		}
 		breResponse.setRiskScore(totalGrpExecScore);
 
-		try {
-			// Get the Scoring Group
-			String ruleVal = getScrSlab(scoringMetricsList.get(0).getScoreGroupId(), totalGrpExecScore, "", true,
-					scoringSlabList);
-			breResponse.setScoringGroup(ruleVal);
-
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+		// Get the Scoring Group
+		String ruleVal = getScrSlab(scoringMetricsList.get(0).getScoreGroupId(), totalGrpExecScore, "", true,
+				scoringSlabList);
+		breResponse.setScoringGroup(ruleVal);
 
 		return breResponse;
 	}
 
 	private String getScrSlab(long refId, BigDecimal grpTotalScore, String execCreditWorth, boolean isRetail,
-			List<ScoringSlab> scoringMetricsList) throws InterruptedException {
+			List<ScoringSlab> scoringMetricsList) {
 		logger.debug("Entering");
 		List<ScoringSlab> slabList = scoringMetricsList;
 		String creditWorth = "None";
