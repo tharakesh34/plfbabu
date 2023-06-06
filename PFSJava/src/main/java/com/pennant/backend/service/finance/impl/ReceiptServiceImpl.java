@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -2352,11 +2353,13 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		if (MandateExtension.ALLOW_HOLD_MARKING && !FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
-			List<ReceiptAllocationDetail> list = new ArrayList<>();
-			list = rch.getAllocations();
-			ReceiptAllocationDetail rcd = list.stream().filter(l1 -> l1.getAllocationType().equals(Allocation.EMI))
-					.findFirst().get();
-			list.remove(rcd);
+			List<ReceiptAllocationDetail> list = rch.getAllocations();
+			Optional<ReceiptAllocationDetail> allocList = list.stream()
+					.filter(l1 -> Allocation.EMI.equals(l1.getAllocationType())).findFirst();
+
+			if (!allocList.isEmpty()) {
+				list.remove(allocList.get());
+			}
 
 			holdMarkingService.updateHoldRemoval(ReceiptUtil.getAllocatedAmount(list), fm.getFinID(), false);
 		}
