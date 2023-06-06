@@ -207,7 +207,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setListAllocationDetails(list);
 
 		if (AllocationType.MANUAL.equals(detail.getAllocationType()) && list != null
-				&& !(detail.getReceiptAmount().compareTo(getSumOfAllocations(list)) > 0)) {
+				&& !(detail.getReceiptAmount().compareTo(getSumOfAllocations(list)) >= 0)) {
 			setFailureStatus(detail, "", "RECEIPT Amount and Allocations amount should be same");
 			return;
 		}
@@ -330,12 +330,11 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 
 		rud.setListAllocationDetails(list);
 
-		if (AllocationType.MANUAL.equals(detail.getAllocationType()) && list != null) {
-			if (!(detail.getReceiptAmount().equals(getSumOfAllocations(list)))) {
-				detail.setProgress(EodConstants.PROGRESS_FAILED);
-				detail.setErrorDesc("RECEIPT Amount and Allocations amount should be same");
-				return;
-			}
+		if (AllocationType.MANUAL.equals(detail.getAllocationType()) && list != null
+				&& !(detail.getReceiptAmount().compareTo(getSumOfAllocations(list)) >= 0)) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorDesc("RECEIPT Amount and Allocations amount should be same");
+			return;
 		}
 
 		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, entityCode);
@@ -402,8 +401,13 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 	}
 
 	private BigDecimal getSumOfAllocations(List<UploadAlloctionDetail> list) {
+		List<UploadAlloctionDetail> newlist = new ArrayList<>();
+		newlist = list;
+		UploadAlloctionDetail uad = newlist.stream().filter(n -> n.getAllocationType().equals("EM")).findFirst().get();
+		newlist.remove(uad);
+
 		BigDecimal sum = BigDecimal.ZERO;
-		for (UploadAlloctionDetail cru : list) {
+		for (UploadAlloctionDetail cru : newlist) {
 			sum = sum.add(cru.getPaidAmount());
 		}
 

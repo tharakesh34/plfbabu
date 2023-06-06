@@ -5763,6 +5763,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			recalEarlyPay(rd);
 		}
 
+		if (peceiptPurpose == ReceiptPurpose.EARLYSETTLE) {
+			repaymentProcessUtil.prepareDueData(rd);
+		}
+
 		List<FinanceScheduleDetail> finSchdDtls = copy(
 				rd.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
 

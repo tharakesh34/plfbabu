@@ -20,7 +20,7 @@ public enum ReceiptStatusUploadError {
 
 	RU08(" REALIZATION DATE is allowed only when RECEIPTMODE is { CHEQUE or DD } "),
 
-	RU09(" REALIZATION DATE is Mandatory in case of RECEIPT MODE { CHEQUE or DD }"),
+	RU09(" REALIZATION DATE is Mandatory when Status is R"),
 
 	RU010(" REALIZATION DATE should not be less than DEPOSITED DATE "),
 
