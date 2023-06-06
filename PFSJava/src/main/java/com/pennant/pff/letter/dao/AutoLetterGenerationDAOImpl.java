@@ -113,7 +113,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 		sql.append(" Set Generated = ?, GeneratedDate = ?, GeneratedOn = ?");
 		sql.append(", LetterName = ?, FileName = ?, LetterLocation = ?");
 		sql.append(", AdviseID = ?, EmailID = ?, EmailNotificationID = ?");
-		sql.append(", Status = ?, Remarks = ?, ApprovedBy = ?, GeneratedBy = ?, ApprovedOn = ?");
+		sql.append(", Status = ?, Remarks = ?, ApprovedBy = ?, GeneratedBy = ?, ApprovedOn = ?, ModeofTransfer = ?");
 		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -136,6 +136,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 				ps.setObject(++index, letter.getApprovedBy());
 				ps.setObject(++index, letter.getGeneratedBy());
 				ps.setTimestamp(++index, letter.getApprovedOn());
+				ps.setString(++index, letter.getModeofTransfer());
 
 				ps.setLong(++index, letter.getId());
 			});

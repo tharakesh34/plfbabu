@@ -131,9 +131,11 @@ public class LetterService {
 		loanLetter.setSaveFormat(SaveFormat.PDF);
 		loanLetter.setLetterType(gl.getLetterType());
 		loanLetter.setLetterMode(gl.getModeofTransfer());
+		loanLetter.setModeofTransfer(gl.getModeofTransfer());
 		loanLetter.setCreatedDate(gl.getCreatedDate());
 		loanLetter.setBusinessDate(appDate);
 		loanLetter.setRequestType(requestType);
+		loanLetter.setFeeID(gl.getFeeID());
 
 		if (autoLetterGenerationDAO.getCountBlockedItems(gl.getFinID()) > 0
 				&& !(LetterMode.OTC.name().equals(requestType) || "M".equals(requestType))) {
@@ -239,7 +241,8 @@ public class LetterService {
 		if (letter.getEmailID() == null) {
 			letter.setLetterMode(LetterMode.COURIER.name());
 			letter.setModeofTransfer(LetterMode.COURIER.name());
-			letter.setRemarks("Since Email ID is not available for the customer, Hence letter is send through courier.");
+			letter.setRemarks(
+					"Since the Email-ID not available, Letter Mode is marked as COURIER, and store the document.");
 			return;
 		}
 
