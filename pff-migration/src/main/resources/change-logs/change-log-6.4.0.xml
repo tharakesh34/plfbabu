@@ -16657,7 +16657,7 @@
 			<![CDATA[	
 				DELETE FROM DATA_ENGINE_CONFIG where Name = 'CSD_STORAGE';
 				INSERT INTO DATA_ENGINE_CONFIG  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'CSD_STORAGE', 'Loan Letters Storage', 5, NULL, NULL, NULL, NULL, 0, 1, NULL, NULL,NULL, 'A', NULL, 'CSD_STORAGE', NULL, 0, current_timestamp, NULL, NULL, '0', NULL, 1, 1, 0);
-				INSERT INTO DATA_ENGINE_EVENT_PROPERTIES (CONFIG_ID, STORAGE_TYPE, BUCKET_NAME, ACCESS_KEY, SECRET_KEY, HOST_NAME,PORT, ID) VALUES ((SELECT ID from DATA_ENGINE_CONFIG WHERE NAME='CSD_STORAGE'), 'SFTP', '/sftpuser/PLF/HDFC/QC', 'sftpuser', 'Zxcvbn$@123','sftpserver','22',(SELECT MAX(ID)+1 FROM DATA_ENGINE_EVENT_PROPERTIES));
+				INSERT INTO DATA_ENGINE_EVENT_PROPERTIES (CONFIG_ID, STORAGE_TYPE, BUCKET_NAME, ACCESS_KEY, SECRET_KEY, HOST_NAME,PORT) VALUES ((SELECT ID from DATA_ENGINE_CONFIG WHERE NAME='CSD_STORAGE'), 'SFTP', '/sftpuser/PLF/HDFC/QC', 'sftpuser', 'Zxcvbn$@123','sftpserver','22');
 				
 			]]>
 		</sql>
@@ -16935,27 +16935,6 @@
 		</sql>
 	</changeSet>
 
-
-	<changeSet id="ST#15956.2.4_1_pre" author="nagavamsi.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'loan_letters');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#15956.2.4_1" author="nagavamsi.p">
-		<modifyDataType tableName="LOAN_LETTERS" columnName="DeliveryDate" newDataType="datetime" />
-	</changeSet>
-
-
-	<changeSet id="ST#15956.2.4_1_post" author="nagavamsi.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'loan_letters');
-			]]>
-		</sql>
-	</changeSet>
 
 	<changeSet id="PSD#226779" author="saikiran.n">
 		<sql>
