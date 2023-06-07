@@ -112,7 +112,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 					if (fileRecordsList.size() > 0) {
 
 						long fileSeq = extPresentmentDAO.getSeqNumber(SEQ_COLLECTION_RECEIPT);
-						String fileSeqName = StringUtils.leftPad(String.valueOf(fileSeq), 4, "0");
+						String fileSeqName = StringUtils.leftPad(String.valueOf(fileSeq), 1, "0");
 
 						String filePath = respConfig.getFileLocation();
 						String fileName = respConfig.getFilePrepend()

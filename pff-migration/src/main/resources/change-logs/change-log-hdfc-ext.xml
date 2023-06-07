@@ -876,5 +876,13 @@
 		<modifyDataType tableName="FINCON_GL_STG" columnName="JOURNAL_NAME"
 			newDataType="VARCHAR(100)" />
 	</changeSet>
-		
+	
+	<changeSet id="002.12" author="sreeram.r">
+		<sql>
+			<![CDATA[
+					UPDATE FILE_INTERFACE_CONFIG SET FILE_POSTPEND='_' WHERE INTERFACE_TYPE='COLLECTION_RECEIPT_RESP';
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
