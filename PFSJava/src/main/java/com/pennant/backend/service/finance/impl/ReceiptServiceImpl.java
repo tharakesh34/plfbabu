@@ -4553,7 +4553,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 
 			String receiptModeSts = rch.getReceiptModeStatus();
-			if (!RepayConstants.PAYSTATUS_BOUNCE.equals(receiptModeSts)
+			if (fsi != null && !fsi.isClosureReceipt() && !RepayConstants.PAYSTATUS_BOUNCE.equals(receiptModeSts)
 					&& !RepayConstants.PAYSTATUS_CANCEL.equals(receiptModeSts)) {
 				Date prvSchdDate = pd.getPrvRpySchDate();
 				if (valueDate.compareTo(prvSchdDate) < 0) {
@@ -4568,7 +4568,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 			Date lastReceivedDate = finReceiptDetailDAO.getMaxReceivedDate(finID);
 
-			if (DateUtil.compare(valueDate, lastReceivedDate) < 0) {
+			if (fsi != null && !fsi.isClosureReceipt() && DateUtil.compare(valueDate, lastReceivedDate) < 0) {
 				if (ReceiptExtension.STOP_BACK_DATED_EARLY_SETTLE) {
 					setError(schdData, "RU0011", valueDateFormat, DateUtil.formatToLongDate(lastReceivedDate));
 					return;
