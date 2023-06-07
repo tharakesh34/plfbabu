@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -83,12 +84,12 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 
 			int pastDueDays = pd.getCurODDays();
 
-			Date pastDueDate = finDpdDate(odDetails);
+			Date pastDueDate = getFirstDueDate(odDetails);
 
 			Date derivedPastDueDate = null;
 
 			if (pastDueDate != null) {
-				derivedPastDueDate = findPastDueDate(pastDueDate, odDetails);
+				derivedPastDueDate = getNpaPasDueDate(fm.getFinType(), pastDueDays, pastDueDate, appDate, odDetails);
 			}
 
 			NpaProvisionStage item = new NpaProvisionStage();
@@ -183,7 +184,12 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		Date pastDueDate = ac.getPastDueDate();
 		Date derivedPastDueDate = ac.getDerivedPastDueDate();
 		int pastDueDays = ac.getPastDueDays();
-		int derivedPastDueDays = DateUtil.getDaysBetween(pastDueDate, derivedPastDueDate);
+		int derivedPastDueDays = 0;
+		if (derivedPastDueDate != null) {
+			derivedPastDueDays = DateUtil.getDaysBetween(pastDueDate, derivedPastDueDate);
+		} else {
+			derivedPastDueDate = pastDueDate;
+		}
 
 		int npaPastDueDays = ac.getNpaPastDueDays();
 
@@ -673,7 +679,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		return null;
 	}
 
-	private Date finDpdDate(List<FinODDetails> odDetails) {
+	private Date getFirstDueDate(List<FinODDetails> odDetails) {
 		for (FinODDetails od : odDetails) {
 			BigDecimal odAmount = od.getFinCurODPri().add(od.getFinCurODPft());
 
@@ -738,11 +744,42 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		return list.stream().filter(ac -> ac.getFinReference().equals(finReference)).findFirst().get().getFinType();
 	}
 
-	private Date findPastDueDate(Date pastDueDate, List<FinODDetails> odDetails) {
+	private Date getNpaPasDueDate(String finType, int pastDueDays, Date pastDueDate, Date bsinessDate,
+			List<FinODDetails> odDetails) {
+
 		List<FinODDetails> list = odDetails.stream().filter(od -> od.getFinODTillDate().compareTo(pastDueDate) >= 0)
 				.collect(Collectors.toList());
 
-		return list.stream().findFirst().get().getFinODSchdDate();
+		Date npaPastDueDate = list.stream().findFirst().get().getFinODSchdDate();
+
+		if (pastDueDate.compareTo(npaPastDueDate) == 0) {
+			return pastDueDate;
+		}
+
+		Date npaFrom = DateUtil.addMonths(pastDueDate, 3);
+
+		int npaPastDueDays = pastDueDays + DateUtil.getDaysBetween(bsinessDate, npaFrom);
+
+		int pastDueDaysForNpaStage = assetClassSetupDAO.getMinDpdByEntity(finType);
+
+		if (npaPastDueDays < pastDueDaysForNpaStage) {
+			return null;
+		}
+
+		list = odDetails.stream().sorted((od1, od2) -> DateUtil.compare(od2.getFinODSchdDate(), od1.getFinODSchdDate()))
+				.collect(Collectors.toList());
+
+		Optional<FinODDetails> findFirst = list.stream().filter(od -> od.getFinCurODDays() >= pastDueDaysForNpaStage)
+				.findFirst();
+
+		if (findFirst.isPresent()) {
+			FinODDetails fod = findFirst.get();
+			if (fod != null) {
+				return fod.getFinODSchdDate();
+			}
+		}
+
+		return null;
 	}
 
 	@Autowired
