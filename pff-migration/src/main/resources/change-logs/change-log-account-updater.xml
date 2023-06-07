@@ -428,7 +428,7 @@
 			<column name="TransOrder" type="int" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="18.1" author="murthy.y">
 		<sql>
 			<![CDATA[
@@ -537,31 +537,72 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="25.6" author="murthy.y">
 		<createIndex tableName="Accounts_History_Details" indexName="idx_ahd_AccountId">
-			<column name="AccountId" type="bigint"/>
+			<column name="AccountId" type="bigint" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="25.7" author="murthy.y">
 		<createIndex tableName="Accounts_History_Details" indexName="idx_ahd_fr_pbranch">
-			<column name="FinReference" type="varchar(20)"/>
-			<column name="PostBranch" type="varchar(12)"/>
+			<column name="FinReference" type="varchar(20)" />
+			<column name="PostBranch" type="varchar(12)" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="26" author="murthy.y">
-		<dropColumn tableName="Accounts" columnName="AcCcy"/>
-		<dropColumn tableName="Accounts" columnName="AcType"/>
-		<dropColumn tableName="Accounts" columnName="AcBranch"/>
+		<dropColumn tableName="Accounts" columnName="AcCcy" />
+		<dropColumn tableName="Accounts" columnName="AcType" />
+		<dropColumn tableName="Accounts" columnName="AcBranch" />
 	</changeSet>
-	
+
 	<changeSet id="26.1" author="murthy.y">
-		<dropColumn tableName="Accounts_Work" columnName="AcCcy"/>
-		<dropColumn tableName="Accounts_Work" columnName="AcType"/>
-		<dropColumn tableName="Accounts_Work" columnName="AcBranch"/>
+		<dropColumn tableName="Accounts_Work" columnName="AcCcy" />
+		<dropColumn tableName="Accounts_Work" columnName="AcType" />
+		<dropColumn tableName="Accounts_Work" columnName="AcBranch" />
+	</changeSet>
+
+	<changeSet id="27_pre" author="murthy.y">
+		<delete tableName="Accounts_By_FinReferences" />
+		<delete tableName="Accounts_History_Details" />
+		<delete tableName="Accounts_History" />
+		<delete tableName="Accounts" />
+		<delete tableName="Accounts_Work" />
+	</changeSet>
+
+	<changeSet id="27" author="murthy.y">
+		<addColumn tableName="Accounts">
+			<column name="AcType" type="varchar(15)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AcCcy" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="27.1" author="murthy.y">
+		<addColumn tableName="Accounts_Work">
+			<column name="AcType" type="varchar(15)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AcCcy" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
 	</changeSet>
 	
+	<changeSet id="28" author="murthy.y">
+		<addUniqueConstraint columnNames="AcNumber, AcType, AcCcy" constraintName="uk_accounts_acnumber_at_accy"
+			tableName="Accounts" />
+	</changeSet>
+	
+	<changeSet id="28.1" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_accounts_actype_at_at"
+			referencedTableName="RMTAccountTypes" baseColumnNames="AcType" baseTableName="Accounts"
+			referencedColumnNames="AcType" />
+	</changeSet>
+
 
 </databaseChangeLog>
