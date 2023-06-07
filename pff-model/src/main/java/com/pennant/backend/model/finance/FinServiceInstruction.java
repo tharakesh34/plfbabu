@@ -371,6 +371,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private boolean closureReceipt;
 	private boolean closureWithFullWaiver;
 	private String cancelRemarks;
+	private String bounceRemarks;
 
 	public FinServiceInstruction copyEntity() {
 		FinServiceInstruction fsi = new FinServiceInstruction();
@@ -1900,6 +1901,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 
 	public void setCancelRemarks(String cancelRemarks) {
 		this.cancelRemarks = cancelRemarks;
+	}
+
+	public String getBounceRemarks() {
+		return bounceRemarks;
+	}
+
+	public void setBounceRemarks(String bounceRemarks) {
+		this.bounceRemarks = bounceRemarks;
 	}
 
 }

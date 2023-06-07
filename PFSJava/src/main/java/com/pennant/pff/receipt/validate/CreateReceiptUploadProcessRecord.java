@@ -563,12 +563,18 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			return;
 		}
 
-		String favourNumber = rud.getTransactionRef();
+		String chequeNumber = rud.getChequeNumber();
 		String bankcode = rud.getBankCode();
 
 		if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
-			if (favourNumber != null && favourNumber.length() > 6) {
-				setError(rud, "[TRANCATIONNUMBER] with length more than 6");
+
+			if (StringUtils.isBlank(chequeNumber)) {
+				setError(rud, "[CHEQUENUMBER] is Mandatory for CHEQUE or DD");
+				return;
+			}
+
+			if (chequeNumber != null && chequeNumber.length() > 6) {
+				setError(rud, "[CHEQUENUMBER] with length more than 6");
 				return;
 			}
 

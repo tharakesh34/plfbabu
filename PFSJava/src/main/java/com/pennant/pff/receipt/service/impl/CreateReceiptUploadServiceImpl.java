@@ -158,7 +158,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setBounceDate(detail.getBounceDate());
 		rud.setBounceReason(detail.getBounceReason());
 		rud.setCancelReason(detail.getBounceReason());
-		rud.setRemarks(detail.getBounceRemarks());
+		// rud.setRemarks(detail.getBounceRemarks());
 
 		PartnerBank pb = partnerBankDAO.getPartnerBankByCode(detail.getPartnerBankCode(), "");
 		if (pb != null) {
@@ -168,6 +168,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		if (RepayConstants.PAYSTATUS_BOUNCE.equals(detail.getReceiptModeStatus())) {
 			String returncode = bounceReasonDAO.getReturnCode(detail.getBounceReason());
 			rud.setBounceReason(returncode);
+			rud.setBounceRemarks(detail.getBounceRemarks());
 		}
 
 		String receiptMode = detail.getReceiptMode();

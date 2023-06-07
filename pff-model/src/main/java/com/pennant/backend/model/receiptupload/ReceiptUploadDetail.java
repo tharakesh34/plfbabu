@@ -79,6 +79,7 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 	private Set<String> txnChequeKeys = new HashSet<>();
 	private Set<String> receiptValidList = new HashSet<>();
 	private String cancelRemarks;
+	private String bounceRemarks;
 
 	public ReceiptUploadDetail() {
 		super();
@@ -587,6 +588,14 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 
 	public void setCancelRemarks(String cancelRemarks) {
 		this.cancelRemarks = cancelRemarks;
+	}
+
+	public String getBounceRemarks() {
+		return bounceRemarks;
+	}
+
+	public void setBounceRemarks(String bounceRemarks) {
+		this.bounceRemarks = bounceRemarks;
 	}
 
 }

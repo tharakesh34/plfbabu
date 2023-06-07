@@ -5151,6 +5151,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			fsi.setCancelReason(rud.getCancelReason());
 			fsi.setBounceDate(rud.getBounceDate());
 			fsi.setBounceReason(rud.getBounceReason());
+			fsi.setBounceRemarks(rud.getBounceRemarks());
 			fsi.setReceiptId(rud.getReceiptId() == null ? 0 : rud.getReceiptId());
 			fsi.setNewReceipt(rud.isNewReceipt());
 		} else {

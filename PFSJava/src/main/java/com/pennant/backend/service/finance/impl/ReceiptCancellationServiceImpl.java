@@ -574,6 +574,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					ma.setReceiptID(rch.getReceiptID());
 					ma.setPaidAmount(BigDecimal.ZERO);
 					ma.setFinID(finID);
+					ma.setRemarks(fsi.getBounceRemarks());
 					ma.setVersion(1);
 					ma.setLastMntBy(rch.getLastMntBy());
 					ma.setLastMntOn(rch.getLastMntOn());
