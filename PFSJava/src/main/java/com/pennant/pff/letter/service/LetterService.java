@@ -352,8 +352,12 @@ public class LetterService {
 
 		letter.setGeneratedDate(letter.getBusinessDate());
 		letter.setGeneratedOn(new Timestamp(System.currentTimeMillis()));
-		letter.setApprovedBy(PFSBatchAdmin.loggedInUser.getUserId());
-		letter.setGeneratedBy(PFSBatchAdmin.loggedInUser.getUserId());
+
+		if (PFSBatchAdmin.loggedInUser != null) {
+			letter.setApprovedBy(PFSBatchAdmin.loggedInUser.getUserId());
+			letter.setGeneratedBy(PFSBatchAdmin.loggedInUser.getUserId());
+		}
+
 		letter.setApprovedOn(new Timestamp(System.currentTimeMillis()));
 
 		autoLetterGenerationDAO.update(letter);

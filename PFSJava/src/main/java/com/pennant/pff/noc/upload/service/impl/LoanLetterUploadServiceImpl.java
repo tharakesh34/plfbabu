@@ -120,6 +120,9 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 					.findFirst().orElse(null);
 			if (ltlm != null) {
 				detail.setModeOfTransfer(ltlm.getLetterMode());
+			} else {
+				setError(detail, LoanLetterUploadError.LOAN_LTR_14);
+				return;
 			}
 
 		}
@@ -170,34 +173,12 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 			return;
 		}
 
-		List<LoanLetterUpload> noc = loanLetterUploadDAO.getByReference(detail.getReference());
-
-		for (LoanLetterUpload llu : noc) {
-			if (isDuplicate(detail, llu)) {
-				setError(detail, LoanLetterUploadError.LOAN_LTR_11);
-				return;
-			}
-
-			LetterType ltrType = LetterType.getType(llu.getLetterType());
-			if (LetterType.CLOSURE == ltrType && LetterType.CANCELLATION == ltrType) {
-				setError(detail, LoanLetterUploadError.LOAN_LTR_13);
-				return;
-			}
-
-			if (LetterType.CANCELLATION == ltrType && LetterType.CLOSURE == ltrType) {
-				setError(detail, LoanLetterUploadError.LOAN_LTR_12);
-				return;
-			}
+		if (loanLetterUploadDAO.getByReference(detail.getReferenceID(), detail.getLetterType())) {
+			setError(detail, LoanLetterUploadError.LOAN_LTR_11);
+			return;
 		}
-		setSuccesStatus(detail);
-	}
 
-	private boolean isDuplicate(LoanLetterUpload detail, LoanLetterUpload noc) {
-		Date valueDate = DateUtil.getSysDate();
-		int date = DateUtil.formatToLongDate(valueDate).compareTo(DateUtil.formatToLongDate(noc.getApprovedOn()));
-		return noc.getReference().equals(detail.getReference()) && date == 1
-				&& noc.getLetterType().equals(detail.getLetterType())
-				&& noc.getWaiverCharges().equals(detail.getWaiverCharges());
+		setSuccesStatus(detail);
 	}
 
 	@Override
@@ -290,7 +271,6 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 						if (ltlp.getLetterType().equals(gl.getLetterType())) {
 							gl.setAgreementTemplate(ltlp.getAgreementCodeId());
 							gl.setEmailTemplate(ltlp.getEmailTemplateId());
-							gl.setModeofTransfer(ltlp.getLetterMode());
 						}
 					}
 
