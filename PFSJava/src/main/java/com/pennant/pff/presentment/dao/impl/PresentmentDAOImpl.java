@@ -1986,13 +1986,14 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public int deleteHeader(long batchID, Date Schdate) {
-		String sql = "Delete From PresentmentHeader Where BatchID = ? and ID not in (Select PresentmentId From PresentmentDetails Where SchDate = ?)";
+		String sql = "Delete From PresentmentHeader Where BatchID = ? and SchDate = ? and ID not in (Select PresentmentId From PresentmentDetails Where SchDate = ?)";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		return this.jdbcOperations.update(sql, ps -> {
 			ps.setLong(1, batchID);
 			ps.setDate(2, JdbcUtil.getDate(Schdate));
+			ps.setDate(3, JdbcUtil.getDate(Schdate));
 		});
 	}
 }
