@@ -78,6 +78,7 @@ import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 /**
  * ************************************************************<br>
@@ -791,10 +792,12 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			ma.setFinReference(finReference);
 			ma.setFinID(fm.getFinID());
 			ma.setValueDate(valueDate);
+			String feType = row.get(2);
+			FeeType feetype = uploadHeaderService.getApprovedFeeTypeByFeeCode(feeType);
 
 			BigDecimal eblAmount = manualAdviseService.getEligibleAmount(ma, fee);
 
-			if (advise.compareTo(eblAmount) > 0) {
+			if (!Allocation.ADHOC.equals(feetype.getPayableLinkTo()) && advise.compareTo(eblAmount) > 0) {
 				reason.append("Advise Amount should be less than or equal to Eligible Amount.");
 				error = true;
 			}

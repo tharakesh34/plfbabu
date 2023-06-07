@@ -489,6 +489,9 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 						uploadAdvise.setManualAdviseId(adviseID);
 					}
 				}
+				if (type.equals("")) {
+					uploadManualAdviseDAO.deleteByUploadId(uploadId, "_temp");
+				}
 				getUploadManualAdviseDAO().save(uploadAdvise, type);
 			}
 
