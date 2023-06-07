@@ -2071,7 +2071,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		fm.setRcdMaintainSts("");
 		rch.setLoanCancellationType(fm.getCancelType());
-		repaymentProcessUtil.doSaveReceipts(rch, scheduleData.getFinFeeDetailList(), true);
+
+		if (!LoanCancelationUtil.LOAN_CANCEL_REBOOK.equals(rch.getLoanCancellationType())) {
+			repaymentProcessUtil.doSaveReceipts(rch, scheduleData.getFinFeeDetailList(), true);
+		}
+
 		long receiptID = rch.getReceiptID();
 
 		// Overdue Details updation , if Value Date is Back dated.
