@@ -24,17 +24,14 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
-import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
+import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
-import com.pennanttech.external.collectionreceipt.model.ExtCollectionReceiptData;
-import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class FileExtractCollectionReqJob extends AbstractJob
-		implements InterfaceConstants, CollectionReceiptDataSplit, ErrorCodesConstants {
+public class FileExtractCollectionReqJob extends AbstractJob implements InterfaceConstants, ErrorCodesConstants {
 
 	private static final Logger logger = LogManager.getLogger(FileExtractCollectionReqJob.class);
 
@@ -46,6 +43,7 @@ public class FileExtractCollectionReqJob extends AbstractJob
 	private DataSource dataSource;
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
 	private ApplicationContext applicationContext;
+	private CollectionReceiptService collectionReceiptService;
 
 	/**
 	 *
@@ -98,149 +96,111 @@ public class FileExtractCollectionReqJob extends AbstractJob
 					extReceiptHeader.setExtraction(INPROCESS);
 					extCollectionReceiptDao.updateFileExtraction(extReceiptHeader);
 
-					String fileData = App.getResourcePath(extReceiptHeader.getRequestFileLocation()) + File.separator
-							+ extReceiptHeader.getRequestFileName();
-
+					String requestFileLocation = extReceiptHeader.getRequestFileLocation();
+					String requestFileName = extReceiptHeader.getRequestFileName();
+					String fileData = TextFileUtil.fileName(requestFileLocation, requestFileName);
 					File file = new File(fileData);
 					// Fetch list of record data from the file
-
 					sc = new Scanner(file);
 
-					boolean dataValid = true;
-
-					String errorCode = "";
-
 					List<CollReceiptDetail> extCollectionLineList = new ArrayList<CollReceiptDetail>();
-
 					int rowNumber = 0;
-					int dataRows = 0;
 					while (sc.hasNextLine()) {
-						rowNumber = rowNumber + 1;
 
 						String lineData = sc.nextLine();
+						rowNumber = rowNumber + 1;
+						if (extReceiptHeader.isValid()) {
 
-						if (rowNumber == 1 && !lineData.trim().startsWith(ROW1)) {
-							dataValid = false;
-							errorCode = F402;
-						}
+							if (rowNumber == 1) {
 
-						if (dataValid && rowNumber == 1 && lineData.trim().startsWith(ROW1)) {
+								if (!lineData.trim().startsWith(ROW1)) {
+									extReceiptHeader.setErrorCode(F402);
+									continue;
+								}
 
-							if (!validateRow1(lineData, "Filename")) {
-								dataValid = false;
-								errorCode = F402;
+								if (!validateRow1(lineData, "Filename")) {
+									extReceiptHeader.setErrorCode(F402);
+									continue;
+								}
+
 							}
 
-						}
+							if (rowNumber == 2) {
 
-						if (dataValid && rowNumber == 2 && !lineData.trim().startsWith(ROW2)) {
-							dataValid = false;
-							errorCode = F403;
+								if (!lineData.trim().startsWith(ROW2)) {
+									extReceiptHeader.setErrorCode(F403);
+									continue;
+								}
 
-						}
+								if (!validateRow2(lineData, requestFileName)) {
+									extReceiptHeader.setErrorCode(F403);
+									continue;
+								}
 
-						if (dataValid && rowNumber == 2 && lineData.trim().startsWith(ROW2)) {
-
-							if (!validateRow2(lineData, extReceiptHeader.getRequestFileName())) {
-								dataValid = false;
-								errorCode = F403;
 							}
 
-						}
+							if (rowNumber == 3 && !lineData.trim().startsWith(HEADER)) {
+								extReceiptHeader.setErrorCode(F404);
+								continue;
+							}
 
-						if (dataValid && rowNumber == 3 && !lineData.trim().startsWith(HEADER)) {
-							dataValid = false;
-							errorCode = F404;
-
-						}
-
-						if (rowNumber > 3) {
-							CollReceiptDetail crd = new CollReceiptDetail();
-							crd.setHeaderId(extReceiptHeader.getId());
-							crd.setRecordData(lineData);
-							crd.setReceiptId(0);
-							extCollectionLineList.add(crd);
-							dataRows = dataRows + 1;
 						} else {
-							// set header status as error
-							extReceiptHeader.setErrorCode(errorCode);
-							extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(errorCode));
+							if (rowNumber > 3) {
+								CollReceiptDetail crd = new CollReceiptDetail();
+								crd.setHeaderId(extReceiptHeader.getId());
+								crd.setRecordData(lineData);
+								crd.setReceiptId(0);
+								extCollectionLineList.add(crd);
+							}
+
 						}
+
 					}
 
-					boolean isLastLineRemoved = false;
+					String sharedTotChecksum = extCollectionLineList.get(extCollectionLineList.size() - 1)
+							.getRecordData();
+					String[] row1Str = sharedTotChecksum.split("\\|", -1);
+					if (row1Str != null && row1Str.length > 2) {
+						sharedTotChecksum = row1Str[1];
+					}
 
-					// Start the transaction
-					if (dataValid && extCollectionLineList.size() > 0) {
+					int gTotalChk = 0;
+					for (CollReceiptDetail lineData : extCollectionLineList) {
 
-						// total check sum
-						int gTotalChk = 0;
-						String mainChksum = extCollectionLineList.get(extCollectionLineList.size() - 1).getRecordData();
-						String[] row1Str = mainChksum.split("\\|", -1);
-						if (row1Str != null && row1Str.length > 2) {
-							mainChksum = row1Str[1];
-						}
+						String[] dataArray = lineData.getRecordData().toString().split("\\|");
+						String Checksum = TextFileUtil.getItem(dataArray, 32);
+						long RowNum = TextFileUtil.getLongItem(dataArray, 31);
 
-						extCollectionLineList.remove(extCollectionLineList.size() - 1);
-						isLastLineRemoved = true;
+						String qualifiedChk = collectionReceiptService.calculateCheckSum(dataArray, RowNum);
 
-						for (CollReceiptDetail lineData : extCollectionLineList) {
-
-							ExtCollectionReceiptData collectionData = splitAndSetData(lineData.getRecordData());
-							int agreementCHK = generateChecksum(String.valueOf(collectionData.getAgreementNumber()));
-							int grTotalCHK = generateChecksum(String.valueOf(collectionData.getGrandTotal()));
-							int chqDateCHK = generateChecksum(String.valueOf(collectionData.getChequeDate()));
-							int receiptDateCHK = generateChecksum(String.valueOf(collectionData.getReceiptDate()));
-							int chqTypeCHK = generateChecksum(String.valueOf(collectionData.getReceiptType()));
-
-							int totalChk = agreementCHK + grTotalCHK + chqDateCHK + receiptDateCHK + chqTypeCHK;
-
-							String qualifiedChk = collectionData.getRowNum() + "" + totalChk;
-
-							gTotalChk = gTotalChk + Integer.parseInt(qualifiedChk);
-
-							if (!qualifiedChk.equals(collectionData.getChecksum())) {
-								dataValid = false;
-								errorCode = F400;
-								break;
-							}
-						}
-
-						if (dataValid && !mainChksum.equals((dataRows - 1) + "" + gTotalChk)) {
-							dataValid = false;
-						}
-
-						// Validate checksum. Checksum is invalid, so updating error to all the beans.
-						if (dataValid) {
-							saveDetails(extCollectionLineList, extReceiptHeader.getId());
-							extReceiptHeader.setStatus(COMPLETED);
-							extReceiptHeader.setWriteResponse(DISABLED);
-							extReceiptHeader.setExtraction(COMPLETED);
-						} else {
-							// set header status as error
+						if (!qualifiedChk.equals(Checksum)) {
 							extReceiptHeader.setErrorCode(F400);
-							extReceiptHeader.setExtraction(COMPLETED);
-							extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F400));
 						}
+
+						gTotalChk = gTotalChk + Integer.parseInt(qualifiedChk);
 
 					}
 
-					if (!dataValid) {
-						if (!isLastLineRemoved) {
-							extCollectionLineList.remove(extCollectionLineList.size() - 1);
-						}
-						saveDetails(extCollectionLineList, extReceiptHeader.getId());
-						extReceiptHeader.setStatus(FAILED);
+					if (!sharedTotChecksum.equals((extCollectionLineList.size() - 1) + "" + gTotalChk)) {
+						extReceiptHeader.setErrorCode(F400);
+					}
+
+					extCollectionLineList.remove(extCollectionLineList.size() - 1);
+
+					extCollectionReceiptDao.saveFileExtractionList(extCollectionLineList, extReceiptHeader.getId());
+					extReceiptHeader.setExtraction(COMPLETED);
+
+					if (!extReceiptHeader.isValid()) {
 						extReceiptHeader.setWriteResponse(ENABLED);
-						extReceiptHeader.setExtraction(COMPLETED);
+						extReceiptHeader.setStatus(FAILED);
+					} else {
+						extReceiptHeader.setStatus(COMPLETED);
 					}
-
 					extCollectionReceiptDao.updateFileExtraction(extReceiptHeader);
 
 				} catch (Exception e) {
 					logger.debug(Literal.EXCEPTION, e);
 					extReceiptHeader.setStatus(FAILED);
-					extReceiptHeader.setWriteResponse(DISABLED);
 					extReceiptHeader.setExtraction(UNPROCESSED);
 					extReceiptHeader.setErrorCode(F702);
 					extReceiptHeader.setErrorMessage(e.getMessage());
@@ -263,12 +223,6 @@ public class FileExtractCollectionReqJob extends AbstractJob
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void saveDetails(List<CollReceiptDetail> detailList, long id) {
-		logger.debug(Literal.ENTERING);
-		extCollectionReceiptDao.saveFileExtractionList(detailList, id);
-		logger.debug(Literal.LEAVING);
-	}
-
 	private boolean validateRow2(String lineData, String fileName) {
 		logger.debug(Literal.ENTERING);
 		String[] row1Str = lineData.split("\\|", -1);
@@ -279,16 +233,6 @@ public class FileExtractCollectionReqJob extends AbstractJob
 		}
 		logger.debug(Literal.LEAVING);
 		return false;
-	}
-
-	private int generateChecksum(String data) {
-		int rcdCS = 0;
-		for (int i = 0; i < data.length(); i++) {
-			char digit = data.charAt(i);
-			int asciiCode = (int) digit;
-			rcdCS = rcdCS + asciiCode;
-		}
-		return rcdCS;
 	}
 
 	private boolean validateRow1(String lineData, String fileName) {

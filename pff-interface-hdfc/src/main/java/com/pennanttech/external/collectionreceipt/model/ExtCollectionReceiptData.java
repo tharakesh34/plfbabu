@@ -1,6 +1,7 @@
 package com.pennanttech.external.collectionreceipt.model;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class ExtCollectionReceiptData {
 	private long agreementNumber;
@@ -35,6 +36,10 @@ public class ExtCollectionReceiptData {
 	private String redepositionflg;
 	private long rowNum;
 	private String checksum;
+
+	private Date uploadDate;
+	private Long receiptID;
+	private String errorCode;
 
 	public long getAgreementNumber() {
 		return agreementNumber;
@@ -290,6 +295,30 @@ public class ExtCollectionReceiptData {
 
 	public void setChecksum(String checksum) {
 		this.checksum = checksum;
+	}
+
+	public Date getUploadDate() {
+		return uploadDate;
+	}
+
+	public void setUploadDate(Date uploadDate) {
+		this.uploadDate = uploadDate;
+	}
+
+	public Long getReceiptID() {
+		return receiptID;
+	}
+
+	public void setReceiptID(Long receiptID) {
+		this.receiptID = receiptID;
+	}
+
+	public String getErrorCode() {
+		return errorCode;
+	}
+
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
 	}
 
 }

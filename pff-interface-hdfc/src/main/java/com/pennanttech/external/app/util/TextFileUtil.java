@@ -11,6 +11,7 @@ import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class TextFileUtil {
@@ -105,4 +106,9 @@ public class TextFileUtil {
 		}
 		return 0L;
 	}
+
+	public static String fileName(String path, String name) {
+		return App.getResourcePath(path) + File.separator + name;
+	}
+
 }

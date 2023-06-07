@@ -113,4 +113,12 @@ public class CollReceiptHeader {
 		this.errorMessage = errorMessage;
 	}
 
+	public boolean isValid() {
+		if (this.errorCode == null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 }
