@@ -2515,7 +2515,18 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					soaTranReport.setEvent(rHEventExcess + status + allocMsg);
 					soaTranReport.setTransactionDate(receiptDate);
 					soaTranReport.setCreditAmount(rd.getAmount());
-					soaTranReport.setDebitAmount(BigDecimal.ZERO);
+
+					if ("EXCESS".equals(rpaymentType) || "PAYABLE".equals(rpaymentType)) {
+						if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())) {
+							soaTranReport.setDebitAmount(rd.getAmount());
+							soaTranReport.setCreditAmount(rd.getAmount());
+						} else {
+							soaTranReport.setDebitAmount(rd.getAmount());
+							soaTranReport.setCreditAmount(BigDecimal.ZERO);
+						}
+					} else {
+						soaTranReport.setDebitAmount(BigDecimal.ZERO);
+					}
 
 					soaTranReport.setPriority(10);
 					if (!RepayConstants.PAYSTATUS_CANCEL.equals(receiptModeStatus)) {
