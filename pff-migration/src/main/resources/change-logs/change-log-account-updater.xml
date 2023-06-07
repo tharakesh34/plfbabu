@@ -428,6 +428,14 @@
 			<column name="TransOrder" type="int" />
 		</createIndex>
 	</changeSet>
+	
+	<changeSet id="18.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update Account_updater set fromID = (select Max(ID) from Postings), ToId = (select Max(ID) from Postings);
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="19" author="murthy.y">
 		<dropTable tableName="Postings_Stage" />
@@ -453,45 +461,107 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="20.2" author="murthy.y">
-		<sql>
-			<![CDATA[
-				update Account_updater set fromID = (select Min(ID) from Postings), ToId = (select Max(ID) from Postings);
-			]]>
-		</sql>
+	<changeSet id="25" author="murthy.y">
+		<dropTable tableName="Accounts_History_Details" />
 	</changeSet>
 
-	<changeSet id="21" author="murthy.y">
-		<dropForeignKeyConstraint baseTableName="Accounts_History"
-			constraintName="fk_accounts_history_accountId" />
+	<changeSet id="25.1" author="murthy.y">
+		<createTable tableName="Accounts_History_Details">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_accounts_history_dtl_id" />
+			</column>
+			<column name="AccountId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="EntityCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PostBranch" type="varchar(12)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BranchProvince" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PostDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="TodayDebits" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TodayCredits" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TodayNet" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AcBalance" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OpeningBal" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
 	</changeSet>
 
-	<changeSet id="21.1" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_accounts_history_accountId"
-			referencedTableName="Accounts" baseColumnNames="AccountId" baseTableName="Accounts_History"
-			referencedColumnNames="Id" />
+	<changeSet id="25.2" author="murthy.y">
+		<addUniqueConstraint tableName="Accounts_History_Details"
+			columnNames="AccountId, FinReference, EntityCode, PostBranch, BranchProvince, PostDate"
+			constraintName="uk_ahd_achid_pd_ec_pb_bp" />
 	</changeSet>
 
-	<changeSet id="22" author="murthy.y">
-		<dropForeignKeyConstraint baseTableName="Accounts_History_Details"
-			constraintName="fk_accounts_history_dtls_aid" />
-	</changeSet>
-
-	<changeSet id="22.1" author="murthy.y">
+	<changeSet id="25.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_accounts_history_dtls_aid"
 			referencedTableName="Accounts" baseColumnNames="AccountId" baseTableName="Accounts_History_Details"
 			referencedColumnNames="Id" />
 	</changeSet>
 
-	<changeSet id="23" author="murthy.y">
-		<dropForeignKeyConstraint baseTableName="Accounts_By_FinReferences"
-			constraintName="fk_accounts_by_ref_accountid" />
+	<changeSet id="25.4" author="murthy.y" dbms="oracle postgresql">
+		<addDefaultValue columnName="TodayDebits" tableName="Accounts_History_Details" defaultValue="0" />
+		<addDefaultValue columnName="TodayCredits" tableName="Accounts_History_Details" defaultValue="0" />
+		<addDefaultValue columnName="TodayNet" tableName="Accounts_History_Details" defaultValue="0" />
+		<addDefaultValue columnName="AcBalance" tableName="Accounts_History_Details" defaultValue="0" />
+		<addDefaultValue columnName="OpeningBal" tableName="Accounts_History_Details" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="23.1" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_accounts_by_ref_accountid"
-			referencedTableName="Accounts" baseColumnNames="AccountId" baseTableName="Accounts_By_FinReferences"
-			referencedColumnNames="Id" />
+	<changeSet id="25.4" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ACCOUNTS_HISTORY_DETAILS ADD CONSTRAINT DF_ACCOUNTS_HISTORY_DETAILS_TODAYDEBITS DEFAULT 0 FOR TODAYDEBITS;
+				ALTER TABLE ACCOUNTS_HISTORY_DETAILS ADD CONSTRAINT DF_ACCOUNTS_HISTORY_DETAILS_TODAYCREDITS DEFAULT 0 FOR TODAYCREDITS;
+				ALTER TABLE ACCOUNTS_HISTORY_DETAILS ADD CONSTRAINT DF_ACCOUNTS_HISTORY_DETAILS_TODAYNET DEFAULT 0 FOR TODAYNET;
+				ALTER TABLE ACCOUNTS_HISTORY_DETAILS ADD CONSTRAINT DF_ACCOUNTS_HISTORY_DETAILS_ACBALANCE DEFAULT 0 FOR ACBALANCE;
+				ALTER TABLE ACCOUNTS_HISTORY_DETAILS ADD CONSTRAINT DF_ACCOUNTS_HISTORY_DETAILS_OPENINGBAL DEFAULT 0 FOR OPENINGBAL;
+			]]>
+		</sql>
 	</changeSet>
+	
+	<changeSet id="25.6" author="murthy.y">
+		<createIndex tableName="Accounts_History_Details" indexName="idx_ahd_AccountId">
+			<column name="AccountId" type="bigint"/>
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="25.7" author="murthy.y">
+		<createIndex tableName="Accounts_History_Details" indexName="idx_ahd_fr_pbranch">
+			<column name="FinReference" type="varchar(20)"/>
+			<column name="PostBranch" type="varchar(12)"/>
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="26" author="murthy.y">
+		<dropColumn tableName="Accounts" columnName="AcCcy"/>
+		<dropColumn tableName="Accounts" columnName="AcType"/>
+		<dropColumn tableName="Accounts" columnName="AcBranch"/>
+	</changeSet>
+	
+	<changeSet id="26.1" author="murthy.y">
+		<dropColumn tableName="Accounts_Work" columnName="AcCcy"/>
+		<dropColumn tableName="Accounts_Work" columnName="AcType"/>
+		<dropColumn tableName="Accounts_Work" columnName="AcBranch"/>
+	</changeSet>
+	
 
 </databaseChangeLog>

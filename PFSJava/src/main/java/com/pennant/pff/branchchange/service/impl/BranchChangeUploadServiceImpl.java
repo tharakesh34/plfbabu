@@ -1,5 +1,6 @@
 package com.pennant.pff.branchchange.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,12 +21,9 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.branchchange.upload.BranchChangeUpload;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.pff.branchchange.dao.BranchChangeUploadDAO;
 import com.pennant.pff.branchchange.dao.BranchMigrationDAO;
-import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
@@ -228,56 +226,95 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 	}
 
 	private void doBranchChange(Long finID, String oldBranch, String newBranch, Date appDate) {
-		String eventCode = AccountingEvent.BRNCHG;
-		int moduleID = FinanceConstants.MODULEID_FINTYPE;
-
 		FinanceMain fm = financeMainDAO.getFinMainsForEODByFinRef(finID, true);
 
-		Long accountingID = AccountingEngine.getAccountSetID(fm.getFinType(), eventCode, moduleID);
+		String finReference = fm.getFinReference();
+		List<Accounts> accountsList = branchMigrationDAO.getAccounts(finReference, oldBranch);
 
-		if (accountingID == null || accountingID <= 0) {
-			logger.debug("Accounting Set not found with {} Event and {} Loan Type", eventCode, fm.getFinType());
-			return;
-		}
+		long linkedTranId = postingsPreparationUtil.getLinkedTranID();
 
-		AEEvent aeEvent = new AEEvent();
-		AEAmountCodes amountCode = new AEAmountCodes();
-		aeEvent.setAeAmountCodes(amountCode);
+		List<ReturnDataSet> list = new ArrayList<>();
 
-		aeEvent.setFinReference(fm.getFinReference());
-		aeEvent.setAccountingEvent(eventCode);
-		aeEvent.setPostDate(appDate);
-		aeEvent.setValueDate(appDate);
-
-		aeEvent.setBranch(newBranch);
-		aeEvent.setCcy(fm.getFinCcy());
-		aeEvent.setFinType(fm.getFinType());
-		aeEvent.setCustID(fm.getCustID());
-
-		amountCode.setFinType(aeEvent.getFinType());
-
-		Map<String, Object> dataMap = amountCode.getDeclaredFieldValues();
-
-		List<Accounts> accountsList = branchMigrationDAO.getAccounts(fm.getFinReference(), oldBranch);
-
+		int transOrder = 1;
+		int transOrderID = 10;
+		String tranCode = "";
+		String revTranCode = "";
+		String drOrCr = "";
 		for (Accounts account : accountsList) {
-			if (AccountingEvent.LIABILITY.equals(account.getGroupCode())) {
-				dataMap.put("L_" + account.getAcType() + "_old_branch".toUpperCase(), account.getAcBalance());
-				dataMap.put("L_" + account.getAcType() + "_new_branch".toUpperCase(), account.getAcBalance());
+			ReturnDataSet oldRds = new ReturnDataSet();
+
+			transOrderID = transOrderID + 10;
+
+			oldRds.setEntityCode(account.getEntityCode());
+			oldRds.setAccount(account.getAcNumber());
+			oldRds.setAccountType(account.getAcType());
+			oldRds.setTranDesc(account.getAcTypeDesc());
+			oldRds.setAcCcy(account.getAcCcy());
+
+			oldRds.setLinkedTranId(linkedTranId);
+			oldRds.setFinID(finID);
+			oldRds.setFinReference(finReference);
+			oldRds.setFinEvent(AccountingEvent.BRNCHG);
+			oldRds.setUserBranch(AccountingEvent.BRNCHG);
+			oldRds.setPostDate(appDate);
+			oldRds.setValueDate(appDate);
+			oldRds.setAmountType("D");
+			oldRds.setPostStatus("S");
+			oldRds.setPostToSys("E");
+			oldRds.setDerivedTranOrder(0);
+			oldRds.setExchangeRate(BigDecimal.ZERO);
+			oldRds.setShadowPosting(false);
+
+			BigDecimal acBalance = account.getAcBalance();
+
+			if (acBalance.compareTo(BigDecimal.ZERO) < 0) {
+				drOrCr = "C";
+				tranCode = "510";
+				revTranCode = "010";
+				acBalance = acBalance.negate();
+			} else {
+				drOrCr = "D";
+				tranCode = "010";
+				revTranCode = "510";
 			}
 
-			if ("ASSET".equals(account.getGroupCode())) {
-				dataMap.put("A_" + account.getAcType() + "_old_branch".toUpperCase(), account.getAcBalance());
-				dataMap.put("A_" + account.getAcType() + "_new_branch".toUpperCase(), account.getAcBalance());
+			oldRds.setPostAmount(acBalance);
+			oldRds.setPostAmountLcCcy(acBalance);
+
+			oldRds.setDrOrCr(drOrCr);
+			oldRds.setTranCode(tranCode);
+			oldRds.setRevTranCode(revTranCode);
+			oldRds.setPostBranch(oldBranch);
+			oldRds.setPostref(oldBranch + "-" + account.getAcType() + "-" + account.getAcCcy());
+			oldRds.setTranOrderId(String.valueOf(transOrderID));
+			oldRds.setTransOrder(transOrder++);
+			oldRds.setPostingId(
+					finReference.concat("/").concat(AccountingEvent.BRNCHG).concat(oldRds.getTranOrderId()));
+
+			list.add(oldRds);
+
+			ReturnDataSet newRds = ObjectUtil.clone(oldRds);
+			transOrderID = transOrderID + 10;
+
+			if (drOrCr.equals("C")) {
+				drOrCr = "D";
+				tranCode = "010";
+				revTranCode = "510";
 			}
+
+			newRds.setDrOrCr(drOrCr);
+			newRds.setTranCode(tranCode);
+			newRds.setRevTranCode(revTranCode);
+			newRds.setPostBranch(newBranch);
+			newRds.setPostref(newBranch + "-" + account.getAcType() + "-" + account.getAcCcy());
+			newRds.setTranOrderId(String.valueOf(transOrderID++));
+			newRds.setTransOrder(transOrder++);
+			newRds.setPostingId(
+					finReference.concat("/").concat(AccountingEvent.BRNCHG).concat(newRds.getTranOrderId()));
+
 		}
 
-		aeEvent.setDataMap(dataMap);
-		aeEvent.getAcSetIDList().add(accountingID);
-		aeEvent.setCustAppDate(appDate);
-
-		postingsPreparationUtil.postAccountingEOD(aeEvent);
-		postingsPreparationUtil.saveAccountingEOD(aeEvent.getReturnDataSet());
+		postingsPreparationUtil.saveAccountingEOD(list);
 	}
 
 	@Override
