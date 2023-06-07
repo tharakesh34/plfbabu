@@ -194,7 +194,7 @@ public class HoldMarkingHeaderDAOImpl extends SequenceDao<HoldMarkingHeader> imp
 			hmh.setBalance(rs.getBigDecimal(("Balance")));
 
 			return hmh;
-		}, finId, PennantConstants.REMOVE_HOLD_MARKING, PennantConstants.AUTO_ASSIGNMENT, 0);
+		}, finId, PennantConstants.HOLD_MARKING, PennantConstants.AUTO_ASSIGNMENT, 0);
 	}
 
 	@Override

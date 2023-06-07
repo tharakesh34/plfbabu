@@ -128,9 +128,15 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 
 		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 		BigDecimal releaseAmount = BigDecimal.ZERO;
+		List<Long> holdIDList = new ArrayList<>();
 
 		@Override
 		public void render(Listitem item, HoldMarkingDetail hd, int index) throws Exception {
+
+			if (holdIDList == null || !holdIDList.contains(hd.getHoldID())) {
+				holdIDList.add(hd.getHoldID());
+				releaseAmount = BigDecimal.ZERO;
+			}
 
 			item.appendChild(new Listcell(String.valueOf(hd.getHoldID())));
 			item.appendChild(new Listcell(headerType ? hd.getFinReference() : hd.getAccountNumber()));
