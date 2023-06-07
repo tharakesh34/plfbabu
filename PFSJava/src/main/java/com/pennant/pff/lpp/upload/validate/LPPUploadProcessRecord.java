@@ -246,8 +246,19 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 			maxWaiver = BigDecimal.ZERO;
 		}
 
-		if (amountOrPercent == null) {
-			amountOrPercent = BigDecimal.ZERO;
+		String penaltyType = detail.getPenaltyType();
+
+		PenaltyTypes lppType = PenaltyTypes.getTypes(penaltyType);
+
+		switch (lppType) {
+		case FLAT, FLAT_ON_PD_MTH:
+			if (amountOrPercent.compareTo(BigDecimal.ZERO) == 0) {
+				setError(detail, LPPUploadError.LPP_31);
+				return;
+			}
+			break;
+		default:
+			break;
 		}
 
 		if (PennantConstants.NO.equals(detail.getApplyOverDue())
@@ -310,6 +321,18 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 		boolean allowWaiver = PennantConstants.YES.equals(detail.getAllowWaiver());
 		boolean includeGraceDays = PennantConstants.YES.equals(detail.getIncludeGraceDays());
 		BigDecimal maxWaiver = detail.getMaxWaiver();
+
+		int graceDays = detail.getGraceDays();
+
+		if (includeGraceDays && graceDays <= 0) {
+			setError(detail, LPPUploadError.LPP_30);
+			return;
+		}
+
+		if (!includeGraceDays && graceDays > 0) {
+			setError(detail, LPPUploadError.LPP_16);
+			return;
+		}
 
 		if (!(PennantConstants.NO.equals(detail.getAllowWaiver()) || allowWaiver)) {
 			setError(detail, LPPUploadError.LPP_20);

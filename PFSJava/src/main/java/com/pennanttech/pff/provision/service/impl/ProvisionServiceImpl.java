@@ -37,6 +37,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.npa.dao.AssetClassSetupDAO;
+import com.pennanttech.pff.npa.model.AssetClassSetupDetail;
 import com.pennanttech.pff.provision.ProvisionBook;
 import com.pennanttech.pff.provision.dao.ProvisionDAO;
 import com.pennanttech.pff.provision.model.Provision;
@@ -279,10 +280,19 @@ public class ProvisionServiceImpl implements ProvisionService {
 	}
 
 	@Override
-	public boolean isAssetClassCodeValid(long finID, String assetClassCode) {
-		List<String> assetClassCodes = assetClassSetupDAO.getAssetClassSetCodes(finID);
+	public boolean isAssetClassCodeValid(long finID, String assetClassCode, String assestSubClassCode) {
+		List<AssetClassSetupDetail> assetClassCodes = assetClassSetupDAO.getAssetClassSetCodes(finID);
+		
+		List<String> assetClassSubCode = new ArrayList<>();
+		List<String> assetCode = new ArrayList<>();
 		boolean isclassCodeExists = false;
-		if (!assetClassCodes.contains(assetClassCode)) {
+		
+		for (AssetClassSetupDetail assetClassSetupDetail : assetClassCodes) {
+			assetCode.add(assetClassSetupDetail.getClassCode());
+			assetClassSubCode.add(assetClassSetupDetail.getSubClassCode());
+		}
+		
+		if (!assetCode.contains(assetClassCode) || (!assetClassSubCode.contains(assestSubClassCode))) {
 			isclassCodeExists = true;
 		}
 		return isclassCodeExists;

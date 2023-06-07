@@ -291,8 +291,8 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 
 		}
 
-		boolean isAssetClassCodeExists = provisionService.isAssetClassCodeValid(detail.getReferenceID(),
-				assetClassCode);
+		boolean isAssetClassCodeExists = provisionService.isAssetClassCodeValid(detail.getReferenceID(), assetClassCode,
+				subClassCode);
 		if (isAssetClassCodeExists) {
 			setError(detail, ProvisionUploadError.PROVSN_08);
 			return;
