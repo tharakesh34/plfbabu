@@ -28,9 +28,13 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class EODExtractionsService implements EODExtractionsHook, InterfaceConstants, ExtIntfConfigConstants {
 
 	private static final Logger logger = LogManager.getLogger(EODExtractionsService.class);
+
 	private FileInterfaceConfig finconGLConfig;
+
 	private ExtExtractionDao extExtractionDao;
+
 	private ExtUcicDataExtractor extUcicExtractData;
+
 	private ExtUcicRequestFile extUcicRequestFile;
 
 	@Override
