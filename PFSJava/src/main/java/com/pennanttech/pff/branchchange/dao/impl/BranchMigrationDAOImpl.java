@@ -139,13 +139,13 @@ public class BranchMigrationDAOImpl extends SequenceDao<BranchChangeUpload> impl
 	@Override
 	public List<Accounts> getAccounts(String finReference, String oldBranch) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ahd.EntityCode, ahd.AcType, ahd.Acbalance, ahd.AcCcy, acct.AcTypeDesc");
+		sql.append(" ahd.EntityCode, acc.AcNumber, acc.AcType, ahd.Acbalance, acc.AcCcy, acct.AcTypeDesc");
 		sql.append(" From Accounts acc");
 		sql.append(" Inner Join Accounts_History_Details ahd on ahd.AccountID = acc.ID");
 		sql.append(" Inner Join RMTAccountTypes acct on acct.AcType = acc.AcType");
 		sql.append(" Inner Join AccountTypeGroup atg on atg.GroupId = acct.AcTypeGrpId");
 		sql.append(" Where atg.GroupCode in (?, ?)");
-		sql.append(" and ahd.FinReference = ? and acc.AcBranch = ?");
+		sql.append(" and ahd.FinReference = ? and ahd.PostBranch = ? ");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -153,13 +153,13 @@ public class BranchMigrationDAOImpl extends SequenceDao<BranchChangeUpload> impl
 
 			ps.setString(1, "ASSET");
 			ps.setString(2, "LIABILITY");
-			ps.setString(2, finReference);
-			ps.setString(2, oldBranch);
-
+			ps.setString(3, finReference);
+			ps.setString(4, oldBranch);
 		}, (rs, rowNum) -> {
 			Accounts acc = new Accounts();
 
 			acc.setEntityCode(rs.getString("EntityCode"));
+			acc.setAcNumber(rs.getString("AcNumber"));
 			acc.setAcType(rs.getString("AcType"));
 			acc.setAcBalance(rs.getBigDecimal("Acbalance"));
 			acc.setAcTypeDesc(rs.getString("AcTypeDesc"));

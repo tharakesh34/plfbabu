@@ -236,11 +236,17 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 		List<ReturnDataSet> list = new ArrayList<>();
 
 		int transOrder = 1;
-		int transOrderID = 10;
+		int transOrderID = 0;
 		String tranCode = "";
 		String revTranCode = "";
 		String drOrCr = "";
 		for (Accounts account : accountsList) {
+			BigDecimal acBalance = account.getAcBalance();
+
+			if (acBalance.compareTo(BigDecimal.ZERO) == 0) {
+				continue;
+			}
+
 			ReturnDataSet oldRds = new ReturnDataSet();
 
 			transOrderID = transOrderID + 10;
@@ -257,15 +263,15 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 			oldRds.setFinEvent(AccountingEvent.BRNCHG);
 			oldRds.setUserBranch(AccountingEvent.BRNCHG);
 			oldRds.setPostDate(appDate);
+			oldRds.setAppDate(appDate);
 			oldRds.setValueDate(appDate);
+			oldRds.setAppValueDate(appDate);
 			oldRds.setAmountType("D");
 			oldRds.setPostStatus("S");
 			oldRds.setPostToSys("E");
 			oldRds.setDerivedTranOrder(0);
 			oldRds.setExchangeRate(BigDecimal.ZERO);
 			oldRds.setShadowPosting(false);
-
-			BigDecimal acBalance = account.getAcBalance();
 
 			if (acBalance.compareTo(BigDecimal.ZERO) < 0) {
 				drOrCr = "C";
@@ -288,10 +294,8 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 			oldRds.setPostref(oldBranch + "-" + account.getAcType() + "-" + account.getAcCcy());
 			oldRds.setTranOrderId(String.valueOf(transOrderID));
 			oldRds.setTransOrder(transOrder++);
-			oldRds.setPostingId(
-					finReference.concat("/").concat(AccountingEvent.BRNCHG).concat(oldRds.getTranOrderId()));
-
-			list.add(oldRds);
+			oldRds.setPostingId(finReference.concat("/").concat(AccountingEvent.BRNCHG).concat("/")
+					.concat(oldRds.getTranOrderId()));
 
 			ReturnDataSet newRds = ObjectUtil.clone(oldRds);
 			transOrderID = transOrderID + 10;
@@ -309,8 +313,16 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 			newRds.setPostref(newBranch + "-" + account.getAcType() + "-" + account.getAcCcy());
 			newRds.setTranOrderId(String.valueOf(transOrderID++));
 			newRds.setTransOrder(transOrder++);
-			newRds.setPostingId(
-					finReference.concat("/").concat(AccountingEvent.BRNCHG).concat(newRds.getTranOrderId()));
+			newRds.setPostingId(finReference.concat("/").concat(AccountingEvent.BRNCHG).concat("/")
+					.concat(newRds.getTranOrderId()));
+
+			if (oldRds.getDrOrCr().equals("D")) {
+				list.add(oldRds);
+				list.add(newRds);
+			} else if (newRds.getDrOrCr().equals("D")) {
+				list.add(newRds);
+				list.add(oldRds);
+			}
 
 		}
 

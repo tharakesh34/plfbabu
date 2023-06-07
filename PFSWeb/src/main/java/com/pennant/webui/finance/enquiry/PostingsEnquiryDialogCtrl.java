@@ -149,12 +149,6 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				isModelWindow = (Boolean) arguments.get("isModelWindow");
 			}
 
-			/*
-			 * if (arguments.containsKey("fromRejectFinance")) { fromRejectFinance = (Boolean)
-			 * arguments.get("fromRejectFinance"); if (fromRejectFinance) { tableType = "_RView";
-			 * this.toolbar_printButton.setVisible(false); this.showAccrual.setDisabled(true); } }
-			 */
-
 			if (fromRejectFinance && arguments.containsKey("reinstateFinance")) {
 				ReinstateFinance reinstateFinance = (ReinstateFinance) arguments.get("reinstateFinance");
 				if (reinstateFinance != null) {
@@ -184,7 +178,6 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		logger.info(Literal.LEAVING);
 
 		try {
-			doCheckEnquiry();
 			// Fill Posting Details
 			this.showAccrual.setChecked(true);
 			doFillPostings();
@@ -215,29 +208,17 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		logger.debug("Leaving");
 	}
 
-	private void doCheckEnquiry() {
-		if (this.enquiry != null) {
-			// this.showAccrual.setDisabled(true);
-			// this.showZeroCals.setDisabled(true);
-		}
-
-	}
-
 	/** ============================================================ */
 	/** Check Events For Postings */
 	/** ============================================================ */
 	public void onCheck$showAccrual(Event event) {
-		logger.debug("Entering");
 		this.listBoxFinPostings.getItems().clear();
 		doFillPostings();
-		logger.debug("Leaving");
 	}
 
 	public void onCheck$showZeroCals(Event event) {
-		logger.debug("Entering");
 		this.listBoxFinPostings.getItems().clear();
 		doFillPostings();
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -254,6 +235,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		events.append(", JVPOST,  D2C,  CHQ2B,  ASSIGN, INSADJ, INSPAY, CANINS, LPPAMZ,  WAIVER,  INSPAY");
 		events.append(", ADVDUE,  WRITEBK,  OEMSBV,  MIGR,  PROVSN,  PROVCHG, PRVSN_MN,  FEREFUND,  PRSNT");
 		events.append(", PRSNTRSP,  PARTCAN,  MANSUB, RESTRUCT, NPACHNG, PROVSN, CRSLANFR, CRSLANTO, EXTRF, REVWRITE");
+		events.append(", BRNCHG");
 		if (this.showAccrual.isChecked()) {
 			events.append(", AMZ, AMZSUSP, AMZ_REV, INDAS, EXPENSE");
 		}
