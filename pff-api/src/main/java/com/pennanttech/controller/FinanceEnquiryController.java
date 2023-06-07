@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
@@ -406,10 +405,10 @@ public class FinanceEnquiryController extends AbstractController {
 		FinServiceInstruction fsi = null;
 		for (int i = 0; i < fsiList.size(); i++) {
 			LoanDetail loanDetail = null;
-
+			
 			fsi = fsiList.get(i);
-			Date fromDate = fsi.getRecalFromDate();
-			Date toDate = null;
+			Date fromDate = fsi.getFromDate();
+			Date toDate = fsi.getToDate();
 
 			if (i == 0) {
 				loanDetail = new LoanDetail();
@@ -419,43 +418,28 @@ public class FinanceEnquiryController extends AbstractController {
 				ldList.add(loanDetail);
 			}
 
-			if (fsiList.size() - 1 > i) {
-				toDate = fsiList.get(i + 1).getRecalFromDate();
+			if (i != 0 && fromDate.compareTo(fsiList.get(i - 1).getToDate()) != 0) {
+				loanDetail = new LoanDetail();
+				loanDetail.setFromDate(fsiList.get(i - 1).getToDate());
+				loanDetail.setToDate(fromDate);
+				loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
+				ldList.add(loanDetail);
 			}
 
 			loanDetail = new LoanDetail();
-			switch (fsi.getRecalType()) {
-			case CalculationConstants.RPYCHG_TILLMDT:
-				loanDetail.setFromDate(fromDate);
-				loanDetail.setToDate(toDate == null ? fm.getMaturityDate() : toDate);
-				loanDetail.setRepayProfitRate(fsi.getActualRate());
-				break;
-			case CalculationConstants.RPYCHG_TILLDATE:
-				loanDetail.setFromDate(fromDate);
-				loanDetail.setToDate(toDate);
-				loanDetail.setRepayProfitRate(fsi.getActualRate());
-				break;
-			default:
-				loanDetail.setFromDate(fsi.getFromDate());
-				loanDetail.setToDate(toDate == null ? fsi.getToDate() : toDate);
-				loanDetail.setRepayProfitRate(fsi.getActualRate());
-				break;
-			}
+			loanDetail.setFromDate(fromDate);
+			loanDetail.setToDate(toDate);
+			loanDetail.setRepayProfitRate(fsi.getActualRate());
 
 			ldList.add(loanDetail);
 		}
 
-		if ((CalculationConstants.RPYCHG_TILLMDT.equals(fsi.getRecalType())
-				&& fm.getMaturityDate().compareTo(fsi.getToDate()) == 0)
-				|| (CalculationConstants.RPYCHG_TILLDATE.equals(fsi.getRecalType())
-						&& fm.getMaturityDate().compareTo(fsi.getRecalToDate()) == 0)
-				|| fm.getMaturityDate().compareTo(fsi.getToDate()) == 0) {
-
+		if (fm.getMaturityDate().compareTo(fsi.getToDate()) == 0) {
 			return;
 		}
 
 		LoanDetail loanDetail = new LoanDetail();
-		loanDetail.setFromDate(fsi.getRecalToDate() == null ? fsi.getToDate() : fsi.getRecalToDate());
+		loanDetail.setFromDate(fsi.getToDate());
 		loanDetail.setToDate(fm.getMaturityDate());
 		loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
 		ldList.add(loanDetail);
