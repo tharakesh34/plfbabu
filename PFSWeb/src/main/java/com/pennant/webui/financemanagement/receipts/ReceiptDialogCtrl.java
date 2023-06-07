@@ -254,7 +254,6 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.notifications.service.NotificationService;
-import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
@@ -7119,16 +7118,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					return false;
 				}
 
-				if (ReceiptPurpose.EARLYSETTLE.code().equals(rch.getReceiptPurpose())
-						|| FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose())) {
-					for (ReceiptAllocationDetail allocate : receiptData.getReceiptHeader().getAllocations()) {
-						if (allocate.getDueAmount().compareTo(allocate.getPaidAmount()) != 0) {
-							MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Paids_Allocations",
-									new String[] { PennantApplicationUtil.getLabelDesc(rch.getReceiptPurpose(),
-											PennantStaticListUtil.getReceiptPurpose()) }));
-							return false;
-						}
-					}
+				receiptService.validateAdjustedAlloc(receiptData);
+
+				List<ErrorDetail> errors = receiptData.getFinanceDetail().getFinScheduleData().getErrorDetails();
+
+				if (CollectionUtils.isNotEmpty(errors)) {
+					MessageUtil.showError(errors.get(0).getError());
+					return false;
 				}
 
 				if (closingBal != null) {

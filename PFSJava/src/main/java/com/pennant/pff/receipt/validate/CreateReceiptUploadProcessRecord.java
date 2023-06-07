@@ -401,7 +401,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		}
 
 		if ("M".equals(allocType) && !"SP".equals(rud.getReceiptPurpose())) {
-			setError(rud, "Values other than A in [ALLOCATIONTYPE] ");
+			setError(rud, "Other than Schedule Payment [ALLOCATIONTYPE] should be A ");
 			return;
 		}
 

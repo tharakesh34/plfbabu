@@ -3623,6 +3623,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			fsi.setAllocationType(AllocationType.AUTO);
 			fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		}
+
+		validateAdjustedAlloc(receiptData);
+
 	}
 
 	private void validateCheque(FinScheduleData schdData, String favourNumber) {
@@ -6606,6 +6609,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			setError(schdData, "91127", String.valueOf(formateAmount));
 			return;
 		}
+
+		validateAdjustedAlloc(rd);
 	}
 
 	private void setFinanceMain(FinScheduleData schdData, ReceiptPurpose receiptPurpose) {
@@ -8963,6 +8968,34 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		return receiptCalculator.getEmiSplit(frd, emiAmount);
+	}
+
+	@Override
+	public void validateAdjustedAlloc(FinReceiptData rd) {
+		FinanceDetail fd = rd.getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		FinReceiptHeader rch = rd.getReceiptHeader();
+
+		if ((ReceiptPurpose.EARLYSETTLE.code().equals(rch.getReceiptPurpose())
+				|| FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose()))) {
+			return;
+		}
+
+		for (ReceiptAllocationDetail allocate : rch.getAllocations()) {
+			BigDecimal dueAmount = allocate.getDueAmount();
+
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
+				dueAmount = dueAmount.add(allocate.getDueGST());
+			}
+
+			if (dueAmount.compareTo(allocate.getPaidAmount()) != 0) {
+				String parm0 = "For allocation item: " + rch.getReceiptPurpose()
+						+ "is not allowed to do, since allocations are not fully adjusted";
+				setError(schdData, "30550", parm0);
+				logger.info(Literal.LEAVING);
+			}
+		}
 	}
 
 	@Autowired
