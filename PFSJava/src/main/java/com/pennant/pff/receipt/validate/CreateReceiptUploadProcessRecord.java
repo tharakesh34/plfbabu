@@ -596,7 +596,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		}
 
 		if (!ReceiptMode.CHEQUE.equals(receiptMode) && !ReceiptMode.DD.equals(receiptMode)
-				&& rud.getTransactionRef().length() > 50) {
+				&& rud.getTransactionRef() != null && rud.getTransactionRef().length() > 50) {
 			setError(rud, "[TRANSACTIONREF] with length more than 50");
 			return;
 		}

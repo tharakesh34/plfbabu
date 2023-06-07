@@ -7129,7 +7129,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		RequestSource requestSource = fsi.getRequestSource();
 
 		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose && !checkDueAdjusted(allocations, rd)) {
-			if (!RequestSource.EOD.equals(requestSource) && !fsi.isClosureReceipt()) {
+			if (RequestSource.API.equals(requestSource) && !fsi.isClosureReceipt()) {
 				adjustToExcess(rd);
 			}
 
