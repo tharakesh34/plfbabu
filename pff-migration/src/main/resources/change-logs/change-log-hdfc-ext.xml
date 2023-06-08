@@ -885,4 +885,39 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="002.13" author="goutham.ch">
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="ACCESS_KEY" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SECRET_KEY" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="HOST_NAME" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="PORT" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="PRIVATE_KEY" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SSE_ALGORITHM" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="PREFIX" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SFTP_LOCATION" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="LOCAL_BACKUP_LOCATION" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SFTP_BUCKET" />
+		<renameColumn newColumnName="FILE_TRANSFER" oldColumnName="IS_SFTP"	tableName="FILE_INTERFACE_CONFIG" />
+		<addColumn tableName="FILE_INTERFACE_CONFIG">
+			<column name="FIC_NAMES" type="VARCHAR(200)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="35" author="goutham.ch">
+	<createTable tableName="FILE_TRANSFER_CONFIG ">
+		<column name="FIC_NAME" type="VARCHAR(100)">
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="ACCESS_KEY" type="varchar(50)" />
+		<column name="SECRET_KEY" type="varchar(200)" />
+		<column name="HOST_NAME" type="varchar(200)" />
+		<column name="PORT" type="int" />
+		<column name="PRIVATE_KEY" type="varchar(255)" />
+		<column name="SSE_ALGORITHM" type="varchar(50)" />
+		<column name="PREFIX" type="varchar(100)" />
+		<column name="SFTP_LOCATION" type="varchar(2000)" />
+		<column name="SFTP_BACKUP_LOCATION" type="varchar(2000)" />
+		<column name="PROTOCOL" type="varchar(25)" />
+	</createTable>
+</changeSet>
+
 </databaseChangeLog>

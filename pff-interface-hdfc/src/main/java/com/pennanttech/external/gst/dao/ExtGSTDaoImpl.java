@@ -46,7 +46,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 	}
 
 	@Override
-	public void extractDetailsFromFinFeeDetail() {
+	public void extractDetailsFromForGstCalculation() {
 
 		String sql = "INSERT INTO GST_VOUCHER_DETAILS(FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
 				+ " REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE) "
@@ -58,17 +58,8 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 				+ " inner join finfeedetail ffd on ffr.FEEID=ffd.FEEID  "
 				+ " inner join finreceiptheader frh on ffr.receiptid=frh.receiptid "
 				+ " where ffr.paidamount >0 and ffd.TAXAPPLICABLE=1) ";
-		// not exist with feeid and receipt id
-		logger.debug(Literal.SQL + sql);
 
-		mainNamedJdbcTemplate.getJdbcOperations().update(sql.toString());
-	}
-
-	@Override
-	public void extractDetailsFromManualadvise() {
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO GST_VOUCHER_DETAILS(FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
+		sql = sql + " INSERT INTO GST_VOUCHER_DETAILS(FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
 				+ " REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE) "
 				+ "  SELECT FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
 				+ " REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE FROM "
@@ -77,7 +68,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 				+ "   to_date(substr(sysdate,1,10),'YYYY-MM-DD' ) AS CREATED_DATE "
 				+ "   from manualadvisemovements madm "
 				+ "   inner join manualadvise mad on madm.ADVISEID=mad.ADVISEID "
-				+ "   inner join finreceiptheader frh on madm.RECEIPTID=frh.receiptid)");
+				+ "   inner join finreceiptheader frh on madm.RECEIPTID=frh.receiptid)";
 		// not exist with feeid and receipt id
 		logger.debug(Literal.SQL + sql);
 
@@ -267,7 +258,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 		logger.debug(Literal.SQL + sql.toString());
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 
-		jdbcOperations.update(new PreparedStatementCreator() {
+		extNamedJdbcTemplate.getJdbcOperations().update(new PreparedStatementCreator() {
 
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
@@ -298,20 +289,21 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return extNamedJdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+		return mainNamedJdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(),
+				new BatchPreparedStatementSetter() {
 
-			@Override
-			public void setValues(PreparedStatement ps, int index) throws SQLException {
-				long txnUid = txnUidList.get(index);
-				ps.setLong(1, headerId);
-				ps.setLong(2, txnUid);
-			}
+					@Override
+					public void setValues(PreparedStatement ps, int index) throws SQLException {
+						long txnUid = txnUidList.get(index);
+						ps.setLong(1, headerId);
+						ps.setLong(2, txnUid);
+					}
 
-			@Override
-			public int getBatchSize() {
-				return txnUidList.size();
-			}
-		}).length;
+					@Override
+					public int getBatchSize() {
+						return txnUidList.size();
+					}
+				}).length;
 
 	}
 
@@ -324,7 +316,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+		return mainNamedJdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), (rs, rowNum) -> {
 			GSTVoucherDetails gvd = new GSTVoucherDetails();
 
 			gvd.setGstVoucherId(rs.getLong("GST_VOUCHER_ID"));
@@ -352,7 +344,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 		logger.debug(Literal.SQL + sql.toString());
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 
-		jdbcOperations.update(new PreparedStatementCreator() {
+		mainNamedJdbcTemplate.getJdbcOperations().update(new PreparedStatementCreator() {
 
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {

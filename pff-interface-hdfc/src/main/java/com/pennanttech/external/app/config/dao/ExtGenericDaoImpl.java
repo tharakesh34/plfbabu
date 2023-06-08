@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.config.model.FileTransferConfig;
 import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -78,9 +79,7 @@ public class ExtGenericDaoImpl implements ExtGenericDao {
 
 		List<FileInterfaceConfig> list = new ArrayList<FileInterfaceConfig>();
 		queryStr = "SELECT INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,"
-				+ "FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR " + ",BACKUP_LOCATION,ACCESS_KEY,"
-				+ "SECRET_KEY,HOST_NAME,PORT,PRIVATE_KEY,SSE_ALGORITHM,PREFIX,"
-				+ "SFTP_LOCATION,IS_SFTP,LOCAL_BACKUP_LOCATION,SFTP_BUCKET" + " FROM FILE_INTERFACE_CONFIG";
+				+ "FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR ,BACKUP_LOCATION FROM FILE_INTERFACE_CONFIG";
 
 		extNamedJdbcTemplate.getJdbcOperations().query(queryStr, rs -> {
 			FileInterfaceConfig extConfig = new FileInterfaceConfig();
@@ -94,21 +93,37 @@ public class ExtGenericDaoImpl implements ExtGenericDao {
 			extConfig.setDateFormat(rs.getString("DATE_FORMAT"));
 			extConfig.setSuccessIndicator(rs.getString("SUCCESS_INDICATOR"));
 			extConfig.setFailIndicator(rs.getString("FAIL_INDICATOR"));
-
-			extConfig.setFileBackupLocation(rs.getString("BACKUP_LOCATION"));
-			extConfig.setAccessKey(rs.getString("ACCESS_KEY"));
-			extConfig.setSecretKey(rs.getString("SECRET_KEY"));
-			extConfig.setHostName(rs.getString("HOST_NAME"));
-			extConfig.setPort(rs.getInt("PORT"));
-			extConfig.setPrivateKey(rs.getString("PRIVATE_KEY"));
-			extConfig.setSseAlgo(rs.getString("SSE_ALGORITHM"));
-			extConfig.setSftpPrefix(rs.getString("PREFIX"));
-			extConfig.setFileSftpLocation(rs.getString("SFTP_LOCATION"));
-			extConfig.setIsSftp(rs.getString("IS_SFTP"));
-			extConfig.setFileLocalBackupLocation(rs.getString("LOCAL_BACKUP_LOCATION"));
-			// extConfig.setSftpBucketLocation(rs.getString("SFTP_BUCKET"));
-
+			extConfig.setFileLocalBackupLocation(rs.getString("BACKUP_LOCATION"));
+			extConfig.setFicNames(rs.getString("FIC_NAMES"));
 			list.add(extConfig);
+		});
+		logger.debug(Literal.LEAVING);
+		return list;
+	}
+
+	@Override
+	public List<FileTransferConfig> getFileTransferConfig() {
+		logger.debug(Literal.ENTERING);
+
+		String queryStr;
+
+		List<FileTransferConfig> list = new ArrayList<FileTransferConfig>();
+		queryStr = "SELECT FIC_NAME,ACCESS_KEY,SECRET_KEY,HOST_NAME,PORT,PRIVATE_KEY,SSE_ALGORITHM,PREFIX,SFTP_LOCATION,SFTP_BACKUP_LOCATION,PROTOCOL FROM FILE_TRANSFER_CONFIG;";
+
+		extNamedJdbcTemplate.getJdbcOperations().query(queryStr, rs -> {
+			FileTransferConfig ftc = new FileTransferConfig();
+			ftc.setFicName(rs.getString("FIC_NAME"));
+			ftc.setAccessKey(rs.getString("ACCESS_KEY"));
+			ftc.setSecretKey(rs.getString("SECRET_KEY"));
+			ftc.setHostName(rs.getString("HOST_NAME"));
+			ftc.setPort(rs.getInt("PORT"));
+			ftc.setPrivateKey(rs.getString("PRIVATE_KEY"));
+			ftc.setSseAlgo(rs.getString("SSE_ALGORITHM"));
+			ftc.setSftpPrefix(rs.getString("PREFIX"));
+			ftc.setSftpLocation(rs.getString("SFTP_LOCATION"));
+			ftc.setSftpBackupLocation(rs.getString("SFTP_BACKUP_LOCATION"));
+			ftc.setProtocol(rs.getString("PROTOCOL"));
+			list.add(ftc);
 		});
 		logger.debug(Literal.LEAVING);
 		return list;

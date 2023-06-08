@@ -14,6 +14,7 @@ import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
@@ -50,8 +51,8 @@ public class ExtUcicResponseFileReader implements InterfaceConstants, ErrorCodes
 		}
 
 		// Check if file is in SFTP location, then get the file.
-		if ("Y".equals(StringUtils.stripToEmpty(ucicRespConfig.getIsSftp()))) {
-
+		if ("Y".equals(StringUtils.stripToEmpty(ucicRespConfig.getFileTransfer()))) {
+			FileTransferConfigUtil.setTransferConfig(ucicRespConfig);
 			// Get list of files in SFTP.
 			FileTransferUtil fileTransferUtil = new FileTransferUtil(ucicRespConfig);
 			List<String> fileNames = fileTransferUtil.fetchFileNamesListFromSFTP();

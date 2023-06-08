@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.io.Files;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.FileTransferConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.gst.dao.ExtGSTDao;
@@ -29,8 +30,7 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 	public void processRequestFile(FileInterfaceConfig reqConfig, FileInterfaceConfig doneConfig, Date appDate) {
 
 		// Dump GST Vouchers to create unique reference for each entry
-		extGSTDao.extractDetailsFromFinFeeDetail();
-		extGSTDao.extractDetailsFromManualadvise();
+		extGSTDao.extractDetailsFromForGstCalculation();
 
 		// Dump data as per the request file format
 		extGSTDao.saveExtractedDetailsToRequestTable();
@@ -187,7 +187,8 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 				extGSTDao.updateGSTVoucherWithReqHeaderId(txnUidList, req_header_id);
 
 				// Uploading to HDFC SFTP
-				if ("Y".equals(reqConfig.getIsSftp())) {
+				if ("Y".equals(reqConfig.getFileTransfer())) {
+					FileTransferConfigUtil.setTransferConfig(reqConfig);
 					uploadToClientLocation(reqConfig, new File(fileName).getName(), baseFilePath, doneFile);
 				}
 			} catch (Exception e) {

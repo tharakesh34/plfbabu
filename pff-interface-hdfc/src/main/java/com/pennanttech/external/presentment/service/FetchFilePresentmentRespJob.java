@@ -19,6 +19,7 @@ import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
@@ -93,7 +94,8 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 		FileInterfaceConfig externalRespConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_NACH_RESP);
 		FileInterfaceConfig externalReqConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_NACH_REQ);
 
-		if ("Y".equals(StringUtils.stripToEmpty(externalRespConfig.getIsSftp()))) {
+		if ("Y".equals(StringUtils.stripToEmpty(externalRespConfig.getFileTransfer()))) {
+			FileTransferConfigUtil.setTransferConfig(externalRespConfig);
 			fetchResponseFilesFromSFTP(externalRespConfig);
 		}
 
@@ -325,15 +327,10 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 
 	private void fetchResponseFilesFromSFTP(FileInterfaceConfig externalRespConfig) {
 		logger.debug(Literal.ENTERING);
-		if (!"".equals(StringUtils.stripToEmpty(externalRespConfig.getFileSftpLocation()))) {
-
-			String host = externalRespConfig.getHostName();
-			int port = externalRespConfig.getPort();
-			String accessKey = externalRespConfig.getAccessKey();
-			String secretKey = externalRespConfig.getSecretKey();
-
+		FileTransferConfigUtil.setTransferConfig(externalRespConfig);
+		if (!"".equals(StringUtils.stripToEmpty(externalRespConfig.getFileTransferConfig().getSftpLocation()))) {
 			try {
-				String remoteFilePath = externalRespConfig.getFileSftpLocation();
+				String remoteFilePath = externalRespConfig.getFileTransferConfig().getSftpLocation();
 
 				if (remoteFilePath == null || "".equals(remoteFilePath)) {
 					logger.debug("EXT_PRMNT:Invalid PRMNT resp remote folder path, so returning.");
@@ -367,14 +364,14 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 
 	private void moveToBackup(FileInterfaceConfig externalRespConfig, String localFolderPath, String fileName) {
 		logger.debug(Literal.ENTERING);
-		if ("".equals(StringUtils.stripToEmpty(externalRespConfig.getFileBackupLocation()))) {
+		if ("".equals(StringUtils.stripToEmpty(externalRespConfig.getFileLocalBackupLocation()))) {
 			logger.debug("EXT_PRMNT: No configuration found for Backup path, so returning.");
 			return;
 		}
 
 		try {
 			FileTransferUtil fileTransferUtil = new FileTransferUtil(externalRespConfig);
-			fileTransferUtil.uploadToSFTP(localFolderPath, fileName);
+			fileTransferUtil.backupToSFTP(localFolderPath, fileName);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}

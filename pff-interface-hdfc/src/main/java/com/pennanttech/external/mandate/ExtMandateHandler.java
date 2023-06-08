@@ -36,7 +36,7 @@ public class ExtMandateHandler implements ExtMandateExtension {
 		}
 
 		if (rowMap.get("CUSTOMER_PHONE") != null) {
-			rowMap.put("CUSTOMER_PHONE", "+91" + rowMap.get("CUSTOMER_PHONE"));
+			rowMap.put("CUSTOMER_PHONE", "+91-" + rowMap.get("CUSTOMER_PHONE"));
 		}
 
 		if (rowMap.get("CUSTOMER_EMAIL") != null) {

@@ -12,9 +12,7 @@ public interface ExtGSTDao {
 
 	long getSeqNumber(String tableName);
 
-	void extractDetailsFromFinFeeDetail();
-
-	void extractDetailsFromManualadvise();
+	void extractDetailsFromForGstCalculation();
 
 	void saveExtractedDetailsToRequestTable();
 

@@ -25,6 +25,7 @@ import com.pennanttech.external.ExtReceiptServiceHook;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
+import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
@@ -119,7 +120,6 @@ public class FileProcessCollectionReqJob extends AbstractJob implements Interfac
 							collectionReceiptService.dataValidations(extRcd, collectionData);
 
 							if (extRcd.isValid()) {
-
 								CreateReceiptUpload createReceiptUpload = collectionReceiptService
 										.getCreateReceiptUploadBean(collectionData);
 
@@ -132,8 +132,10 @@ public class FileProcessCollectionReqJob extends AbstractJob implements Interfac
 									extRcd.setErrorCode(createReceiptUpload.getErrorCode());
 									extRcd.setErrorMessage(createReceiptUpload.getErrorDesc());
 								}
-							}
 
+							} else {
+								extRcd.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(extRcd.getErrorCode()));
+							}
 							transactionManager.commit(txStatus);
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
@@ -145,7 +147,6 @@ public class FileProcessCollectionReqJob extends AbstractJob implements Interfac
 						}
 
 						extCollectionReceiptDao.updateExtCollectionReceiptDetailStatus(extRcd);
-
 					}
 				}
 

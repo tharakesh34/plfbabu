@@ -11,19 +11,11 @@ public class FileInterfaceConfig {
 	private String dateFormat;
 	private String successIndicator;
 	private String failIndicator;
-
-	private String fileBackupLocation = "";
 	private String fileLocalBackupLocation = "";
-	private String sftpBucketLocation = "";
-	private String fileSftpLocation = "";
-	private String isSftp = "";
-	private String accessKey = "";
-	private String secretKey = "";
-	private String hostName = "";
-	private int port;
-	private String privateKey = "";
-	private String sseAlgo = "";
-	private String sftpPrefix = "";
+	private String fileTransfer = "";
+	private String ficNames = "";
+
+	private FileTransferConfig fileTransferConfig = new FileTransferConfig();
 
 	public String getInterfaceName() {
 		return interfaceName;
@@ -105,14 +97,6 @@ public class FileInterfaceConfig {
 		this.failIndicator = failIndicator;
 	}
 
-	public String getFileBackupLocation() {
-		return fileBackupLocation;
-	}
-
-	public void setFileBackupLocation(String fileBackupLocation) {
-		this.fileBackupLocation = fileBackupLocation;
-	}
-
 	public String getFileLocalBackupLocation() {
 		return fileLocalBackupLocation;
 	}
@@ -121,84 +105,28 @@ public class FileInterfaceConfig {
 		this.fileLocalBackupLocation = fileLocalBackupLocation;
 	}
 
-	public String getSftpBucketLocation() {
-		return sftpBucketLocation;
+	public String getFileTransfer() {
+		return fileTransfer;
 	}
 
-	public void setSftpBucketLocation(String sftpBucketLocation) {
-		this.sftpBucketLocation = sftpBucketLocation;
+	public void setFileTransfer(String fileTransfer) {
+		this.fileTransfer = fileTransfer;
 	}
 
-	public String getFileSftpLocation() {
-		return fileSftpLocation;
+	public String getFicNames() {
+		return ficNames;
 	}
 
-	public void setFileSftpLocation(String fileSftpLocation) {
-		this.fileSftpLocation = fileSftpLocation;
+	public void setFicNames(String ficNames) {
+		this.ficNames = ficNames;
 	}
 
-	public String getIsSftp() {
-		return isSftp;
+	public FileTransferConfig getFileTransferConfig() {
+		return fileTransferConfig;
 	}
 
-	public void setIsSftp(String isSftp) {
-		this.isSftp = isSftp;
-	}
-
-	public String getAccessKey() {
-		return accessKey;
-	}
-
-	public void setAccessKey(String accessKey) {
-		this.accessKey = accessKey;
-	}
-
-	public String getSecretKey() {
-		return secretKey;
-	}
-
-	public void setSecretKey(String secretKey) {
-		this.secretKey = secretKey;
-	}
-
-	public String getHostName() {
-		return hostName;
-	}
-
-	public void setHostName(String hostName) {
-		this.hostName = hostName;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
-	}
-
-	public String getPrivateKey() {
-		return privateKey;
-	}
-
-	public void setPrivateKey(String privateKey) {
-		this.privateKey = privateKey;
-	}
-
-	public String getSseAlgo() {
-		return sseAlgo;
-	}
-
-	public void setSseAlgo(String sseAlgo) {
-		this.sseAlgo = sseAlgo;
-	}
-
-	public String getSftpPrefix() {
-		return sftpPrefix;
-	}
-
-	public void setSftpPrefix(String sftpPrefix) {
-		this.sftpPrefix = sftpPrefix;
+	public void setFileTransferConfig(FileTransferConfig fileTransferConfig) {
+		this.fileTransferConfig = fileTransferConfig;
 	}
 
 }

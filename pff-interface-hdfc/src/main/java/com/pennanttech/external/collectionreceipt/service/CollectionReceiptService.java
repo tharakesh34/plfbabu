@@ -13,13 +13,15 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.receipt.model.CreateReceiptUpload;
+import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.ExtCollectionReceiptData;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
-public class CollectionReceiptService {
+public class CollectionReceiptService implements ErrorCodesConstants {
 
 	public ExtCollectionReceiptData prepareData(CollReceiptDetail collReceiptDetail) {
 		ExtCollectionReceiptData collectionData = new ExtCollectionReceiptData();
@@ -206,8 +208,66 @@ public class CollectionReceiptService {
 	}
 
 	public void dataValidations(CollReceiptDetail extRcd, ExtCollectionReceiptData collectionData) {
-		// TODO Auto-generated method stub
+		if (collectionData.getAgreementNumber() == 0) {
+			extRcd.setErrorCode(CR2000);
+			return;
+		}
+		if (StringUtils.trimToEmpty(collectionData.getReceiptChannel()).isEmpty()) {
+			extRcd.setErrorCode(CR2001);
+			return;
+		}
 
+		if (collectionData.getAgencyId() == 0) {
+			extRcd.setErrorCode(CR2002);
+			return;
+		}
+
+		if (StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) {
+			extRcd.setErrorCode(CR2003);
+			return;
+		}
+
+		if (!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) {
+			if (!"C".equalsIgnoreCase(StringUtils.trimToEmpty(collectionData.getReceiptType()))
+					|| !"Q".equalsIgnoreCase(StringUtils.trimToEmpty(collectionData.getReceiptType()))) {
+				extRcd.setErrorCode(CR2004);
+				return;
+			}
+		}
+
+		if (!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) {
+			if ("Q".equalsIgnoreCase(StringUtils.trimToEmpty(collectionData.getReceiptType()))) {
+				if (collectionData.getChequeNumber() == 0) {
+					extRcd.setErrorCode(CR2005);
+					return;
+				}
+			}
+		}
+
+		if (collectionData.getDealingBankId() == 0) {
+			extRcd.setErrorCode(CR2006);
+			return;
+		}
+
+		if (StringUtils.trimToEmpty(collectionData.getReceiptDate()).isEmpty()) {
+			extRcd.setErrorCode(CR2007);
+			return;
+		}
+
+		if (DateUtil.compare(getFormattedDate(collectionData.getReceiptDate()), SysParamUtil.getAppDate()) == 1) {
+			extRcd.setErrorCode(CR2008);
+			return;
+		}
+
+		if (StringUtils.trimToEmpty(collectionData.getChequeDate()).isEmpty()) {
+			extRcd.setErrorCode(CR2009);
+			return;
+		}
+
+		if (collectionData.getExcessAmount().compareTo(collectionData.getGrandTotal()) == 1) {
+			extRcd.setErrorCode(CR2010);
+			return;
+		}
 	}
 
 }

@@ -20,6 +20,7 @@ import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
@@ -70,7 +71,8 @@ public class FetchFileCollectionReqJob extends AbstractJob implements InterfaceC
 			return;
 		}
 
-		String remoteFilePath = collectionReqConfig.getFileSftpLocation();
+		FileTransferConfigUtil.setTransferConfig(collectionReqConfig);
+		String remoteFilePath = collectionReqConfig.getFileTransferConfig().getSftpLocation();
 
 		if ("".equals(StringUtils.stripToEmpty(remoteFilePath))) {
 			logger.debug(COLLECTION_REQ_REMOTE_FILE_PATH_MISSING);

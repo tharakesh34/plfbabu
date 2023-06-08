@@ -18,6 +18,7 @@ import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.extractions.dao.ExtExtractionDao;
 import com.pennanttech.external.ucic.service.ExtUcicDataExtractor;
@@ -92,8 +93,9 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 			return;
 		}
 
-		if ("Y".equals(finconGLConfig.getIsSftp())) {
+		if ("Y".equals(finconGLConfig.getFileTransfer())) {
 			// Now upload file to SFTP of client location as per configuration
+			FileTransferConfigUtil.setTransferConfig(finconGLConfig);
 			File mainFile = new File(baseFilePath + File.separator + fileName);
 			FileTransferUtil fTransferUtil = new FileTransferUtil(finconGLConfig);
 			fTransferUtil.uploadToSFTP(baseFilePath, fileName);

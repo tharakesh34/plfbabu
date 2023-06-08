@@ -15,6 +15,7 @@ import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
@@ -66,7 +67,8 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 			}
 
 			// Now get remote file to local base location using SERVER config
-			remoteFilePath = serverConfig.getFileSftpLocation();
+			FileTransferConfigUtil.setTransferConfig(serverConfig);
+			remoteFilePath = serverConfig.getFileTransferConfig().getSftpLocation();
 			if (remoteFilePath == null || "".equals(remoteFilePath)) {
 				logger.debug("EXT_UCIC: remoteFilePath in Configuration not found, so returning.");
 				return;
@@ -85,7 +87,8 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 			}
 
 			// Uploading to HDFC SFTP
-			if ("Y".equals(ucicReqConfig.getIsSftp())) {
+			if ("Y".equals(ucicReqConfig.getFileTransfer())) {
+				FileTransferConfigUtil.setTransferConfig(ucicReqConfig);
 				uploadToClientLocation(appDate, fileName, baseFilePath);
 			} else {
 				// Request file is already downloaded to local location,

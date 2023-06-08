@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.AmountUtil;
+import com.pennanttech.external.app.util.FileTransferConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
@@ -174,7 +175,8 @@ public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
 
 				super.writeDataToFile(fileName, itemList);
 
-				if ("Y".equals(StringUtils.stripToEmpty(config.getIsSftp()))) {
+				if ("Y".equals(StringUtils.stripToEmpty(config.getFileTransfer()))) {
+					FileTransferConfigUtil.setTransferConfig(config);
 					FileTransferUtil fileTransferUtil = new FileTransferUtil(config);
 					fileTransferUtil.uploadToSFTP(baseFilePath, new File(fileName).getName());
 				}

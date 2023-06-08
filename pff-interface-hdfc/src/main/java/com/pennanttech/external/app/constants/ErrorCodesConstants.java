@@ -29,4 +29,16 @@ public interface ErrorCodesConstants {
 	String F404 = "F404";
 	String F405 = "F405";
 
+	String CR2000 = "CR2000";
+	String CR2001 = "CR2001";
+	String CR2002 = "CR2002";
+	String CR2003 = "CR2003";
+	String CR2004 = "CR2004";
+	String CR2005 = "CR2005";
+	String CR2006 = "CR2006";
+	String CR2007 = "CR2007";
+	String CR2008 = "CR2008";
+	String CR2009 = "CR2009";
+	String CR2010 = "CR2010";
+
 }
