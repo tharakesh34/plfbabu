@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -235,8 +236,6 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 
 		List<ReturnDataSet> list = new ArrayList<>();
 
-		int transOrder = 1;
-		int transOrderID = 0;
 		String tranCode = "";
 		String revTranCode = "";
 		String drOrCr = "";
@@ -247,31 +246,29 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 				continue;
 			}
 
-			ReturnDataSet oldRds = new ReturnDataSet();
+			ReturnDataSet rds = new ReturnDataSet();
 
-			transOrderID = transOrderID + 10;
+			rds.setEntityCode(account.getEntityCode());
+			rds.setAccount(account.getAcNumber());
+			rds.setAccountType(account.getAcType());
+			rds.setTranDesc(account.getAcTypeDesc());
+			rds.setAcCcy(account.getAcCcy());
 
-			oldRds.setEntityCode(account.getEntityCode());
-			oldRds.setAccount(account.getAcNumber());
-			oldRds.setAccountType(account.getAcType());
-			oldRds.setTranDesc(account.getAcTypeDesc());
-			oldRds.setAcCcy(account.getAcCcy());
-
-			oldRds.setLinkedTranId(linkedTranId);
-			oldRds.setFinID(finID);
-			oldRds.setFinReference(finReference);
-			oldRds.setFinEvent(AccountingEvent.BRNCHG);
-			oldRds.setUserBranch(AccountingEvent.BRNCHG);
-			oldRds.setPostDate(appDate);
-			oldRds.setAppDate(appDate);
-			oldRds.setValueDate(appDate);
-			oldRds.setAppValueDate(appDate);
-			oldRds.setAmountType("D");
-			oldRds.setPostStatus("S");
-			oldRds.setPostToSys("E");
-			oldRds.setDerivedTranOrder(0);
-			oldRds.setExchangeRate(BigDecimal.ZERO);
-			oldRds.setShadowPosting(false);
+			rds.setLinkedTranId(linkedTranId);
+			rds.setFinID(finID);
+			rds.setFinReference(finReference);
+			rds.setFinEvent(AccountingEvent.BRNCHG);
+			rds.setUserBranch(AccountingEvent.BRNCHG);
+			rds.setPostDate(appDate);
+			rds.setAppDate(appDate);
+			rds.setValueDate(appDate);
+			rds.setAppValueDate(appDate);
+			rds.setAmountType("D");
+			rds.setPostStatus("S");
+			rds.setPostToSys("E");
+			rds.setDerivedTranOrder(0);
+			rds.setExchangeRate(BigDecimal.ZERO);
+			rds.setShadowPosting(false);
 
 			if (acBalance.compareTo(BigDecimal.ZERO) < 0) {
 				drOrCr = "C";
@@ -284,44 +281,68 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 				revTranCode = "510";
 			}
 
-			oldRds.setPostAmount(acBalance);
-			oldRds.setPostAmountLcCcy(acBalance);
+			rds.setPostAmount(acBalance);
+			rds.setPostAmountLcCcy(acBalance);
 
-			oldRds.setDrOrCr(drOrCr);
-			oldRds.setTranCode(tranCode);
-			oldRds.setRevTranCode(revTranCode);
-			oldRds.setPostBranch(oldBranch);
-			oldRds.setPostref(oldBranch + "-" + account.getAcType() + "-" + account.getAcCcy());
-			oldRds.setTranOrderId(String.valueOf(transOrderID));
-			oldRds.setTransOrder(transOrder++);
-			oldRds.setPostingId(finReference.concat("/").concat(AccountingEvent.BRNCHG).concat("/")
-					.concat(oldRds.getTranOrderId()));
+			rds.setDrOrCr(drOrCr);
+			rds.setTranCode(tranCode);
+			rds.setRevTranCode(revTranCode);
+			rds.setPostBranch(oldBranch);
+			rds.setPostref(oldBranch + "-" + account.getAcType() + "-" + account.getAcCcy());
 
-			ReturnDataSet newRds = ObjectUtil.clone(oldRds);
+			list.add(rds);
+		}
+
+		List<ReturnDataSet> sortedList = list.stream()
+				.sorted((rds1, rds2) -> StringUtils.compare(rds2.getDrOrCr(), rds1.getDrOrCr()))
+				.collect(Collectors.toList());
+
+		list.clear();
+
+		int transOrder = 1;
+		int transOrderID = 0;
+		for (ReturnDataSet rds : sortedList) {
 			transOrderID = transOrderID + 10;
 
-			if (drOrCr.equals("C")) {
+			rds.setTranOrderId(String.valueOf(transOrderID));
+			rds.setTransOrder(transOrder++);
+			rds.setPostingId(
+					finReference.concat("/").concat(AccountingEvent.BRNCHG).concat("/").concat(rds.getTranOrderId()));
+
+			if (rds.getDrOrCr().equals("C")) {
 				drOrCr = "D";
 				tranCode = "010";
 				revTranCode = "510";
+			} else {
+				drOrCr = "C";
+				tranCode = "510";
+				revTranCode = "010";
 			}
+
+			ReturnDataSet newRds = ObjectUtil.clone(rds);
+			transOrderID = transOrderID + 10;
 
 			newRds.setDrOrCr(drOrCr);
 			newRds.setTranCode(tranCode);
 			newRds.setRevTranCode(revTranCode);
 			newRds.setPostBranch(newBranch);
-			newRds.setPostref(newBranch + "-" + account.getAcType() + "-" + account.getAcCcy());
+			newRds.setPostref(newBranch + "-" + newRds.getAccountType() + "-" + newRds.getAcCcy());
 			newRds.setTranOrderId(String.valueOf(transOrderID++));
 			newRds.setTransOrder(transOrder++);
 			newRds.setPostingId(finReference.concat("/").concat(AccountingEvent.BRNCHG).concat("/")
 					.concat(newRds.getTranOrderId()));
 
-			if (oldRds.getDrOrCr().equals("D")) {
-				list.add(oldRds);
-				list.add(newRds);
+			if (rds.getDrOrCr().equals("D")) {
+				list.add(rds);
 			} else if (newRds.getDrOrCr().equals("D")) {
 				list.add(newRds);
-				list.add(oldRds);
+			}
+
+			if (rds.getDrOrCr().equals("C")) {
+				list.add(rds);
+			}
+			if (newRds.getDrOrCr().equals("C")) {
+				list.add(newRds);
 			}
 
 		}
