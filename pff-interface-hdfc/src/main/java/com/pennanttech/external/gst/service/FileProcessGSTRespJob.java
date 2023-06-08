@@ -1,8 +1,11 @@
 package com.pennanttech.external.gst.service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 
@@ -39,6 +42,7 @@ public class FileProcessGSTRespJob extends AbstractJob
 	private DataSource dataSource;
 	private ExtGSTDao extGSTDao;
 	private ApplicationContext applicationContext;
+	private Properties gstProp;
 
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
@@ -219,14 +223,27 @@ public class FileProcessGSTRespJob extends AbstractJob
 		detail.setUgstAmount(respBean.getUtgstAmount());
 		detail.setPop("");// FIXME Source State Place of Purchase
 		detail.setPos("");// FIXME Destination State Place of Service
-		detail.setCin("L65920MH1994PC08618");// HardCoded
-		detail.setPan("AAACH27020H");// HardCoded
 		detail.setSac(respBean.getSac());
-		detail.setWebsiteAddress("www.hdfcbank.com");// HardCoded
-		detail.setEmailId("loansupport@hdfcbank.com");// HardCoded
 		detail.setRegBankAddress("");// FIXME Registered address of FI/Bank
-		detail.setDisclaimer("");// HardCoded
+		setHardcodedProperties(detail);
 		return detail;
+	}
+
+	private void setHardcodedProperties(GSTInvoiceDetail detail) {
+		try {
+			if (gstProp == null) {
+				gstProp = new Properties();
+				InputStream inputStream = this.getClass().getResourceAsStream("/properties/HDFCInterface.properties");
+				gstProp.load(inputStream);
+			}
+			detail.setCin(gstProp.getProperty("GSTINTERFACE.CIN"));// HardCoded
+			detail.setPan(gstProp.getProperty("GSTINTERFACE.PAN"));// HardCoded
+			detail.setWebsiteAddress(gstProp.getProperty("GSTINTERFACE.WEBSITE"));// HardCoded
+			detail.setEmailId(gstProp.getProperty("GSTINTERFACE.EMAILID"));// HardCoded
+			detail.setDisclaimer(gstProp.getProperty("GSTINTERFACE.DISCLAIMER"));// HardCoded
+		} catch (IOException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 	}
 
 	private GSTRespDetail convertRecordToBean(GSTCompDetail detail) {
