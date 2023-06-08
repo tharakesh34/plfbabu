@@ -40,11 +40,6 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 	private static final String HEADER = "Agr";
 	private static final String FETCH_QUERY = "Select * from COLL_RECEIPT_HEADER  Where STATUS=? AND EXTRACTION=?";
 
-	private DataSource dataSource;
-	private ExtCollectionReceiptDao extCollectionReceiptDao;
-	private ApplicationContext applicationContext;
-	private CollectionReceiptService collectionReceiptService;
-
 	/**
 	 *
 	 */
@@ -52,9 +47,11 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
 
-		applicationContext = ApplicationContextProvider.getApplicationContext();
-		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
-		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
+		ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+		DataSource dataSource = applicationContext.getBean("extDataSource", DataSource.class);
+		ExtCollectionReceiptDao extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao",
+				ExtCollectionReceiptDao.class);
+		CollectionReceiptService collectionReceiptService = applicationContext.getBean(CollectionReceiptService.class);
 
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<CollReceiptHeader> cursorItemReader = new JdbcCursorItemReader<CollReceiptHeader>();
@@ -90,18 +87,18 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 
 		try {
 			while ((extReceiptHeader = cursorItemReader.read()) != null) {
-				Scanner sc = null;
-				try {
-					// update the file status as processing
-					extReceiptHeader.setExtraction(INPROCESS);
-					extCollectionReceiptDao.updateFileExtraction(extReceiptHeader);
 
-					String requestFileLocation = extReceiptHeader.getRequestFileLocation();
-					String requestFileName = extReceiptHeader.getRequestFileName();
-					String fileData = TextFileUtil.fileName(requestFileLocation, requestFileName);
-					File file = new File(fileData);
-					// Fetch list of record data from the file
-					sc = new Scanner(file);
+				// update the file status as processing
+				extReceiptHeader.setExtraction(INPROCESS);
+				extCollectionReceiptDao.updateFileExtraction(extReceiptHeader);
+
+				String requestFileLocation = extReceiptHeader.getRequestFileLocation();
+				String requestFileName = extReceiptHeader.getRequestFileName();
+				String fileData = TextFileUtil.fileName(requestFileLocation, requestFileName);
+				File file = new File(fileData);
+				// Fetch list of record data from the file
+
+				try (Scanner sc = new Scanner(file)) {
 
 					List<CollReceiptDetail> extCollectionLineList = new ArrayList<CollReceiptDetail>();
 					int rowNumber = 0;
@@ -141,7 +138,6 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 
 							if (rowNumber == 3 && !lineData.trim().startsWith(HEADER)) {
 								extReceiptHeader.setErrorCode(F404);
-								continue;
 							}
 
 						} else {
@@ -167,13 +163,13 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 					int gTotalChk = 0;
 					for (CollReceiptDetail lineData : extCollectionLineList) {
 
-						String[] dataArray = lineData.getRecordData().toString().split("\\|");
-						String Checksum = TextFileUtil.getItem(dataArray, 32);
-						long RowNum = TextFileUtil.getLongItem(dataArray, 31);
+						String[] dataArray = lineData.getRecordData().split("\\|");
+						String checksum = TextFileUtil.getItem(dataArray, 32);
+						long rowNum = TextFileUtil.getLongItem(dataArray, 31);
 
-						String qualifiedChk = collectionReceiptService.calculateCheckSum(dataArray, RowNum);
+						String qualifiedChk = collectionReceiptService.calculateCheckSum(dataArray, rowNum);
 
-						if (!qualifiedChk.equals(Checksum)) {
+						if (!qualifiedChk.equals(checksum)) {
 							extReceiptHeader.setErrorCode(F400);
 						}
 
@@ -205,10 +201,6 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 					extReceiptHeader.setErrorCode(F702);
 					extReceiptHeader.setErrorMessage(e.getMessage());
 					extCollectionReceiptDao.updateFileExtraction(extReceiptHeader);
-				} finally {
-					if (sc != null) {
-						sc.close();
-					}
 				}
 			}
 

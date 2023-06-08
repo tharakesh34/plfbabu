@@ -68,4 +68,33 @@
 	</bean>
 
 	<bean id="appDateChangeServiceHook" class="com.pennant.pff.eod.extension.AppDateChangeServiceHookImpl" />
+	
+	<bean id="baselOneDumpService" class="com.pennanttech.external.extractions.service.micro.BaselOneDumpService">
+		<property name="extExtractionDao" ref="extExtractionDao" />
+	</bean>
+
+	<bean id="almDumpService" class="com.pennanttech.external.extractions.service.micro.ALMDumpService">
+		<property name="extExtractionDao" ref="extExtractionDao" />
+	</bean>
+
+	<bean id="baselTwoDumpService" class="com.pennanttech.external.extractions.service.micro.BaselTwoDumpService">
+		<property name="extExtractionDao" ref="extExtractionDao" />
+	</bean>
+
+	<bean id="rpmsDumpService" class="com.pennanttech.external.extractions.service.micro.RPMSDumpService">
+		<property name="extExtractionDao" ref="extExtractionDao" />
+	</bean>
+
+	<bean id="microEodExternalProcessHook"
+		class="com.pennanttech.external.extractions.service.micro.ExtExtractionDumpService">
+		<property name="baselOneDumpService" ref="baselOneDumpService" />
+		<property name="almDumpService" ref="almDumpService" />
+		<property name="baselTwoDumpService" ref="baselTwoDumpService" />
+		<property name="rpmsDumpService" ref="rpmsDumpService" />
+	</bean>
+
+	<bean id="beforeEodExternalProcessHook"
+		class="com.pennanttech.external.extractions.service.micro.BeforeEodExternalProcessService">
+		<property name="extExtractionDao" ref="extExtractionDao" />
+	</bean>
 </beans>

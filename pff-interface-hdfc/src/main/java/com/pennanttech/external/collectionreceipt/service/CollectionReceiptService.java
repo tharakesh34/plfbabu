@@ -25,7 +25,7 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 
 	public ExtCollectionReceiptData prepareData(CollReceiptDetail collReceiptDetail) {
 		ExtCollectionReceiptData collectionData = new ExtCollectionReceiptData();
-		String[] dataArray = collReceiptDetail.getRecordData().toString().split("\\|");
+		String[] dataArray = collReceiptDetail.getRecordData().split("\\|");
 		collectionData.setAgreementNumber(TextFileUtil.getLongItem(dataArray, 1));
 		collectionData.setCollection(TextFileUtil.getItem(dataArray, 2));
 		collectionData.setReceiptChannel(TextFileUtil.getItem(dataArray, 3));
@@ -62,32 +62,30 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 		return collectionData;
 	}
 
-	public String calculateCheckSum(String[] dataArray, long RowNum) {
+	public String calculateCheckSum(String[] dataArray, long rowNum) {
 
-		long AgreementNumber = TextFileUtil.getLongItem(dataArray, 1);
-		BigDecimal GrandTotal = TextFileUtil.getBigDecimalItem(dataArray, 9);
-		String ChequeDate = TextFileUtil.getItem(dataArray, 11);
-		String ReceiptDate = TextFileUtil.getItem(dataArray, 10);
-		String ReceiptType = TextFileUtil.getItem(dataArray, 12);
+		long agreementNumber = TextFileUtil.getLongItem(dataArray, 1);
+		BigDecimal grandTotal = TextFileUtil.getBigDecimalItem(dataArray, 9);
+		String chequeDate = TextFileUtil.getItem(dataArray, 11);
+		String receiptDate = TextFileUtil.getItem(dataArray, 10);
+		String receiptType = TextFileUtil.getItem(dataArray, 12);
 
-		int agreementCHK = generateChecksum(String.valueOf(AgreementNumber));
-		int grTotalCHK = generateChecksum(String.valueOf(GrandTotal));
-		int chqDateCHK = generateChecksum(String.valueOf(ChequeDate));
-		int receiptDateCHK = generateChecksum(String.valueOf(ReceiptDate));
-		int chqTypeCHK = generateChecksum(String.valueOf(ReceiptType));
+		int agreementCHK = generateChecksum(String.valueOf(agreementNumber));
+		int grTotalCHK = generateChecksum(String.valueOf(grandTotal));
+		int chqDateCHK = generateChecksum(String.valueOf(chequeDate));
+		int receiptDateCHK = generateChecksum(String.valueOf(receiptDate));
+		int chqTypeCHK = generateChecksum(String.valueOf(receiptType));
 
 		int totalChk = agreementCHK + grTotalCHK + chqDateCHK + receiptDateCHK + chqTypeCHK;
 
-		String qualifiedChk = RowNum + "" + totalChk;
-
-		return qualifiedChk;
+		return rowNum + "" + totalChk;
 	}
 
 	private int generateChecksum(String data) {
 		int rcdCS = 0;
 		for (int i = 0; i < data.length(); i++) {
 			char digit = data.charAt(i);
-			int asciiCode = (int) digit;
+			int asciiCode = digit;
 			rcdCS = rcdCS + asciiCode;
 		}
 		return rcdCS;
@@ -105,7 +103,7 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 		cru.setRealizationDate(getFormattedDate(collectionData.getReceiptDate()));
 		cru.setReceiptAmount(getAbsoluteAmount(collectionData.getGrandTotal()));
 		cru.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
-		cru.setReceiptPurpose("SP");// FIXME
+		cru.setReceiptPurpose("SP");
 		cru.setStatus(RepayConstants.PAYSTATUS_REALIZED);
 		cru.setReceiptChannel(PennantConstants.List_Select);
 		// collectionData
@@ -197,14 +195,14 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 		return convertedAmt.setScale(2);
 	}
 
-	private Date getFormattedDate(String str_date) {
+	private Date getFormattedDate(String strDate) {
 		try {
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yy");
-			return formatter.parse(str_date);
+			return formatter.parse(strDate);
 		} catch (Exception e) {
-
+			return null;
 		}
-		return null;
+
 	}
 
 	public void dataValidations(CollReceiptDetail extRcd, ExtCollectionReceiptData collectionData) {
@@ -254,7 +252,7 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 			return;
 		}
 
-		if (DateUtil.compare(getFormattedDate(collectionData.getReceiptDate()), SysParamUtil.getAppDate()) == 1) {
+		if (DateUtil.compare(getFormattedDate(collectionData.getReceiptDate()), SysParamUtil.getAppDate()) > 0) {
 			extRcd.setErrorCode(CR2008);
 			return;
 		}
@@ -266,7 +264,6 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 
 		if (collectionData.getExcessAmount().compareTo(collectionData.getGrandTotal()) > 0) {
 			extRcd.setErrorCode(CR2010);
-			return;
 		}
 	}
 

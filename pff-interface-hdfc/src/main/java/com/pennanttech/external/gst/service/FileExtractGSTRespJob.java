@@ -35,15 +35,12 @@ public class FileExtractGSTRespJob extends AbstractJob implements InterfaceConst
 	private static final String GST_COMP_RESPONSE_START = "G";
 	private static final String FETCH_QUERY = "Select * from GSTCOMPHEADER  Where STATUS=? AND EXTRACTION=?";
 
-	private DataSource dataSource;
-	private ApplicationContext applicationContext;
-
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
 
-		applicationContext = ApplicationContextProvider.getApplicationContext();
-		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
+		ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+		DataSource dataSource = applicationContext.getBean("extDataSource", DataSource.class);
 		ExtGSTDao extGSTDao = applicationContext.getBean(ExtGSTDao.class);
 
 		// Fetch 10 files using extraction status = 0
@@ -109,7 +106,7 @@ public class FileExtractGSTRespJob extends AbstractJob implements InterfaceConst
 							detailList.clear();
 						}
 					}
-					if (detailList.size() > 0) {
+					if (!detailList.isEmpty()) {
 						// save records remaining after bulk insert
 						extGSTDao.saveExtGSTCompRecordsData(detailList);
 						detailList.clear();
