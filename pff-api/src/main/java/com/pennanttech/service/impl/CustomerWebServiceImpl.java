@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -457,16 +456,11 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = cd.getCustCIF();
-			return getFailedStatus(ERR_90101, valueParm);
+			return getFailedStatus(ERR_90101, cd.getCustCIF());
 		}
 
 		if (!StringUtils.equals(cd.getCustCtgCode(), customer.getCustCtgCode())) {
-			String[] valueParm = new String[2];
-			valueParm[0] = cd.getCustCtgCode();
-			valueParm[1] = cd.getCustCIF();
-			return getFailedStatus("90599", valueParm);
+			return getFailedStatus("90599", cd.getCustCtgCode(), cd.getCustCIF());
 		}
 
 		logReference(cd.getCustCIF());
@@ -493,62 +487,46 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 	}
 
-	/**
-	 * Method for create CustomerEmployment in PLF system.
-	 * 
-	 * @param customerEmploymentDetail
-	 * @throws ServiceException
-	 */
-
 	@Override
-	public EmploymentDetail addCustomerEmployment(EmploymentDetail employmentDetail) throws ServiceException {
+	public EmploymentDetail addCustomerEmployment(EmploymentDetail ed) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
-		validationUtility.validate(employmentDetail, SaveValidationGroup.class);
-		EmploymentDetail response = null;
-		if (employmentDetail.getCustomerEmploymentDetail() == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "employment";
-			EmploymentDetail custEmploymentDetail = new EmploymentDetail();
-			custEmploymentDetail.setReturnStatus(getFailedStatus("90502", valueParm));
-			return custEmploymentDetail;
+		validationUtility.validate(ed, SaveValidationGroup.class);
+
+		if (ed.getCustomerEmploymentDetail() == null) {
+			EmploymentDetail response = new EmploymentDetail();
+			response.setReturnStatus(getFailedStatus("90502", "employment"));
+			return response;
 		}
-		Customer customerDetails = null;
-		if (StringUtils.isNotBlank(employmentDetail.getCif())) {
-			customerDetails = customerDetailsService.getCustomerByCIF(employmentDetail.getCif());
-			if (customerDetails == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = employmentDetail.getCif();
-				EmploymentDetail customerEmpDetail = new EmploymentDetail();
-				customerEmpDetail.setReturnStatus(getFailedStatus(ERR_90101, valueParm));
-				return customerEmpDetail;
+
+		Customer customer = null;
+		if (StringUtils.isNotBlank(ed.getCif())) {
+			customer = customerDetailsService.getCustomerByCIF(ed.getCif());
+			if (customer == null) {
+				EmploymentDetail response = new EmploymentDetail();
+				response.setReturnStatus(getFailedStatus(ERR_90101, ed.getCif()));
+				return response;
 			}
 		}
-		// for logging purpose
-		logReference(employmentDetail.getCif());
-		AuditHeader auditHeader = getAuditHeader(employmentDetail.getCustomerEmploymentDetail(),
-				PennantConstants.TRAN_WF);
-		// validate customer details as per the API specification
-		AuditDetail auditDetail = customerEmploymentDetailService
-				.doValidations(employmentDetail.getCustomerEmploymentDetail(), customerDetails);
+
+		logReference(ed.getCif());
+		AuditHeader auditHeader = getAuditHeader(ed.getCustomerEmploymentDetail(), PennantConstants.TRAN_WF);
+
+		AuditDetail auditDetail = customerEmploymentDetailService.doValidations(ed.getCustomerEmploymentDetail(),
+				customer);
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		if (CollectionUtils.isNotEmpty(auditHeader.getErrorMessage())) {
-			ErrorDetail ed = auditHeader.getErrorMessage().get(0);
-			response = new EmploymentDetail();
-			response.setReturnStatus(getFailedStatus(ed.getCode(), ed.getError()));
+			ErrorDetail error = auditHeader.getErrorMessage().get(0);
+			EmploymentDetail response = new EmploymentDetail();
+			response.setReturnStatus(getFailedStatus(error.getCode(), error.getError()));
 			return response;
 		}
 
-		response = customerController.addCustomerEmployment(employmentDetail.getCustomerEmploymentDetail(),
-				employmentDetail.getCif());
-
 		logger.debug(Literal.LEAVING);
-		return response;
-
+		return customerController.addCustomerEmployment(ed.getCustomerEmploymentDetail(), ed.getCif());
 	}
 
 	@Override
@@ -732,11 +710,9 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			valueParm[0] = custCIF;
 			response.setReturnStatus(getErrorDetails(ERR_90101, valueParm));
 		} else {
-			if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "director details";
-				valueParm[1] = PennantConstants.PFF_CUSTCTG_CORP + "," + PennantConstants.PFF_CUSTCTG_SME;
-				response.setReturnStatus(getFailedStatus("90124", valueParm));
+			if (PennantConstants.PFF_CUSTCTG_INDIV.equals(customer.getCustCtgCode())) {
+				response.setReturnStatus(getFailedStatus("90124", "director details",
+						PennantConstants.PFF_CUSTCTG_CORP + "," + PennantConstants.PFF_CUSTCTG_SME));
 				return response;
 			}
 			response = customerController.getCustomerDirectorDetails(custCIF, customer.getCustID());
@@ -969,9 +945,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = cpn.getCif();
-			return getFailedStatus(ERR_90101, valueParm);
+			return getFailedStatus(ERR_90101, cpn.getCif());
 		}
 
 		long custID = customer.getCustID();
@@ -1036,7 +1010,6 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		logger.debug(Literal.LEAVING);
-
 		return customerDetailsController.addCustomerAddress(ca.getCustomerAddres(), ca.getCif());
 	}
 
@@ -1083,7 +1056,6 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		logger.debug(Literal.LEAVING);
-
 		return customerDetailsController.updateCustomerAddress(ca.getCustomerAddres(), ca.getCif());
 	}
 
@@ -1107,7 +1079,6 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		logger.debug(Literal.LEAVING);
-
 		return customerDetailsController.getCustomerAddresses(custCIF);
 	}
 
@@ -1162,10 +1133,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = custEMail.getCif();
-			return getFailedStatus(ERR_90101, valueParm);
-
+			return getFailedStatus(ERR_90101, custEMail.getCif());
 		}
 
 		logReference(custEMail.getCif());
@@ -1408,7 +1376,6 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		custIncome.setId(customerIncome.getId());
 
 		logger.debug(Literal.LEAVING);
-
 		return customerDetailsController.updateCustomerIncome(custIncome, custCIF);
 	}
 
@@ -1434,7 +1401,6 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		logger.debug(Literal.LEAVING);
-
 		return customerDetailsController.getCustomerIncomes(custCIF);
 	}
 
@@ -1472,7 +1438,6 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		logger.debug(Literal.LEAVING);
-
 		return customerDetailsController.deleteCustomerIncome(custIncome);
 	}
 
@@ -1521,7 +1486,6 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		logger.debug(Literal.LEAVING);
 		return customerDetailsController.addCustomerBankingInformation(custBankInfo, custCIF);
-
 	}
 
 	@Override
@@ -1571,7 +1535,6 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 
 		logger.debug(Literal.LEAVING);
 		return customerDetailsController.updateCustomerBankingInformation(custBankInfo, custCIF);
-
 	}
 
 	@Override
@@ -1593,7 +1556,6 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		logger.debug(Literal.LEAVING);
-
 		return customerDetailsController.getCustomerBankingInformation(custCIF);
 	}
 
@@ -1612,9 +1574,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = custCIF;
-			return getFailedStatus(ERR_90101, valueParm);
+			return getFailedStatus(ERR_90101, custCIF);
 		}
 
 		CustomerBankInfo customerBankInfo = new CustomerBankInfo();
@@ -1630,7 +1590,6 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		logger.debug(Literal.LEAVING);
-
 		return customerDetailsController.deleteCustomerBankingInformation(custBankInfo);
 	}
 
@@ -1679,9 +1638,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		logger.debug(Literal.LEAVING);
-
 		return customerDetailsController.addCustomerGstInformation(customerGST, custCIF);
-
 	}
 
 	@Override
@@ -1730,9 +1687,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		logger.debug(Literal.LEAVING);
-
 		return customerDetailsController.updateCustomerGstInformation(customerGST, custCIF);
-
 	}
 
 	@Override
@@ -1756,7 +1711,6 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		logger.debug(Literal.LEAVING);
-
 		return customerDetailsController.getCustomerGstInformation(custCIF);
 	}
 
@@ -1774,9 +1728,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = custCIF;
-			return getFailedStatus(ERR_90101, valueParm);
+			return getFailedStatus(ERR_90101, custCIF);
 		}
 
 		CustomerGST customerGST = new CustomerGST();
@@ -2002,10 +1954,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 				chequeSeq, "");
 
 		if (custCheqInfo == null) {
-			String[] valueParm = new String[2];
-			valueParm[0] = String.valueOf(chequeSeq);
-			valueParm[1] = chequeInfo.getCif();
-			return getFailedStatus("90117", valueParm);
+			return getFailedStatus("90117", String.valueOf(chequeSeq), chequeInfo.getCif());
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -2247,9 +2196,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		if (customer == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = custCIF;
-			return getFailedStatus(ERR_90101, valueParm);
+			return getFailedStatus(ERR_90101, custCIF);
 		}
 
 		logReference(custCIF);
@@ -2562,7 +2509,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 			return response;
 		}
 
-		String custCtgCode = null;
+		String custCtgCode = "";
 		for (CustDedupRequest detail : dedupList) {
 			if (StringUtils.equalsIgnoreCase(detail.getName(), "CustCtgCode")) {
 				custCtgCode = String.valueOf(detail.getValue());
@@ -2585,7 +2532,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		List<BuilderTable> fieldList = dedupFieldsDAO.getFieldList(custCtgCode.concat("Customer"));
-		List<String> fieldNamesList = fieldList.stream().map(d -> d.getFieldName()).collect(Collectors.toList());
+		List<String> fieldNamesList = fieldList.stream().map(d -> d.getFieldName()).toList();
 
 		for (CustDedupRequest feild : dedupList) {
 			if (StringUtils.isBlank(feild.getName())) {
@@ -2680,7 +2627,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		}
 
 		List<BuilderTable> fieldList = dedupFieldsDAO.getFieldList(custCtgCode.concat("BlackList"));
-		List<String> fieldNamesList = fieldList.stream().map(d -> d.getFieldName()).collect(Collectors.toList());
+		List<String> fieldNamesList = fieldList.stream().map(d -> d.getFieldName()).toList();
 
 		for (CustDedupRequest feild : dedupList) {
 			if (StringUtils.isBlank(feild.getName())) {
@@ -2720,10 +2667,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 							blackListCustomers
 									.setCustDOB(DateUtil.parse(fieldValue, PennantConstants.APIDateFormatter));
 						} catch (Exception e) {
-							String[] valueParm = new String[2];
-							valueParm[0] = feild.getName();
-							valueParm[1] = "Date";
-							response.setReturnStatus(getFailedStatus("41002", valueParm));
+							response.setReturnStatus(getFailedStatus("41002", feild.getName(), "Date"));
 							return response;
 						}
 					}
