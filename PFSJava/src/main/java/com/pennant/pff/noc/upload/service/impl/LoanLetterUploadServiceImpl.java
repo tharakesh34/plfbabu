@@ -159,7 +159,8 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 			}
 		}
 
-		FinTypeFees ftf = loanLetterUploadDAO.getFeeWaiverAllowed(fm.getFinType(), detail.getLetterType());
+		FinTypeFees ftf = loanLetterUploadDAO.getFeeWaiverAllowed(fm.getFinType(),
+				NOCConstants.getLetterType(detail.getLetterType()));
 
 		if (PennantConstants.YES.equals(waiverCharges) && ftf == null
 				|| PennantConstants.YES.equals(waiverCharges) && BigDecimal.ZERO == ftf.getMaxWaiverPerc()) {
