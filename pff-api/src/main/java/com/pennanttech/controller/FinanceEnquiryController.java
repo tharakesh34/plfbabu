@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -246,29 +245,31 @@ public class FinanceEnquiryController extends AbstractController {
 
 		List<ApplicantDetails> response = new ArrayList<>();
 
-		Customer applicant = customerDAO.getBasicDetails(fm.getCustID(), TableType.MAIN_TAB);
+		long custID = fm.getCustID();
+		long finID = fm.getFinID();
+
+		Customer applicant = customerDAO.getBasicDetails(custID, TableType.MAIN_TAB);
 		applicant.setApplicantType("Applicant");
 		addApplicantDetails(applicant, response);
 
-		List<Customer> coApplicants = customerDAO.getBasicDetailsForJointCustomers(fm.getFinID(), TableType.MAIN_TAB);
+		List<Customer> coApplicants = customerDAO.getBasicDetailsForJointCustomers(finID, TableType.MAIN_TAB);
 
 		for (Customer coApplicant : coApplicants) {
 			coApplicant.setApplicantType("CoApplicant");
 			addApplicantDetails(coApplicant, response);
 		}
 
-		List<GuarantorDetail> guarantors = guarantorDetailDAO.getGuarantorDetailByFinRef(fm.getFinID(), "_AView");
+		List<GuarantorDetail> guarantors = guarantorDetailDAO.getGuarantorDetailByFinRef(finID, "_AView");
 
 		Customer guarantator;
 		for (GuarantorDetail guarantor : guarantors) {
 			if (guarantor.isBankCustomer()) {
-				guarantator = customerDAO.getBasicDetails(fm.getCustID(), TableType.MAIN_TAB);
+				guarantator = customerDAO.getBasicDetails(custID, TableType.MAIN_TAB);
 				guarantator.setApplicantType("Guarantor");
 				guarantator.setCustCIF(guarantor.getGuarantorCIF());
 
 				addApplicantDetails(guarantator, response);
 			} else {
-				guarantator = new Customer();
 				ApplicantDetails ad = new ApplicantDetails();
 				ad.setApplicantType("Guarantor");
 				ad.setCustID(guarantor.getCustID());
@@ -299,8 +300,7 @@ public class FinanceEnquiryController extends AbstractController {
 			businessDate = DateUtil.addDays(fm.getMaturityDate(), -1);
 		}
 
-		int instalments = Collections
-				.max(schedules.stream().map(schd -> schd.getInstNumber()).collect(Collectors.toList()));
+		int instalments = Collections.max(schedules.stream().map(schd -> schd.getInstNumber()).toList());
 
 		response.setInstalmentsPaid(SchdUtil.getPaidInstalments(schedules));
 		response.setExcessMoney(finExcessAmountDAO.getExcessBalance(finID));
@@ -338,7 +338,7 @@ public class FinanceEnquiryController extends AbstractController {
 			return ldList;
 		}
 
-		getRateChange(fm, ldList, ld, fsiList);
+		getRateChange(fm, ldList, fsiList);
 
 		return ldList;
 	}
@@ -399,16 +399,18 @@ public class FinanceEnquiryController extends AbstractController {
 
 	}
 
-	private void getRateChange(FinanceMain fm, List<LoanDetail> ldList, LoanDetail ld,
-			List<FinServiceInstruction> fsiList) {
+	private void getRateChange(FinanceMain fm, List<LoanDetail> ldList, List<FinServiceInstruction> fsiList) {
 
 		FinServiceInstruction fsi = null;
+
+		Date toDate = null;
+
 		for (int i = 0; i < fsiList.size(); i++) {
 			LoanDetail loanDetail = null;
-			
+
 			fsi = fsiList.get(i);
 			Date fromDate = fsi.getFromDate();
-			Date toDate = fsi.getToDate();
+			toDate = fsi.getToDate();
 
 			if (i == 0) {
 				loanDetail = new LoanDetail();
@@ -434,12 +436,12 @@ public class FinanceEnquiryController extends AbstractController {
 			ldList.add(loanDetail);
 		}
 
-		if (fm.getMaturityDate().compareTo(fsi.getToDate()) == 0) {
+		if (DateUtil.compare(fm.getMaturityDate(), toDate) == 0) {
 			return;
 		}
 
 		LoanDetail loanDetail = new LoanDetail();
-		loanDetail.setFromDate(fsi.getToDate());
+		loanDetail.setFromDate(toDate);
 		loanDetail.setToDate(fm.getMaturityDate());
 		loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
 		ldList.add(loanDetail);
