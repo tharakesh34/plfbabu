@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -404,8 +405,12 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 	private BigDecimal getSumOfAllocations(List<UploadAlloctionDetail> list) {
 		List<UploadAlloctionDetail> newlist = new ArrayList<>();
 		newlist = list;
-		UploadAlloctionDetail uad = newlist.stream().filter(n -> n.getAllocationType().equals("EM")).findFirst().get();
-		newlist.remove(uad);
+		Optional<UploadAlloctionDetail> allocList = newlist.stream()
+				.filter(l1 -> Allocation.EMI.equals(l1.getAllocationType())).findFirst();
+
+		if (!allocList.isEmpty()) {
+			newlist.remove(allocList.get());
+		}
 
 		BigDecimal sum = BigDecimal.ZERO;
 		for (UploadAlloctionDetail cru : newlist) {
