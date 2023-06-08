@@ -133,7 +133,7 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		@Override
 		public void render(Listitem item, HoldMarkingDetail hd, int index) throws Exception {
 
-			if (holdIDList == null || !holdIDList.contains(hd.getHoldID())) {
+			if (!holdIDList.contains(hd.getHoldID())) {
 				holdIDList.add(hd.getHoldID());
 				releaseAmount = BigDecimal.ZERO;
 			}
