@@ -35,7 +35,6 @@ public class FileExtractGSTRespJob extends AbstractJob implements InterfaceConst
 	private static final String GST_COMP_RESPONSE_START = "G";
 	private static final String FETCH_QUERY = "Select * from GSTCOMPHEADER  Where STATUS=? AND EXTRACTION=?";
 
-	private ExtGSTDao extGSTDao;
 	private DataSource dataSource;
 	private ApplicationContext applicationContext;
 
@@ -45,7 +44,7 @@ public class FileExtractGSTRespJob extends AbstractJob implements InterfaceConst
 
 		applicationContext = ApplicationContextProvider.getApplicationContext();
 		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
-		extGSTDao = applicationContext.getBean(ExtGSTDao.class);
+		ExtGSTDao extGSTDao = applicationContext.getBean(ExtGSTDao.class);
 
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<GSTCompHeader> cursorItemReader = new JdbcCursorItemReader<GSTCompHeader>();
