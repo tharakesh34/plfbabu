@@ -7,6 +7,7 @@ import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.google.common.io.Files;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
@@ -31,8 +32,6 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 		ucicWeeklyConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_WEEKLY_FILE);
 
 		if (ucicWeeklyConfig == null) {
-			logger.debug(
-					"Ext_Warning: No configuration found for type UCIC Weekly request file. So returning without generating the request file.");
 			return;
 		}
 
@@ -42,8 +41,11 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 
 		String baseFilePath = App.getResourcePath(ucicWeeklyConfig.getFileLocation());
 
+		MapSqlParameterSource inPrams = new MapSqlParameterSource();
+		inPrams.addValue("aFileName", fileName);
+
 		// Generate Request file from database server
-		String status = extUcicDao.executeUcicRequestFileSP(fileName);
+		String status = extUcicDao.executeSP("SP_UCIC_WRITE_WEEKLY_REQUEST_FILE", inPrams);
 
 		if ("SUCCESS".equals(status)) {
 			// Fetch request file from DB Server location and store it in client SFTP

@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.google.common.io.Files;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
@@ -46,7 +47,10 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 				+ new SimpleDateFormat(ucicAckConfig.getDateFormat()).format(appDate)
 				+ StringUtils.stripToEmpty(ucicAckConfig.getFilePostpend()) + ucicAckConfig.getFileExtension();
 
-		String status = extUcicDao.executeUcicAckFileSP(fileName);
+		MapSqlParameterSource inPrams = new MapSqlParameterSource();
+		inPrams.addValue("aFileName", fileName);
+
+		String status = extUcicDao.executeSP("SP_UCIC_WRITE_ACK_FILE", inPrams);
 
 		if ("SUCCESS".equals(status)) {
 			// Fetch request file from DB Server location and store it in client SFTP

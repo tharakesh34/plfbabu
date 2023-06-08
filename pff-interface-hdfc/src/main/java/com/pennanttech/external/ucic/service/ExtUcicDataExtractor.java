@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
@@ -30,7 +31,7 @@ public class ExtUcicDataExtractor extends TextFileUtil implements InterfaceConst
 
 		try {
 
-			String resp = extUcicDao.executeDataExtractionFromSP();
+			String resp = extUcicDao.executeSP("SP_EXTRACT_UCIC_DATA");
 
 			if (resp != null && "SUCCESS".equals(resp)) {
 				logger.debug("Successfully extracted customers data.");
@@ -60,8 +61,11 @@ public class ExtUcicDataExtractor extends TextFileUtil implements InterfaceConst
 					+ new SimpleDateFormat(ucicReqConfig.getDateFormat()).format(appDate)
 					+ ucicReqConfig.getFileExtension();
 
+			MapSqlParameterSource inPrams = new MapSqlParameterSource();
+			inPrams.addValue("aFileName", fileName);
+
 			// Generate Request file from database server
-			String status = extUcicDao.executeUcicRequestFileSP(fileName);
+			String status = extUcicDao.executeSP("SP_UCIC_WRITE_REQUEST_FILE", inPrams);
 
 			if (!"SUCCESS".equals(status)) {
 				return;

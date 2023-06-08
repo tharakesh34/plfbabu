@@ -1,19 +1,15 @@
 package com.pennanttech.external.ucic.dao;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 
 import javax.sql.DataSource;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.CallableStatementCreator;
-import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 import com.pennanttech.external.ucic.model.ExtUcicCust;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -25,6 +21,42 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 
 	public ExtUcicDaoImpl() {
 		super();
+	}
+
+	@Override
+	public String executeSP(String spName, MapSqlParameterSource in) {
+		String status = "FAIL";
+		try {
+
+			SimpleJdbcCall jdbcCall = new SimpleJdbcCall(mainNamedJdbcTemplate.getJdbcTemplate());
+			jdbcCall.withProcedureName(spName);
+			jdbcCall.execute(in);
+
+			status = "SUCCESS";
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			status = "Error In Calling Procedure";
+		}
+		logger.info("UCIC request file writing Completed.");
+		return status;
+	}
+
+	@Override
+	public String executeSP(String spName) {
+		String status = "FAIL";
+		try {
+
+			SimpleJdbcCall jdbcCall = new SimpleJdbcCall(mainNamedJdbcTemplate.getJdbcTemplate());
+			jdbcCall.withProcedureName(spName);
+			jdbcCall.execute();
+
+			status = "SUCCESS";
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			status = "Error In Calling Procedure";
+		}
+		logger.info("UCIC request file writing Completed.");
+		return status;
 	}
 
 	@Override
@@ -98,127 +130,6 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 	}
 
 	@Override
-	public String executeDataExtractionFromSP() {
-		logger.info("Extracting UCIC data");
-		String status = "FAIL";
-		try {
-			mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
-
-				@Override
-				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
-
-					CallableStatement callableStatement = connection.prepareCall("{ call SP_EXTRACT_UCIC_DATA() }");
-					return callableStatement;
-
-				}
-			}, new ArrayList<SqlParameter>());
-
-			status = "SUCCESS";
-		} catch (Exception e) {
-			logger.error("Exception: Extraction of UCIC Cust Data failed ", e);
-			status = "Error In Calling Procedure";
-		}
-		logger.info("Extracting UCIC data Completed");
-		return status;
-	}
-
-	@Override
-	public String executeUcicRequestFileSP(String fileName) {
-		String status = "FAIL";
-		try {
-			mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
-
-				@Override
-				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
-
-					CallableStatement callableStatement = connection
-							.prepareCall("{ call SP_UCIC_WRITE_REQUEST_FILE('" + fileName + "') }");
-					return callableStatement;
-
-				}
-			}, new ArrayList<SqlParameter>());
-
-			status = "SUCCESS";
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			status = "Error In Calling Procedure";
-		}
-		logger.info("UCIC request file writing Completed.");
-		return status;
-	}
-
-	@Override
-	public String executeUcicWeeklyRequestFileSP(String fileName) {
-		String status = "FAIL";
-		try {
-			mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
-
-				@Override
-				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
-
-					CallableStatement callableStatement = connection
-							.prepareCall("{ call SP_UCIC_WRITE_WEEKLY_REQUEST_FILE('" + fileName + "') }");
-					return callableStatement;
-
-				}
-			}, new ArrayList<SqlParameter>());
-
-			status = "SUCCESS";
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			status = "Error In Calling Procedure";
-		}
-		logger.info("UCIC request file writing Completed.");
-		return status;
-	}
-
-	@Override
-	public String executeUcicResponseFileSP(String fileName) {
-		String status = "FAIL";
-		try {
-			mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
-				@Override
-				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
-					CallableStatement callableStatement = connection
-							.prepareCall("{ call SP_READ_UCIC_RESP_FILE('" + fileName + "') }");
-					return callableStatement;
-				}
-			}, new ArrayList<SqlParameter>());
-			status = "SUCCESS";
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			status = "Error In Calling Procedure";
-		}
-		logger.info("UCIC request file writing Completed.");
-		return status;
-	}
-
-	@Override
-	public String executeUcicAckFileSP(String fileName) {
-		String status = "FAIL";
-		try {
-			mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
-
-				@Override
-				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
-
-					CallableStatement callableStatement = connection
-							.prepareCall("{ call SP_UCIC_WRITE_ACK_FILE('" + fileName + "') }");
-					return callableStatement;
-
-				}
-			}, new ArrayList<SqlParameter>());
-
-			status = "SUCCESS";
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			status = "Error In Calling Procedure";
-		}
-		logger.info("UCIC request file writing Completed.");
-		return status;
-	}
-
-	@Override
 	public int updateAckForFile(String fileName, int ackStatus) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder();
@@ -236,4 +147,5 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 	public void setMainDataSource(DataSource extDataSource) {
 		this.mainNamedJdbcTemplate = new NamedParameterJdbcTemplate(extDataSource);
 	}
+
 }

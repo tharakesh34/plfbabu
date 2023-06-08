@@ -14,6 +14,7 @@ import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
@@ -108,8 +109,10 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 				// Upload the response file to DB Server to read by ORACLE Database
 				fileTransferUtil.uploadToSFTP(localFolderPath, ucicFile.getFileName());
 
+				MapSqlParameterSource inPrams = new MapSqlParameterSource();
+				inPrams.addValue("aFileName", file.getName());
 				// Now Run SP here to read file by ORACLE
-				String stat = extUcicDao.executeUcicResponseFileSP(file.getName());
+				String stat = extUcicDao.executeSP("SP_READ_UCIC_RESP_FILE", inPrams);
 
 				// check if list is null
 				if ("SUCCESS".equals(stat)) {
