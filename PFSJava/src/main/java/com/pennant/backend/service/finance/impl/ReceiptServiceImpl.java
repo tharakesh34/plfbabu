@@ -8979,7 +8979,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		FinReceiptHeader rch = rd.getReceiptHeader();
 
-		if ((ReceiptPurpose.EARLYSETTLE.code().equals(rch.getReceiptPurpose())
+		if (!(ReceiptPurpose.EARLYSETTLE.code().equals(rch.getReceiptPurpose())
 				|| FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose()))) {
 			return;
 		}

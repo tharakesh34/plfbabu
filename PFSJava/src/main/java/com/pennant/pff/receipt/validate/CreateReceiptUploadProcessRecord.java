@@ -489,8 +489,8 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			}
 
 			if (!ReceiptMode.NEFT.equals(subReceiptMode) && !ReceiptMode.RTGS.equals(subReceiptMode)
-					&& !ReceiptMode.IMPS.equals(subReceiptMode) && !"FT".equals(subReceiptMode)) {
-				setError(rud, "Values other than IMPS/RTGS/NEFT/FT in [RECEIPTMODE] ");
+					&& !ReceiptMode.IMPS.equals(subReceiptMode) && !ReceiptMode.IFT.equals(subReceiptMode)) {
+				setError(rud, "Values other than IMPS/RTGS/NEFT/IFT in [RECEIPTMODE] ");
 				return;
 			}
 
