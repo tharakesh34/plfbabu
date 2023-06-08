@@ -30,9 +30,6 @@
 		<property name="extUcicDao" ref="extUcicDao" />
 	</bean>
 
-	<bean id="extUcicRequestFile" class="com.pennanttech.external.ucic.service.ExtUcicRequestFile">
-		<property name="extUcicDao" ref="extUcicDao" />
-	</bean>
 
 	<bean id="externalPresentmentDAO" class="com.pennanttech.external.presentment.dao.ExtPresentmentDAOImpl">
 		<property name="mainDataSource" ref="dataSource" />
@@ -43,7 +40,6 @@
 	<bean id="extExtractionHook" class="com.pennanttech.external.extractions.service.EODExtractionsService">
 		<property name="extExtractionDao" ref="extExtractionDao" />
 		<property name="extUcicExtractData" ref="extUcicExtractData" />
-		<property name="extUcicRequestFile" ref="extUcicRequestFile" />
 	</bean>
 
 	<bean id="siService" class="com.pennanttech.external.presentment.service.SIService">

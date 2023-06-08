@@ -73,7 +73,7 @@ public class ExtExtractionDaoImpl extends SequenceDao implements ExtExtractionDa
 				@Override
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
 
-					CallableStatement callableStatement = connection.prepareCall(spName);
+					CallableStatement callableStatement = connection.prepareCall("{ call " + spName + "(?) }");
 					callableStatement.setDate(1, (java.sql.Date) appDate);
 					return callableStatement;
 

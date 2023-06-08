@@ -102,10 +102,6 @@
 		<property name="extUcicDao" ref="extUcicDao" />
 	</bean>
 
-	<bean id="extUcicRequestFile" class="com.pennanttech.external.ucic.service.ExtUcicRequestFile">
-		<property name="extUcicDao" ref="extUcicDao" />
-	</bean>
-
 	<bean id="extUcicResponseFolderReader" class="com.pennanttech.external.ucic.service.ExtUcicResponseFileReader">
 		<property name="extUcicDao" ref="extUcicDao" />
 	</bean>

@@ -21,7 +21,6 @@ import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.extractions.dao.ExtExtractionDao;
 import com.pennanttech.external.ucic.service.ExtUcicDataExtractor;
-import com.pennanttech.external.ucic.service.ExtUcicRequestFile;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -29,33 +28,35 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 
 	private static final Logger logger = LogManager.getLogger(EODExtractionsService.class);
 
-	private FileInterfaceConfig finconGLConfig;
-
 	private ExtExtractionDao extExtractionDao;
 
 	private ExtUcicDataExtractor extUcicExtractData;
 
-	private ExtUcicRequestFile extUcicRequestFile;
+	@Override
+	public void processUCICExtraction() {
+		logger.debug(Literal.ENTERING);
+
+		if (extUcicExtractData != null) {
+			extUcicExtractData.processUCIC();
+		}
+		logger.debug(Literal.LEAVING);
+	}
 
 	@Override
 	public void processFinconGLExtraction() {
 		Date appDate = SysParamUtil.getAppDate();
-		String spCall = "{ call " + SP_FINCON_GL + "(?) }";
-		String finconSPStatus = extExtractionDao.executeSp(spCall, appDate);
+
+		String finconSPStatus = extExtractionDao.executeSp(SP_FINCON_GL, appDate);
+
 		if (!"SUCCESS".equals(finconSPStatus)) {
 			logger.debug("EXT_FINCONGL: SP extraction failed.");
 			return;
 		}
 
 		// file writing
-		finconGLConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_FINCONGL);
+		FileInterfaceConfig finconGLConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_FINCONGL);
 
-		long fileSeq = extExtractionDao.getSeqNumber(SEQ_FINCON_GL);
-
-		String fileSeqName = StringUtils.leftPad(String.valueOf(fileSeq), 4, "0");
-		String fileName = finconGLConfig.getFilePrepend()
-				+ new SimpleDateFormat(finconGLConfig.getDateFormat()).format(appDate) + fileSeqName
-				+ finconGLConfig.getFileExtension();
+		String fileName = getFileName(appDate, finconGLConfig);
 
 		// write the file in DB server
 		String spQuery = "{ call " + SP_FINCON_WRITE_FILE + "(?) }";
@@ -92,7 +93,7 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 			return;
 		}
 
-		if ("Y".equals(finconGLConfig.getFileTransfer())) {
+		if ("Y".equals(finconGLConfig.getIsSftp())) {
 			// Now upload file to SFTP of client location as per configuration
 			File mainFile = new File(baseFilePath + File.separator + fileName);
 			FileTransferUtil fTransferUtil = new FileTransferUtil(finconGLConfig);
@@ -103,27 +104,14 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 
 	}
 
-	private void processUcicRequest() {
-		logger.debug(Literal.ENTERING);
-		String custDataExtrctstatus = "";
-		try {
-			if (extUcicExtractData != null) {
-				custDataExtrctstatus = extUcicExtractData.extractCustomerData();
-			}
-			if (custDataExtrctstatus.equals("SUCCESS")) {
-				Date appDate = SysParamUtil.getAppDate();
-				if (extUcicRequestFile != null) {
-					extUcicRequestFile.processUcicRequestFile(appDate);
-				}
-			} else {
-				logger.debug("Customers data extraction Unsuccessful :" + custDataExtrctstatus);
-			}
+	private String getFileName(Date appDate, FileInterfaceConfig finconGLConfig) {
+		long fileSeq = extExtractionDao.getSeqNumber(SEQ_FINCON_GL);
 
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
+		String fileSeqName = StringUtils.leftPad(String.valueOf(fileSeq), 4, "0");
+		String fileName = finconGLConfig.getFilePrepend()
+				+ new SimpleDateFormat(finconGLConfig.getDateFormat()).format(appDate) + fileSeqName
+				+ finconGLConfig.getFileExtension();
+		return fileName;
 	}
 
 	private void fileBackup(FileInterfaceConfig finconGLconf, File mainFile) {
@@ -159,17 +147,6 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	@Qualifier(value = "extUcicExtractData")
 	public void setExtUcicExtractData(ExtUcicDataExtractor extUcicExtractData) {
 		this.extUcicExtractData = extUcicExtractData;
-	}
-
-	@Autowired(required = false)
-	@Qualifier(value = "extUcicRequestFile")
-	public void setExtUcicRequestFile(ExtUcicRequestFile extUcicRequestFile) {
-		this.extUcicRequestFile = extUcicRequestFile;
-	}
-
-	@Override
-	public void processUCICExtraction() {
-		processUcicRequest();
 	}
 
 	@Override
