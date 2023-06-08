@@ -2801,11 +2801,9 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 					"_AView", false);
 
 			List<CustomerFinanceDetail> finances = response.getCustomerFinanceDetailList();
-			if (finances != null) {
-				finances.addAll(custFD);
-			}
 
 			if (CollectionUtils.isNotEmpty(finances)) {
+				finances.addAll(custFD);
 				finances.forEach(cfd -> cfd.setJointAccountDetails(
 						jointAccountDetailDAO.getJointAccountDetailByFinRef(cfd.getFinID(), "_View")));
 
