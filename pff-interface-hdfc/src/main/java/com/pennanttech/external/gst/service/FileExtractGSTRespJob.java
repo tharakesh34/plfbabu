@@ -79,19 +79,16 @@ public class FileExtractGSTRespJob extends AbstractJob implements InterfaceConst
 		GSTCompHeader header;
 		try {
 			while ((header = cursorItemReader.read()) != null) {
-				Scanner sc = null;
-				try {
-					// update the extract state as processing
-					extGSTDao.updateFileStatus(header.getId(), INPROCESS);
 
-					String filePath = App.getResourcePath(header.getFileLocation()) + File.separator
-							+ header.getFileName();
+				// update the extract state as processing
+				extGSTDao.updateFileStatus(header.getId(), INPROCESS);
 
-					File file = new File(filePath);
+				String filePath = App.getResourcePath(header.getFileLocation()) + File.separator + header.getFileName();
 
-					List<GSTCompDetail> detailList = new ArrayList<GSTCompDetail>();
+				File file = new File(filePath);
 
-					sc = new Scanner(file);
+				List<GSTCompDetail> detailList = new ArrayList<GSTCompDetail>();
+				try (Scanner sc = new Scanner(file)) {
 					// Read file line by line
 					while (sc.hasNextLine()) {
 						String lineData = sc.nextLine();
@@ -123,10 +120,6 @@ public class FileExtractGSTRespJob extends AbstractJob implements InterfaceConst
 					logger.debug(Literal.EXCEPTION, e);
 					// update the file extraction as completed
 					extGSTDao.updateFileStatus(header.getId(), EXCEPTION);
-				} finally {
-					if (sc != null) {
-						sc.close();
-					}
 				}
 			}
 		} catch (Exception e) {
