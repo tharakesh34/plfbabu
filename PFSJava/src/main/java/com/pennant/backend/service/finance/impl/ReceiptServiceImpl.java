@@ -1796,12 +1796,14 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		} else if (RepayConstants.PAYSTATUS_BOUNCE.equals(rch.getReceiptModeStatus())
 				|| RepayConstants.PAYSTATUS_CANCEL.equals(rch.getReceiptModeStatus())) {
 			for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
-				FinRepayHeader rph = financeRepaymentsDAO.getFinRepayHeadersByReceipt(rcd.getReceiptSeqID(), "");
-				rcd.setRepayHeader(rph);
-				if (rph != null) {
-					List<RepayScheduleDetail> rpySchdList = financeRepaymentsDAO
-							.getRpySchdListByRepayID(rph.getRepayID(), "");
-					rph.setRepayScheduleDetails(rpySchdList);
+				if (rcd.getReceiptSeqID() > 0) {
+					FinRepayHeader rph = financeRepaymentsDAO.getFinRepayHeadersByReceipt(rcd.getReceiptSeqID(), "");
+					rcd.setRepayHeader(rph);
+					if (rph != null) {
+						List<RepayScheduleDetail> rpySchdList = financeRepaymentsDAO
+								.getRpySchdListByRepayID(rph.getRepayID(), "");
+						rph.setRepayScheduleDetails(rpySchdList);
+					}
 				}
 			}
 			receiptCancellationService.doApprove(auditHeader);
