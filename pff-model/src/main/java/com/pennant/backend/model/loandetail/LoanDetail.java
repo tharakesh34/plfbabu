@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.emiholidays.EMIHolidays;
 import com.pennant.backend.model.gracedetails.GraceDetails;
 import com.pennant.backend.model.loanbranch.LoanBranch;
@@ -230,6 +231,8 @@ public class LoanDetail {
 	private Date toDate;
 	@XmlElement
 	private Integer noOfTerms;
+
+	private List<BaseRate> baseRates;
 
 	public LoanDetail() {
 		super();
@@ -1001,5 +1004,13 @@ public class LoanDetail {
 
 	public void setNoOfTerms(Integer noOfTerms) {
 		this.noOfTerms = noOfTerms;
+	}
+
+	public List<BaseRate> getBaseRates() {
+		return baseRates;
+	}
+
+	public void setBaseRates(List<BaseRate> baseRates) {
+		this.baseRates = baseRates;
 	}
 }

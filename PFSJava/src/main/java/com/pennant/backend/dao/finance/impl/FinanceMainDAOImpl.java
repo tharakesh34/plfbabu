@@ -5910,25 +5910,25 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		switch (tableType) {
 		case MAIN_TAB:
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
-			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference, RepayBaseRate, FinCcy");
 			sql.append(" From FinanceMain fm Where FinReference = ?");
 			break;
 		case TEMP_TAB:
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
-			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference, RepayBaseRate, FinCcy");
 			sql.append("  From FinanceMain_Temp fm Where FinReference = ?");
 			break;
 		case BOTH_TAB:
 			object = new Object[] { finReference, finReference };
 
 			sql.append("Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
-			sql.append(" , RepayProfitRate, FinStartDate, , FinReference From(");
+			sql.append(" , RepayProfitRate, FinStartDate, , FinReference, RepayBaseRate, FinCcy From(");
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
-			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference, RepayBaseRate, FinCcy");
 			sql.append("  From FinanceMain_Temp fm Where FinReference = ?");
 			sql.append(" Union All");
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
-			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference, RepayBaseRate, FinCcy");
 			sql.append("  From FinanceMain fm Where FinReference = ?");
 			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
 			sql.append(" ) fm");
@@ -5950,6 +5950,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setFinStartDate(rs.getDate("FinStartDate"));
 				fm.setRepayProfitRate(rs.getBigDecimal("RepayProfitRate"));
 				fm.setFinReference(rs.getString("FinReference"));
+				fm.setRepayBaseRate(rs.getString("RepayBaseRate"));
+				fm.setFinCcy(rs.getString("FinCcy"));
 
 				return fm;
 			}, object);

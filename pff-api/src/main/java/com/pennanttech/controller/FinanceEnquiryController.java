@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
@@ -25,6 +27,7 @@ import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.applicant.ApplicantDetails;
+import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.chargedetails.ChargeDetails;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -70,6 +73,7 @@ public class FinanceEnquiryController extends AbstractController {
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 	private FinFeeDetailDAO finFeeDetailDAO;
+	private BaseRateDAO baseRateDAO;
 
 	private static final String ERROR_92021 = "92021";
 
@@ -329,6 +333,10 @@ public class FinanceEnquiryController extends AbstractController {
 		List<FinServiceInstruction> fsiList = finServiceInstrutionDAO.getFinServiceInstructions(finID, "",
 				FinServiceEvent.RATECHG);
 
+		if (StringUtils.isNotBlank(fm.getRepayBaseRate())) {
+			ld.setBaseRates(baseRateDAO.getBaseRates(fm.getRepayBaseRate(), fm.getFinCcy(), fm.getMaturityDate(), ""));
+		}
+
 		if (CollectionUtils.isEmpty(fsiList)) {
 			setRateCahngeDetails(fm, ld);
 
@@ -338,7 +346,7 @@ public class FinanceEnquiryController extends AbstractController {
 			return ldList;
 		}
 
-		getRateChange(fm, ldList, fsiList);
+		getRateChange(fm, ldList, fsiList, ld);
 
 		return ldList;
 	}
@@ -399,11 +407,13 @@ public class FinanceEnquiryController extends AbstractController {
 
 	}
 
-	private void getRateChange(FinanceMain fm, List<LoanDetail> ldList, List<FinServiceInstruction> fsiList) {
+	private void getRateChange(FinanceMain fm, List<LoanDetail> ldList, List<FinServiceInstruction> fsiList,
+			LoanDetail ld) {
 
 		FinServiceInstruction fsi = null;
-
 		Date toDate = null;
+
+		fsiList = fsiList.stream().sorted((fsi1, fsi2) -> fsi1.getFromDate().compareTo(fsi2.getFromDate())).toList();
 
 		for (int i = 0; i < fsiList.size(); i++) {
 			LoanDetail loanDetail = null;
@@ -416,14 +426,27 @@ public class FinanceEnquiryController extends AbstractController {
 				loanDetail = new LoanDetail();
 				loanDetail.setFromDate(fm.getFinStartDate());
 				loanDetail.setToDate(fromDate == null ? fsi.getFromDate() : fromDate);
+				
+				if (!StringUtils.isEmpty(fm.getRepayBaseRate())) {
+					BaseRate b = getBaseRate(fm, loanDetail.getFromDate(), ld);
+					fm.setRepayProfitRate(b != null ? b.getBRRate() : BigDecimal.ZERO);
+				}
+				
 				loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
 				ldList.add(loanDetail);
 			}
 
-			if (i != 0 && fromDate.compareTo(fsiList.get(i - 1).getToDate()) != 0) {
+			if (i != 0 && toDate.compareTo(fm.getMaturityDate()) != 0
+					&& fromDate.compareTo(fsiList.get(i - 1).getToDate()) > 0) {
 				loanDetail = new LoanDetail();
 				loanDetail.setFromDate(fsiList.get(i - 1).getToDate());
 				loanDetail.setToDate(fromDate);
+			
+				if (StringUtils.isEmpty(fm.getRepayBaseRate())) {
+					BaseRate b = getBaseRate(fm, loanDetail.getFromDate(), ld);
+					fm.setRepayProfitRate(b != null ? b.getBRRate() : BigDecimal.ZERO);
+				}
+				
 				loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
 				ldList.add(loanDetail);
 			}
@@ -443,6 +466,12 @@ public class FinanceEnquiryController extends AbstractController {
 		LoanDetail loanDetail = new LoanDetail();
 		loanDetail.setFromDate(toDate);
 		loanDetail.setToDate(fm.getMaturityDate());
+		
+		if (StringUtils.isEmpty(fm.getRepayBaseRate())) {
+			BaseRate b = getBaseRate(fm, loanDetail.getFromDate(), ld);
+			fm.setRepayProfitRate(b != null ? b.getBRRate() : BigDecimal.ZERO);
+		}
+		
 		loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
 		ldList.add(loanDetail);
 	}
@@ -450,7 +479,25 @@ public class FinanceEnquiryController extends AbstractController {
 	private void setRateCahngeDetails(FinanceMain fm, LoanDetail ld) {
 		ld.setFromDate(fm.getFinStartDate());
 		ld.setToDate(fm.getMaturityDate());
+		
+		if (StringUtils.isEmpty(fm.getRepayBaseRate())) {
+			BaseRate b = getBaseRate(fm, fm.getFinStartDate(), ld);
+			fm.setRepayProfitRate(b != null ? b.getBRRate() : BigDecimal.ZERO);
+		}
+
 		ld.setRepayProfitRate(fm.getRepayProfitRate());
+	}
+
+	private BaseRate getBaseRate(FinanceMain fm, Date date, LoanDetail ld) {
+
+		List<BaseRate> baseRates = ld.getBaseRates().stream()
+				.filter(baseRate -> baseRate.getBREffDate().compareTo(date) <= 0).toList();
+
+		if (CollectionUtils.isEmpty(baseRates)) {
+			return null;
+		}
+
+		return Collections.max(baseRates, (b1, b2) -> b1.getBREffDate().compareTo(b2.getBREffDate()));
 	}
 
 	private void addApplicantDetails(Customer customer, List<ApplicantDetails> applicantDetails) {
@@ -573,5 +620,10 @@ public class FinanceEnquiryController extends AbstractController {
 	@Autowired
 	public void setFinanceEnquiryService(FinanceEnquiryService financeEnquiryService) {
 		this.financeEnquiryService = financeEnquiryService;
+	}
+
+	@Autowired
+	public void setBaseRateDAO(BaseRateDAO baseRateDAO) {
+		this.baseRateDAO = baseRateDAO;
 	}
 }

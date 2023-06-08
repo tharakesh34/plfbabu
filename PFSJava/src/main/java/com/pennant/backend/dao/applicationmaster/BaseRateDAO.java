@@ -51,4 +51,6 @@ public interface BaseRateDAO extends BasicCrudDao<BaseRate> {
 	List<BaseRate> getBaseRateHistByType(String bRType, String currency, Date bREffDate);
 
 	BaseRate getBaseRateByDate(String bRType, String currency, Date bREffDate);
+
+	List<BaseRate> getBaseRates(String bRType, String currency, Date bREffDate, String type);
 }
