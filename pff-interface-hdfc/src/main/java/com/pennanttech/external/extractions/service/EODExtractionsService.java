@@ -72,7 +72,6 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 		String baseFilePath = App.getResourcePath(finconGLConfig.getFileLocation());
 
 		if (baseFilePath == null || "".equals(baseFilePath)) {
-			logger.debug("Ext_Warning: Local file path not found for config. So returning.");
 			return;
 		}
 
@@ -80,7 +79,6 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 		FileInterfaceConfig dbServerConfig = FileInterfaceConfigUtil.getFIConfig("PLF_DB_SERVER");
 
 		if (dbServerConfig == null) {
-			logger.debug("Ext_Warning: DB Server config not found. So returning.");
 			return;
 		}
 
@@ -119,7 +117,6 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 
 		String localBkpLocation = finconGLconf.getFileLocalBackupLocation();
 		if (localBkpLocation == null || "".equals(localBkpLocation)) {
-			logger.debug("EXT_FINCONGL: Local backup location not configured, so returning.");
 			return;
 		}
 

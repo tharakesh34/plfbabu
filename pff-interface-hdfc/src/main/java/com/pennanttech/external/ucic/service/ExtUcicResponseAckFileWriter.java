@@ -52,7 +52,7 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil
 		MapSqlParameterSource inPrams = new MapSqlParameterSource();
 		inPrams.addValue("aFileName", fileName);
 
-		String status = extUcicDao.executeSP("SP_UCIC_WRITE_ACK_FILE", inPrams);
+		String status = extUcicDao.executeSP(SP_UCIC_WRITE_ACK_FILE, inPrams);
 
 		if ("SUCCESS".equals(status)) {
 			// Fetch request file from DB Server location and store it in client SFTP

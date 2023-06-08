@@ -112,7 +112,7 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 				MapSqlParameterSource inPrams = new MapSqlParameterSource();
 				inPrams.addValue("aFileName", file.getName());
 				// Now Run SP here to read file by ORACLE
-				String stat = extUcicDao.executeSP("SP_READ_UCIC_RESP_FILE", inPrams);
+				String stat = extUcicDao.executeSP(SP_READ_UCIC_RESP_FILE, inPrams);
 
 				// check if list is null
 				if ("SUCCESS".equals(stat)) {

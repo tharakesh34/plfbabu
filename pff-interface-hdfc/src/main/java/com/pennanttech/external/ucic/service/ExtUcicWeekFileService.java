@@ -35,7 +35,6 @@ public class ExtUcicWeekFileService extends TextFileUtil
 		ucicWeeklyConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_WEEKLY_FILE);
 
 		if (ucicWeeklyConfig == null) {
-			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1014));
 			return;
 		}
 
@@ -49,7 +48,7 @@ public class ExtUcicWeekFileService extends TextFileUtil
 		inPrams.addValue("aFileName", fileName);
 
 		// Generate Request file from database server
-		String status = extUcicDao.executeSP("SP_UCIC_WRITE_WEEKLY_REQUEST_FILE", inPrams);
+		String status = extUcicDao.executeSP(SP_UCIC_WRITE_WEEKLY_REQ_FILE, inPrams);
 
 		if ("SUCCESS".equals(status)) {
 			// Fetch request file from DB Server location and store it in client SFTP
@@ -58,7 +57,6 @@ public class ExtUcicWeekFileService extends TextFileUtil
 			// Now get remote file to local base location using SERVER config
 			String remoteFilePath = serverConfig.getFileTransferConfig().getSftpLocation();
 			if (remoteFilePath == null || "".equals(remoteFilePath)) {
-				logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1014));
 				return;
 			}
 			FileTransferUtil fileTransferUtil = new FileTransferUtil(ucicWeeklyConfig);
@@ -87,7 +85,6 @@ public class ExtUcicWeekFileService extends TextFileUtil
 
 		String localBkpLocation = ucicWeeklyConfig.getFileLocalBackupLocation();
 		if (localBkpLocation == null || "".equals(localBkpLocation)) {
-			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1013));
 			return;
 		}
 		String localBackupLocation = App.getResourcePath(ucicWeeklyConfig.getFileLocalBackupLocation());
