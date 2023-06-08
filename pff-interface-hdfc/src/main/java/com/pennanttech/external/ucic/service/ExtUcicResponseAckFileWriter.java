@@ -14,16 +14,19 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.google.common.io.Files;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
+import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtUcicResponseAckFileWriter extends TextFileUtil implements InterfaceConstants, ExtIntfConfigConstants {
+public class ExtUcicResponseAckFileWriter extends TextFileUtil
+		implements InterfaceConstants, ExtIntfConfigConstants, ErrorCodesConstants {
 
 	private static final Logger logger = LogManager.getLogger(ExtUcicResponseAckFileWriter.class);
 
@@ -36,8 +39,7 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 		FileInterfaceConfig ucicAckConfConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_ACK_CONF);
 
 		if (ucicAckConfig == null || ucicAckConfConfig == null) {
-			logger.debug(
-					"EXT_UCIC: No configuration found for type UCIC ack file. So returning without generating the ack file.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1010));
 			return;
 		}
 
@@ -57,13 +59,13 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 			FileInterfaceConfig dbServerConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_PLF_DB_SERVER);
 
 			if (dbServerConfig == null) {
-				logger.debug("EXT_UCIC: DB Server config not found. So returning.");
+				logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1007));
 				return;
 			}
 			String remoteFilePath = dbServerConfig.getFileTransferConfig().getSftpLocation();
 
 			if (remoteFilePath == null || "".equals(remoteFilePath)) {
-				logger.debug("EXT_UCIC: RemoteFilePath in config not found. So returning.");
+				logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1008));
 				return;
 			}
 
@@ -71,7 +73,7 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 				FileTransferUtil fileTransferUtil = new FileTransferUtil(dbServerConfig);
 				fileTransferUtil.downloadFromSFTP(fileName, baseFilePath);
 			} catch (Exception e) {
-				logger.debug("Unable to download file from DB Server to local path.");
+				logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1011));
 				return;
 			}
 
@@ -84,7 +86,7 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 				writeCompleteFile(appDate, ucicAckConfig, ucicAckConfConfig);
 			}
 		} else {
-			logger.debug("Error In Executing SP_UCIC_WRITE_ACK_FILE Procedure");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1012));
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -108,7 +110,7 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 
 		String localBkpLocation = ucicAckConfig.getFileLocalBackupLocation();
 		if (localBkpLocation == null || "".equals(localBkpLocation)) {
-			logger.debug("EXT_UCIC: Local backup location not configured, so returning.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1013));
 			return;
 		}
 
@@ -119,8 +121,6 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 
 		Files.copy(mainFile, mainFileBkp);
 		Files.copy(completeFileToUpload, completeFileBkp);
-
-		logger.debug("EXT_UCIC:MainFile & Completefile backup Successful");
 		logger.debug(Literal.LEAVING);
 	}
 

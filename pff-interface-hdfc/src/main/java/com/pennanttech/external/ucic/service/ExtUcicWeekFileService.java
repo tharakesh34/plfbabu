@@ -11,16 +11,19 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.google.common.io.Files;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
+import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceConstants, ExtIntfConfigConstants {
+public class ExtUcicWeekFileService extends TextFileUtil
+		implements InterfaceConstants, ExtIntfConfigConstants, ErrorCodesConstants {
 	private static final Logger logger = LogManager.getLogger(ExtUcicWeekFileService.class);
 	private ExtUcicDao extUcicDao;
 	private FileInterfaceConfig ucicWeeklyConfig;
@@ -32,6 +35,7 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 		ucicWeeklyConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_WEEKLY_FILE);
 
 		if (ucicWeeklyConfig == null) {
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1014));
 			return;
 		}
 
@@ -54,15 +58,14 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 			// Now get remote file to local base location using SERVER config
 			String remoteFilePath = serverConfig.getFileTransferConfig().getSftpLocation();
 			if (remoteFilePath == null || "".equals(remoteFilePath)) {
-				logger.debug(
-						"EXT_UCIC: No configuration found for type UCIC Weekly request file. So returning without generating the request file.");
+				logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1014));
 				return;
 			}
 			FileTransferUtil fileTransferUtil = new FileTransferUtil(ucicWeeklyConfig);
 			try {
 				fileTransferUtil.downloadFromSFTP(fileName, baseFilePath);
 			} catch (Exception e) {
-				logger.debug("Unable to download file from DB Server to local path.");
+				logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1011));
 				return;
 			}
 
@@ -84,13 +87,12 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 
 		String localBkpLocation = ucicWeeklyConfig.getFileLocalBackupLocation();
 		if (localBkpLocation == null || "".equals(localBkpLocation)) {
-			logger.debug("EXT_UCIC: Local backup location not configured, so returning.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1013));
 			return;
 		}
 		String localBackupLocation = App.getResourcePath(ucicWeeklyConfig.getFileLocalBackupLocation());
 		File mainFileBkp = new File(localBackupLocation + File.separator + mainFile.getName());
 		Files.copy(mainFile, mainFileBkp);
-		logger.debug("EXT_UCIC: AckFile backup Successful");
 		logger.debug(Literal.LEAVING);
 	}
 

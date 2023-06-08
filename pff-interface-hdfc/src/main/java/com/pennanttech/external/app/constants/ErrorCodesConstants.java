@@ -83,5 +83,13 @@ public interface ErrorCodesConstants {
 	String UC1004 = "UC1004";
 	String UC1005 = "UC1005";
 	String UC1006 = "UC1006";
+	String UC1007 = "UC1007";
+	String UC1008 = "UC1008";
+	String UC1009 = "UC1009";
+	String UC1010 = "UC1010";
+	String UC1011 = "UC1011";
+	String UC1012 = "UC1012";
+	String UC1013 = "UC1013";
+	String UC1014 = "UC1014";
 
 }

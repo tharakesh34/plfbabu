@@ -49,14 +49,14 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 		FileInterfaceConfig ucicDBServerConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_PLF_DB_SERVER);
 
 		if (ucicDBServerConfig == null) {
-			logger.debug("EXT_UCIC: DB Server CONFIG_PLF_DB_SERVER configuration not found . So returning.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1007));
 			return;
 		}
 
 		// Get configured remote path to save file to DB server location
 		String remoteFilePath = ucicDBServerConfig.getFileTransferConfig().getSftpLocation();
 		if (remoteFilePath == null || "".equals(remoteFilePath)) {
-			logger.debug("EXT_UCIC: DB RemoteFilePath configuration not found . So returning.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1008));
 			return;
 		}
 
@@ -94,7 +94,7 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 				String localFolderPath = App.getResourcePath(ucicFile.getFileLocation());
 
 				if (localFolderPath == null || "".equals(localFolderPath)) {
-					logger.debug("EXT_UCIC: Local folderPath configuration not found . So returning.");
+					logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1009));
 					return;
 				}
 

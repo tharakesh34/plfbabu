@@ -48,7 +48,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 	@Override
 	public void extractDetailsFromForGstCalculation() {
 
-		String sql = "INSERT INTO GST_VOUCHER_DETAILS(FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
+		String sqlQuery = "INSERT INTO GST_VOUCHER_DETAILS(FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
 				+ " REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE) "
 				+ " SELECT FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
 				+ " REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE FROM "
@@ -58,8 +58,10 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 				+ " inner join finfeedetail ffd on ffr.FEEID=ffd.FEEID  "
 				+ " inner join finreceiptheader frh on ffr.receiptid=frh.receiptid "
 				+ " where ffr.paidamount >0 and ffd.TAXAPPLICABLE=1) ";
+		logger.debug(Literal.SQL + sqlQuery);
+		mainNamedJdbcTemplate.getJdbcOperations().update(sqlQuery);
 
-		sql = sql + " INSERT INTO GST_VOUCHER_DETAILS(FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
+		String sqlQueryManualAdvice = " INSERT INTO GST_VOUCHER_DETAILS(FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
 				+ " REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE) "
 				+ "  SELECT FINREFERENCE,AMOUNT_TYPE,REFERENCE_FIELD1, "
 				+ " REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE FROM "
@@ -69,10 +71,8 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 				+ "   from manualadvisemovements madm "
 				+ "   inner join manualadvise mad on madm.ADVISEID=mad.ADVISEID "
 				+ "   inner join finreceiptheader frh on madm.RECEIPTID=frh.receiptid)";
-		// not exist with feeid and receipt id
-		logger.debug(Literal.SQL + sql);
-
-		mainNamedJdbcTemplate.getJdbcOperations().update(sql.toString());
+		logger.debug(Literal.SQL + sqlQueryManualAdvice);
+		mainNamedJdbcTemplate.getJdbcOperations().update(sqlQueryManualAdvice);
 	}
 
 	public void setExtDataSource(DataSource extDataSource) {
