@@ -31,7 +31,7 @@ public class ExtUcicDataExtractor extends TextFileUtil implements InterfaceConst
 
 		try {
 
-			String resp = extUcicDao.executeSP("SP_EXTRACT_UCIC_DATA");
+			String resp = extUcicDao.executeSP(SP_EXTRACT_UCIC_DATA);
 
 			if (resp != null && "SUCCESS".equals(resp)) {
 				logger.debug("Successfully extracted customers data.");
@@ -65,7 +65,7 @@ public class ExtUcicDataExtractor extends TextFileUtil implements InterfaceConst
 			inPrams.addValue("aFileName", fileName);
 
 			// Generate Request file from database server
-			String status = extUcicDao.executeSP("SP_UCIC_WRITE_REQUEST_FILE", inPrams);
+			String status = extUcicDao.executeSP(SP_UCIC_WRITE_REQ_FILE, inPrams);
 
 			if (!"SUCCESS".equals(status)) {
 				return;

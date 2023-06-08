@@ -37,14 +37,12 @@ public class ExtUcicResponseFileReader implements InterfaceConstants, ErrorCodes
 		FileInterfaceConfig ucicRespCompleteConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_RESP_COMPLETE);
 
 		if (ucicRespConfig == null || ucicRespCompleteConfig == null) {
-			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1002));
 			return;
 		}
 
 		String localFolderPath = App.getResourcePath(ucicRespConfig.getFileLocation());
 
 		if (localFolderPath == null || "".equals(localFolderPath)) {
-			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1003));
 			return;
 		}
 
