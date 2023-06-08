@@ -93,7 +93,7 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 			return;
 		}
 
-		if ("Y".equals(finconGLConfig.getIsSftp())) {
+		if ("Y".equals(finconGLConfig.getFileTransfer())) {
 			// Now upload file to SFTP of client location as per configuration
 			File mainFile = new File(baseFilePath + File.separator + fileName);
 			FileTransferUtil fTransferUtil = new FileTransferUtil(finconGLConfig);

@@ -76,7 +76,7 @@ public class ExtUcicDataExtractor extends TextFileUtil implements InterfaceConst
 			}
 
 			// Now get remote file to local base location using SERVER config
-			remoteFilePath = serverConfig.getFileSftpLocation();
+			remoteFilePath = serverConfig.getFileTransferConfig().getSftpLocation();
 			if (remoteFilePath == null || "".equals(remoteFilePath)) {
 				return;
 			}
@@ -89,7 +89,7 @@ public class ExtUcicDataExtractor extends TextFileUtil implements InterfaceConst
 			logger.debug("File Download Sucessful from DB Server to local path");
 
 			// Uploading to HDFC SFTP
-			if ("Y".equals(ucicReqConfig.getIsSftp())) {
+			if ("Y".equals(ucicReqConfig.getFileTransfer())) {
 				FileTransferUtil sftpServerConfig = new FileTransferUtil(serverConfig);
 				sftpServerConfig.uploadToSFTP(baseFilePath, fileName);
 			}

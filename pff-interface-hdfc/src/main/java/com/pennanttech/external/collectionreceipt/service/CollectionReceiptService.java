@@ -264,7 +264,7 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 			return;
 		}
 
-		if (collectionData.getExcessAmount().compareTo(collectionData.getGrandTotal()) == 1) {
+		if (collectionData.getExcessAmount().compareTo(collectionData.getGrandTotal()) > 0) {
 			extRcd.setErrorCode(CR2010);
 			return;
 		}
