@@ -21,7 +21,6 @@ import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
-import com.pennanttech.external.app.util.FileTransferConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.gst.dao.ExtGSTDao;
@@ -69,7 +68,6 @@ public class FetchFileGSTRespJob extends AbstractJob
 
 		// Check if file is in SFTP location, then get the file.
 		if ("Y".equals(StringUtils.stripToEmpty(respConfig.getFileTransfer()))) {
-			FileTransferConfigUtil.setTransferConfig(respConfig);
 			FileTransferUtil fileTransferUtil = new FileTransferUtil(respConfig);
 			// Get list of files in SFTP.
 			List<String> fileNames = fileTransferUtil.fetchFileNamesListFromSFTP();

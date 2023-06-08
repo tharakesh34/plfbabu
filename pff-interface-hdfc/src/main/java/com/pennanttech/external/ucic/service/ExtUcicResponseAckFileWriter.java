@@ -16,7 +16,6 @@ import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
-import com.pennanttech.external.app.util.FileTransferConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
@@ -57,7 +56,6 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 				logger.debug("EXT_UCIC: DB Server config not found. So returning.");
 				return;
 			}
-			FileTransferConfigUtil.setTransferConfig(dbServerConfig);
 			String remoteFilePath = dbServerConfig.getFileTransferConfig().getSftpLocation();
 
 			if (remoteFilePath == null || "".equals(remoteFilePath)) {
@@ -74,7 +72,6 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 			}
 
 			if ("Y".equals(ucicAckConfig.getFileTransfer())) {
-				FileTransferConfigUtil.setTransferConfig(ucicAckConfig);
 				uploadFilesToClientLocation(appDate, ucicAckConfig, ucicAckConfConfig, baseFilePath, fileName);
 
 			} else {

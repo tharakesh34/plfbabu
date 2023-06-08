@@ -21,7 +21,6 @@ import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
-import com.pennanttech.external.app.util.FileTransferConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
@@ -54,7 +53,6 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 		}
 
 		// Get configured remote path to save file to DB server location
-		FileTransferConfigUtil.setTransferConfig(ucicDBServerConfig);
 		String remoteFilePath = ucicDBServerConfig.getFileTransferConfig().getSftpLocation();
 		if (remoteFilePath == null || "".equals(remoteFilePath)) {
 			logger.debug("EXT_UCIC: DB RemoteFilePath configuration not found . So returning.");

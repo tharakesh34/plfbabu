@@ -108,7 +108,7 @@ public class ExtGenericDaoImpl implements ExtGenericDao {
 		String queryStr;
 
 		List<FileTransferConfig> list = new ArrayList<FileTransferConfig>();
-		queryStr = "SELECT FIC_NAME,ACCESS_KEY,SECRET_KEY,HOST_NAME,PORT,PRIVATE_KEY,SSE_ALGORITHM,PREFIX,SFTP_LOCATION,SFTP_BACKUP_LOCATION,PROTOCOL FROM FILE_TRANSFER_CONFIG;";
+		queryStr = "SELECT FIC_NAME,ACCESS_KEY,SECRET_KEY,HOST_NAME,PORT,PRIVATE_KEY,SSE_ALGORITHM,PREFIX,SFTP_LOCATION,SFTP_BACKUP_LOCATION,PROTOCOL FROM FILE_TRANSFER_CONFIG";
 
 		extNamedJdbcTemplate.getJdbcOperations().query(queryStr, rs -> {
 			FileTransferConfig ftc = new FileTransferConfig();

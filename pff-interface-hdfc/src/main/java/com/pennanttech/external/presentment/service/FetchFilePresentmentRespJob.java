@@ -19,7 +19,6 @@ import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
-import com.pennanttech.external.app.util.FileTransferConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
@@ -95,7 +94,6 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 		FileInterfaceConfig externalReqConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_NACH_REQ);
 
 		if ("Y".equals(StringUtils.stripToEmpty(externalRespConfig.getFileTransfer()))) {
-			FileTransferConfigUtil.setTransferConfig(externalRespConfig);
 			fetchResponseFilesFromSFTP(externalRespConfig);
 		}
 
@@ -327,7 +325,6 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 
 	private void fetchResponseFilesFromSFTP(FileInterfaceConfig externalRespConfig) {
 		logger.debug(Literal.ENTERING);
-		FileTransferConfigUtil.setTransferConfig(externalRespConfig);
 		if (!"".equals(StringUtils.stripToEmpty(externalRespConfig.getFileTransferConfig().getSftpLocation()))) {
 			try {
 				String remoteFilePath = externalRespConfig.getFileTransferConfig().getSftpLocation();

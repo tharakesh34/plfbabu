@@ -18,6 +18,7 @@ public class FileTransferUtil {
 	FileTransferConfig fic;
 
 	public FileTransferUtil(FileInterfaceConfig fic) {
+		FileTransferConfigUtil.setTransferConfig(fic);
 		this.fic = fic.getFileTransferConfig();
 	}
 

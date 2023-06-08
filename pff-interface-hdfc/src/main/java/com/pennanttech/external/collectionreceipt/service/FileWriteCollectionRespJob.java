@@ -29,7 +29,6 @@ import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
-import com.pennanttech.external.app.util.FileTransferConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
@@ -257,7 +256,6 @@ public class FileWriteCollectionRespJob extends AbstractJob
 			CollReceiptHeader extReceiptHeader) {
 		if ("Y".equals(StringUtils.stripToEmpty(respConfig.getFileTransfer()))) {
 			try {
-				FileTransferConfigUtil.setTransferConfig(respConfig);
 				FileTransferUtil fileTransferUtil = new FileTransferUtil(respConfig);
 				String localReqFileName = extReceiptHeader.getRequestFileName();
 
@@ -266,7 +264,6 @@ public class FileWriteCollectionRespJob extends AbstractJob
 				String reqFileTB = localReqFileName.substring(0,
 						localReqFileName.indexOf(reqConfig.getFileExtension()));
 				String finalFile = reqFileTB + ".inproc";
-				FileTransferConfigUtil.setTransferConfig(reqConfig);
 				String deleteInproc = reqConfig.getFileTransferConfig().getSftpLocation().concat("/") + finalFile;
 
 				// Delete .inproc file

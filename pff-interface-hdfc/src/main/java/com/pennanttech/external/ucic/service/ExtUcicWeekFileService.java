@@ -13,7 +13,6 @@ import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
-import com.pennanttech.external.app.util.FileTransferConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
@@ -51,7 +50,6 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 			FileInterfaceConfig serverConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_PLF_DB_SERVER);
 
 			// Now get remote file to local base location using SERVER config
-			FileTransferConfigUtil.setTransferConfig(serverConfig);
 			String remoteFilePath = serverConfig.getFileTransferConfig().getSftpLocation();
 			if (remoteFilePath == null || "".equals(remoteFilePath)) {
 				logger.debug(
@@ -67,7 +65,6 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 			}
 
 			if ("Y".equals(ucicWeeklyConfig.getFileTransfer())) {
-				FileTransferConfigUtil.setTransferConfig(ucicWeeklyConfig);
 				FileTransferUtil sFileTransferUtil = new FileTransferUtil(serverConfig);
 				// Now upload file to SFTP of client location as per configuration
 				File mainFile = new File(baseFilePath + File.separator + fileName);
