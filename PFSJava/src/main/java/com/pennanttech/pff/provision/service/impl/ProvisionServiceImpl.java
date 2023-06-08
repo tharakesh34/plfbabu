@@ -458,6 +458,9 @@ public class ProvisionServiceImpl implements ProvisionService {
 
 	@Override
 	public void executeProvisionRule(ProvisionRuleData provisionData, Provision p) {
+		if (!NpaAndProvisionExtension.ALLOW_PROVISION) {
+			return;
+		}
 		String regProvsnRule = provisionData.getRegProvsnRule();
 		String intProvsnRule = provisionData.getIntProvsnRule();
 
