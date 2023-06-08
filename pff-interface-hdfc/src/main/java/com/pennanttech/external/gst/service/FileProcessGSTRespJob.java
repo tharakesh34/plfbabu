@@ -164,12 +164,11 @@ public class FileProcessGSTRespJob extends AbstractJob
 							continue;
 						}
 
-						// Save the Invoice details into the table
-						GSTInvoiceDetail invoiceDetail = getInvoiceDetail(responseBean);
-						extGSTDao.saveGSTInvoiceDetails(invoiceDetail);
-
 						// FIXME Process GST amounts into Taxheader and Postings
-						saveTaxDetails(responseBean);
+						processTaxDetails(responseBean);
+
+						// Save the Invoice details into the table
+						savetInvoiceDetail(responseBean);
 
 						// Update GST VOUCHER ID in Response detail record for successful transaction
 						detail.setGstVoucherId(responseBean.getTransactionUID());
@@ -197,12 +196,12 @@ public class FileProcessGSTRespJob extends AbstractJob
 
 	}
 
-	private void saveTaxDetails(GSTRespDetail responseBean) {
+	private void processTaxDetails(GSTRespDetail responseBean) {
 		// TODO Auto-generated method stub
 
 	}
 
-	private GSTInvoiceDetail getInvoiceDetail(GSTRespDetail respBean) {
+	private void savetInvoiceDetail(GSTRespDetail respBean) {
 		GSTInvoiceDetail detail = new GSTInvoiceDetail();
 		detail.setCustomerName(respBean.getCustomerName());
 		detail.setCustomerAddress("");// FIXME Call db for customer address
@@ -226,7 +225,9 @@ public class FileProcessGSTRespJob extends AbstractJob
 		detail.setSac(respBean.getSac());
 		detail.setRegBankAddress("");// FIXME Registered address of FI/Bank
 		setHardcodedProperties(detail);
-		return detail;
+
+		extGSTDao.saveGSTInvoiceDetails(detail);
+
 	}
 
 	private void setHardcodedProperties(GSTInvoiceDetail detail) {
