@@ -64,6 +64,7 @@ import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.FinanceUtil;
+import com.pennanttech.pff.core.util.LoanCancelationUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class LetterService {
@@ -99,7 +100,8 @@ public class LetterService {
 			}
 
 			if ((letterType == LetterType.CANCELLATION
-					&& FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus()))
+					&& FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())
+					&& !LoanCancelationUtil.LOAN_CANCEL_REBOOK.equals(fm.getCancelType()))
 					|| ((letterType == LetterType.NOC || letterType == LetterType.CLOSURE)
 							&& FinanceUtil.isClosedNow(fm))) {
 

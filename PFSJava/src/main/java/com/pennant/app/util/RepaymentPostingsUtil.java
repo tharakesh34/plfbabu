@@ -1075,7 +1075,7 @@ public class RepaymentPostingsUtil {
 				if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
 					fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 					pftDetail.setSvnAcrTillLBD(pftDetail.getTotalSvnAmount());
-				} else if (rch != null) {
+				} else if (rch != null && fm.isOldActiveState()) {
 					rch.setClosureType(ClosureType.CLOSURE.code());
 				}
 
@@ -1096,11 +1096,9 @@ public class RepaymentPostingsUtil {
 			fm.setFinIsActive(false);
 			fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_CANCELLED);
 		} else {
-			fm.setFinIsActive(true);
-			fm.setClosedDate(null);
-			if (!fm.isWriteoffLoan()) {
-				fm.setClosingStatus(null);
-			}
+			fm.setFinIsActive(fm.isOldActiveState());
+			fm.setClosedDate(fm.getClosedDate());
+			fm.setClosingStatus(fm.getClosingStatus());
 		}
 
 		if (schdFullyPaid && MandateExtension.ALLOW_HOLD_MARKING) {

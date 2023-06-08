@@ -13132,7 +13132,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FWV_1.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FWV_1_2_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'feewaivers_view');
@@ -13140,7 +13140,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FWV_1.1" author="Gopal.p">
+	<changeSet id="FWV_1_2" author="Gopal.p">
 		<createView viewName="FEEWAIVERS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT DISTINCT T1.FINID,
@@ -13205,7 +13205,7 @@
 				LEFT JOIN SECROLES T5 ON T10.NEXTROLECODE = T5.ROLECD
 				JOIN BMTPRODUCT T4 ON T3.FINCATEGORY = T4.PRODUCTCODE
 				LEFT JOIN FINPFTDETAILS T9 ON T9.FINID = T1.FINID
-				JOIN (SELECT FINID FROM MANUALADVISE WHERE ADVISETYPE = 1 AND BALANCEAMT > 0
+				JOIN (SELECT FINID FROM MANUALADVISE WHERE ADVISETYPE = 1 AND BALANCEAMT > 0 and (STATUS IS NULL OR STATUS != 'C')
 					UNION ALL
 					SELECT FINID FROM FINODDETAILS WHERE TOTPENALTYBAL > 0 OR LPIBAL > 0) T ON T.FINID = T1.FINID
 					WHERE T10.EVENT = 'FEEWAIVERS'
@@ -13271,7 +13271,7 @@
 				LEFT JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
 				JOIN BMTPRODUCT T4 ON T3.FINCATEGORY = T4.PRODUCTCODE
 				LEFT JOIN FINPFTDETAILS T9 ON T1.FINID = T9.FINID
-				JOIN (SELECT FINID FROM MANUALADVISE WHERE ADVISETYPE = 1 AND BALANCEAMT > 0
+				JOIN (SELECT FINID FROM MANUALADVISE WHERE ADVISETYPE = 1 AND BALANCEAMT > 0 and (STATUS IS NULL OR STATUS != 'C')
 					UNION ALL
 					SELECT FINID FROM FINODDETAILS WHERE TOTPENALTYBAL > 0 OR LPIBAL > 0) T ON T.FINID = T1.FINID
 				WHERE NOT EXISTS (SELECT 1 FROM FEEWAIVERHEADER_TEMP
@@ -13280,14 +13280,13 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FWV_1.1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FWV_1_2_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'feewaivers_view');	
 			]]>
 		</sql>
 	</changeSet>
-
 
 	<changeSet id="ST#1561.1" author="Mounika.M">
 		<createSequence sequenceName="SEQ_Service_Branches" minValue="1" maxValue="9223372036854775807"
