@@ -282,7 +282,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 	@Override
 	public boolean isAssetClassCodeValid(long finID, String assetClassCode, String assestSubClassCode) {
 		List<AssetClassSetupDetail> assetClassCodes = assetClassSetupDAO.getAssetClassSetCodes(finID);
-		
+
 		List<String> assetClassSubCode = new ArrayList<>();
 		List<String> assetCode = new ArrayList<>();
 		boolean isclassCodeExists = false;
