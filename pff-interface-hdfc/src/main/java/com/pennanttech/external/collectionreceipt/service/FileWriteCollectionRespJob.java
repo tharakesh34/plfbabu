@@ -117,7 +117,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 				} catch (Exception e) {
 					logger.debug(Literal.EXCEPTION, e);
 					extReceiptHeader.setRespFileStatus(EXCEPTION);
-					extReceiptHeader.setErrorCode(F400);
+					extReceiptHeader.setErrorCode(CR1012);
 					extReceiptHeader.setErrorMessage(e.getMessage());
 					extCollectionReceiptDao.updateExtCollectionRespFileWritingStatus(extReceiptHeader);
 				}

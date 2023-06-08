@@ -154,8 +154,8 @@ public class FileProcessGSTRespJob extends AbstractJob
 						if (gstVoucherDetails == null) {
 							// save record with error mentioning as GST voucher not found in PLF
 							detail.setStatus(FAILED);
-							detail.setErrorCode(F405);
-							detail.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F405));
+							detail.setErrorCode(GS1001);
+							detail.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(GS1001));
 							extGSTDao.updateGSTRecordDetailStatus(detail);
 							continue;
 						}
@@ -176,7 +176,7 @@ public class FileProcessGSTRespJob extends AbstractJob
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 					detail.setStatus(EXCEPTION);
-					detail.setErrorCode(F702);
+					detail.setErrorCode(GS1002);
 					detail.setErrorMessage(e.getMessage());
 				}
 
@@ -234,8 +234,8 @@ public class FileProcessGSTRespJob extends AbstractJob
 		String[] lineDataStrings = detail.getRecord().split("\\|");
 
 		if (lineDataStrings == null || lineDataStrings.length == 0) {
-			detail.setErrorCode(F703);
-			detail.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F703));
+			detail.setErrorCode(GS1003);
+			detail.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(GS1003));
 			detail.setStatus(FAILED);
 			return null;
 		}

@@ -111,14 +111,14 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 		String folderPath = App.getResourcePath(respConfig.getFileLocation());
 
 		if (folderPath == null || "".equals(folderPath)) {
-			logger.debug("Invalid folder path, so returning.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(PR1000));
 			return;
 		}
 
 		File dirPath = new File(folderPath);
 
 		if (!dirPath.isDirectory()) {
-			logger.debug("Invalid folder directory path, so returning.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(PR1001));
 			return;
 		}
 
@@ -127,7 +127,7 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 
 		if (filesList == null || filesList.length == 0) {
 			// no files
-			logger.debug("No files found in the folder, so returning.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(PR1002));
 			return;
 		}
 
@@ -142,7 +142,7 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 					respConfig.getInterfaceName());
 
 			if (isRecordExist) {
-				logger.debug("EXT_FILE: File status already saved, so returning.");
+				logger.debug(InterfaceErrorCodeUtil.getErrorMessage(PR1003));
 				continue;
 			}
 
@@ -169,7 +169,7 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 					if ((!fileName.startsWith(filePrepend.concat(respConfig.getSuccessIndicator()))
 							|| !fileName.startsWith(filePrepend.concat(respConfig.getFailIndicator())))
 							&& !fileName.endsWith(fileExtension)) {
-						logger.debug("Error Code F407, Invalid response file. So not processing the response file.");
+						logger.debug(InterfaceErrorCodeUtil.getErrorMessage(PR1004));
 						continue;
 					}
 
@@ -199,8 +199,7 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 					isValid = requestFileNames.contains(reqFileNameInRespFile);
 
 					if (!isValid) {
-						logger.debug(
-								"Error Code F401, Request file name is invalid. So not processing the response file.");
+						logger.debug(InterfaceErrorCodeUtil.getErrorMessage(PR1005));
 						continue;
 					}
 
@@ -209,8 +208,8 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 						boolean isValidRejectFile = validateRejectFile(file);
 
 						if (!isValidRejectFile) {
-							extPresentment.setErrorCode(F606);
-							extPresentment.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F606));
+							extPresentment.setErrorCode(PR1019);
+							extPresentment.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(PR1019));
 						}
 
 					}
@@ -330,14 +329,14 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 				String remoteFilePath = externalRespConfig.getFileTransferConfig().getSftpLocation();
 
 				if (remoteFilePath == null || "".equals(remoteFilePath)) {
-					logger.debug("EXT_PRMNT:Invalid PRMNT resp remote folder path, so returning.");
+					logger.debug(InterfaceErrorCodeUtil.getErrorMessage(PR1007));
 					return;
 				}
 
 				String localFolderPath = App.getResourcePath(externalRespConfig.getFileLocation());
 
 				if (localFolderPath == null || "".equals(localFolderPath)) {
-					logger.debug("EXT_PRMNT:Invalid PRMNT resp local folder path, so returning.");
+					logger.debug(InterfaceErrorCodeUtil.getErrorMessage(PR1008));
 					return;
 				}
 
@@ -361,8 +360,8 @@ public class FetchFilePresentmentRespJob extends AbstractJob
 
 	private void moveToBackup(FileInterfaceConfig externalRespConfig, String localFolderPath, String fileName) {
 		logger.debug(Literal.ENTERING);
-		if ("".equals(StringUtils.stripToEmpty(externalRespConfig.getFileLocalBackupLocation()))) {
-			logger.debug("EXT_PRMNT: No configuration found for Backup path, so returning.");
+		if (StringUtils.stripToEmpty(externalRespConfig.getFileLocalBackupLocation()).isEmpty()) {
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(PR1009));
 			return;
 		}
 

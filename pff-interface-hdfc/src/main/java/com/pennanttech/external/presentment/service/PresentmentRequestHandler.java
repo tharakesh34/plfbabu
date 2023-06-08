@@ -9,15 +9,18 @@ import org.apache.logging.log4j.Logger;
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.ExternalPresentmentHook;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
-public class PresentmentRequestHandler implements ExternalPresentmentHook, InterfaceConstants, ExtIntfConfigConstants {
+public class PresentmentRequestHandler
+		implements ExternalPresentmentHook, InterfaceConstants, ExtIntfConfigConstants, ErrorCodesConstants {
 	private static final Logger logger = LogManager.getLogger(PresentmentRequestHandler.class);
 
 	private ExtPresentmentDAO externalPresentmentDAO;
@@ -115,7 +118,7 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 
 		Date schDate = presentmentList.get(0).getSchDate();
 		String batchRef = String.valueOf(presentmentHeader.getId());
-	achService.processACHRequest(externalConfig, presentmentList, schDate, batchRef, appDate);
+		achService.processACHRequest(externalConfig, presentmentList, schDate, batchRef, appDate);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -150,7 +153,7 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 				.getSiInternalPresentmentDetails(presentmentHeader);
 
 		if (presentmentList.isEmpty()) {
-			logger.debug("No IPDC record found with cheque");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(PR1014));
 			return;
 		}
 

@@ -16,18 +16,21 @@ import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
+import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class FetchFileCollectionReqJob extends AbstractJob implements InterfaceConstants, ExtIntfConfigConstants {
+public class FetchFileCollectionReqJob extends AbstractJob
+		implements InterfaceConstants, ExtIntfConfigConstants, ErrorCodesConstants {
 
 	private static final Logger logger = LogManager.getLogger(FetchFileCollectionReqJob.class);
 
@@ -35,10 +38,6 @@ public class FetchFileCollectionReqJob extends AbstractJob implements InterfaceC
 	private ApplicationContext applicationContext;
 
 	private FileInterfaceConfig collectionReqConfig;
-
-	String COLLECTION_REQ_CONFIG_MISSING = "Ext_Warning: No configuration found for type Collection receipt interface. So returning without generating the request file.";
-	String COLLECTION_REQ_BASE_FILE_PATH_MISSING = "Ext_Warning: No configuration found for type Collection receipt baseFilePath. So returning without generating the request file.";
-	String COLLECTION_REQ_REMOTE_FILE_PATH_MISSING = "Ext_Warning: No configuration found for type Collection receipt remoteFilePath. So returning without generating the request file.";
 
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
@@ -59,21 +58,21 @@ public class FetchFileCollectionReqJob extends AbstractJob implements InterfaceC
 		collectionReqConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_COLLECTION_REQ_CONF);
 
 		if (collectionReqConfig == null) {
-			logger.debug(COLLECTION_REQ_CONFIG_MISSING);
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(CR1000));
 			return;
 		}
 
 		String baseFilePath = collectionReqConfig.getFileLocation();
 
 		if ("".equals(StringUtils.stripToEmpty(baseFilePath))) {
-			logger.debug(COLLECTION_REQ_BASE_FILE_PATH_MISSING);
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(CR1001));
 			return;
 		}
 
 		String remoteFilePath = collectionReqConfig.getFileTransferConfig().getSftpLocation();
 
 		if ("".equals(StringUtils.stripToEmpty(remoteFilePath))) {
-			logger.debug(COLLECTION_REQ_REMOTE_FILE_PATH_MISSING);
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(CR1002));
 			return;
 		}
 
@@ -88,7 +87,7 @@ public class FetchFileCollectionReqJob extends AbstractJob implements InterfaceC
 		for (String fileName : fileNames) {
 
 			if (fileName.contains(".inproc")) {
-				logger.debug("EXT_WARN: File is having extension inproc, so returning.");
+				logger.debug(InterfaceErrorCodeUtil.getErrorMessage(CR1003));
 				continue;
 			}
 
@@ -132,7 +131,7 @@ public class FetchFileCollectionReqJob extends AbstractJob implements InterfaceC
 		File dirPath = new File(localFolderPath);
 
 		if (!dirPath.isDirectory()) {
-			logger.debug("Invalid folder directory path, so returning.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(CR1004));
 			return;
 		}
 
@@ -141,7 +140,7 @@ public class FetchFileCollectionReqJob extends AbstractJob implements InterfaceC
 
 		if (filesList == null || filesList.length == 0) {
 			// no files
-			logger.debug("No files found in the folder, so returning.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(CR1005));
 			return;
 		}
 

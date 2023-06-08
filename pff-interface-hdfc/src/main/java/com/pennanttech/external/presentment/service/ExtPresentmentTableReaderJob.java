@@ -133,8 +133,7 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 
 			if ("".equals(chqNo) || chqDate == null || loanReff <= 0) {
 
-				logger.debug(
-						"CMS_ERROR:Invalid cheque no or cheque date or loan number received. Unable to process data from stage table.");
+				logger.debug(InterfaceErrorCodeUtil.getErrorMessage(PR1013));
 				continue;
 
 			}
@@ -173,7 +172,8 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 
 				if (data == null) {
 					externalPresentmentDAO.updateErrorDetails(extPresentmentFile.getAgreementId(),
-							extPresentmentFile.getChequeSerialNo(), "Y", InterfaceErrorCodeUtil.getErrorMessage(F703));
+							extPresentmentFile.getChequeSerialNo(), "Y",
+							InterfaceErrorCodeUtil.getErrorMessage(PR1011));
 					// commit the transaction
 					transactionManager.commit(txStatus);
 					continue;

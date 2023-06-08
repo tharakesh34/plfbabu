@@ -24,8 +24,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
@@ -233,7 +233,7 @@ public class FileProcessPresentmentRespJob extends AbstractJob
 				String errorCode = extPresentmentFile.getErrorCode();
 
 				if (extPresentmentFile != null && !"".equals(errorCode)) {
-					logger.debug("Ext_PRMNT:F704 Exception in presentment.");
+					logger.debug(InterfaceErrorCodeUtil.getErrorMessage(PR1010));
 					String errorMessage = extPresentmentFile.getErrorMessage();
 					externalPresentmentDAO.updateExternalPresentmentRecordStatus(id, UNPROCESSED, errorCode,
 							errorMessage);
@@ -243,9 +243,9 @@ public class FileProcessPresentmentRespJob extends AbstractJob
 				Presentment data = getRequiredData(extPresentmentFile, extPresentment);
 
 				if (data == null) {
-					logger.debug("Ext_PRMNT:F703 No data available for presentment.");
-					externalPresentmentDAO.updateExternalPresentmentRecordStatus(id, UNPROCESSED, F703,
-							InterfaceErrorCodeUtil.getErrorMessage(F703));
+					logger.debug(InterfaceErrorCodeUtil.getErrorMessage(PR1011));
+					externalPresentmentDAO.updateExternalPresentmentRecordStatus(id, UNPROCESSED, PR1011,
+							InterfaceErrorCodeUtil.getErrorMessage(PR1011));
 					continue;
 				}
 
@@ -324,8 +324,8 @@ public class FileProcessPresentmentRespJob extends AbstractJob
 
 			if (extPresentmentFile == null) {
 				extPresentmentFile = new ExtPresentmentFile();
-				extPresentmentFile.setErrorCode(F704);
-				extPresentmentFile.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F704));
+				extPresentmentFile.setErrorCode(PR1020);
+				extPresentmentFile.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(PR1020));
 			}
 
 			// Validate Presentment.ID and BounceCode
@@ -334,7 +334,7 @@ public class FileProcessPresentmentRespJob extends AbstractJob
 			}
 
 		} catch (Exception e) {
-			logger.debug("Ext_PRMNT:Exception while processing record data.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(PR1012));
 			logger.debug(Literal.EXCEPTION, e);
 		}
 
@@ -346,8 +346,8 @@ public class FileProcessPresentmentRespJob extends AbstractJob
 
 		if (extPresentmentFile.getTxnReference() == -1) {
 
-			extPresentmentFile.setErrorCode(F801);
-			extPresentmentFile.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F801));
+			extPresentmentFile.setErrorCode(PR1021);
+			extPresentmentFile.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(PR1021));
 			return;
 		}
 
@@ -356,16 +356,16 @@ public class FileProcessPresentmentRespJob extends AbstractJob
 
 			if (StringUtils.isBlank(bounceReturnCode)) {
 				// Bounce return code is empty or null, So report error
-				extPresentmentFile.setErrorCode(F900);
-				extPresentmentFile.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F900));
+				extPresentmentFile.setErrorCode(PR1022);
+				extPresentmentFile.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(PR1022));
 				return;
 			}
 
 			Map<String, ExtBounceReason> extBounceReasonsMap = ExtBounceReasons.getInstance().getBounceData();
 			if (!extBounceReasonsMap.containsKey(bounceReturnCode)) {
 				// Bounce code not found in PLF, So report error
-				extPresentmentFile.setErrorCode(F901);
-				extPresentmentFile.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F901));
+				extPresentmentFile.setErrorCode(PR1023);
+				extPresentmentFile.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(PR1023));
 				return;
 			}
 

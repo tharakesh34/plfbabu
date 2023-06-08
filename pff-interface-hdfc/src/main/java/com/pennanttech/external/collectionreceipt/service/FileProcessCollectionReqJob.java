@@ -142,7 +142,7 @@ public class FileProcessCollectionReqJob extends AbstractJob implements Interfac
 							if (txStatus != null) {
 								transactionManager.rollback(txStatus);
 							}
-							extRcd.setErrorCode(F400);
+							extRcd.setErrorCode(CR1011);
 							extRcd.setErrorMessage(e.getMessage());
 						}
 

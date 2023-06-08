@@ -23,8 +23,8 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
@@ -122,7 +122,7 @@ public class LeinFileProcesserJob extends AbstractJob
 						List<LienMarkDetail> lienDataList = getFileRecords(file);
 						if (lienDataList == null) {
 							// Invalid file
-							errCode = F603;
+							errCode = SL1000;
 							externalLienMarkingDAO.updateLienResponseFileStatus(lienFileStatus.getId(), COMPLETED,
 									errCode, InterfaceErrorCodeUtil.getErrorMessage(errCode));
 							continue;
@@ -151,7 +151,7 @@ public class LeinFileProcesserJob extends AbstractJob
 
 					} else {
 						// mark file processing status as completed with error
-						errCode = F602;
+						errCode = SL1001;
 						externalLienMarkingDAO.updateLienResponseFileStatus(lienFileStatus.getId(), COMPLETED, errCode,
 								InterfaceErrorCodeUtil.getErrorMessage(errCode));
 						continue;
@@ -160,7 +160,7 @@ public class LeinFileProcesserJob extends AbstractJob
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 					// mark file processing status as completed with exception
-					errCode = F604;
+					errCode = SL1002;
 					externalLienMarkingDAO.updateLienResponseFileStatus(lienFileStatus.getId(), FAILED, errCode,
 							e.getMessage());
 				}

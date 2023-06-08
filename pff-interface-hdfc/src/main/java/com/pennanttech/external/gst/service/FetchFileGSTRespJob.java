@@ -33,11 +33,6 @@ public class FetchFileGSTRespJob extends AbstractJob
 		implements InterfaceConstants, ErrorCodesConstants, ExtIntfConfigConstants {
 	private static final Logger logger = LogManager.getLogger(FetchFileGSTRespJob.class);
 	private static final String GST_COMP_RESPONSE_END = "EOF";
-	private static final String ERR_RESP_CONFIG_MISSING = "Ext_GST: No configuration found for type GST response. So returning without reading the folder.";
-	private static final String ERR_RESP_LOCAL_PATH_CONFIG_MISSING = "Ext_GST:Invalid GST resp folder path configured, so returning.";
-	private static final String ERR_INVALID_DIRECTORY_PATH = "Invalid  GST resp folder directory path, so returning.";
-	private static final String ERR_NO_FILES_FOUND = "No files found in the folder, so returning.";
-	private static final String ERR_NO_DONE_FILE_FOUND = "No done files found in the GST response folder, so returning.";
 
 	private ExtGSTDao extGSTDao;
 	private ApplicationContext applicationContext;
@@ -55,14 +50,14 @@ public class FetchFileGSTRespJob extends AbstractJob
 		FileInterfaceConfig respDoneConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_GST_RESP_DONE);
 
 		if (respConfig == null || respDoneConfig == null) {
-			logger.debug(ERR_RESP_CONFIG_MISSING);
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(GS1004));
 			return;
 		}
 
 		String localFolderPath = App.getResourcePath(respConfig.getFileLocation());
 
 		if (localFolderPath == null || "".equals(localFolderPath)) {
-			logger.debug(ERR_RESP_LOCAL_PATH_CONFIG_MISSING);
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(GS1005));
 			return;
 		}
 
@@ -79,7 +74,7 @@ public class FetchFileGSTRespJob extends AbstractJob
 		File dirPath = new File(localFolderPath);
 
 		if (!dirPath.isDirectory()) {
-			logger.debug(ERR_INVALID_DIRECTORY_PATH);
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(GS1006));
 			return;
 		}
 
@@ -88,7 +83,7 @@ public class FetchFileGSTRespJob extends AbstractJob
 
 		if (filesList == null || filesList.length == 0) {
 			// no files
-			logger.debug(ERR_NO_FILES_FOUND);
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(GS1007));
 			return;
 		}
 
@@ -105,7 +100,7 @@ public class FetchFileGSTRespJob extends AbstractJob
 		}
 
 		if (doneFilesList.isEmpty()) {
-			logger.debug(ERR_NO_DONE_FILE_FOUND);
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(GS1008));
 			return;
 		}
 
@@ -137,8 +132,8 @@ public class FetchFileGSTRespJob extends AbstractJob
 					if (!isValidFile) {
 						header.setStatus(FAILED);
 						header.setExtraction(UNPROCESSED);
-						header.setErrorCode(F607);
-						header.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F607));
+						header.setErrorCode(GS1000);
+						header.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(GS1000));
 						extGSTDao.saveResponseFile(header);
 					}
 

@@ -136,8 +136,6 @@ public class ACHService extends TextFileUtil implements InterfaceConstants, Erro
 					FileTransferUtil fileTransferUtil = new FileTransferUtil(config);
 					fileTransferUtil.uploadToSFTP(baseFilePath, new File(fileName).getName());
 				}
-			} else {
-				logger.debug("No ACH request records found, so returning. ");
 			}
 
 		} catch (Exception e) {
@@ -169,16 +167,16 @@ public class ACHService extends TextFileUtil implements InterfaceConstants, Erro
 				if ("1".equals(recordFlag)) {
 					presentment.setStatus(SUCCESS);
 				} else {
-					presentment.setErrorCode(F802);
-					presentment.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F802));
+					presentment.setErrorCode(PR1015);
+					presentment.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(PR1015));
 				}
 			}
 			if (config.getFailIndicator().equals(recordStatus)) {
 				if ("0".equals(recordFlag)) {
 					presentment.setStatus(FAIL);
 				} else {
-					presentment.setErrorCode(F803);
-					presentment.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F803));
+					presentment.setErrorCode(PR1016);
+					presentment.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(PR1016));
 				}
 
 			}
@@ -194,8 +192,8 @@ public class ACHService extends TextFileUtil implements InterfaceConstants, Erro
 			presentment.setTxnReference(getLongValue(presentmentId));
 
 		} else {
-			presentment.setErrorCode(F804);
-			presentment.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F804));
+			presentment.setErrorCode(PR1017);
+			presentment.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(PR1017));
 		}
 		logger.debug(Literal.LEAVING);
 		return presentment;

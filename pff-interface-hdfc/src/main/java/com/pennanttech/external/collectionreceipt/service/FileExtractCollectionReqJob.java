@@ -111,12 +111,12 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 							if (rowNumber == 1) {
 
 								if (!lineData.trim().startsWith(ROW1)) {
-									extReceiptHeader.setErrorCode(F402);
+									extReceiptHeader.setErrorCode(CR1006);
 									continue;
 								}
 
 								if (!validateRow1(lineData, "Filename")) {
-									extReceiptHeader.setErrorCode(F402);
+									extReceiptHeader.setErrorCode(CR1006);
 									continue;
 								}
 
@@ -125,19 +125,19 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 							if (rowNumber == 2) {
 
 								if (!lineData.trim().startsWith(ROW2)) {
-									extReceiptHeader.setErrorCode(F403);
+									extReceiptHeader.setErrorCode(CR1007);
 									continue;
 								}
 
 								if (!validateRow2(lineData, requestFileName)) {
-									extReceiptHeader.setErrorCode(F403);
+									extReceiptHeader.setErrorCode(CR1007);
 									continue;
 								}
 
 							}
 
 							if (rowNumber == 3 && !lineData.trim().startsWith(HEADER)) {
-								extReceiptHeader.setErrorCode(F404);
+								extReceiptHeader.setErrorCode(CR1008);
 							}
 
 						} else {
@@ -170,7 +170,7 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 						String qualifiedChk = collectionReceiptService.calculateCheckSum(dataArray, rowNum);
 
 						if (!qualifiedChk.equals(checksum)) {
-							extReceiptHeader.setErrorCode(F400);
+							extReceiptHeader.setErrorCode(CR1009);
 						}
 
 						gTotalChk = gTotalChk + Integer.parseInt(qualifiedChk);
@@ -178,7 +178,7 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 					}
 
 					if (!sharedTotChecksum.equals((extCollectionLineList.size() - 1) + "" + gTotalChk)) {
-						extReceiptHeader.setErrorCode(F400);
+						extReceiptHeader.setErrorCode(CR1013);
 					}
 
 					extCollectionLineList.remove(extCollectionLineList.size() - 1);
@@ -198,7 +198,7 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 					logger.debug(Literal.EXCEPTION, e);
 					extReceiptHeader.setStatus(FAILED);
 					extReceiptHeader.setExtraction(UNPROCESSED);
-					extReceiptHeader.setErrorCode(F702);
+					extReceiptHeader.setErrorCode(CR1010);
 					extReceiptHeader.setErrorMessage(e.getMessage());
 					extCollectionReceiptDao.updateFileExtraction(extReceiptHeader);
 				}

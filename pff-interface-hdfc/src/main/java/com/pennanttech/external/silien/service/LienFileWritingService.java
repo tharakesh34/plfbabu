@@ -11,10 +11,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.silien.dao.ExtLienMarkingDAO;
 import com.pennanttech.external.silien.model.LienMarkDetail;
@@ -37,8 +38,7 @@ public class LienFileWritingService extends TextFileUtil
 			lienConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_LIEN_REQ);
 
 			if (lienConfig == null) {
-				logger.debug(
-						"Ext_Warning: No configuration found for type LIEN. So returning without generating the request file.");
+				logger.debug(InterfaceErrorCodeUtil.getErrorMessage(SL1004));
 				return;
 			}
 
@@ -82,13 +82,13 @@ public class LienFileWritingService extends TextFileUtil
 				try {
 					// Validate Account number in the record
 					if (lienMarkDetail.getAccNumber() == null || "".equals(lienMarkDetail.getAccNumber())) {
-						logger.debug("EXT_SILIEN:Account number received is empty/null, So not Processing");
+						logger.debug(InterfaceErrorCodeUtil.getErrorMessage(SL1005));
 						continue;
 					}
 
 					// Validate Lien mark in the record
 					if ("".equals(StringUtils.stripToEmpty(lienMarkDetail.getLienMark()))) {
-						logger.debug("EXT_SILIEN:Lien Status received is empty/null, So not Processing");
+						logger.debug(InterfaceErrorCodeUtil.getErrorMessage(SL1006));
 						continue;
 					}
 
@@ -106,7 +106,7 @@ public class LienFileWritingService extends TextFileUtil
 				} catch (Exception e) {
 					logger.debug("Exception caught {}" + e);
 					// update record status as in-process
-					errCode = F605;
+					errCode = SL1003;
 					lienMarkDetail.setInterfaceStatus(LIEN_FAILED);
 					lienMarkDetail.setErrCode(errCode);
 					lienMarkDetail.setErrMsg(e.getMessage());

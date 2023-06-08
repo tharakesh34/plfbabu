@@ -37,15 +37,14 @@ public class ExtUcicResponseFileReader implements InterfaceConstants, ErrorCodes
 		FileInterfaceConfig ucicRespCompleteConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_RESP_COMPLETE);
 
 		if (ucicRespConfig == null || ucicRespCompleteConfig == null) {
-			logger.debug(
-					"EXT_UCIC: No configuration found for type UCIC response. So returning without reading the folder.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1002));
 			return;
 		}
 
 		String localFolderPath = App.getResourcePath(ucicRespConfig.getFileLocation());
 
 		if (localFolderPath == null || "".equals(localFolderPath)) {
-			logger.debug("EXT_UCIC:Invalid UCIC resp folder path, so returning.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1003));
 			return;
 		}
 
@@ -63,7 +62,7 @@ public class ExtUcicResponseFileReader implements InterfaceConstants, ErrorCodes
 		File dirPath = new File(localFolderPath);
 
 		if (!dirPath.isDirectory()) {
-			logger.debug("Invalid  UCIC resp folder directory path, so returning.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1004));
 			return;
 		}
 
@@ -72,7 +71,7 @@ public class ExtUcicResponseFileReader implements InterfaceConstants, ErrorCodes
 
 		if (filesList == null || filesList.length == 0) {
 			// no files
-			logger.debug("No files found in the folder, so returning.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1005));
 			return;
 		}
 
@@ -91,7 +90,7 @@ public class ExtUcicResponseFileReader implements InterfaceConstants, ErrorCodes
 		}
 
 		if (completeFilesList.isEmpty()) {
-			logger.debug("No complete files found in the folder, so returning.");
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1006));
 			return;
 		}
 
@@ -120,8 +119,8 @@ public class ExtUcicResponseFileReader implements InterfaceConstants, ErrorCodes
 								"");
 					} else {
 						// Add Failed file in to table with error code and error message
-						extUcicDao.saveResponseFile(respFileName, ucicRespConfig.getFileLocation(), FAILED, F607,
-								InterfaceErrorCodeUtil.getErrorMessage(F607));
+						extUcicDao.saveResponseFile(respFileName, ucicRespConfig.getFileLocation(), FAILED, UC1001,
+								InterfaceErrorCodeUtil.getErrorMessage(UC1001));
 					}
 				}
 			}
