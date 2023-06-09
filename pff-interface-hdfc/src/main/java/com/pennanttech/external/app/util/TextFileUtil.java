@@ -3,6 +3,7 @@ package com.pennanttech.external.app.util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -109,6 +111,17 @@ public class TextFileUtil {
 
 	public static String fileName(String path, String name) {
 		return App.getResourcePath(path) + File.separator + name;
+	}
+
+	public static String getFilePath(FileInterfaceConfig reqConfig, Date appDate, String fileSeq) {
+		return reqConfig.getFileLocation() + File.separator + reqConfig.getFilePrepend()
+				+ new SimpleDateFormat(reqConfig.getDateFormat()).format(appDate) + reqConfig.getFilePostpend()
+				+ fileSeq + reqConfig.getFileExtension();
+	}
+
+	public static String getFileName(FileInterfaceConfig reqConfig, Date appDate, String fileSeq) {
+		return reqConfig.getFilePrepend() + new SimpleDateFormat(reqConfig.getDateFormat()).format(appDate)
+				+ reqConfig.getFilePostpend() + fileSeq + reqConfig.getFileExtension();
 	}
 
 }

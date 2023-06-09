@@ -145,13 +145,10 @@ public class FileProcessGSTRespJob extends AbstractJob
 			while ((detail = dataCursorReader.read()) != null) {
 				try {
 
-					GSTRespDetail responseBean = null;
-
 					// Get extPresentment object from record data
-					responseBean = convertRecordToBean(detail);
+					GSTRespDetail responseBean = convertRecordToBean(detail);
 
 					if (responseBean != null) {
-
 						// Fetch GST VOUCHER from GST_VOUCHER_DETAILS based on ID, If not found error.
 						GSTVoucherDetails gstVoucherDetails = extGSTDao
 								.fetchVoucherDetails(responseBean.getTransactionUID());

@@ -5,6 +5,7 @@ import java.util.List;
 import com.pennanttech.external.gst.model.GSTCompDetail;
 import com.pennanttech.external.gst.model.GSTCompHeader;
 import com.pennanttech.external.gst.model.GSTInvoiceDetail;
+import com.pennanttech.external.gst.model.GSTReqFile;
 import com.pennanttech.external.gst.model.GSTRequestDetail;
 import com.pennanttech.external.gst.model.GSTVoucherDetails;
 
@@ -14,9 +15,9 @@ public interface ExtGSTDao {
 
 	void extractDetailsFromForGstCalculation();
 
-	void saveExtractedDetailsToRequestTable();
+	void saveExtractedDetailsToRequestTable(long headerId);
 
-	List<GSTRequestDetail> fetchRecords(int status);
+	List<GSTRequestDetail> fetchRecords();
 
 	boolean isFileProcessed(String respFileName);
 
@@ -28,12 +29,16 @@ public interface ExtGSTDao {
 
 	void updateGSTRecordDetailStatus(GSTCompDetail detail);
 
-	long saveGSTRequestFileData(String fileName, String fileLocation);
-
-	int updateGSTVoucherWithReqHeaderId(List<Long> txnUidList, long headerId);
+	void updateGSTRequestFileToHeaderId(GSTReqFile gstReqFile);
 
 	public GSTVoucherDetails fetchVoucherDetails(long transactionUID);
 
 	long saveGSTInvoiceDetails(GSTInvoiceDetail gstInvoiceDetail);
+
+	long fetchHeaderIdForProcessing(GSTReqFile gstReqFile);
+
+	long getHeaderIdForFile(GSTReqFile gstReqFile);
+
+	void updateHeaderIdIntoGSTVoucherDetails(long headerId);
 
 }
