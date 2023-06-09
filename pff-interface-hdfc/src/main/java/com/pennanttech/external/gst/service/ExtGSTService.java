@@ -2,7 +2,6 @@ package com.pennanttech.external.gst.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +16,7 @@ import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.gst.dao.ExtGSTDao;
+import com.pennanttech.external.gst.model.GSTReqFile;
 import com.pennanttech.external.gst.model.GSTRequestDetail;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -31,23 +31,84 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 		// Dump GST Vouchers to create unique reference for each entry
 		extGSTDao.extractDetailsFromForGstCalculation();
 
-		// Dump data as per the request file format
-		extGSTDao.saveExtractedDetailsToRequestTable();
-
 		// Write the file
-		List<GSTRequestDetail> gstComputationRecords = extGSTDao.fetchRecords(UNPROCESSED);
-		if (gstComputationRecords != null && !gstComputationRecords.isEmpty()) {
-			writeRequestFile(gstComputationRecords, reqConfig, doneConfig, appDate);
-		}
-
+		writeRequestFile(reqConfig, doneConfig, appDate);
 	}
 
-	public void writeRequestFile(List<GSTRequestDetail> gstRequestDetailList, FileInterfaceConfig reqConfig,
-			FileInterfaceConfig doneConfig, Date appDate) {
+	public void writeRequestFile(FileInterfaceConfig reqConfig, FileInterfaceConfig doneConfig, Date appDate) {
 		logger.debug(Literal.ENTERING);
+
+		// Save Request file details and get headerId
+		GSTReqFile gstReqFile = new GSTReqFile();
+		gstReqFile.setFileLocation(reqConfig.getFileLocation());
+
+		// File header id generated
+		long reqHeaderId = extGSTDao.fetchHeaderIdForProcessing(gstReqFile);
+
+		if (reqHeaderId == 0) {
+			logger.debug(Literal.LEAVING);
+			return;
+		}
+
+		// Now update headerId for the vouchers to send in request file
+		extGSTDao.updateHeaderIdIntoGSTVoucherDetails(reqHeaderId);
+
+		// Dump data to request table from GST vouchers using headerId
+		extGSTDao.saveExtractedDetailsToRequestTable(reqHeaderId);
+
+		// Fetch records and Prepare file item data and write file
+		prepareDataAndWriteFile(gstReqFile, reqConfig, doneConfig, appDate);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void prepareDataAndWriteFile(GSTReqFile gstReqFile, FileInterfaceConfig reqConfig,
+			FileInterfaceConfig doneConfig, Date appDate) {
+
+		// Fetch records to write request file
+		List<GSTRequestDetail> gstRequestDetailList = extGSTDao.fetchRecords();
 
 		List<StringBuilder> itemList = new ArrayList<StringBuilder>();
 
+		// Prepare file line items list
+		prepareFileItems(itemList, gstRequestDetailList);
+
+		// Write file item list to file
+		try {
+			StringBuilder footer = new StringBuilder();
+			footer.append("EOF");
+			footer.append(pipeSeperator);
+			footer.append(itemList.size());
+			itemList.add(footer);
+
+			// Write Request file
+			long fileSeq = extGSTDao.getSeqNumber(SEQ_GST_INTF);
+			String fileSeqName = StringUtils.leftPad(String.valueOf(fileSeq), 5, "0");
+			String fileName = TextFileUtil.getFileName(reqConfig, appDate, fileSeqName);
+			String filePathWithName = reqConfig.getFileLocation() + File.separator + fileName;
+			super.writeDataToFile(filePathWithName, itemList);
+
+			// Write Done file
+			String doneFile = fileName + doneConfig.getFilePostpend();
+			List<StringBuilder> emptyList = new ArrayList<StringBuilder>();
+			emptyList.add(new StringBuilder(""));
+			super.writeDataToFile(doneFile, emptyList);
+
+			gstReqFile.setFileName(fileName);
+			// Save Request file details and get headerId
+			extGSTDao.updateGSTRequestFileToHeaderId(gstReqFile);
+
+			// Uploading to HDFC SFTP
+			if ("Y".equals(reqConfig.getFileTransfer())) {
+				String baseFilePath = reqConfig.getFileLocation();
+				uploadToClientLocation(reqConfig, fileName, baseFilePath, doneFile);
+			}
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+	}
+
+	private void prepareFileItems(List<StringBuilder> itemList, List<GSTRequestDetail> gstRequestDetailList) {
 		StringBuilder item = new StringBuilder();
 		// DETAIL ITEM FOR REQUEST FILE
 		for (GSTRequestDetail data : gstRequestDetailList) {
@@ -158,42 +219,6 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 			itemList.add(item);
 		}
 
-		if (itemList.size() > 0) {
-			try {
-				StringBuilder footer = new StringBuilder();
-				footer.append("EOF");
-				footer.append(pipeSeperator);
-				footer.append(itemList.size());
-				itemList.add(footer);
-				long fileSeq = extGSTDao.getSeqNumber(SEQ_GST_INTF);
-				String fileSeqName = StringUtils.leftPad(String.valueOf(fileSeq), 5, "0");
-				String baseFilePath = reqConfig.getFileLocation();
-				String fileName = baseFilePath + File.separator + reqConfig.getFilePrepend()
-						+ new SimpleDateFormat(reqConfig.getDateFormat()).format(appDate) + fileSeqName
-						+ reqConfig.getFileExtension();
-				super.writeDataToFile(fileName, itemList);
-
-				String doneFile = writeDoneFile(doneConfig, fileName);
-
-				// Save Request file details and get headerId
-				long req_header_id = extGSTDao.saveGSTRequestFileData(fileName, reqConfig.getFileLocation());
-				// Get all gst voucher id's as a list
-				List<Long> txnUidList = new ArrayList<Long>();
-				for (GSTRequestDetail data : gstRequestDetailList) {
-					txnUidList.add(data.getTransactionUid());
-				}
-				// Update gst vouchers with request header id
-				extGSTDao.updateGSTVoucherWithReqHeaderId(txnUidList, req_header_id);
-
-				// Uploading to HDFC SFTP
-				if ("Y".equals(reqConfig.getFileTransfer())) {
-					uploadToClientLocation(reqConfig, new File(fileName).getName(), baseFilePath, doneFile);
-				}
-			} catch (Exception e) {
-				logger.debug(Literal.EXCEPTION, e);
-			}
-		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	private void append(StringBuilder item, Object data) {
@@ -204,15 +229,6 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 		item.append(pipeSeperator);
 		item.append(data);
 
-	}
-
-	private String writeDoneFile(FileInterfaceConfig doneConfig, String fileName) throws Exception {
-		String completeFileName = fileName + doneConfig.getFilePostpend();
-		List<StringBuilder> emptyList = new ArrayList<StringBuilder>();
-		emptyList.add(new StringBuilder(""));
-		super.writeDataToFile(completeFileName, emptyList);
-		logger.debug(Literal.LEAVING);
-		return completeFileName;
 	}
 
 	private void uploadToClientLocation(FileInterfaceConfig reqConfig, String fileName, String baseFilePath,
