@@ -127,12 +127,12 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 			return;
 		}
 
-		updateHold(amount, list);
+		updateHold(amount, list, isFateCorrection);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void updateHold(BigDecimal amount, List<HoldMarkingHeader> list) {
+	private void updateHold(BigDecimal amount, List<HoldMarkingHeader> list, boolean isFateCorrection) {
 		for (HoldMarkingHeader headerList : list) {
 			if (amount.compareTo(BigDecimal.ZERO) > 0) {
 
@@ -145,7 +145,7 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 					headerList.setBalance(BigDecimal.ZERO);
 					headerList.setReleaseAmount(headerList.getHoldAmount());
 
-					saveDetail(headerList);
+					saveDetail(headerList, isFateCorrection);
 				} else {
 					headerList.setBalance(headerList.getBalance().subtract(amount));
 					headerList.setReleaseAmount(headerList.getReleaseAmount().add(amount));
@@ -153,7 +153,7 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 					headerList.setId(headerList.getId());
 					headerList.setHoldID(headerList.getHoldID());
 					headerList.setRemovalAmount(amount);
-					saveDetail(headerList);
+					saveDetail(headerList, isFateCorrection);
 
 					amount = BigDecimal.ZERO;
 				}
@@ -162,7 +162,7 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 		}
 	}
 
-	private void saveDetail(HoldMarkingHeader hmh) {
+	private void saveDetail(HoldMarkingHeader hmh, boolean isFateCorrection) {
 		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 		Date appData = SysParamUtil.getAppDate();
 		long userId = 1000;
@@ -176,10 +176,15 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 		hmd.setHoldType(PennantConstants.REMOVE_HOLD_MARKING);
 		hmd.setMarking(PennantConstants.AUTO_ASSIGNMENT);
 		hmd.setMovementDate(appData);
-		hmd.setStatus(InsuranceConstants.PENDING);
 		hmd.setAmount(hmh.getRemovalAmount());
 		hmd.setLogID(++count);
-		hmd.setHoldReleaseReason("Receipt");
+		if (isFateCorrection) {
+			hmd.setStatus(InsuranceConstants.SUCCESS);
+			hmd.setHoldReleaseReason("Presentment Fatecorrection");
+		} else {
+			hmd.setStatus(InsuranceConstants.PENDING);
+			hmd.setHoldReleaseReason("Receipt");
+		}
 		hmd.setCreatedBy(userId);
 		hmd.setCreatedOn(currentTime);
 		hmd.setLastMntBy(userId);
@@ -377,7 +382,7 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 
 		holdMarkingHeaderDAO.updateHeader(headerList);
 
-		saveDetail(headerList);
+		saveDetail(headerList, false);
 
 		logger.debug(Literal.LEAVING);
 	}

@@ -76,6 +76,7 @@ public class Accounts extends AbstractWorkflowEntity {
 	private String groupCode;
 	private String entityCode;
 	private String acTypeDesc;
+	private Date postDate;
 
 	public Accounts() {
 		super();
@@ -87,6 +88,7 @@ public class Accounts extends AbstractWorkflowEntity {
 		excludeFields.add("groupCode");
 		excludeFields.add("entityCode");
 		excludeFields.add("acTypeDesc");
+		excludeFields.add("postDate");
 		return excludeFields;
 	}
 
@@ -365,6 +367,14 @@ public class Accounts extends AbstractWorkflowEntity {
 
 	public void setAcTypeDesc(String acTypeDesc) {
 		this.acTypeDesc = acTypeDesc;
+	}
+
+	public Date getPostDate() {
+		return postDate;
+	}
+
+	public void setPostDate(Date postDate) {
+		this.postDate = postDate;
 	}
 
 }

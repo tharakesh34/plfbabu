@@ -36,6 +36,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NOCConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.letter.dao.AutoLetterGenerationDAO;
 import com.pennant.pff.noc.dao.GenerateLetterDAO;
@@ -162,8 +163,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 		FinTypeFees ftf = loanLetterUploadDAO.getFeeWaiverAllowed(fm.getFinType(),
 				NOCConstants.getLetterType(detail.getLetterType()));
 
-		if (PennantConstants.YES.equals(waiverCharges) && ftf == null
-				|| PennantConstants.YES.equals(waiverCharges) && BigDecimal.ZERO == ftf.getMaxWaiverPerc()) {
+		if (PennantConstants.YES.equals(waiverCharges) && (ftf == null || BigDecimal.ZERO == ftf.getMaxWaiverPerc())) {
 			setError(detail, LoanLetterUploadError.LOAN_LTR_09);
 			return;
 		}
@@ -198,6 +198,12 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 
 				for (LoanLetterUpload detail : details) {
 					doValidate(header, detail);
+
+					detail.setUserDetails(header.getUserDetails());
+					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
+						setFailureStatus(detail);
+						continue;
+					}
 
 					FinanceMain fm = financeMainDAO.getFinanceMainByRef(detail.getReference(), "_View", false);
 
@@ -282,8 +288,6 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 					} else {
 						setSuccesStatus(detail);
 					}
-
-					detail.setUserDetails(header.getUserDetails());
 				}
 
 				try {

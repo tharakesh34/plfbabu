@@ -1720,6 +1720,10 @@ public class PresentmentEngine {
 			if (br == null) {
 				throw new PresentmentException(PresentmentError.PRMNT503);
 			}
+
+			if (br.getInstrumentType() == null || !StringUtils.equals(br.getInstrumentType(), pd.getMandateType())) {
+				throw new PresentmentException(PresentmentError.PRMNT503);
+			}
 		}
 
 		if (PresentmentStatus.BOUNCE.equals(status) && ImplementationConstants.PRESENT_RESP_BOUNCE_REMARKS_MAN) {

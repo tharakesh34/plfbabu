@@ -3,8 +3,10 @@ package com.pennant.webui.hold.holdenquiry;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -61,6 +63,7 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		setPageComponents(windowHoldEnquiryDialog);
 
 		List<HoldMarkingDetail> holdDetail = new ArrayList<>();
+		List<HoldMarkingDetail> sortedHoldDetail = new ArrayList<>();
 		boolean headerType = false;
 
 		try {
@@ -86,11 +89,35 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 						.toList();
 			}
 
+			List<Long> holdIDList = holdDetail.stream().map(HoldMarkingDetail::getHoldID).distinct()
+					.collect(Collectors.toList());
+
+			for (Long holdID : holdIDList) {
+
+				List<HoldMarkingDetail> holdIDDetails = holdDetail.stream()
+						.filter(hmhList -> hmhList.getHoldID() == holdID).collect(Collectors.toList());
+
+				List<HoldMarkingDetail> HoldMarkingDetail = new ArrayList<>();
+				List<HoldMarkingDetail> HoldremovalDetail = new ArrayList<>();
+
+				for (HoldMarkingDetail holdIDDetail : holdIDDetails) {
+
+					if (StringUtils.equals(PennantConstants.HOLD_MARKING, holdIDDetail.getHoldType())) {
+						HoldMarkingDetail.add(holdIDDetail);
+					} else {
+						HoldremovalDetail.add(holdIDDetail);
+					}
+				}
+
+				sortedHoldDetail.addAll(HoldMarkingDetail);
+				sortedHoldDetail.addAll(HoldremovalDetail);
+			}
+
 			this.listBoxHold.setItemRenderer(new ListModelItemRenderer(headerType));
 
 			this.paging.setActivePage(0);
 
-			pagedListWrapper.initList(holdDetail, this.listBoxHold, this.paging);
+			pagedListWrapper.initList(sortedHoldDetail, this.listBoxHold, this.paging);
 
 			doShowDialog(headerType);
 		} catch (Exception e) {

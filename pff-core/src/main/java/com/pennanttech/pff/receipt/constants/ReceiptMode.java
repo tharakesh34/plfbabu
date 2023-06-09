@@ -42,6 +42,7 @@ public class ReceiptMode {
 	public static final String SETTLEMENT = "S";
 
 	public static final String BBPS = "BBPS";
+	public static final String IFT = "IFT";
 	public static final String RTRNGDS = "RTRNGDS";
 	public static final String NACH = "NACH";
 	public static final String PAYMENTGATEWAY = "PAYMENTGATEWAY";
@@ -187,6 +188,7 @@ public class ReceiptMode {
 			subReceiptModes.add(PAYMENTGATEWAY);
 			subReceiptModes.add(UPI);
 			subReceiptModes.add(BBPS);
+			subReceiptModes.add(IFT);
 		}
 
 		return subReceiptModes;

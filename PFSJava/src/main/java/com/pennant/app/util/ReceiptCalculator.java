@@ -2537,22 +2537,16 @@ public class ReceiptCalculator {
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 		for (FinFeeDetail fee : feeList) {
 			if (allocate.getAllocationTo() == -(fee.getFeeTypeID())) {
+				BigDecimal paidAmountOriginal = allocate.getPaidNow().add(allocate.getTdsPaid());
+
 				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
-					BigDecimal paidAmountOriginal = BigDecimal.ZERO;
-					paidAmountOriginal = paidAmountOriginal.add(allocate.getPaidAmount());
-					paidAmountOriginal = paidAmountOriginal.add(allocate.getTdsPaid());
-					paidAmountOriginal = paidAmountOriginal.add(allocate.getPaidGST());
-
-					fee.setPaidAmountOriginal(paidAmountOriginal);
-
-					BigDecimal remainingFeeOriginal = BigDecimal.ZERO;
-					remainingFeeOriginal = remainingFeeOriginal.add(fee.getActualAmountOriginal());
-					remainingFeeOriginal = remainingFeeOriginal.subtract(allocate.getWaivedNow());
-					remainingFeeOriginal = remainingFeeOriginal.subtract(fee.getPaidAmountOriginal());
-
-					fee.setRemainingFeeOriginal(remainingFeeOriginal);
+					paidAmountOriginal = allocate.getPaidNow().subtract(allocate.getPaidGST())
+							.add(allocate.getTdsPaid());
 				}
 
+				fee.setPaidAmountOriginal(paidAmountOriginal);
+				fee.setRemainingFeeOriginal(fee.getActualAmountOriginal().subtract(allocate.getWaivedNow())
+						.subtract(fee.getPaidAmountOriginal()));
 				fee.setPaidAmount(fee.getPaidAmount().add(allocate.getPaidNow()));
 				fee.setWaivedAmount(fee.getWaivedAmount().add(allocate.getWaivedNow()));
 				fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount().add(fee.getWaivedAmount())));
