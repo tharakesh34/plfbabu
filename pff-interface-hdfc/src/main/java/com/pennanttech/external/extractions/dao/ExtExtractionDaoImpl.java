@@ -39,54 +39,6 @@ public class ExtExtractionDaoImpl implements ExtExtractionDao {
 		return this.extNamedJdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Long.class);
 	}
 
-	@Override
-	public String executeSp(String spName) {
-		logger.info("SP Execution Started.");
-		String status = "FAIL";
-		try {
-			mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
-
-				@Override
-				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
-
-					return connection.prepareCall(spName);
-
-				}
-			}, new ArrayList<>());
-			status = "SUCCESS";
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			status = "Error In Calling Procedure";
-		}
-		logger.info("SP Execution Completed.");
-		return status;
-	}
-
-	@Override
-	public String executeSp(String spName, java.util.Date appDate) {
-		logger.info("SP Execution Started.");
-		String status = "FAIL";
-		try {
-			mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
-
-				@Override
-				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
-
-					CallableStatement callableStatement = connection.prepareCall("{ call " + spName + "(?) }");
-					callableStatement.setDate(1, (java.sql.Date) appDate);
-					return callableStatement;
-
-				}
-			}, new ArrayList<>());
-			status = "SUCCESS";
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			status = "Error In Calling Procedure";
-		}
-		logger.info("SP Execution Completed.");
-		return status;
-	}
-
 	public String executeSp(String spName, String fileName) {
 		logger.info("File writing SP Execution Started");
 		String status = "FAIL";

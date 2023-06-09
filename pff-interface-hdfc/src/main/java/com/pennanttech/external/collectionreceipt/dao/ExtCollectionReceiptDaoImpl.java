@@ -246,4 +246,26 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 			return null;
 		}
 	}
+
+	@Override
+	public boolean validateAgreementNumber(long agreementNumber) {
+		String sql = "select * from financemain where FINREFERENCE=?;";
+		logger.debug(Literal.SQL + sql);
+		try {
+			return mainNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, Integer.class, agreementNumber) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean validateAgencyId(long agencyId) {
+		String sql = "select * from FinReceiptHeader where agencyId=?;";
+		logger.debug(Literal.SQL + sql);
+		try {
+			return mainNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, Integer.class, agencyId) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			return false;
+		}
+	}
 }

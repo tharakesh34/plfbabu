@@ -10,16 +10,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.google.common.io.Files;
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.EODExtractionsHook;
+import com.pennanttech.external.app.config.dao.ExternalDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
-import com.pennanttech.external.extractions.dao.ExtExtractionDao;
 import com.pennanttech.external.ucic.service.ExtUcicDataExtractor;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -28,9 +29,9 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 
 	private static final Logger logger = LogManager.getLogger(EODExtractionsService.class);
 
-	private ExtExtractionDao extExtractionDao;
-
 	private ExtUcicDataExtractor extUcicExtractData;
+
+	private ExternalDao externalDao;
 
 	@Override
 	public void processUCICExtraction() {
@@ -44,16 +45,16 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 
 	@Override
 	public void processExtRBIADFExtarction() {
-		String spCall = "{ call " + SP_RBIADF + "() }";
-		extExtractionDao.executeSp(spCall);
+		externalDao.executeSP(SP_RBIADF);
 
 	}
 
 	@Override
 	public void processFinconGLExtraction() {
 		Date appDate = SysParamUtil.getAppDate();
-
-		String finconSPStatus = extExtractionDao.executeSp(SP_FINCON_GL, appDate);
+		MapSqlParameterSource appDateAsinPram = new MapSqlParameterSource();
+		appDateAsinPram.addValue("exe_postdate", appDate);
+		String finconSPStatus = externalDao.executeSP(SP_FINCON_GL, appDateAsinPram);
 
 		if (!"SUCCESS".equals(finconSPStatus)) {
 			logger.debug("EXT_FINCONGL: SP extraction failed.");
@@ -65,9 +66,9 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 
 		String fileName = getFileName(appDate, finconGLConfig);
 
-		// write the file in DB server
-		String spQuery = "{ call " + SP_FINCON_WRITE_FILE + "(?) }";
-		String status = extExtractionDao.executeSp(spQuery, fileName);
+		MapSqlParameterSource inPrams = new MapSqlParameterSource();
+		inPrams.addValue("aFileName", fileName);
+		String status = externalDao.executeSP(SP_FINCON_WRITE_FILE, inPrams);
 
 		if (!"SUCCESS".equals(status)) {
 			logger.debug("EXT_FINCONGL: Fincon File writing SP failed.");
@@ -110,7 +111,7 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	}
 
 	private String getFileName(Date appDate, FileInterfaceConfig finconGLConfig) {
-		long fileSeq = extExtractionDao.getSeqNumber(SEQ_FINCON_GL);
+		long fileSeq = externalDao.getSeqNumber(SEQ_FINCON_GL);
 
 		String fileSeqName = StringUtils.leftPad(String.valueOf(fileSeq), 4, "0");
 		String fileName = finconGLConfig.getFilePrepend()
@@ -142,27 +143,23 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	}
 
 	@Autowired(required = false)
-	@Qualifier(value = "extExtractionDao")
-	public void setExtExtractionDao(ExtExtractionDao extExtractionDao) {
-		this.extExtractionDao = extExtractionDao;
-	}
-
-	@Autowired(required = false)
 	@Qualifier(value = "extUcicExtractData")
 	public void setExtUcicExtractData(ExtUcicDataExtractor extUcicExtractData) {
 		this.extUcicExtractData = extUcicExtractData;
 	}
 
+	public void setExternalDao(ExternalDao externalDao) {
+		this.externalDao = externalDao;
+	}
+
 	@Override
 	public void processBaselOneExtarction() {
-		String spCall = "{ call " + SP_BASEL_ONE + "() }";
-		extExtractionDao.executeSp(spCall);
+		externalDao.executeSP(SP_BASEL_ONE);
 	}
 
 	@Override
 	public void processALMReportExtarction() {
-		String spCall = "{ call " + SP_ALM_REPORT + "() }";
-		extExtractionDao.executeSp(spCall);
+		externalDao.executeSP(SP_ALM_REPORT);
 	}
 
 }

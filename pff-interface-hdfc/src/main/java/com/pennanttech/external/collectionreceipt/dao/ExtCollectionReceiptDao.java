@@ -26,4 +26,8 @@ public interface ExtCollectionReceiptDao {
 	void updateFileExtraction(CollReceiptHeader header);
 
 	CollReceiptHeader getErrorFromHeader(long p_id);
+
+	boolean validateAgreementNumber(long agreementNumber);
+
+	boolean validateAgencyId(long agencyId);
 }

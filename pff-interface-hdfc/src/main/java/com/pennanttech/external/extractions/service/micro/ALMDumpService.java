@@ -50,8 +50,7 @@ public class ALMDumpService {
 				}
 			}
 
-			almExtract.setCurrentBalance((fpd.getTotalPriBal().subtract(excessBalance)).abs());// negative values to be
-																								// resolved
+			almExtract.setCurrentBalance((fpd.getTotalPriBal().subtract(excessBalance)).abs());
 			almExtract.setDueDate(formatData(fpd.getNSchdDate()));
 			almExtract.setInitRate(fm.getRepayProfitRate());
 			almExtract.setLifeCeiling(fm.getRepayProfitRate());

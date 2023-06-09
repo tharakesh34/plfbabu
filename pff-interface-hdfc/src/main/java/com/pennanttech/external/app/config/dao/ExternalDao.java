@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -53,4 +54,10 @@ public class ExternalDao {
 		return status;
 	}
 
+	public long getSeqNumber(String tableName) {
+		StringBuilder sql = new StringBuilder("select ").append(tableName).append(".NEXTVAL from DUAL");
+
+		return new NamedParameterJdbcTemplate(extDataSource).queryForObject(sql.toString(), new MapSqlParameterSource(),
+				Long.class);
+	}
 }

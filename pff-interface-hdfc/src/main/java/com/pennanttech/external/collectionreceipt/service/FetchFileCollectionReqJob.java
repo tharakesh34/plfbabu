@@ -69,14 +69,14 @@ public class FetchFileCollectionReqJob extends AbstractJob
 			return;
 		}
 
+		FileTransferUtil fileTransferUtil = new FileTransferUtil(collectionReqConfig);
+
 		String remoteFilePath = collectionReqConfig.getFileTransferConfig().getSftpLocation();
 
 		if ("".equals(StringUtils.stripToEmpty(remoteFilePath))) {
 			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(CR1002));
 			return;
 		}
-
-		FileTransferUtil fileTransferUtil = new FileTransferUtil(collectionReqConfig);
 
 		// Get list of files in SFTP.
 		List<String> fileNames = fileTransferUtil.fetchFileNamesListFromSFTP();
