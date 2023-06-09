@@ -15,13 +15,13 @@
 	<bean id="prepareCustomerQueueTaskLet" class="com.pennant.backend.endofday.tasklet.PrepareCustomerQueue" />
 
 	<!-- FINCONGLEXTRACTION -->
-	<bean id="finconGLExtractionTasklet" class="com.pennant.backend.endofday.tasklet.FinconGLExtractionTasklet" />
+	<bean id="finconGLExtractionTasklet" class="com.pennant.backend.endofday.tasklet.external.FinconGLExtractionTasklet" />
 
 	<!-- UCICEXTRACTION -->
-	<bean id="ucicExtractionTasklet" class="com.pennant.backend.endofday.tasklet.UCICExtractionTasklet" />
+	<bean id="ucicExtractionTasklet" class="com.pennant.backend.endofday.tasklet.external.UCICExtractionTasklet" />
 	
 	<!-- RBIADFEXTRACTION -->
-	<bean id="extRBIADFExtractionTasklet" class="com.pennant.backend.endofday.tasklet.ExtRBIADFExtractionTasklet" />	
+	<bean id="extRBIADFExtractionTasklet" class="com.pennant.backend.endofday.tasklet.external.ExtRBIADFExtractionTasklet" />	
 
 	<!-- MicroEOD -->
 	<bean id="microEODTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEOD" />

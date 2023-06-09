@@ -43,6 +43,13 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	}
 
 	@Override
+	public void processExtRBIADFExtarction() {
+		String spCall = "{ call " + SP_RBIADF + "() }";
+		extExtractionDao.executeSp(spCall);
+
+	}
+
+	@Override
 	public void processFinconGLExtraction() {
 		Date appDate = SysParamUtil.getAppDate();
 
@@ -156,13 +163,6 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	public void processALMReportExtarction() {
 		String spCall = "{ call " + SP_ALM_REPORT + "() }";
 		extExtractionDao.executeSp(spCall);
-	}
-
-	@Override
-	public void processExtRBIADFExtarction() {
-		String spCall = "{ call " + SP_RBIADF + "() }";
-		extExtractionDao.executeSp(spCall);
-
 	}
 
 }
