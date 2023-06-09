@@ -309,7 +309,7 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 				}
 			}
 		} else if (StringUtils.isNotBlank(statementRequest.getFinReference())) {
-			Long finID = financeMainDAO.getActiveFinID(statementRequest.getFinReference(), TableType.MAIN_TAB);
+			Long finID = financeMainDAO.getFinID(statementRequest.getFinReference(), TableType.MAIN_TAB);
 			if (finID == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = statementRequest.getFinReference();

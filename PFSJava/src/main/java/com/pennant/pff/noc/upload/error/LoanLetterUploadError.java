@@ -21,11 +21,13 @@ public enum LoanLetterUploadError {
 
 	LOAN_LTR_10("Loan reference with 'CANCEL AND REBOOK' are not allowed to issue letter"),
 
-	LOAN_LTR_11("Duplicate data found with loan reference on same date"),
+	LOAN_LTR_11("Already Letter Generation intiated for the same loan."),
 
 	LOAN_LTR_12("Not allowed to generate CLOSELTR for this loan, {CANCELLATION} is already generated"),
 
-	LOAN_LTR_13("Not allowed to generate CANCLLTR for this loan, {CLOSURE} is already generated");
+	LOAN_LTR_13("Not allowed to generate CANCLLTR for this loan, {CLOSURE} is already generated"),
+
+	LOAN_LTR_14("Mode should not be blank as Loan Type Letter Mapping is not available for the given Letter type.");
 
 	private String description;
 

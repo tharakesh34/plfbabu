@@ -28,7 +28,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -1111,7 +1110,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 */
-	public boolean doValidation(AuditHeader auditHeader) throws InterruptedException {
+	public boolean doValidation(AuditHeader auditHeader) {
 		return super.doValidation(auditHeader);
 	}
 
@@ -2447,9 +2446,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onSelectCheckListDetailsTab(ForwardEvent event)
-			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
-
+	@Override
+	public void onSelectCheckListDetailsTab(ForwardEvent event) {
 		this.doWriteComponentsToBean(getFinanceDetail());
 
 		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getCustomerDetails() != null) {
@@ -2462,7 +2460,6 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			getFinanceCheckListReferenceDialogCtrl().doWriteBeanToComponents(getFinanceDetail().getCheckList(),
 					getFinanceDetail().getFinanceCheckList(), false);
 		}
-
 	}
 
 	// WorkFlow Creations

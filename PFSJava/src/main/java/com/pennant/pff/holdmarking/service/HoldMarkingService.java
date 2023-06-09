@@ -8,7 +8,7 @@ public interface HoldMarkingService {
 
 	void removeHold(FinanceMain fm);
 
-	void updateHoldRemoval(BigDecimal amount, long finId, String finReference);
+	void updateHoldRemoval(BigDecimal amount, long finId, boolean isFateCorrection);
 
-	void updateFundRecovery(BigDecimal amount, String accNum, long finId, String finReference);
+	void updateFundRecovery(BigDecimal amount, String accNum, long finId);
 }

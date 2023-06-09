@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -158,7 +159,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setBounceDate(detail.getBounceDate());
 		rud.setBounceReason(detail.getBounceReason());
 		rud.setCancelReason(detail.getBounceReason());
-		rud.setRemarks(detail.getBounceRemarks());
+		// rud.setRemarks(detail.getBounceRemarks());
 
 		PartnerBank pb = partnerBankDAO.getPartnerBankByCode(detail.getPartnerBankCode(), "");
 		if (pb != null) {
@@ -168,6 +169,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		if (RepayConstants.PAYSTATUS_BOUNCE.equals(detail.getReceiptModeStatus())) {
 			String returncode = bounceReasonDAO.getReturnCode(detail.getBounceReason());
 			rud.setBounceReason(returncode);
+			rud.setBounceRemarks(detail.getBounceRemarks());
 		}
 
 		String receiptMode = detail.getReceiptMode();
@@ -207,7 +209,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setListAllocationDetails(list);
 
 		if (AllocationType.MANUAL.equals(detail.getAllocationType()) && list != null
-				&& !(detail.getReceiptAmount().compareTo(getSumOfAllocations(list)) > 0)) {
+				&& !(detail.getReceiptAmount().compareTo(getSumOfAllocations(list)) >= 0)) {
 			setFailureStatus(detail, "", "RECEIPT Amount and Allocations amount should be same");
 			return;
 		}
@@ -231,6 +233,8 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		if (FinanceConstants.EARLYSETTLEMENT.equals(detail.getReceiptPurpose())) {
 			fsi.setClosureType(detail.getClosureType());
 		}
+
+		fsi.setCancelRemarks(detail.getBounceRemarks());
 
 		FinanceDetail fd = null;
 
@@ -286,7 +290,6 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setReason(detail.getReason());
 		rud.setRemarks(detail.getRemarks());
 		rud.setChequeNo(detail.getChequeNumber());
-		rud.setChequeNo(detail.getChequeAccountNumber());
 		rud.setBankCode(detail.getBankCode());
 		rud.setPaymentRef(detail.getPaymentRef());
 		rud.setPanNumber(detail.getPanNumber());
@@ -329,12 +332,11 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 
 		rud.setListAllocationDetails(list);
 
-		if (AllocationType.MANUAL.equals(detail.getAllocationType()) && list != null) {
-			if (!(detail.getReceiptAmount().equals(getSumOfAllocations(list)))) {
-				detail.setProgress(EodConstants.PROGRESS_FAILED);
-				detail.setErrorDesc("RECEIPT Amount and Allocations amount should be same");
-				return;
-			}
+		if (AllocationType.MANUAL.equals(detail.getAllocationType()) && list != null
+				&& !(detail.getReceiptAmount().compareTo(getSumOfAllocations(list)) >= 0)) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorDesc("RECEIPT Amount and Allocations amount should be same");
+			return;
 		}
 
 		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, entityCode);
@@ -401,8 +403,17 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 	}
 
 	private BigDecimal getSumOfAllocations(List<UploadAlloctionDetail> list) {
+		List<UploadAlloctionDetail> newlist = new ArrayList<>();
+		newlist = list;
+		Optional<UploadAlloctionDetail> allocList = newlist.stream()
+				.filter(l1 -> Allocation.EMI.equals(l1.getAllocationType())).findFirst();
+
+		if (!allocList.isEmpty()) {
+			newlist.remove(allocList.get());
+		}
+
 		BigDecimal sum = BigDecimal.ZERO;
-		for (UploadAlloctionDetail cru : list) {
+		for (UploadAlloctionDetail cru : newlist) {
 			sum = sum.add(cru.getPaidAmount());
 		}
 

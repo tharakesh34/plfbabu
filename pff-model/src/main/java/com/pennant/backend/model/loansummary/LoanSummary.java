@@ -28,6 +28,8 @@ public class LoanSummary {
 	private BigDecimal totalCpz;
 	@XmlElement(name = "DPD")
 	private Integer finCurODDays;
+	@XmlElement(name = "DPDString")
+	private String dPDString;
 	@XmlElement
 	private Date nextSchDate;
 	@XmlElement
@@ -125,6 +127,20 @@ public class LoanSummary {
 	private String migratedNo;
 	@XmlElement
 	private Date lastInstDate;
+	@XmlElement
+	private String assetCost;
+	@XmlElement
+	private String assetModel;
+	@XmlElement
+	private String categoryID;
+	@XmlElement
+	private String categoryDesc;
+	@XmlElement
+	private BigDecimal interestComponent;
+	@XmlElement
+	private BigDecimal principalComponent;
+	@XmlElement
+	private BigDecimal totalAmount;
 
 	public LoanSummary() {
 		super();
@@ -568,5 +584,77 @@ public class LoanSummary {
 
 	public void setLastInstDate(Date lastInstDate) {
 		this.lastInstDate = lastInstDate;
+	}
+
+	public String getDPDString() {
+		return dPDString;
+	}
+
+	public void setDPDString(String dPDString) {
+		this.dPDString = dPDString;
+	}
+
+	public String getAssetCost() {
+		return assetCost;
+	}
+
+	public void setAssetCost(String assetCost) {
+		this.assetCost = assetCost;
+	}
+
+	public String getAssetModel() {
+		return assetModel;
+	}
+
+	public void setAssetModel(String assetModel) {
+		this.assetModel = assetModel;
+	}
+
+	public String getdPDString() {
+		return dPDString;
+	}
+
+	public void setdPDString(String dPDString) {
+		this.dPDString = dPDString;
+	}
+
+	public String getCategoryID() {
+		return categoryID;
+	}
+
+	public void setCategoryID(String categoryID) {
+		this.categoryID = categoryID;
+	}
+
+	public String getCategoryDesc() {
+		return categoryDesc;
+	}
+
+	public void setCategoryDesc(String categoryDesc) {
+		this.categoryDesc = categoryDesc;
+	}
+
+	public BigDecimal getInterestComponent() {
+		return interestComponent;
+	}
+
+	public void setInterestComponent(BigDecimal interestComponent) {
+		this.interestComponent = interestComponent;
+	}
+
+	public BigDecimal getPrincipalComponent() {
+		return principalComponent;
+	}
+
+	public void setPrincipalComponent(BigDecimal principalComponent) {
+		this.principalComponent = principalComponent;
+	}
+
+	public BigDecimal getTotalAmount() {
+		return totalAmount;
+	}
+
+	public void setTotalAmount(BigDecimal totalAmount) {
+		this.totalAmount = totalAmount;
 	}
 }

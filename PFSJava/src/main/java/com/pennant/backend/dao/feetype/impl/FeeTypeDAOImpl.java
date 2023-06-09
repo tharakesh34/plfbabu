@@ -302,7 +302,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			ft.setIncomeOrExpenseAcTypeDesc(rs.getString("IncomeOrExpenseAcTypeDesc"));
 
 			ft.setWaiverOrRefundAcType(rs.getString("WaiverOrRefundAcType"));
-			ft.setIncomeOrExpenseAcTypeDesc(rs.getString("IncomeOrExpenseAcTypeDesc"));
+			ft.setWaiverOrRefundAcTypeDesc(rs.getString("WaiverOrRefundAcTypeDesc"));
 
 			ft.setCgstAcType(rs.getString("CgstAcType"));
 			ft.setCgstAcTypeDesc(rs.getString("CgstAcTypeDesc"));
@@ -778,7 +778,8 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		sql.append(" Inner join (select case when PayableLinkTo = ?");
 		sql.append(" then (Select FeeTypeCode From FeeTypes where FeeTypeId = f.RecvFeeTypeId)");
 		sql.append(" else PayableLinkTo end Type, FeeTypeCode, FeeTypeDesc, Refundable");
-		sql.append(", PayableLinkTo, AdviseType, FeeTypeID, RecvFeeTypeId From FeeTypes f) fe");
+		sql.append(", PayableLinkTo, AdviseType, FeeTypeID, RecvFeeTypeId From FeeTypes f");
+		sql.append(" Where f.RecvFeeTypeId is not null) fe");
 		sql.append(" on fee.FeeTypeCode = fe.Type and fee.FeeTypeCode = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));

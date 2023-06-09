@@ -475,4 +475,36 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
+
+	@Override
+	public List<BaseRate> getBaseRates(String bRType, String currency, Date bREffDate, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BRType, Currency, BREffDate, BRRate, LastMdfDate");
+		sql.append(" From RMTBaseRates");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where BRType = ? and Currency = ? and BREffDate <= ? and BRTypeIsActive = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<BaseRate> list = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, bRType);
+			ps.setString(index++, currency);
+			ps.setDate(index++, JdbcUtil.getDate(bREffDate));
+			ps.setInt(index, 1);
+		}, (rs, rowNum) -> {
+			BaseRate br = new BaseRate();
+
+			br.setBRType(rs.getString("BRType"));
+			br.setCurrency(rs.getString("Currency"));
+			br.setBREffDate(rs.getTimestamp("BREffDate"));
+			br.setBRRate(rs.getBigDecimal("BRRate"));
+			br.setLastMdfDate(rs.getTimestamp("LastMdfDate"));
+
+			return br;
+		});
+
+		return list.stream().sorted((l1, l2) -> DateUtil.compare(l2.getBREffDate(), l1.getBREffDate()))
+				.collect(Collectors.toList());
+	}
 }

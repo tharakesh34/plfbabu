@@ -35,6 +35,7 @@ import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.NOCConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.letter.LetterMode;
 import com.pennant.pff.letter.dao.AutoLetterGenerationDAO;
@@ -363,8 +364,10 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		schdData.setFinanceSummary(summary);
 
 		if (CollectionUtils.isNotEmpty(letterInfo)) {
-			gl.getFinanceDetail().setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesList(fm.getFinType(),
-					getLetterType(gl), "_AView", false, FinanceConstants.MODULEID_FINTYPE));
+			gl.getFinanceDetail()
+					.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesList(fm.getFinType(),
+							NOCConstants.getLetterType(gl.getLetterType()), "_AView", false,
+							FinanceConstants.MODULEID_FINTYPE));
 			processfees(gl, letterInfo);
 		}
 

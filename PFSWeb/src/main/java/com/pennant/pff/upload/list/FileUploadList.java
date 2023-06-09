@@ -1313,7 +1313,7 @@ public class FileUploadList extends Window implements Serializable {
 			lc.setParent(item);
 
 			if ("A".equals(uph.getStage())) {
-				lc = new Listcell(uph.getUserDetails().getUserName());
+				lc = new Listcell(uph.getCreatedByName());
 				lc.setParent(item);
 			}
 

@@ -13,6 +13,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -36,6 +37,7 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RestructureDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
+import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.financeservice.RestructureService;
 import com.pennant.backend.model.ValueLabel;
@@ -60,6 +62,7 @@ import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.RestructureType;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.Taxes;
+import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
@@ -69,6 +72,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -92,6 +96,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 	private FinanceTypeDAO financeTypeDAO;
 	private BaseRateDAO baseRateDAO;
 	private FinanceStepDetailDAO financeStepDetailDAO;
+	private MandateDAO mandateDAO;
 
 	@Override
 	public FinScheduleData doRestructure(FinScheduleData schdData, FinServiceInstruction fsi) {
@@ -887,6 +892,13 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 		FinanceProfitDetail fpd = schdData.getFinPftDeatil();
 
 		long finID = fm.getFinID();
+
+		if (InstrumentType.isSI(fm.getFinRepayMethod())) {
+			Mandate mandate = new Mandate();
+			String accNum = mandateDAO.getMandateNumber(fm.getMandateID());
+			mandate.setAccNumber(accNum);
+			fd.setMandate(mandate);
+		}
 
 		if (fpd == null) {
 			fpd = financeProfitDetailDAO.getFinProfitDetailsById(finID);
@@ -1986,6 +1998,11 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
 		this.financeStepDetailDAO = financeStepDetailDAO;
+	}
+
+	@Autowired
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
 	}
 
 }

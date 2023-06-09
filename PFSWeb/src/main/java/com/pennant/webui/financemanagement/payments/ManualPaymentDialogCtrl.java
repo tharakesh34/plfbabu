@@ -37,7 +37,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1834,8 +1833,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		return header;
 	}
 
-	public void onSelectCheckListDetailsTab(ForwardEvent event)
-			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
+	@Override
+	public void onSelectCheckListDetailsTab(ForwardEvent event) {
 		getFinanceDetail().getFinScheduleData().getFinanceMain().setRefundAmount(this.totRefundAmt.getValue());
 		this.doWriteComponentsToBean(false);
 
@@ -1849,11 +1848,9 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			getFinanceCheckListReferenceDialogCtrl().doWriteBeanToComponents(getFinanceDetail().getCheckList(),
 					getFinanceDetail().getFinanceCheckList(), false);
 		}
-
 	}
 
-	public void onSelectAgreementDetailTab(ForwardEvent event)
-			throws IllegalAccessException, InvocationTargetException, InterruptedException {
+	public void onSelectAgreementDetailTab(ForwardEvent event) {
 		this.doWriteComponentsToBean(false);
 
 		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getCustomerDetails() != null) {

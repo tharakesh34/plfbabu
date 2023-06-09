@@ -7,6 +7,7 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.util.PennantConstants;
 
 public class CustomerUtil {
 
@@ -16,6 +17,12 @@ public class CustomerUtil {
 
 	public static String getCustomerFullName(Customer customer) {
 		StringBuilder custFullName = new StringBuilder();
+
+		if (PennantConstants.PFF_CUSTCTG_CORP.equals(customer.getCustCtgCode())
+				|| PennantConstants.PFF_CUSTCTG_SME.equals(customer.getCustCtgCode())) {
+			custFullName.append(customer.getCustShrtName());
+			return custFullName.toString();
+		}
 
 		String salutation = StringUtils.trimToEmpty(customer.getCustSalutationCode());
 		String fName = StringUtils.trimToEmpty(customer.getCustFName());

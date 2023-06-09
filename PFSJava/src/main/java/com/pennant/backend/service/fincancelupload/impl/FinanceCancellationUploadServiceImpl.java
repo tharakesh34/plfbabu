@@ -163,7 +163,10 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl<Fin
 
 						detail.setAppDate(appDate);
 						processCancelLoan(detail);
-						setSuccesStatus(detail);
+
+						if (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) {
+							setSuccesStatus(detail);
+						}
 						logger.info("Loan Cancelation Process is Completed for the Header ID {}", header.getId());
 					}
 
@@ -231,19 +234,21 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl<Fin
 			fd.setReasonHeader(rh);
 		}
 
+		if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
+			return;
+		}
+
 		TransactionStatus txnStatus = getTransactionStatus();
 
 		try {
-			if (EodConstants.PROGRESS_FAILED != detail.getProgress()) {
-				fm.setFinSourceID(UploadTypes.LOAN_CANCEL.name());
-				fm.setCancelRemarks(detail.getRemarks());
-				fm.setCancelType(detail.getCancelType());
-				if (rh != null) {
-					fm.setDetailsList(rh.getDetailsList());
-				}
-
-				processLoanCancel(fd, detail);
+			fm.setFinSourceID(UploadTypes.LOAN_CANCEL.name());
+			fm.setCancelRemarks(detail.getRemarks());
+			fm.setCancelType(detail.getCancelType());
+			if (rh != null) {
+				fm.setDetailsList(rh.getDetailsList());
 			}
+
+			processLoanCancel(fd, detail);
 
 			this.transactionManager.commit(txnStatus);
 		} catch (Exception e) {

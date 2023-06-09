@@ -1864,34 +1864,42 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public List<String> getInstrumentTypes(long batchID) {
-		String sql = "Select distinct MandateType From PresentmentHeader Where BatchID = ?";
+	public List<PresentmentHeader> getInstrumentTypes(long batchID) {
+		String sql = "Select distinct MandateType, Schdate From PresentmentHeader Where BatchID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return jdbcOperations.queryForList(sql.toString(), String.class, batchID);
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			PresentmentHeader ph = new PresentmentHeader();
+
+			ph.setMandateType(rs.getString("MandateType"));
+			ph.setSchdate(rs.getDate("Schdate"));
+
+			return ph;
+
+		}, batchID);
 	}
 
 	@Override
-	public void groupByInclude(long batchID, String instrumentType, PresentmentEngine presentmentEngine,
+	public void groupByInclude(long batchID, PresentmentHeader ph, PresentmentEngine presentmentEngine,
 			Map<Long, Integer> headerMap, Integer batchSize, List<PresentmentDetail> list) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select pd.ID, ph.Id HeaderId, ph.MandateType");
+		sql.append("Select pd.ID, ph.Id HeaderId");
 		sql.append(" From PresentmentHeader ph");
 		sql.append(" Inner Join PresentmentDetails pd on pd.PresentmentID = ph.ID");
-		sql.append(" Where ph.BatchID = ? and ph.MandateType = ? and ExcludeReason = ?");
+		sql.append(" Where ph.BatchID = ? and ph.MandateType = ? and ExcludeReason = ? and PresentmentDate = ?");
 		sql.append(" order by ph.Id");
 
 		jdbcOperations.query(sql.toString(), ps -> {
 			ps.setLong(1, batchID);
-			ps.setString(2, instrumentType);
+			ps.setString(2, ph.getMandateType());
 			ps.setInt(3, RepayConstants.PEXC_EMIINCLUDE);
+			ps.setDate(4, JdbcUtil.getDate(ph.getPresentmentDate()));
 		}, (rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
 
 			pd.setId(rs.getLong("ID"));
 			pd.setHeaderId(rs.getLong("HeaderId"));
-			pd.setMandateType(rs.getString("MandateType"));
 
 			presentmentEngine.groupByInclude(pd, headerMap, batchSize, list);
 
@@ -1967,4 +1975,25 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	}
 
+	@Override
+	public int getQueueCount() {
+		String sql = "Select Coalesce(count(Id), 0) From PRMNT_EXTRACTION_STAGE";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class);
+	}
+
+	@Override
+	public int deleteHeader(long batchID, Date Schdate) {
+		String sql = "Delete From PresentmentHeader Where BatchID = ? and SchDate = ? and ID not in (Select PresentmentId From PresentmentDetails Where SchDate = ?)";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.update(sql, ps -> {
+			ps.setLong(1, batchID);
+			ps.setDate(2, JdbcUtil.getDate(Schdate));
+			ps.setDate(3, JdbcUtil.getDate(Schdate));
+		});
+	}
 }

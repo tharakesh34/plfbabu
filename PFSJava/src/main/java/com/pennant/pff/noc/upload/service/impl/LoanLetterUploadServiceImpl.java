@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NOCConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.letter.dao.AutoLetterGenerationDAO;
 import com.pennant.pff.noc.dao.GenerateLetterDAO;
@@ -100,12 +102,30 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 		}
 
 		detail.setReferenceID(fm.getFinID());
+		List<LoanTypeLetterMapping> ltrmap = loanTypeLetterMappingDAO.getLetterMapping(fm.getFinType());
 
 		LetterType letterType = LetterType.getType(detail.getLetterType());
 		if ((LetterType.NOC != letterType) && (LetterType.CLOSURE != letterType)
 				&& (LetterType.CANCELLATION != letterType)) {
 			setError(detail, LoanLetterUploadError.LOAN_LTR_02);
 			return;
+		}
+
+		if (!ltrmap.stream().anyMatch(l -> l.getLetterType().equals(detail.getLetterType()))) {
+			setError(detail, LoanLetterUploadError.LOAN_LTR_08);
+			return;
+		}
+
+		if (StringUtils.isBlank(detail.getModeOfTransfer())) {
+			LoanTypeLetterMapping ltlm = ltrmap.stream().filter(l -> l.getLetterType().equals(detail.getLetterType()))
+					.findFirst().orElse(null);
+			if (ltlm != null) {
+				detail.setModeOfTransfer(ltlm.getLetterMode());
+			} else {
+				setError(detail, LoanLetterUploadError.LOAN_LTR_14);
+				return;
+			}
+
 		}
 
 		String mode = detail.getModeOfTransfer();
@@ -125,12 +145,6 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 			return;
 		}
 
-		List<LoanTypeLetterMapping> ltrmap = loanTypeLetterMappingDAO.getLetterMapping(fm.getFinType());
-		if (!ltrmap.stream().anyMatch(l -> l.getLetterType().equals(detail.getLetterType()))) {
-			setError(detail, LoanLetterUploadError.LOAN_LTR_08);
-			return;
-		}
-
 		if ((LetterType.CLOSURE == letterType || LetterType.NOC == letterType)
 				&& FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
 			setError(detail, LoanLetterUploadError.LOAN_LTR_06);
@@ -146,10 +160,10 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 			}
 		}
 
-		FinTypeFees ftf = loanLetterUploadDAO.getFeeWaiverAllowed(fm.getFinType(), detail.getLetterType());
+		FinTypeFees ftf = loanLetterUploadDAO.getFeeWaiverAllowed(fm.getFinType(),
+				NOCConstants.getLetterType(detail.getLetterType()));
 
-		if (PennantConstants.YES.equals(waiverCharges) && ftf == null
-				|| PennantConstants.YES.equals(waiverCharges) && BigDecimal.ZERO == ftf.getMaxWaiverPerc()) {
+		if (PennantConstants.YES.equals(waiverCharges) && (ftf == null || BigDecimal.ZERO == ftf.getMaxWaiverPerc())) {
 			setError(detail, LoanLetterUploadError.LOAN_LTR_09);
 			return;
 		}
@@ -160,34 +174,12 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 			return;
 		}
 
-		List<LoanLetterUpload> noc = loanLetterUploadDAO.getByReference(detail.getReference());
-
-		for (LoanLetterUpload llu : noc) {
-			if (isDuplicate(detail, llu)) {
-				setError(detail, LoanLetterUploadError.LOAN_LTR_11);
-				return;
-			}
-
-			LetterType ltrType = LetterType.getType(llu.getLetterType());
-			if (LetterType.CLOSURE == ltrType && LetterType.CANCELLATION == ltrType) {
-				setError(detail, LoanLetterUploadError.LOAN_LTR_13);
-				return;
-			}
-
-			if (LetterType.CANCELLATION == ltrType && LetterType.CLOSURE == ltrType) {
-				setError(detail, LoanLetterUploadError.LOAN_LTR_12);
-				return;
-			}
+		if (loanLetterUploadDAO.getByReference(detail.getReferenceID(), detail.getLetterType())) {
+			setError(detail, LoanLetterUploadError.LOAN_LTR_11);
+			return;
 		}
-		setSuccesStatus(detail);
-	}
 
-	private boolean isDuplicate(LoanLetterUpload detail, LoanLetterUpload noc) {
-		Date valueDate = DateUtil.getSysDate();
-		int date = DateUtil.formatToLongDate(valueDate).compareTo(DateUtil.formatToLongDate(noc.getApprovedOn()));
-		return noc.getReference().equals(detail.getReference()) && date == 1
-				&& noc.getLetterType().equals(detail.getLetterType())
-				&& noc.getWaiverCharges().equals(detail.getWaiverCharges());
+		setSuccesStatus(detail);
 	}
 
 	@Override
@@ -207,17 +199,24 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 				for (LoanLetterUpload detail : details) {
 					doValidate(header, detail);
 
+					detail.setUserDetails(header.getUserDetails());
+					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
+						setFailureStatus(detail);
+						continue;
+					}
+
 					FinanceMain fm = financeMainDAO.getFinanceMainByRef(detail.getReference(), "_View", false);
 
 					GenerateLetter gl = new GenerateLetter();
 					long finID = fm.getFinID();
-					List<GenerateLetter> loanLetterInfo = generateLetterDAO.getLoanLetterInfo(finID,
-							gl.getLetterType());
+					List<GenerateLetter> letterInfo = generateLetterDAO.getLoanLetterInfo(fm.getFinID(),
+							detail.getLetterType());
 
-					if (CollectionUtils.isNotEmpty(loanLetterInfo)) {
+					if (CollectionUtils.isNotEmpty(letterInfo)) {
 						long custID = fm.getCustID();
 						List<FinTypeFees> list = finTypeFeesDAO.getFinTypeFeesList(fm.getFinType(),
-								detail.getLetterType(), "_AView", false, FinanceConstants.MODULEID_FINTYPE);
+								NOCConstants.getLetterType(detail.getLetterType()), "_AView", false,
+								FinanceConstants.MODULEID_FINTYPE);
 
 						FinanceDetail fd = new FinanceDetail();
 						FinScheduleData fsd = new FinScheduleData();
@@ -236,10 +235,10 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 
 						gl.setFinReference(detail.getReference());
 						gl.setFinID(detail.getReferenceID());
-						gl.setLetterType(gl.getLetterType());
+						gl.setLetterType(detail.getLetterType());
 						gl.setFinanceDetail(fd);
 
-						setMapDetails(gl, loanLetterInfo);
+						setMapDetails(gl, letterInfo);
 
 						FinReceiptHeader frh = new FinReceiptHeader();
 						FinReceiptData rd = new FinReceiptData();
@@ -279,7 +278,6 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 						if (ltlp.getLetterType().equals(gl.getLetterType())) {
 							gl.setAgreementTemplate(ltlp.getAgreementCodeId());
 							gl.setEmailTemplate(ltlp.getEmailTemplateId());
-							gl.setModeofTransfer(ltlp.getLetterMode());
 						}
 					}
 
@@ -290,8 +288,6 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 					} else {
 						setSuccesStatus(detail);
 					}
-
-					detail.setUserDetails(header.getUserDetails());
 				}
 
 				try {
@@ -323,7 +319,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 
 		if (CollectionUtils.isNotEmpty(letterInfo)) {
 			letter.setSequenceNo(letterInfo.size());
-			letter.setStatusOfpreviousletters(letterInfo.get(0).getDeliveryStatus());
+			letter.setStatusOfpreviousletters(letterInfo.get(0).getStatus());
 		}
 
 		fm.setLoanLetter(letter);

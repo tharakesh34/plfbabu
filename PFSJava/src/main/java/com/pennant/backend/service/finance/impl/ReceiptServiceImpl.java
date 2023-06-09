@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -1795,12 +1796,14 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		} else if (RepayConstants.PAYSTATUS_BOUNCE.equals(rch.getReceiptModeStatus())
 				|| RepayConstants.PAYSTATUS_CANCEL.equals(rch.getReceiptModeStatus())) {
 			for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
-				FinRepayHeader rph = financeRepaymentsDAO.getFinRepayHeadersByReceipt(rcd.getReceiptSeqID(), "");
-				rcd.setRepayHeader(rph);
-				if (rph != null) {
-					List<RepayScheduleDetail> rpySchdList = financeRepaymentsDAO
-							.getRpySchdListByRepayID(rph.getRepayID(), "");
-					rph.setRepayScheduleDetails(rpySchdList);
+				if (rcd.getReceiptSeqID() > 0) {
+					FinRepayHeader rph = financeRepaymentsDAO.getFinRepayHeadersByReceipt(rcd.getReceiptSeqID(), "");
+					rcd.setRepayHeader(rph);
+					if (rph != null) {
+						List<RepayScheduleDetail> rpySchdList = financeRepaymentsDAO
+								.getRpySchdListByRepayID(rph.getRepayID(), "");
+						rph.setRepayScheduleDetails(rpySchdList);
+					}
 				}
 			}
 			receiptCancellationService.doApprove(auditHeader);
@@ -2070,7 +2073,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		fm.setRcdMaintainSts("");
 		rch.setLoanCancellationType(fm.getCancelType());
-		repaymentProcessUtil.doSaveReceipts(rch, scheduleData.getFinFeeDetailList(), true);
+
+		if (!LoanCancelationUtil.LOAN_CANCEL_REBOOK.equals(rch.getLoanCancellationType())) {
+			repaymentProcessUtil.doSaveReceipts(rch, scheduleData.getFinFeeDetailList(), true);
+		}
+
 		long receiptID = rch.getReceiptID();
 
 		// Overdue Details updation , if Value Date is Back dated.
@@ -2352,8 +2359,15 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		if (MandateExtension.ALLOW_HOLD_MARKING && !FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
-			holdMarkingService.updateHoldRemoval(ReceiptUtil.getAllocatedAmount(rch.getAllocations()), fm.getFinID(),
-					fm.getFinReference());
+			List<ReceiptAllocationDetail> list = rch.getAllocations();
+			Optional<ReceiptAllocationDetail> allocList = list.stream()
+					.filter(l1 -> Allocation.EMI.equals(l1.getAllocationType())).findFirst();
+
+			if (!allocList.isEmpty()) {
+				list.remove(allocList.get());
+			}
+
+			holdMarkingService.updateHoldRemoval(ReceiptUtil.getAllocatedAmount(list), fm.getFinID(), false);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -3611,6 +3625,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			fsi.setAllocationType(AllocationType.AUTO);
 			fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		}
+
+		validateAdjustedAlloc(receiptData);
+
 	}
 
 	private void validateCheque(FinScheduleData schdData, String favourNumber) {
@@ -3738,8 +3755,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		boolean autoReceipt = ReceiptUtil.isAutoReceipt(receiptMode, productCategory);
 
-		if (!isTerminationEvent(fsi) && (!(ReceiptMode.isValidReceiptMode(receiptMode)) && !fsi.isKnockOffReceipt()
-				&& !fsi.isLoanCancellation() || autoReceipt)) {
+		if (!(isTerminationEvent(fsi) || ReceiptMode.isValidReceiptMode(receiptMode) || fsi.isKnockOffReceipt()
+				|| fsi.isLoanCancellation() || autoReceipt)) {
 			setError(schdData, "90281", "Receipt mode", ReceiptMode.getValidReceiptModes());
 			return;
 		}
@@ -4015,7 +4032,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return;
 		}
 
-		if (StringUtils.isNotBlank(fsi.getClosureType())) {
+		if (StringUtils.isNotBlank(fsi.getClosureType()) && fsi.isClosureReceipt()) {
 			rd.setForeClosure(true);
 		}
 
@@ -4243,7 +4260,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 					return;
 				}
 
-				if (StringUtils.isNotBlank(referenceCode) && feeTypeDAO.getFeeTypeId(referenceCode) == null) {
+				if (!fsi.isClosureReceipt() && StringUtils.isNotBlank(referenceCode)
+						&& feeTypeDAO.getFeeTypeId(referenceCode) == null) {
 					setError(schdData, "90501", "referenceCode :" + referenceCode);
 					logger.info(Literal.LEAVING);
 					return;
@@ -4544,7 +4562,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 
 			String receiptModeSts = rch.getReceiptModeStatus();
-			if (!RepayConstants.PAYSTATUS_BOUNCE.equals(receiptModeSts)
+			if (fsi != null && !fsi.isClosureReceipt() && !RepayConstants.PAYSTATUS_BOUNCE.equals(receiptModeSts)
 					&& !RepayConstants.PAYSTATUS_CANCEL.equals(receiptModeSts)) {
 				Date prvSchdDate = pd.getPrvRpySchDate();
 				if (valueDate.compareTo(prvSchdDate) < 0) {
@@ -4559,7 +4577,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 			Date lastReceivedDate = finReceiptDetailDAO.getMaxReceivedDate(finID);
 
-			if (DateUtil.compare(valueDate, lastReceivedDate) < 0) {
+			if (fsi != null && !fsi.isClosureReceipt() && DateUtil.compare(valueDate, lastReceivedDate) < 0) {
 				if (ReceiptExtension.STOP_BACK_DATED_EARLY_SETTLE) {
 					setError(schdData, "RU0011", valueDateFormat, DateUtil.formatToLongDate(lastReceivedDate));
 					return;
@@ -5069,7 +5087,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		String reference = rud.getReference();
 		String chequeNo = rud.getChequeNo();
 
-		Long finID = financeMainDAO.getFinIDByFinReference(reference, "", false);
+		Long finID = financeMainDAO.getFinID(reference, TableType.MAIN_TAB);
 
 		if (finID == null) {
 			setErrorToRUD(rud, "RU0004", reference);
@@ -5142,6 +5160,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			fsi.setCancelReason(rud.getCancelReason());
 			fsi.setBounceDate(rud.getBounceDate());
 			fsi.setBounceReason(rud.getBounceReason());
+			fsi.setBounceRemarks(rud.getBounceRemarks());
 			fsi.setReceiptId(rud.getReceiptId() == null ? 0 : rud.getReceiptId());
 			fsi.setNewReceipt(rud.isNewReceipt());
 		} else {
@@ -5757,6 +5776,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			recalEarlyPay(rd);
 		}
 
+		if (peceiptPurpose == ReceiptPurpose.EARLYSETTLE) {
+			repaymentProcessUtil.prepareDueData(rd);
+		}
+
 		List<FinanceScheduleDetail> finSchdDtls = copy(
 				rd.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
 
@@ -5917,6 +5940,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rch.setFinType(fm.getFinType());
 		rch.setClosureType(fsi.getClosureType());
 		rch.setClosureWithFullWaiver(fsi.isClosureWithFullWaiver());
+		rch.setCancelRemarks(fsi.getCancelRemarks());
 
 		if (fsi.isKnockOffReceipt()) {
 			rch.setKnockOffType(fsi.getKnockoffType());
@@ -6504,6 +6528,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 						}
 					}
 				}
+
+				rd = receiptCalculator.recalAutoAllocation(rd, false);
 			}
 		}
 
@@ -6534,7 +6560,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 					&& receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
 				rd = validateAllocationsAmount(rd);
 			}
-			rd = updateAllocationsPaid(rd);
+
+			if (!fsi.isClosureReceipt()) {
+				rd = updateAllocationsPaid(rd);
+			}
 		}
 
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
@@ -6582,6 +6611,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			setError(schdData, "91127", String.valueOf(formateAmount));
 			return;
 		}
+
+		validateAdjustedAlloc(rd);
 	}
 
 	private void setFinanceMain(FinScheduleData schdData, ReceiptPurpose receiptPurpose) {
@@ -6834,8 +6865,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			if (!fsi.isClosureReceipt()) {
 				rcd.setPayOrder(rch.getReceiptDetails().size() + 1);
 				rch.getReceiptDetails().add(rcd);
+
 			}
-		} else {
+		}
+
+		if (CollectionUtils.isEmpty(rch.getXcessPayables())) {
 			if (rd.getTotalPastDues().compareTo(rch.getReceiptAmount()) >= 0) {
 				rcd.setDueAmount(rch.getReceiptAmount());
 				rd.setTotalPastDues(rd.getTotalPastDues().subtract(rch.getReceiptAmount()));
@@ -6843,6 +6877,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				rcd.setDueAmount(rd.getTotalPastDues());
 				rd.setTotalPastDues(BigDecimal.ZERO);
 			}
+
+			for (FinReceiptDetail detail : rch.getReceiptDetails()) {
+				detail.setDueAmount(rcd.getDueAmount());
+			}
+
 		}
 
 		fm.setReceiptPurpose(receiptPurpose.code());
@@ -7092,7 +7131,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		RequestSource requestSource = fsi.getRequestSource();
 
 		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose && !checkDueAdjusted(allocations, rd)) {
-			if (!RequestSource.EOD.equals(requestSource) && !fsi.isClosureReceipt()) {
+			if (RequestSource.API.equals(requestSource) && !fsi.isClosureReceipt()) {
 				adjustToExcess(rd);
 			}
 
@@ -7526,6 +7565,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rd.getReceiptHeader().setReceiptDetails(rcdList);
 		int receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(rch.getReceiptPurpose());
 
+		FinServiceInstruction fsi = rd.getFinanceDetail().getFinScheduleData().getFinServiceInstruction();
 		Map<String, BigDecimal> taxPercMap = null;
 
 		FinScheduleData schdData = rd.getFinanceDetail().getFinScheduleData();
@@ -7567,12 +7607,18 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 
 			rcd.setPayAgainstID(payable.getPayableID());
-			if (rd.getTotalPastDues().compareTo(payable.getTotPaidNow()) >= 0) {
+
+			if (fsi != null && fsi.isClosureReceipt()) {
 				rcd.setDueAmount(payable.getTotPaidNow());
 				rd.setTotalPastDues(rd.getTotalPastDues().subtract(payable.getPaidNow()));
 			} else {
-				rcd.setDueAmount(rd.getTotalPastDues());
-				rd.setTotalPastDues(BigDecimal.ZERO);
+				if (rd.getTotalPastDues().compareTo(payable.getTotPaidNow()) >= 0) {
+					rcd.setDueAmount(payable.getTotPaidNow());
+					rd.setTotalPastDues(rd.getTotalPastDues().subtract(payable.getPaidNow()));
+				} else {
+					rcd.setDueAmount(rd.getTotalPastDues());
+					rd.setTotalPastDues(BigDecimal.ZERO);
+				}
 			}
 
 			if (receiptPurposeCtg == 1) {
@@ -8924,6 +8970,34 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		return receiptCalculator.getEmiSplit(frd, emiAmount);
+	}
+
+	@Override
+	public void validateAdjustedAlloc(FinReceiptData rd) {
+		FinanceDetail fd = rd.getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		FinReceiptHeader rch = rd.getReceiptHeader();
+
+		if (!(ReceiptPurpose.EARLYSETTLE.code().equals(rch.getReceiptPurpose())
+				|| FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose()))) {
+			return;
+		}
+
+		for (ReceiptAllocationDetail allocate : rch.getAllocations()) {
+			BigDecimal dueAmount = allocate.getDueAmount();
+
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
+				dueAmount = dueAmount.add(allocate.getDueGST());
+			}
+
+			if (dueAmount.compareTo(allocate.getPaidAmount()) != 0) {
+				String parm0 = "For allocation item: " + rch.getReceiptPurpose()
+						+ "is not allowed to do, since allocations are not fully adjusted";
+				setError(schdData, "30550", parm0);
+				logger.info(Literal.LEAVING);
+			}
+		}
 	}
 
 	@Autowired

@@ -722,7 +722,7 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 		return notes;
 	}
 
-	public void onChange$transferFrom(Event event) throws Exception {
+	public void onChange$transferFrom(Event event) {
 		this.transferAmount.setValue(BigDecimal.ZERO);
 		setExcessReference();
 	}

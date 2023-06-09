@@ -24,7 +24,6 @@
  */
 package com.pennant.pff.noc.webui;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -133,9 +132,7 @@ public class LoanTypeLetterMappingListCtrl extends GFCBaseListCtrl<LoanTypeLette
 		logger.debug(Literal.LEAVING);
 	}
 
-	public class LTLPListModelItemRender implements ListitemRenderer<LoanTypeLetterMapping>, Serializable {
-		private static final long serialVersionUID = 1L;
-
+	public class LTLPListModelItemRender implements ListitemRenderer<LoanTypeLetterMapping> {
 		public LTLPListModelItemRender() {
 			super();
 		}
@@ -158,7 +155,7 @@ public class LoanTypeLetterMappingListCtrl extends GFCBaseListCtrl<LoanTypeLette
 	}
 
 	public void onClick$buttonLoanTypeLetterMappingSearchDialog(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		List<LoanTypeLetterMapping> excludeCodes = this.loanTypeLetterMappingService.getResult(getSearchFilters());
 
@@ -179,15 +176,16 @@ public class LoanTypeLetterMappingListCtrl extends GFCBaseListCtrl<LoanTypeLette
 
 		this.pagedListWrapper.initList(excludeCodes, listBoxLoanTypeLetterMapping, pagingLoanTypeLetterMapping);
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	private ISearch getSearchFilters() {
 		ISearch search = new Search();
 
-		String finType = this.finType.getValue();
-		if (StringUtils.isNotEmpty(finType)) {
-			search.getFilters().add(new Filter("ltlm.finType", finType, this.sortOperatorFinType.getSelectedIndex()));
+		String selectedFinType = this.finType.getValue();
+		if (StringUtils.isNotEmpty(selectedFinType)) {
+			search.getFilters()
+					.add(new Filter("ltlm.finType", selectedFinType, this.sortOperatorFinType.getSelectedIndex()));
 		}
 
 		String status = this.recordStatus.getValue();
@@ -205,7 +203,7 @@ public class LoanTypeLetterMappingListCtrl extends GFCBaseListCtrl<LoanTypeLette
 		return search;
 	}
 
-	public void onClick$btnRefresh(Event event) throws InterruptedException {
+	public void onClick$btnRefresh(Event event) {
 		doReset();
 		fillListData();
 	}

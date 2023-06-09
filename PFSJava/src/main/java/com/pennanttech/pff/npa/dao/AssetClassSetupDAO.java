@@ -33,5 +33,7 @@ public interface AssetClassSetupDAO extends BasicCrudDao<AssetClassSetupHeader> 
 
 	boolean checkDependency(long assetClassSetupId);
 
-	List<String> getAssetClassSetCodes(long finID);
+	List<AssetClassSetupDetail> getAssetClassSetCodes(long finID);
+
+	int getMinDpdByEntity(String entityCode);
 }

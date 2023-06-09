@@ -304,7 +304,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.eligibleAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
 		this.eligibleAmount.setScale(PennantConstants.defaultCCYDecPos);
 
-		this.reasonRow.setVisible(PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module));
+		this.reasonRow.setVisible(PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module)
+				|| PennantConstants.MANUALADVISE_ENQUIRY_MODULE.equals(this.module));
 
 		if (enqiryModule) {
 			this.groupboxWf.setVisible(false);
@@ -1287,6 +1288,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		} else {
 			readOnlyComponent(true, this.adviseAmount);
 			readOnlyComponent(true, this.remarks);
+			readOnlyComponent(true, this.reason);
 			readOnlyComponent(true, this.valueDate);
 		}
 

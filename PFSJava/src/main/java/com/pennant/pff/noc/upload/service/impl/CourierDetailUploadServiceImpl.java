@@ -67,7 +67,7 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 			return;
 		}
 
-		if (!isValidDeliveryStatus(deliveryStatus)) {
+		if (StringUtils.isNotBlank(deliveryStatus) && !isValidDeliveryStatus(deliveryStatus)) {
 			setError(detail, CourierDetailUploadError.LCD_004);
 			return;
 		}
@@ -80,12 +80,6 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 		}
 
 		Date letterGenDate = DateUtil.getSqlDate(detail.getLetterDate());
-		Long isExist = courierDetailUploadDAO.isFileExist(reference, letterType, letterGenDate);
-		if (isExist != null) {
-			setFailureStatus(detail, "LCD_999", "Same data already exist with the uploadId : " + isExist);
-			return;
-		}
-
 		if (courierDetailUploadDAO.isValidRecord(detail.getReferenceID(), letterType, letterGenDate)) {
 			setError(detail, CourierDetailUploadError.LCD_006);
 			return;

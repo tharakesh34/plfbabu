@@ -18,6 +18,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.applicationmaster.RejectDetailDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -29,6 +30,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -41,6 +43,7 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -74,6 +77,8 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private CustomerDAO customerDAO;
 	private ReceiptAllocationDetailDAO receiptAllocationDetailDAO;
+	private ManualAdviseService manualAdviseService;
+	private FinODDetailsDAO finODDetailsDAO;
 
 	public ReceiptStatusUploadServiceImpl() {
 		super();
@@ -136,7 +141,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		}
 
 		if (!FinServiceEvent.SCHDRPY.equals(receiptPurpose) && !RepayConstants.PAYSTATUS_REALIZED.equals(status)
-				&& realizedDate != null && (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(receiptmode)
+				&& realizedDate == null && (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(receiptmode)
 						|| DisbursementConstants.PAYMENT_TYPE_DD.equals(receiptmode))) {
 			setError(detail, ReceiptStatusUploadError.RU021);
 			return;
@@ -159,24 +164,19 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 				setError(detail, ReceiptStatusUploadError.RU07);
 				return;
 			}
-
-			if (realizedDate != null) {
-				setError(detail, ReceiptStatusUploadError.RU08);
-				return;
-			}
 		}
 
 		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(receiptmode)
 				|| DisbursementConstants.PAYMENT_TYPE_DD.equals(receiptmode)) {
 
-			if (realizedDate == null) {
+			if (RepayConstants.PAYSTATUS_REALIZED.equals(status) && realizedDate == null) {
 				setError(detail, ReceiptStatusUploadError.RU09);
 				return;
 			}
 
 			Date depositDate = frh.getDepositDate();
 
-			if (depositDate != null && DateUtil.compare(realizedDate, depositDate) < 0) {
+			if (depositDate != null && realizedDate != null && DateUtil.compare(realizedDate, depositDate) < 0) {
 				setError(detail, ReceiptStatusUploadError.RU010);
 				return;
 			}
@@ -192,11 +192,6 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		if (RepayConstants.PAYSTATUS_BOUNCE.equals(status)) {
 			if (bounceDate == null) {
 				setError(detail, ReceiptStatusUploadError.RU017);
-				return;
-			}
-
-			if (DateUtil.compare(bounceDate, realizedDate) < 0) {
-				setError(detail, ReceiptStatusUploadError.RU018);
 				return;
 			}
 
@@ -262,7 +257,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 						setFailureStatus(detail);
 					} else {
 						prepareUserDetails(header, detail);
-						updateReceipt(detail);
+						updateReceipt(detail, header);
 						setSuccesStatus(detail);
 					}
 				}
@@ -282,7 +277,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		}).start();
 	}
 
-	private void updateReceipt(ReceiptStatusUpload detail) {
+	private void updateReceipt(ReceiptStatusUpload detail, FileUploadHeader header) {
 		FinReceiptData fd = new FinReceiptData();
 		AuditHeader auditHeader = null;
 
@@ -299,11 +294,20 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 			frh.setPartPayAmount(frh.getReceiptAmount());
 		}
 
+		if (RepayConstants.PAYSTATUS_BOUNCE.equals(detail.getStatusRM())) {
+			String returnCode = bounceReasonDAO.getReturnCode(detail.getBounceReason());
+			ManualAdvise ma = manualAdviseService.getMAForBounce(frh, frd.get(0), returnCode, detail.getBounceRemarks(),
+					"", frh.getValueDate());
+			frh.setBounceId(ma.getBounceID());
+			frh.setManualAdvise(ma);
+		}
+
 		frh.setReceiptID(detail.getReceiptId());
 		frh.setReceiptModeStatus(detail.getStatusRM());
 		frh.setRealizationDate(detail.getRealizationDate());
 		frh.setReceiptDetails(frd);
 		frh.setUserDetails(detail.getUserDetails());
+
 		if (allocations != null) {
 			frh.setAllocations(allocations);
 		}
@@ -314,6 +318,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 
 		if (RepayConstants.PAYSTATUS_CANCEL.equals(detail.getStatusRM())) {
 			frh.setCancelReason(detail.getBounceReason());
+			frh.setCancelRemarks(detail.getBounceRemarks());
 		}
 
 		fd.setFinID(frh.getFinID());
@@ -326,6 +331,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finid, "_AView", false);
 		FinanceType ft = financeTypeDAO.getFinanceTypeByFinType(financeMain.getFinType());
 		FinanceProfitDetail fpd = financeProfitDetailDAO.getFinProfitDetailsById(finid);
+		List<FinODDetails> odDetails = finODDetailsDAO.getFinODDByFinRef(finid, null);
 
 		FinScheduleData schdData = new FinScheduleData();
 		FinanceDetail financeDetail = new FinanceDetail();
@@ -341,6 +347,8 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		schdData.setFinanceScheduleDetails(schedules);
 		schdData.setFinanceType(ft);
 		schdData.setFinanceMain(financeMain);
+		schdData.setFinODDetails(odDetails);
+
 		if (fpd != null) {
 			schdData.setFinPftDeatil(fpd);
 		}
@@ -381,12 +389,13 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 
 		Map<String, String> map = new HashMap<>();
 		if (detail != null) {
-			FinReceiptData fdTemp = (FinReceiptData) auditHeader.getModelData();
+			FinReceiptData fdTemp = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 
 			ManualAdvise manualAdvise = fdTemp.getReceiptHeader().getManualAdvise();
 			if (manualAdvise != null) {
 				map.put("Bounce Charge", CurrencyUtil.format(manualAdvise.getAdviseAmount()));
 				detail.setExtendedFields(map);
+				header.setExtendedFieldRequired(true);
 			}
 		}
 	}
@@ -514,6 +523,16 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 	@Autowired
 	public void setReceiptAllocationDetailDAO(ReceiptAllocationDetailDAO receiptAllocationDetailDAO) {
 		this.receiptAllocationDetailDAO = receiptAllocationDetailDAO;
+	}
+
+	@Autowired
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
+	}
+
+	@Autowired
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
 }

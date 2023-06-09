@@ -3,7 +3,6 @@ package com.pennanttech.webui.downloads;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -246,7 +245,7 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> {
 		return eventproperties.getPrefix();
 	}
 
-	private void downloadFromServer(FileDownlaod fileDownlaod) throws FileNotFoundException, IOException {
+	private void downloadFromServer(FileDownlaod fileDownlaod) throws IOException {
 		String filePath = fileDownlaod.getFileLocation();
 		String fileName = fileDownlaod.getFileName();
 
@@ -254,18 +253,16 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> {
 			filePath = filePath.concat("/").concat(fileName);
 		}
 
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		try (ByteArrayOutputStream stream = new ByteArrayOutputStream();) {
+			try (InputStream inputStream = new FileInputStream(filePath)) {
+				int data;
+				while ((data = inputStream.read()) >= 0) {
+					stream.write(data);
+				}
 
-		InputStream inputStream = new FileInputStream(filePath);
-		int data;
-		while ((data = inputStream.read()) >= 0) {
-			stream.write(data);
+				Filedownload.save(stream.toByteArray(), "text/plain", fileName);
+			}
 		}
-
-		inputStream.close();
-		inputStream = null;
-		Filedownload.save(stream.toByteArray(), "text/plain", fileName);
-		stream.close();
 	}
 
 	private void downloadFromS3Bucket(String prefix, String fileName) {

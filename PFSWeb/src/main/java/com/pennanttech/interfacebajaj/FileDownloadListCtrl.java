@@ -28,7 +28,6 @@ package com.pennanttech.interfacebajaj;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -238,7 +237,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> {
 		return eventproperties.getPrefix();
 	}
 
-	private void downloadFromServer(FileDownlaod fileDownlaod) throws FileNotFoundException, IOException {
+	private void downloadFromServer(FileDownlaod fileDownlaod) throws IOException {
 		String filePath = fileDownlaod.getFileLocation();
 		String fileName = fileDownlaod.getFileName();
 
@@ -255,7 +254,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> {
 		}
 
 		inputStream.close();
-		inputStream = null;
+
 		Filedownload.save(stream.toByteArray(), "application/octet-stream", fileName);
 		stream.close();
 	}

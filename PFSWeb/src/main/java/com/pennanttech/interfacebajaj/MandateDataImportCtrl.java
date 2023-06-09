@@ -111,7 +111,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		// Set the page level components.
 		setPageComponents(window);
 
-		List<ValueLabel> menuList = new ArrayList<ValueLabel>();
+		List<ValueLabel> menuList = new ArrayList<>();
 		userId = getUserWorkspace().getUserDetails().getLoginId();
 		List<Configuration> configList = dataEngineConfig.getMenuList(true);
 
@@ -168,7 +168,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		}
 	}
 
-	public void onChange$mandateType(Event event) throws Exception {
+	public void onChange$mandateType(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		if (PennantConstants.List_Select.equals(getComboboxValue(this.mandateType))) {
@@ -184,7 +184,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void setDEStatus(String configName) throws Exception {
+	private void setDEStatus(String configName) {
 		if (configName != null) {
 			fileName.setValue("");
 			serverFileName.setValue("");
@@ -226,7 +226,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 	}
 
-	public void onFulfill$partnerBank(Event event) throws Exception {
+	public void onFulfill$partnerBank(Event event) {
 		Object dataObject = partnerBank.getObject();
 		if (dataObject == null || dataObject instanceof String) {
 			this.partnerBank.setValue("");
@@ -260,9 +260,8 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * when the Source type is changed. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$fileConfiguration(Event event) throws Exception {
+	public void onChange$fileConfiguration(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -293,9 +292,8 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * when the Source type is changed. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	private void fileConfigurationSetup() throws Exception {
+	private void fileConfigurationSetup() {
 		logger.debug(Literal.ENTERING);
 
 		String path = config.getUploadPath();
@@ -323,7 +321,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 		} else if (StringUtils.equalsIgnoreCase(ConfigUtil.SERVER_FILE_LOCATION, uploadLoc)) {
 			setComponentsVisibility(false);
-			serverFiles = new ArrayList<ValueLabel>();
+			serverFiles = new ArrayList<>();
 			File file = new File(path);
 			File[] files = file.listFiles();
 
@@ -363,7 +361,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		} else {
 			Hbox hbox = null;
 			List<Hbox> item = rows.getChildren();
-			hbox = (Hbox) item.get(0);
+			hbox = item.get(0);
 			if (hbox.getChildren().size() == 2) {
 				rows = new Row();
 				rows.setStyle("overflow: visible !important");
@@ -400,9 +398,8 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * When user clicks on "btnImport"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnImport(Event event) throws InterruptedException {
+	public void onClick$btnImport(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		if (MandateExtension.UPLOAD_ENITITY_CODE_MANDATORY) {
@@ -452,7 +449,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void exceptionTrace(Exception e) throws InterruptedException {
+	private void exceptionTrace(Exception e) {
 		fileConfiguration.setValue(PennantConstants.List_Select);
 		fileConfiguration.setSelectedIndex(0);
 		MessageUtil.showError(e.getMessage());
@@ -460,9 +457,8 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 	/**
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
+	public void onUpload$btnFileUpload(UploadEvent event) {
 		// Clear the file name.
 		this.fileName.setText("");
 		// Get the media of the selected file.
@@ -498,7 +494,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		this.fileName.setText(mediaName);
 	}
 
-	public void onChange$serverFileName(Event event) throws Exception {
+	public void onChange$serverFileName(Event event) {
 		try {
 			file = new File(this.serverFileName.getSelectedItem().getValue().toString());
 		} catch (Exception e) {

@@ -1449,6 +1449,22 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						CurrencyUtil.getFormat(finSummary.getFinCcy())));
 			}
 
+			String pftRate = PennantApplicationUtil.formatRate(finSummary.getFinRate().doubleValue(), 2);
+			List<FinanceScheduleDetail> fsds = finScheduleData.getFinanceScheduleDetails();
+			Date appDate = SysParamUtil.getAppDate();
+			int schInst = 0;
+			for (FinanceScheduleDetail fsd : fsds) {
+				Date schdate = fsd.getSchDate();
+				if (schdate.compareTo(appDate) < 0 && fsd.getInstNumber() > 0) {
+					schInst++;
+				}
+
+				if (schdate.compareTo(appDate) >= 0 && fsd.getInstNumber() > 0) {
+					pftRate = PennantApplicationUtil.formatRate(fsd.getActRate().doubleValue(), 2);
+					break;
+				}
+			}
+
 			this.schdPriPaid.setValue(
 					CurrencyUtil.format(finSummary.getSchdPriPaid(), CurrencyUtil.getFormat(finSummary.getFinCcy())));
 			this.schdPftPaid.setValue(
@@ -1465,24 +1481,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					CurrencyUtil.format(finSummary.getPayOffProfit(), CurrencyUtil.getFormat(finSummary.getFinCcy())));
 			this.totalPayOff.setValue(
 					CurrencyUtil.format(finSummary.getTotalPayOff(), CurrencyUtil.getFormat(finSummary.getFinCcy())));
-			this.overDueInstlments.setValue(String.valueOf(finSummary.getOverDueInstlments()));
+			this.overDueInstlments.setValue(String.valueOf(schInst - (finSummary.getPaidInstlments())));
 			this.overDueInstlementPft.setValue(CurrencyUtil.format(
 					finSummary.getOverDueInstlementPft().add(financeSummary.getFinODTotPenaltyBal()),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-			Date appDate = SysParamUtil.getAppDate();
-
-			List<FinanceScheduleDetail> fsds = finScheduleData.getFinanceScheduleDetails();
-
-			String pftRate = PennantApplicationUtil.formatRate(finSummary.getFinRate().doubleValue(), 2);
-
-			for (FinanceScheduleDetail fsd : fsds) {
-				Date schdate = fsd.getSchDate();
-
-				if (schdate.compareTo(appDate) >= 0 && fsd.getInstNumber() > 0) {
-					pftRate = PennantApplicationUtil.formatRate(fsd.getActRate().doubleValue(), 2);
-					break;
-				}
-			}
 
 			this.finProfitrate.setValue(pftRate);
 			this.paidInstlments.setValue(String.valueOf(finSummary.getPaidInstlments()));

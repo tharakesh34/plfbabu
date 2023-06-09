@@ -54,6 +54,7 @@ import com.pennant.backend.util.UploadConstants;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -525,7 +526,7 @@ public class VariableOverdraftScheduleDialogCtrl extends GFCBaseCtrl<VariableOve
 			this.variableOverdraftSchdHeader.setValidSchdUpload(true);
 
 			br = new BufferedReader(new FileReader(file));
-			List<VariableOverdraftSchdDetail> odSchdDetails = new ArrayList<VariableOverdraftSchdDetail>();
+			List<VariableOverdraftSchdDetail> odSchdDetails = new ArrayList<>();
 
 			while ((line = br.readLine()) != null) {
 
@@ -534,13 +535,13 @@ public class VariableOverdraftScheduleDialogCtrl extends GFCBaseCtrl<VariableOve
 				try {
 					if (row.length == HEADERS_COUNT && recordCount == 0) {
 						if (!(HEADER_DATE.equalsIgnoreCase(row[0]) && HEADER_AMOUNT.equalsIgnoreCase(row[1]))) {
-							throw new Exception(Labels.getLabel("HEADER_MISMATCH"));
+							throw new AppException(Labels.getLabel("HEADER_MISMATCH"));
 						}
 
 						saveUploadHeader();
 
 					} else if (recordCount == 0) {
-						throw new Exception(Labels.getLabel("HEADER_MISMATCH_SPACE"));
+						throw new AppException(Labels.getLabel("HEADER_MISMATCH_SPACE"));
 					}
 				} catch (Exception e) {
 					MessageUtil.showError(e.getMessage());

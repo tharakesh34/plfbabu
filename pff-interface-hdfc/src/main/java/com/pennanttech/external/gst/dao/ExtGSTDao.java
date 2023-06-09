@@ -3,23 +3,25 @@ package com.pennanttech.external.gst.dao;
 import java.util.List;
 
 import com.pennanttech.external.gst.model.GSTCompDetail;
+import com.pennanttech.external.gst.model.GSTCompHeader;
 import com.pennanttech.external.gst.model.GSTInvoiceDetail;
+import com.pennanttech.external.gst.model.GSTReqFile;
 import com.pennanttech.external.gst.model.GSTRequestDetail;
+import com.pennanttech.external.gst.model.GSTVoucherDetails;
 
 public interface ExtGSTDao {
 
 	long getSeqNumber(String tableName);
 
-	void extractGSTVouchers();
+	void extractDetailsFromForGstCalculation();
 
-	void saveGSTVouchersToRequestTable(int processStatus, int req_file_id);
+	void saveExtractedDetailsToRequestTable(long headerId);
 
-	List<GSTRequestDetail> fetchRecords(int status);
+	List<GSTRequestDetail> fetchRecords();
 
 	boolean isFileProcessed(String respFileName);
 
-	void saveResponseFile(String fileName, String fileLocation, int fileStatus, int extractStatus, String errorCode,
-			String errorMessage);
+	void saveResponseFile(GSTCompHeader compHeader);
 
 	void updateFileStatus(long id, int status);
 
@@ -27,12 +29,16 @@ public interface ExtGSTDao {
 
 	void updateGSTRecordDetailStatus(GSTCompDetail detail);
 
-	long saveGSTRequestFileData(String fileName, String fileLocation);
+	void updateGSTRequestFileToHeaderId(GSTReqFile gstReqFile);
 
-	int updateGSTVoucherWithReqHeaderId(List<Long> txnUidList, long headerId);
-
-	boolean isVoucherFound(long transactionUID);
+	public GSTVoucherDetails fetchVoucherDetails(long transactionUID);
 
 	long saveGSTInvoiceDetails(GSTInvoiceDetail gstInvoiceDetail);
+
+	long fetchHeaderIdForProcessing(GSTReqFile gstReqFile);
+
+	long getHeaderIdForFile(GSTReqFile gstReqFile);
+
+	void updateHeaderIdIntoGSTVoucherDetails(long headerId);
 
 }

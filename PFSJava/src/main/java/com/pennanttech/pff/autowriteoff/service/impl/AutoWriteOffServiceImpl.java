@@ -251,7 +251,10 @@ public class AutoWriteOffServiceImpl implements AutoWriteOffService {
 		} else if (fea != null) {
 			receiptAmt = fea.getBalanceAmt();
 			payAgainstID = fea.getExcessID();
-			receiptMode = ExcessHead.valueOf(fea.getAmountType()).name();
+			ExcessHead head = ExcessHead.getHead(fea.getAmountType());
+			if (head != null) {
+				receiptMode = head.name();
+			}
 		}
 
 		FinanceMain fm = schdData.getFinanceMain();

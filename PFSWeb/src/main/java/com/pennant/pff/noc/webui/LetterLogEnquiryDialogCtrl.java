@@ -1,6 +1,5 @@
 package com.pennant.pff.noc.webui;
 
-import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
@@ -53,7 +52,6 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 	protected Label finReference;
 	protected Label custName;
 	private String moduleDefiner = "";
-	private boolean enquiry;
 
 	private GenerateLetter generateLetter;
 	private transient GenerateLetterService generateLetterService;
@@ -83,10 +81,6 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 
 		if (arguments.containsKey("moduleDefiner")) {
 			moduleDefiner = (String) arguments.get("moduleDefiner");
-		}
-
-		if (arguments.containsKey("enquiry")) {
-			this.enquiry = (boolean) arguments.get("enquiry");
 		}
 
 		if (arguments.containsKey("financeEnquiryHeaderDialogCtrl")) {
@@ -175,9 +169,7 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 		logger.debug("Leaving");
 	}
 
-	private class LogLetterEnquiryModelItemRenderer implements ListitemRenderer<GenerateLetter>, Serializable {
-		private static final long serialVersionUID = 6056180845898696437L;
-
+	private class LogLetterEnquiryModelItemRenderer implements ListitemRenderer<GenerateLetter> {
 		public LogLetterEnquiryModelItemRenderer() {
 			super();
 		}
@@ -205,12 +197,22 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 
 				String requestType = data.getRequestType();
 
+				String approverName = data.getApproverName();
+
+				if ("A".equals(requestType)) {
+					approverName = "Auto";
+				}
+
 				if ("A".equals(requestType)) {
 					requestType = "Auto";
 				}
 
 				if ("M".equals(requestType)) {
 					requestType = "Manual";
+				}
+
+				if ("D".equals(requestType)) {
+					requestType = "Delink-Auto";
 				}
 
 				lc = new Listcell(data.getModeofTransfer());
@@ -221,16 +223,11 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 				lc.setSpan(1);
 				lc.setParent(item);
 
-				String approverName = data.getApproverName();
-				if ("A".equals(requestType)) {
-					approverName = "Auto";
-				}
-
 				lc = new Listcell(StringUtils.trimToEmpty(approverName));
 				lc.setSpan(1);
 				lc.setParent(item);
 
-				lc = new Listcell(data.getCourierAgencyName());
+				lc = new Listcell(data.getCourierAgency());
 				lc.setSpan(1);
 				lc.setParent(item);
 
@@ -257,10 +254,7 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 		}
 	}
 
-	private class LogLetterEnquiryComparator implements Comparator<Object>, Serializable {
-
-		private static final long serialVersionUID = 9112640872865877333L;
-
+	private class LogLetterEnquiryComparator implements Comparator<Object> {
 		public LogLetterEnquiryComparator() {
 			super();
 		}

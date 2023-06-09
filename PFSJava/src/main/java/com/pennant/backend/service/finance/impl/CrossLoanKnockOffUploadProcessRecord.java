@@ -48,7 +48,7 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 	@Autowired
 	private ManualAdviseDAO manualAdviseDAO;
 
-	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource record, Table table)
+	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource paramSource, Table table)
 			throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -67,7 +67,7 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 		}
 
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
-		Long recordSeq = (Long) record.getValue("RecordSeq");
+		Long recordSeq = (Long) paramSource.getValue("RecordSeq");
 
 		clku.setHeaderId(headerID);
 		clku.setRecordSeq(recordSeq);
@@ -174,11 +174,11 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 				index++;
 
 				if (index == 23) {
-					record.addValue("ERRORCODE", "9999");
-					record.addValue("ERRORDESC", "Fee Types are exceeded the limit");
+					paramSource.addValue("ERRORCODE", "9999");
+					paramSource.addValue("ERRORDESC", "Fee Types are exceeded the limit");
 
-					record.addValue("STATUS", "F");
-					record.addValue("PROGRESS", EodConstants.PROGRESS_FAILED);
+					paramSource.addValue("STATUS", "F");
+					paramSource.addValue("PROGRESS", EodConstants.PROGRESS_FAILED);
 
 					continue;
 				}
@@ -210,19 +210,19 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 			crossLoanKnockOffUploadService.doValidate(header, clku);
 
 			if (clku.getProgress() == EodConstants.PROGRESS_FAILED) {
-				record.addValue("ERRORCODE", clku.getErrorCode());
-				record.addValue("ERRORDESC", clku.getErrorDesc());
+				paramSource.addValue("ERRORCODE", clku.getErrorCode());
+				paramSource.addValue("ERRORDESC", clku.getErrorDesc());
 			}
 
 		} catch (AppException e) {
 			clku.setStatus("F");
 			clku.setProgress(EodConstants.PROGRESS_FAILED);
 
-			record.addValue("ERRORCODE", "9999");
-			record.addValue("ERRORDESC", e.getMessage());
+			paramSource.addValue("ERRORCODE", "9999");
+			paramSource.addValue("ERRORDESC", e.getMessage());
 
-			record.addValue("STATUS", clku.getStatus());
-			record.addValue("PROGRESS", clku.getProgress());
+			paramSource.addValue("STATUS", clku.getStatus());
+			paramSource.addValue("PROGRESS", clku.getProgress());
 		}
 
 		List<CrossLoanKnockoffUpload> details = new ArrayList<>();
@@ -230,7 +230,7 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 
 		crossLoanKnockOffUploadDAO.update(details);
 
-		crossLoanKnockOffUploadService.updateProcess(header, clku, record);
+		crossLoanKnockOffUploadService.updateProcess(header, clku, paramSource);
 
 		header.getUploadDetails().add(clku);
 

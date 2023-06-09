@@ -24,8 +24,6 @@
  */
 package com.pennanttech.pff.cd.web;
 
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +49,6 @@ import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainListCtrl;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -177,12 +174,6 @@ public class CDFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	}
 
 	@Override
-	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
-		super.doWriteBeanToComponents(aFinanceDetail, onLoadProcess);
-	}
-
-	@Override
 	public void doSave() throws Exception {
 		super.doSave();
 
@@ -261,7 +252,8 @@ public class CDFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doFillReasons(int reason) throws InterruptedException {
+	@Override
+	public void doFillReasons(int reason) {
 		logger.debug("Entering");
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", this);

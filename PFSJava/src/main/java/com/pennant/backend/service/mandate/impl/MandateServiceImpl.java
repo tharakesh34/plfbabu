@@ -585,14 +585,21 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		if (!MandateStatus.isInprocess(status) && !MandateStatus.isNew(status) && !mandate.isSecondaryMandate()
 				&& !((MandateStatus.isApproved(status) || (MandateStatus.isRejected(status))))
 				&& !StringUtils.equals(method, PennantConstants.method_doReject)) {
+
 			boolean exists = mandateDAO.checkMandates(mandate.getOrgReference(), mandate.getMandateID(),
 					mandate.isSecurityMandate());
-			if (exists) {
+
+			if (exists && !mandate.isSecurityMandate()) {
 				String[] valueParm2 = new String[1];
 				valueParm2[0] = String.valueOf(mandate.getOrgReference());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41022", valueParm2)));
 			}
 
+			if (exists && mandate.isSecurityMandate()) {
+				String[] valueParm2 = new String[1];
+				valueParm2[0] = String.valueOf(mandate.getOrgReference());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41222", valueParm2)));
+			}
 		}
 
 		if (mandate.isSwapIsActive()

@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1474,9 +1473,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		return getFinanceDetail();
 	}
 
-	public void onSelectCheckListDetailsTab(ForwardEvent event)
-			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
-
+	@Override
+	public void onSelectCheckListDetailsTab(ForwardEvent event) {
 		this.doWriteComponentsToBean(getFinanceDetail().getFinScheduleData());
 
 		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getCustomerDetails() != null) {
@@ -1489,7 +1487,6 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			getFinanceCheckListReferenceDialogCtrl().doWriteBeanToComponents(getFinanceDetail().getCheckList(),
 					getFinanceDetail().getFinanceCheckList(), false);
 		}
-
 	}
 
 	/**

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -77,6 +78,7 @@ import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.extension.PresentmentExtension;
 import com.pennant.pff.holdmarking.model.HoldMarkingDetail;
 import com.pennant.pff.holdmarking.model.HoldMarkingHeader;
+import com.pennant.pff.holdmarking.service.HoldMarkingService;
 import com.pennant.pff.holdmarking.upload.dao.HoldMarkingDetailDAO;
 import com.pennant.pff.holdmarking.upload.dao.HoldMarkingHeaderDAO;
 import com.pennant.pff.mandate.ChequeSatus;
@@ -152,6 +154,7 @@ public class PresentmentEngine {
 	private PresentmentImportProcess presentmentImportProcess;
 	private FinMandateService finMandateService;
 	private EventPropertiesService eventPropertiesService;
+	private HoldMarkingService holdMarkingService;
 
 	public PresentmentEngine() {
 		super();
@@ -427,20 +430,40 @@ public class PresentmentEngine {
 
 		Map<String, Integer> batchMap = presentmentDAO.batchSizeByInstrumentType();
 
-		List<String> instrumentTypes = presentmentDAO.getInstrumentTypes(batchID);
+		List<PresentmentHeader> list = presentmentDAO.getInstrumentTypes(batchID);
 
-		List<PresentmentDetail> list = new ArrayList<>();
+		Map<String, List<PresentmentHeader>> map = new HashMap<>();
+		for (PresentmentHeader ph : list) {
+			String key = ph.getMandateType().concat(DateUtil.formatToLongDate(ph.getSchdate()));
 
-		for (String instrumentType : instrumentTypes) {
-			Map<Long, Integer> headerMap = new LinkedHashMap<>();
-			Integer batchSize = batchMap.get(instrumentType);
+			List<PresentmentHeader> subList = map.get(key);
 
-			presentmentDAO.groupByInclude(batchID, instrumentType, this, headerMap, batchSize, list);
-
-			if (!list.isEmpty()) {
-				presentmentDAO.updateHeaderByInclude(list);
-				list.clear();
+			if (subList == null) {
+				subList = new ArrayList<>();
+				map.put(key, subList);
 			}
+
+			subList.add(ph);
+		}
+
+		for (Entry<String, List<PresentmentHeader>> entry : map.entrySet()) {
+			List<PresentmentDetail> pdList = new ArrayList<>();
+
+			for (PresentmentHeader ph : entry.getValue()) {
+				Map<Long, Integer> headerMap = new LinkedHashMap<>();
+				Integer batchSize = batchMap.get(ph.getMandateType());
+
+				presentmentDAO.groupByInclude(batchID, ph, this, headerMap, batchSize, pdList);
+
+				if (!pdList.isEmpty()) {
+					presentmentDAO.updateHeaderByInclude(pdList);
+					pdList.clear();
+				}
+			}
+		}
+
+		for (PresentmentHeader ph : list) {
+			presentmentDAO.deleteHeader(batchID, ph.getSchdate());
 		}
 
 		logger.debug(Literal.ENTERING);
@@ -1453,6 +1476,11 @@ public class PresentmentEngine {
 			}
 		}
 
+		if (InstrumentType.SI.code().equals(pd.getMandateType()) && PresentmentStatus.SUCCESS.equals(clearingStatus)
+				&& "Y".equals(fateCorrection)) {
+			holdMarkingService.updateHoldRemoval(pd.getPresentmentAmt(), pd.getFinID(), true);
+		}
+
 		if ((InstrumentType.isPDC(mandateType) || InstrumentType.isIPDC(mandateType)) && checkStatus != null) {
 			presentmentDetailDAO.updateChequeStatus(mandateID, checkStatus);
 		}
@@ -1690,6 +1718,10 @@ public class PresentmentEngine {
 		if (PresentmentStatus.BOUNCE.equals(status)) {
 			BounceReason br = BounceConfigCache.getCacheBounceReason(bounceCode);
 			if (br == null) {
+				throw new PresentmentException(PresentmentError.PRMNT503);
+			}
+
+			if (br.getInstrumentType() == null || !StringUtils.equals(br.getInstrumentType(), pd.getMandateType())) {
 				throw new PresentmentException(PresentmentError.PRMNT503);
 			}
 		}
@@ -2069,4 +2101,8 @@ public class PresentmentEngine {
 		this.holdMarkingHeaderDAO = holdMarkingHeaderDAO;
 	}
 
+	@Autowired
+	public void setHoldMarkingService(HoldMarkingService holdMarkingService) {
+		this.holdMarkingService = holdMarkingService;
+	}
 }

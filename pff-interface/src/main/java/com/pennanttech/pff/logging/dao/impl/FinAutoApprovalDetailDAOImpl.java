@@ -1,20 +1,14 @@
 package com.pennanttech.pff.logging.dao.impl;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.backend.model.finance.FinAutoApprovalDetails;
 import com.pennanttech.pennapps.core.AppException;
@@ -31,7 +25,6 @@ import com.pennanttech.pff.logging.dao.FinAutoApprovalDetailDAO;
  */
 public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDetails>
 		implements FinAutoApprovalDetailDAO {
-	private static Logger logger = LogManager.getLogger(FinAutoApprovalDetailDAOImpl.class);
 
 	public FinAutoApprovalDetailDAOImpl() {
 		super();
@@ -46,38 +39,23 @@ public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDet
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		KeyHolder keyHolder = new GeneratedKeyHolder();
-
 		try {
-			jdbcOperations.update(new PreparedStatementCreator() {
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
 
-				@Override
-				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-					PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
+				ps.setLong(index++, fapd.getBatchId());
+				ps.setLong(index++, fapd.getFinID());
+				ps.setString(index++, fapd.getFinReference());
+				ps.setLong(index++, fapd.getDisbId());
+				ps.setDate(index++, JdbcUtil.getDate(fapd.getRealizedDate()));
+				ps.setString(index++, fapd.getStatus());
+				ps.setString(index++, fapd.getErrorDesc());
+				ps.setLong(index++, fapd.getUserId());
+				ps.setDate(index, JdbcUtil.getDate(fapd.getDownloadedOn()));
+			});
 
-					int index = 1;
-
-					ps.setLong(index++, fapd.getBatchId());
-					ps.setLong(index++, fapd.getFinID());
-					ps.setString(index++, fapd.getFinReference());
-					ps.setLong(index++, fapd.getDisbId());
-					ps.setDate(index++, JdbcUtil.getDate(fapd.getRealizedDate()));
-					ps.setString(index++, fapd.getStatus());
-					ps.setString(index++, fapd.getErrorDesc());
-					ps.setLong(index++, fapd.getUserId());
-					ps.setDate(index, JdbcUtil.getDate(fapd.getDownloadedOn()));
-
-					return ps;
-				}
-			}, keyHolder);
-
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			throw new AppException("Unable to save the details into FinAutoApprovalDetails table.");
-		}
-
-		Number key = keyHolder.getKey();
-		if (key != null) {
-			fapd.setId(key.longValue());
 		}
 	}
 

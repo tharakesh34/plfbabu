@@ -1,11 +1,12 @@
 package com.pennant.webui.hold.holdenquiry;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -62,6 +63,7 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		setPageComponents(windowHoldEnquiryDialog);
 
 		List<HoldMarkingDetail> holdDetail = new ArrayList<>();
+		List<HoldMarkingDetail> sortedHoldDetail = new ArrayList<>();
 		boolean headerType = false;
 
 		try {
@@ -87,13 +89,37 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 						.toList();
 			}
 
+			List<Long> holdIDList = holdDetail.stream().map(HoldMarkingDetail::getHoldID).distinct()
+					.collect(Collectors.toList());
+
+			for (Long holdID : holdIDList) {
+
+				List<HoldMarkingDetail> holdIDDetails = holdDetail.stream()
+						.filter(hmhList -> hmhList.getHoldID() == holdID).collect(Collectors.toList());
+
+				List<HoldMarkingDetail> HoldMarkingDetail = new ArrayList<>();
+				List<HoldMarkingDetail> HoldremovalDetail = new ArrayList<>();
+
+				for (HoldMarkingDetail holdIDDetail : holdIDDetails) {
+
+					if (StringUtils.equals(PennantConstants.HOLD_MARKING, holdIDDetail.getHoldType())) {
+						HoldMarkingDetail.add(holdIDDetail);
+					} else {
+						HoldremovalDetail.add(holdIDDetail);
+					}
+				}
+
+				sortedHoldDetail.addAll(HoldMarkingDetail);
+				sortedHoldDetail.addAll(HoldremovalDetail);
+			}
+
 			this.listBoxHold.setItemRenderer(new ListModelItemRenderer(headerType));
 
 			this.paging.setActivePage(0);
 
-			pagedListWrapper.initList(holdDetail, this.listBoxHold, this.paging);
+			pagedListWrapper.initList(sortedHoldDetail, this.listBoxHold, this.paging);
 
-			doShowDialog(holdDetail, headerType);
+			doShowDialog(headerType);
 		} catch (Exception e) {
 			closeDialog();
 			MessageUtil.showError(e);
@@ -102,7 +128,7 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doShowDialog(List<HoldMarkingDetail> holdDetail, boolean headerType) {
+	private void doShowDialog(boolean headerType) {
 		try {
 			if (headerType) {
 				this.listheaderHoldReference
@@ -120,9 +146,7 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		doClose(false);
 	}
 
-	public class ListModelItemRenderer implements ListitemRenderer<HoldMarkingDetail>, Serializable {
-		private static final long serialVersionUID = 1L;
-
+	public class ListModelItemRenderer implements ListitemRenderer<HoldMarkingDetail> {
 		private boolean headerType;
 
 		public ListModelItemRenderer(boolean headerType) {
@@ -130,11 +154,16 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		}
 
 		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
+		BigDecimal releaseAmount = BigDecimal.ZERO;
+		List<Long> holdIDList = new ArrayList<>();
 
 		@Override
 		public void render(Listitem item, HoldMarkingDetail hd, int index) throws Exception {
-			BigDecimal releaseAmount = BigDecimal.ZERO;
-			releaseAmount = releaseAmount.add(hd.getAmount());
+
+			if (!holdIDList.contains(hd.getHoldID())) {
+				holdIDList.add(hd.getHoldID());
+				releaseAmount = BigDecimal.ZERO;
+			}
 
 			item.appendChild(new Listcell(String.valueOf(hd.getHoldID())));
 			item.appendChild(new Listcell(headerType ? hd.getFinReference() : hd.getAccountNumber()));
@@ -145,6 +174,7 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 				item.appendChild(new Listcell(String.valueOf(BigDecimal.ZERO)));
 				item.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getHoldAmount(), formatter)));
 			} else {
+				releaseAmount = releaseAmount.add(hd.getAmount());
 				item.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getHoldAmount(), formatter)));
 				item.appendChild(new Listcell(PennantApplicationUtil.amountFormate(releaseAmount, formatter)));
 				item.appendChild(new Listcell(

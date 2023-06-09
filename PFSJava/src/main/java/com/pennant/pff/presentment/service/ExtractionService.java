@@ -14,6 +14,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -96,6 +97,11 @@ public class ExtractionService {
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+
+		if (presentmentDAO.getQueueCount() > 0) {
+			throw new AppException(Labels.getLabel("label_PresentmentInProcess"));
+		}
+
 		try {
 			count = presentmentEngine.preparation(ph);
 			transactionManager.commit(transactionStatus);

@@ -16,28 +16,23 @@ import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.constants.EXTIFConfigConstants;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
-import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
+import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.gst.dao.ExtGSTDao;
+import com.pennanttech.external.gst.model.GSTCompHeader;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class GSTFolderReaderJob extends AbstractJob
-		implements InterfaceConstants, ErrorCodesConstants, EXTIFConfigConstants {
-	private static final Logger logger = LogManager.getLogger(GSTFolderReaderJob.class);
+public class FetchFileGSTRespJob extends AbstractJob
+		implements InterfaceConstants, ErrorCodesConstants, ExtIntfConfigConstants {
+	private static final Logger logger = LogManager.getLogger(FetchFileGSTRespJob.class);
 	private static final String GST_COMP_RESPONSE_END = "EOF";
-	private static final String ERR_RESP_CONFIG_MISSING = "Ext_GST: No configuration found for type GST response. So returning without reading the folder.";
-	private static final String ERR_RESP_LOCAL_PATH_CONFIG_MISSING = "Ext_GST:Invalid GST resp folder path configured, so returning.";
-	private static final String ERR_INVALID_DIRECTORY_PATH = "Invalid  GST resp folder directory path, so returning.";
-	private static final String ERR_NO_FILES_FOUND = "No files found in the folder, so returning.";
-	private static final String ERR_NO_DONE_FILE_FOUND = "No done files found in the GST response folder, so returning.";
 
 	private ExtGSTDao extGSTDao;
 	private ApplicationContext applicationContext;
@@ -55,34 +50,31 @@ public class GSTFolderReaderJob extends AbstractJob
 		FileInterfaceConfig respDoneConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_GST_RESP_DONE);
 
 		if (respConfig == null || respDoneConfig == null) {
-			logger.debug(ERR_RESP_CONFIG_MISSING);
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(GS1004));
 			return;
 		}
 
 		String localFolderPath = App.getResourcePath(respConfig.getFileLocation());
 
 		if (localFolderPath == null || "".equals(localFolderPath)) {
-			logger.debug(ERR_RESP_LOCAL_PATH_CONFIG_MISSING);
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(GS1005));
 			return;
 		}
 
 		// Check if file is in SFTP location, then get the file.
-		if ("Y".equals(StringUtils.stripToEmpty(respConfig.getIsSftp()))) {
-			ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(respConfig);
-			String remoteFilePath = respConfig.getFileSftpLocation();
+		if ("Y".equals(StringUtils.stripToEmpty(respConfig.getFileTransfer()))) {
+			FileTransferUtil fileTransferUtil = new FileTransferUtil(respConfig);
 			// Get list of files in SFTP.
-			List<String> fileNames = extSFTPUtil.getFileListFromSFTP(remoteFilePath);
-
+			List<String> fileNames = fileTransferUtil.fetchFileNamesListFromSFTP();
 			for (String fileName : fileNames) {
-				FtpClient ftpClient = extSFTPUtil.getSFTPConnection();
-				ftpClient.download(remoteFilePath, localFolderPath, fileName);
+				fileTransferUtil.downloadFromSFTP(fileName, localFolderPath);
 			}
 		}
 
 		File dirPath = new File(localFolderPath);
 
 		if (!dirPath.isDirectory()) {
-			logger.debug(ERR_INVALID_DIRECTORY_PATH);
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(GS1006));
 			return;
 		}
 
@@ -91,7 +83,7 @@ public class GSTFolderReaderJob extends AbstractJob
 
 		if (filesList == null || filesList.length == 0) {
 			// no files
-			logger.debug(ERR_NO_FILES_FOUND);
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(GS1007));
 			return;
 		}
 
@@ -108,7 +100,7 @@ public class GSTFolderReaderJob extends AbstractJob
 		}
 
 		if (doneFilesList.isEmpty()) {
-			logger.debug(ERR_NO_DONE_FILE_FOUND);
+			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(GS1008));
 			return;
 		}
 
@@ -132,14 +124,23 @@ public class GSTFolderReaderJob extends AbstractJob
 					// Validating file Header and Footer. If not valid, mark file as 'File format mismatch'
 					boolean isValidFile = validateFile(responseFile, fileRecordsList.size());
 
+					GSTCompHeader header = new GSTCompHeader();
+
+					header.setFileName(respFileName);
+					header.setFileLocation(respConfig.getFileLocation());
+
 					if (!isValidFile) {
-						extGSTDao.saveResponseFile(respFileName, respConfig.getFileLocation(), FAILED, UNPROCESSED,
-								F607, InterfaceErrorCodeUtil.getErrorMessage(F607));
+						header.setStatus(FAILED);
+						header.setExtraction(UNPROCESSED);
+						header.setErrorCode(GS1000);
+						header.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(GS1000));
+						extGSTDao.saveResponseFile(header);
 					}
 
 					// Add unprocessed files in to table
-					extGSTDao.saveResponseFile(respFileName, respConfig.getFileLocation(), UNPROCESSED, UNPROCESSED, "",
-							"");
+					header.setStatus(UNPROCESSED);
+					header.setExtraction(UNPROCESSED);
+					extGSTDao.saveResponseFile(header);
 				}
 			}
 		}
@@ -149,24 +150,17 @@ public class GSTFolderReaderJob extends AbstractJob
 
 	private List<String> prepareDataFromFile(File file) {
 		logger.debug(Literal.ENTERING);
-		int cnt = 0;
 		List<String> dataList = new ArrayList<String>();
 		try (Scanner sc = new Scanner(file)) {
 
 			while (sc.hasNextLine()) {
 				String lineData = sc.nextLine();
-
-				if (cnt == 0) {// Consider record after 2 lines.
-
-					if (lineData.contains(GST_COMP_RESPONSE_END)) { // End of the line for response data.
-						return dataList;
-					} else {
-						dataList.add(lineData);
-					}
-
+				if (lineData.contains(GST_COMP_RESPONSE_END)) { // End of the line for response data.
+					return dataList;
 				} else {
-					cnt = cnt + 1;
+					dataList.add(lineData);
 				}
+
 			}
 
 			return dataList;

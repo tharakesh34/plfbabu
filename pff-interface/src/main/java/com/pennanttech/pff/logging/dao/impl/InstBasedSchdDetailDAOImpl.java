@@ -1,14 +1,6 @@
 package com.pennanttech.pff.logging.dao.impl;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.dao.DataAccessException;
 
 import com.pennant.backend.model.finance.InstBasedSchdDetails;
 import com.pennanttech.pennapps.core.AppException;
@@ -22,7 +14,6 @@ import com.pennanttech.pff.logging.dao.InstBasedSchdDetailDAO;
  * 
  */
 public class InstBasedSchdDetailDAOImpl extends SequenceDao<InstBasedSchdDetails> implements InstBasedSchdDetailDAO {
-	private static Logger logger = LogManager.getLogger(InstBasedSchdDetailDAOImpl.class);
 
 	public InstBasedSchdDetailDAOImpl() {
 		super();
@@ -37,39 +28,26 @@ public class InstBasedSchdDetailDAOImpl extends SequenceDao<InstBasedSchdDetails
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		KeyHolder keyHolder = new GeneratedKeyHolder();
-
 		try {
-			jdbcOperations.update(new PreparedStatementCreator() {
+			jdbcOperations.update(sql.toString(), ps -> {
 
-				@Override
-				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-					PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
+				int index = 1;
+				ps.setLong(index++, instBasedSchd.getBatchId());
+				ps.setLong(index++, instBasedSchd.getFinID());
+				ps.setString(index++, instBasedSchd.getFinReference());
+				ps.setLong(index++, instBasedSchd.getDisbId());
+				ps.setDate(index++, JdbcUtil.getDate(instBasedSchd.getRealizedDate()));
+				ps.setString(index++, instBasedSchd.getStatus());
+				ps.setString(index++, instBasedSchd.getErrorDesc());
+				ps.setLong(index++, instBasedSchd.getUserId());
+				ps.setDate(index++, JdbcUtil.getDate(instBasedSchd.getDownloadedOn()));
+				ps.setBigDecimal(index++, instBasedSchd.getDisbAmount());
+				ps.setLong(index, instBasedSchd.getLinkedTranId());
 
-					int index = 1;
-					ps.setLong(index++, instBasedSchd.getBatchId());
-					ps.setLong(index++, instBasedSchd.getFinID());
-					ps.setString(index++, instBasedSchd.getFinReference());
-					ps.setLong(index++, instBasedSchd.getDisbId());
-					ps.setDate(index++, JdbcUtil.getDate(instBasedSchd.getRealizedDate()));
-					ps.setString(index++, instBasedSchd.getStatus());
-					ps.setString(index++, instBasedSchd.getErrorDesc());
-					ps.setLong(index++, instBasedSchd.getUserId());
-					ps.setDate(index++, JdbcUtil.getDate(instBasedSchd.getDownloadedOn()));
-					ps.setBigDecimal(index++, instBasedSchd.getDisbAmount());
-					ps.setLong(index, instBasedSchd.getLinkedTranId());
+			});
 
-					return ps;
-				}
-			}, keyHolder);
-
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			throw new AppException("Unable to save the details into InstBasedSchdDetails table.");
-		}
-
-		Number key = keyHolder.getKey();
-		if (key != null) {
-			instBasedSchd.setId(key.longValue());
 		}
 	}
 

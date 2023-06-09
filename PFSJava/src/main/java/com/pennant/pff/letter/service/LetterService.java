@@ -5,10 +5,9 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +21,7 @@ import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.mail.MailTemplateDAO;
+import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
@@ -57,11 +57,14 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.notification.email.EmailEngine;
+import com.pennanttech.pennapps.notification.email.configuration.AttachmentType;
 import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
 import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
+import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.FinanceUtil;
+import com.pennanttech.pff.core.util.LoanCancelationUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class LetterService {
@@ -97,7 +100,8 @@ public class LetterService {
 			}
 
 			if ((letterType == LetterType.CANCELLATION
-					&& FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus()))
+					&& FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())
+					&& !LoanCancelationUtil.LOAN_CANCEL_REBOOK.equals(fm.getCancelType()))
 					|| ((letterType == LetterType.NOC || letterType == LetterType.CLOSURE)
 							&& FinanceUtil.isClosedNow(fm))) {
 
@@ -129,12 +133,14 @@ public class LetterService {
 		loanLetter.setSaveFormat(SaveFormat.PDF);
 		loanLetter.setLetterType(gl.getLetterType());
 		loanLetter.setLetterMode(gl.getModeofTransfer());
+		loanLetter.setModeofTransfer(gl.getModeofTransfer());
 		loanLetter.setCreatedDate(gl.getCreatedDate());
 		loanLetter.setBusinessDate(appDate);
 		loanLetter.setRequestType(requestType);
+		loanLetter.setFeeID(gl.getFeeID());
 
 		if (autoLetterGenerationDAO.getCountBlockedItems(gl.getFinID()) > 0
-				&& !LetterMode.OTC.name().equals(requestType)) {
+				&& !(LetterMode.OTC.name().equals(requestType) || "M".equals(requestType))) {
 			loanLetter.setBlocked(true);
 			return loanLetter;
 		}
@@ -234,6 +240,14 @@ public class LetterService {
 			return;
 		}
 
+		if (letter.getEmailID() == null) {
+			letter.setLetterMode(LetterMode.COURIER.name());
+			letter.setModeofTransfer(LetterMode.COURIER.name());
+			letter.setRemarks(
+					"Since the Email-ID not available, Letter Mode is marked as COURIER, and store the document.");
+			return;
+		}
+
 		try {
 			notificationService.parseMail(mailTemplate, letter.getDeclaredFieldValues());
 		} catch (Exception e) {
@@ -258,9 +272,13 @@ public class LetterService {
 		address.setRecipientType(RecipientType.TO.getKey());
 		emailMessage.getAddressesList().add(address);
 
-		Map<String, byte[]> map = new HashMap<>();
-		map.put(letter.getFileName(), letter.getContent());
-		emailMessage.setAttachments(map);
+		List<MessageAttachment> attachments = new ArrayList<>();
+
+		MessageAttachment attachement = new MessageAttachment(letter.getFileName(), AttachmentType.TEXT);
+		attachement.setAttachment(letter.getContent());
+		attachments.add(attachement);
+
+		emailMessage.setAttachmentList(attachments);
 
 		try {
 			emailEngine.sendEmail(emailMessage);
@@ -297,11 +315,19 @@ public class LetterService {
 					"There is no FTP/SFTP/S-3 Storage details not configured with Data-Engine Name CSD_STORAGE");
 		}
 
-		String csdCode = serviceBranch.getCode();
 		String parentFolder = serviceBranch.getFolderPath();
+		String csdCode = serviceBranch.getCode();
 		Date appDate = letter.getBusinessDate();
 
 		String letterLocation = csdCode.concat(File.separator).concat(DateUtil.format(appDate, "ddMMyyyy"));
+
+		if ("A".equals(letter.getRequestType())) {
+			letterLocation = letterLocation.concat(File.separator).concat("Closure");
+		} else if ("M".equals(letter.getRequestType())) {
+			letterLocation = letterLocation.concat(File.separator).concat("Request");
+		} else if ("D".equals(letter.getRequestType())) {
+			letterLocation = letterLocation.concat(File.separator).concat("Delink");
+		}
 
 		String fileName = letter.getFileName();
 		String remotePath = parentFolder.concat(File.separator).concat(letterLocation);
@@ -328,6 +354,13 @@ public class LetterService {
 
 		letter.setGeneratedDate(letter.getBusinessDate());
 		letter.setGeneratedOn(new Timestamp(System.currentTimeMillis()));
+
+		if (PFSBatchAdmin.loggedInUser != null) {
+			letter.setApprovedBy(PFSBatchAdmin.loggedInUser.getUserId());
+			letter.setGeneratedBy(PFSBatchAdmin.loggedInUser.getUserId());
+		}
+
+		letter.setApprovedOn(new Timestamp(System.currentTimeMillis()));
 
 		autoLetterGenerationDAO.update(letter);
 

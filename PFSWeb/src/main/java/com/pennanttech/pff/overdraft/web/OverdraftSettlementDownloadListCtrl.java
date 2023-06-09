@@ -3,7 +3,6 @@ package com.pennanttech.pff.overdraft.web;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -71,7 +70,7 @@ public class OverdraftSettlementDownloadListCtrl extends GFCBaseListCtrl<ODSettl
 
 	}
 
-	public void onCreate$window_overDraftSettlementDownload(Event event) throws Exception {
+	public void onCreate$window_overDraftSettlementDownload(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -102,7 +101,7 @@ public class OverdraftSettlementDownloadListCtrl extends GFCBaseListCtrl<ODSettl
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		refresh();
 	}
 
@@ -140,7 +139,7 @@ public class OverdraftSettlementDownloadListCtrl extends GFCBaseListCtrl<ODSettl
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void downloadFromServer(String fileName, String filePath) throws FileNotFoundException, IOException {
+	private void downloadFromServer(String fileName, String filePath) throws IOException {
 		if (filePath != null && fileName != null) {
 			filePath = filePath.concat("/").concat(fileName);
 		}
@@ -154,7 +153,7 @@ public class OverdraftSettlementDownloadListCtrl extends GFCBaseListCtrl<ODSettl
 		}
 
 		inputStream.close();
-		inputStream = null;
+
 		Filedownload.save(stream.toByteArray(), "application/octet-stream", fileName);
 		stream.close();
 	}

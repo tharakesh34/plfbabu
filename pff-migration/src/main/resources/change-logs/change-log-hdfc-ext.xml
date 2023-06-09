@@ -863,4 +863,158 @@
 		<dropTable tableName="UCIC_RESP_FILE_DATA" />
 	</changeSet>
 	
+	<changeSet id="24.1" author="sreeram.r">
+		<modifyDataType tableName="FINCON_GL_STG" columnName="PERIOD"
+			newDataType="VARCHAR(50)" />
+	</changeSet>
+	
+	<changeSet id="34" author="goutham.ch">
+		<dropTable tableName="EXTAPILOG" />
+	</changeSet>
+	
+	<changeSet id="24.2" author="sreeram.r">
+		<modifyDataType tableName="FINCON_GL_STG" columnName="JOURNAL_NAME"
+			newDataType="VARCHAR(100)" />
+	</changeSet>
+	
+	<changeSet id="002.12" author="sreeram.r">
+		<sql>
+			<![CDATA[
+					UPDATE FILE_INTERFACE_CONFIG SET FILE_POSTPEND='_' WHERE INTERFACE_TYPE='COLLECTION_RECEIPT_RESP';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="002.13" author="goutham.ch">
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="ACCESS_KEY" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SECRET_KEY" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="HOST_NAME" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="PORT" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="PRIVATE_KEY" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SSE_ALGORITHM" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="PREFIX" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SFTP_LOCATION" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="LOCAL_BACKUP_LOCATION" />
+		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SFTP_BUCKET" />
+		<renameColumn newColumnName="FILE_TRANSFER" oldColumnName="IS_SFTP"	tableName="FILE_INTERFACE_CONFIG" />
+		<addColumn tableName="FILE_INTERFACE_CONFIG">
+			<column name="FIC_NAMES" type="VARCHAR(200)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="35" author="goutham.ch">
+		<createTable tableName="FILE_TRANSFER_CONFIG ">
+			<column name="FIC_NAMES" type="VARCHAR(100)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ACCESS_KEY" type="varchar(50)" />
+			<column name="SECRET_KEY" type="varchar(200)" />
+			<column name="HOST_NAME" type="varchar(200)" />
+			<column name="PORT" type="int" />
+			<column name="PRIVATE_KEY" type="varchar(255)" />
+			<column name="SSE_ALGORITHM" type="varchar(50)" />
+			<column name="PREFIX" type="varchar(100)" />
+			<column name="SFTP_LOCATION" type="varchar(2000)" />
+			<column name="SFTP_BACKUP_LOCATION" type="varchar(2000)" />
+			<column name="PROTOCOL" type="varchar(25)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="010.1" author="goutham.ch">
+		<dropColumn tableName="INTERFACE_ERROR_CODES" columnName="ID" />
+		<dropColumn tableName="INTERFACE_ERROR_CODES" columnName="ERROR_DESC" />
+		<dropColumn tableName="INTERFACE_ERROR_CODES" columnName="STATUS" />
+		<dropColumn tableName="INTERFACE_ERROR_CODES" columnName="CREATED_DATE" />
+		<addColumn tableName="INTERFACE_ERROR_CODES">
+			<column name="MODULE" type="VARCHAR(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="011.04" author="goutham.ch">
+		<sql>
+			<![CDATA[
+				  truncate table INTERFACE_ERROR_CODES;
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1000', 	'Invalid base folder path configured, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1001', 	'Invalid folder directory path, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1002', 	'No files found in the folder, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1003', 	'File status already saved, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1004', 	'Invalid response file. So not processing the response file.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1005', 	'Request file name is invalid. So not processing the response file.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1006', 	'Request file name is invalid. So not processing the response file.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1007', 	'Invalid PRMNT resp remote folder path, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1008', 	'Invalid PRMNT resp local folder path, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1009', 	'No configuration found for Backup path, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1010',	'Exception in presentment.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1011',	'No data available for presentment.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1012',	'Exception while processing record data.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1013',	'Invalid cheque no or cheque date or loan number received. Unable to process data from stage table.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1014',	'No IPDC record found with cheque.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1015',	'Invalid success flag received for ACH record.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1016',	'Invalid reject/bounce flag received for ACH record.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1017',	'Invalid ACH record not starting with valid data.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1018',	'Presentment details not found in PLF.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1019',	'Invalid reject file count.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1020',	'Exception while processing presentment record.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1021',	'Invalid record id/txn reference received.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1022',	'Bounce code received is Empty.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('PRESENTMENT',			'PR1023',	'Invalid bounce code. Bounce code not found in PLF.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR1000', 	'No configuration found for type Collection receipt interface. So returning without generating the request file.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR1001',	'No configuration found for type Collection receipt baseFilePath. So returning without generating the request file.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR1002',	'No configuration found for type Collection receipt remoteFilePath. So returning without generating the request file.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR1003',	'File is having extension inproc, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR1004', 	'Invalid folder directory path, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR1005', 	'No files found in the folder, so returning.'); 
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR1006',	'Row1 validation failed.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR1007',	'Row2 validation failed.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR1008',	'Header validation failed.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR1009',	'Row checksum verification failed.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR1010',	'Exception while saving record while file extraction.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR1011',	'Exception while processing record while receipt generation.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR1012',	'Exception while writing response file.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR1013',	'Total checksum verification failed.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR2000',	'Invalid Agreement Id provided.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR2001', 	'Invalid Receipt channel provided.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR2002', 	'Invalid Agency Id provided.'); 
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR2003',	'Empty receipt type provided.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR2004',	'Invalid receipt type provided other than C and Q.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR2005',	'Cheque number not provided.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR2006',	'Empty dealing bank Id provided.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR2007',	'Invalid receipt date provided.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR2008',	'Receipt date greater than Application Date.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR2009',	'Cheque date not provided.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',		'CR2010',	'Excess amount is greater than total amount.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('SILIEN',					'SL1000',	'Invalid Lien response file name.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('SILIEN',					'SL1001',	'Invalid Lien response file.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('SILIEN',					'SL1002',	'Exception caught in processing Lien response file.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('SILIEN',					'SL1003',	'Exception caught while writing record to request file.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('SILIEN',					'SL1004',	'No configuration found for type LIEN. So returning without generating the request file.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('SILIEN',					'SL1005',	'Account number received is empty/null, So not Processing.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('SILIEN',					'SL1006',	'Lien Status received is empty or null, So not Processing.'); 
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('GST',					'GS1000',	'Header and footer mismatch in the file.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('GST',					'GS1001',	'GST Voucher not found.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('GST',					'GS1002',	'Exception while processing GST response file data.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('GST',					'GS1003',	'Invalid GST response record data.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('GST',					'GS1004',	'No configuration found for type GST response. So returning without reading the folder.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('GST',					'GS1005',	'Invalid GST resp folder path configured, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('GST',					'GS1006',	'Invalid  GST resp folder directory path, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('GST',					'GS1007',	'No files found in the folder, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('GST',					'GS1008',	'No done files found in the GST response folder, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('UCIC',					'UC1000',	'Failed to execute UCIC Response file reading.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('UCIC',					'UC1001',	'Invalid file Header or Footer. Mark file as File format mismatch.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('UCIC',					'UC1002',	'No configuration found for type UCIC response. So returning without reading the folder.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('UCIC',					'UC1003',	'Invalid UCIC resp folder path, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('UCIC',					'UC1004',	'Invalid  UCIC resp folder directory path, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('UCIC',					'UC1005',	'No files found in the folder, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('UCIC',					'UC1006',	'No complete files found in the folder, so returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('UCIC',					'UC1007',	'DB Server CONFIG_PLF_DB_SERVER configuration not found . So returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('UCIC',					'UC1008',	'DB RemoteFilePath configuration not found . So returning.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('UCIC',					'UC1009',	'Local folderPath configuration not found . So returning.');
+				
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="35.1" author="goutham.ch">
+		<renameColumn newColumnName="FIC_NAME" oldColumnName="FIC_NAMES"	tableName="FILE_TRANSFER_CONFIG" />
+	</changeSet>
 </databaseChangeLog>

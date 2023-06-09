@@ -566,6 +566,7 @@ public class PennantJavaUtil {
 	private static String FEEREFUND_WF = "FINFEEREFUND_PROCESS";
 	private static String WF_OCRMAINTENANCE = "OCRMAINTENANCE";
 	private final static String EXT_FIELDS_MAINT = "EXT_FIELDS_MAINT";
+	private final static String WF_GENERATE_LETTER = "GENERATE_LETTER";
 
 	public static String getLabel(String label) {
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(label))) {
@@ -4074,7 +4075,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("GenerateLetter",
 				new ModuleMapping("GenerateLetter", GenerateLetter.class,
-						new String[] { "LOAN_LETTER_MANUAL", "LOAN_LETTER_MANUAL" }, masterWF,
+						new String[] { "LOAN_LETTER_MANUAL", "LOAN_LETTER_MANUAL" }, WF_GENERATE_LETTER,
 						new String[] { "Id", "FinID" }, null, 600));
 
 		registerCustomModules();

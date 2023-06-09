@@ -273,8 +273,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		ArrayList<Object> list = new ArrayList<Object>();
 		list.add(chequeDetailsList);
 		String userName = getUserWorkspace().getLoggedInUser().getUserName();
-		ReportsUtil.print(list, CHEQUE_PRINTING_CHEQUES, userName,
-				this.financeEnquiryHeaderDialogCtrl.window_FinEnqHeaderDialog);
+		ReportsUtil.print(list, userName, this.financeEnquiryHeaderDialogCtrl.window_FinEnqHeaderDialog);
 
 		doRemoveValidation();
 		logger.debug("Leaving " + event.toString());
@@ -452,8 +451,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					comboitem = new Comboitem();
 					comboitem.setAttribute("index", count);
 					count++;
-					comboitem.setLabel(
-							DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+					comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 					comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
 					comboitem.setValue(curSchd.getSchDate());
 					dateCombobox.appendChild(comboitem);

@@ -3,7 +3,6 @@ package com.pennanttech.pff.cd.web;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -71,7 +70,7 @@ public class CDSettlementDownloadCtrl extends GFCBaseListCtrl<CDSettlementProces
 
 	}
 
-	public void onCreate$window_cdSettlementDownload(Event event) throws Exception {
+	public void onCreate$window_cdSettlementDownload(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -107,7 +106,7 @@ public class CDSettlementDownloadCtrl extends GFCBaseListCtrl<CDSettlementProces
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		refresh();
 	}
 
@@ -145,7 +144,7 @@ public class CDSettlementDownloadCtrl extends GFCBaseListCtrl<CDSettlementProces
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void downloadFromServer(String fileName, String filePath) throws FileNotFoundException, IOException {
+	private void downloadFromServer(String fileName, String filePath) throws IOException {
 		if (filePath != null && fileName != null) {
 			filePath = filePath.concat("/").concat(fileName);
 		}

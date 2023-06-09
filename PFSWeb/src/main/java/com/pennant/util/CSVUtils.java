@@ -1,6 +1,5 @@
 package com.pennant.util;
 
-import java.io.IOException;
 import java.util.List;
 
 public class CSVUtils {
@@ -15,7 +14,7 @@ public class CSVUtils {
 
 	}
 
-	public static byte[] writeLine(List<String> values, char separators, char customQuote) throws IOException {
+	public static byte[] writeLine(List<String> values, char separators, char customQuote) {
 
 		boolean first = true;
 		StringBuilder sb = new StringBuilder();

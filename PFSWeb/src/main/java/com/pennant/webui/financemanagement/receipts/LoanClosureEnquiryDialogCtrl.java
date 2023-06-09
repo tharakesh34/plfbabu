@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,8 +16,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -429,10 +426,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * 
 	 * @param event
 	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering " + event.toString());
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException {
+		logger.debug(Literal.ENTERING);
 
 		final Map<String, Object> map = new HashMap<String, Object>();
 		CustomerDetails customerDetails = getCustomerDetailsService()
@@ -445,7 +441,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		map.put("CustomerEnq", "CustomerEnq");
 		Executions.createComponents(pageName, null, map);
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -453,10 +449,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * 
 	 * @param event
 	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchFinreference(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onClick$btnSearchFinreference(Event event) throws SuspendNotAllowedException {
+		logger.debug(Literal.ENTERING);
 
 		// Preparation of Finance Enquiry Data
 		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -485,7 +480,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
 				this.window_LoanClosureEnquiryDialog, map);
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -533,13 +528,13 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug("Leaving");
 	}
 
-	public void onChange$receiptDate(Event event) throws InterruptedException {
+	public void onChange$receiptDate(Event event) {
 		logger.debug("Entering");
 		changeReceiptDate();
 		logger.debug("Leaving");
 	}
 
-	public void changeReceiptDate() throws InterruptedException {
+	public void changeReceiptDate() {
 		logger.debug("Entering");
 		this.btnCalcReceipts.setDisabled(false);
 		this.btnChangeReceipt.setDisabled(false);
@@ -721,13 +716,11 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * Method for calculation of Schedule Repayment details List of data
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws AccountNotFoundException
 	 * @throws WrongValueException
+	 * @throws InterfaceException
 	 */
-	public void onClick$btnCalcReceipts(Event event)
-			throws InterruptedException, WrongValueException, InterfaceException {
-		logger.debug("Entering" + event.toString());
+	public void onClick$btnCalcReceipts(Event event) throws WrongValueException, InterfaceException {
+		logger.debug(Literal.ENTERING);
 		if (!isValidateData(true)) {
 			return;
 		}
@@ -754,7 +747,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		doFillExcessPayables();
 
 		this.btnPrint.setVisible(true);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -768,9 +761,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * Method for Processing Captured details based on Receipt Mod
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onChange$receiptMode(Event event) throws InterruptedException {
+	public void onChange$receiptMode(Event event) {
 		logger.debug("Entering");
 		String dType = this.receiptMode.getSelectedItem().getValue().toString();
 		checkByReceiptMode(dType, true);
@@ -865,9 +857,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * Method for Schedule Modifications with Effective Schedule Method
 	 * 
 	 * @param receiptData
-	 * @throws InterruptedException
 	 */
-	public boolean recalEarlyPaySchd(boolean isRecal) throws InterruptedException {
+	public boolean recalEarlyPaySchd(boolean isRecal) {
 		logger.debug("Entering");
 
 		receiptData.getRepayMain().setEarlyPayOnSchDate(receiptData.getValueDate());
@@ -1132,12 +1123,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * Method for event of Changing Repayments Amount
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnChangeReceipt(Event event)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnChangeReceipt(Event event) {
 		doClearMessage();
 		doSetValidation();
 		doWriteComponentsToBean();
@@ -1782,8 +1769,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	/**
 	 * Method for Processing Checklist Details when Check list Tab selected
 	 */
-	public void onSelectCheckListDetailsTab(ForwardEvent event)
-			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void onSelectCheckListDetailsTab(ForwardEvent event) {
 		this.doWriteComponentsToBean();
 
 		if (getFinanceCheckListReferenceDialogCtrl() != null) {
@@ -1792,14 +1778,12 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					receiptData.getFinanceDetail().getCheckList(), receiptData.getFinanceDetail().getFinanceCheckList(),
 					false);
 		}
-
 	}
 
 	/**
 	 * Method for Processing Agreement Details when Agreement list Tab selected
 	 */
-	public void onSelectAgreementDetailTab(ForwardEvent event)
-			throws IllegalAccessException, InvocationTargetException, InterruptedException, ParseException {
+	public void onSelectAgreementDetailTab(ForwardEvent event) {
 		this.doWriteComponentsToBean();
 
 		// refresh template tab
@@ -2972,10 +2956,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * Method to validate data
 	 * 
 	 * @return
-	 * @throws InterruptedException
-	 * @throws AccountNotFoundException
+	 * @throws InterfaceException
 	 */
-	private boolean isValidateData(boolean isCalProcess) throws InterruptedException, InterfaceException {
+	private boolean isValidateData(boolean isCalProcess) throws InterfaceException {
 		logger.debug("Entering");
 		// FIXME: PV: CODE REVIEW PENDING
 		// Validate Field Details
@@ -3322,7 +3305,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		return listChartSetElement;
 	}
 
-	public void onClick$btn_LinkedLoan(Event event) throws InterruptedException {
+	public void onClick$btn_LinkedLoan(Event event) {
 		logger.debug(Literal.ENTERING); // FIXME: PV: CODE
 		// REVIEW PENDING
 		List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
@@ -3374,7 +3357,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	}
 
 	/** new code to display chart by skipping jsps code start */
-	public void onSelectDashboardTab(Event event) throws InterruptedException {
+	public void onSelectDashboardTab(Event event) {
 		logger.debug("Entering");
 		// FIXME: PV: CODE REVIEW PENDING
 		for (ChartDetail chartDetail : chartDetailList) {
@@ -3731,7 +3714,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				}
 
 				if (next7DayMap != null && next7DayMap.size() > 0) {
-					Date[] dates = (Date[]) next7DayMap.keySet().toArray(new Date[0]);
+					Date[] dates = next7DayMap.keySet().toArray(new Date[0]);
 					// setting next 7 days Dates
 					closureReport.setValueDate1(DateFormatUtils.format(dates[0], "dd-MMM-yyyy"));
 					closureReport.setAmount1(next7DayMap.get(dates[0]));

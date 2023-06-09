@@ -33,7 +33,6 @@
  */
 package com.pennant.app.util;
 
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -42,8 +41,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -67,8 +64,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 
-public class PostingsPreparationUtil implements Serializable {
-	private static final long serialVersionUID = 1715547921928620037L;
+public class PostingsPreparationUtil {
 	private Logger logger = LogManager.getLogger(PostingsPreparationUtil.class);
 
 	private AccountEngineExecution engineExecution;
@@ -81,37 +77,17 @@ public class PostingsPreparationUtil implements Serializable {
 		super();
 	}
 
-	public AEEvent processPostingDetails(AEEvent aeEvent, Map<String, Object> dataMap)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AEEvent processPostingDetails(AEEvent aeEvent, Map<String, Object> dataMap) {
 
 		return processPostings(aeEvent, dataMap);
 	}
 
-	/**
-	 * Method for Process Commitment Posting Details
-	 * 
-	 * @param commitment
-	 * @param aeCommitment
-	 * @param isCreateNow
-	 * @param dateAppDate
-	 * @param acSetEvent
-	 * @return
-	 * @throws InterfaceException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException List<Object>
-	 */
 	public AEEvent processCmtPostingDetails(Commitment commitment, Date dateAppDate, String acSetEvent)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 
 		return procCmtPostingDetails(commitment, dateAppDate, acSetEvent);
 	}
 
-	/**
-	 * Method To Process Finance JV Postings IN PostingsPreparationUtil.java
-	 * 
-	 * @param finReference
-	 * @return boolean
-	 */
 	public List<JVPostingEntry> prepareAccountingEntryList(List<JVPostingEntry> externalAcEntryList, String baseCcy,
 			String baseCcyNumber, int baseCcyEditField) {
 		return procJVPostings(externalAcEntryList, baseCcy, baseCcyNumber, baseCcyEditField);
@@ -127,33 +103,26 @@ public class PostingsPreparationUtil implements Serializable {
 		return procJVPostingEntryList(jvPostingEntryList, jVPosting);
 	}
 
-	public AEEvent processPostings(AEEvent aeEvent)
-			throws AccountNotFoundException, IllegalAccessException, InvocationTargetException, InterfaceException {
+	public AEEvent processPostings(AEEvent aeEvent) {
 		return processPostingDetails(aeEvent);
 	}
 
-	// ******************************************************//
-	// ****************** Process Methods *******************//
-	// ******************************************************//
-
-	public AEEvent processPostingDetails(AEEvent aeEvent) throws InterfaceException {
-		// Preparation for Commitment Postings
+	public AEEvent processPostingDetails(AEEvent aeEvent) {
 		long linkedTranId = postingsDAO.getLinkedTransId();
 		aeEvent.setLinkedTranId(linkedTranId);
 
 		List<ReturnDataSet> returnDatasetList = aeEvent.getReturnDataSet();
-		// FIXME: PV: Prepare Return Data Set
 
 		postingsDAO.saveBatch(returnDatasetList);
 
 		return aeEvent;
 	}
 
-	private AEEvent processPostings(AEEvent aeEvent, Map<String, Object> dataMap)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
-
+	private AEEvent processPostings(AEEvent aeEvent, Map<String, Object> dataMap) {
 		List<ReturnDataSet> list = new ArrayList<>();
+
 		engineExecution.getAccEngineExecResults(aeEvent);
+
 		list = aeEvent.getReturnDataSet();
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -197,18 +166,7 @@ public class PostingsPreparationUtil implements Serializable {
 			}
 		}
 
-		aeEvent = postingsExecProcess(aeEvent);
-
-		// FIXME: PV 05MAY17 Update Commitment Movement
-
-		/*
-		 * if (cmtEventExecuted && (Boolean) returnList.get(0) && ((BigDecimal)
-		 * executingMap.get("ae_rpPri")).compareTo(BigDecimal.ZERO) > 0) {
-		 * getCommitmentDAO().updateCommitmentAmounts(commitment.getCmtReference (), ((BigDecimal)
-		 * executingMap.get("ae_rpPri")).negate(), commitment.getCmtExpDate()); CommitmentMovement cmtMovement =
-		 * prepareCommitMovement(commitment, (Long) returnList.get(1), executingMap); if (cmtMovement != null) {
-		 * getCommitmentMovementDAO().save(cmtMovement, ""); } }
-		 */
+		postingsExecProcess(aeEvent);
 		return aeEvent;
 	}
 
@@ -243,19 +201,16 @@ public class PostingsPreparationUtil implements Serializable {
 			if (acSetEvent.equals(AccountingEvent.NEWCMT) && commitment.isOpenAccount()) {
 				aeEvent.setCommitment(true);
 			}
-			aeEvent = postingsExecProcess(aeEvent);
+			postingsExecProcess(aeEvent);
 		}
 
 		return aeEvent;
 
 	}
 
-	private AEEvent postingsExecProcess(AEEvent aeEvent) throws InterfaceException {
-
+	private void postingsExecProcess(AEEvent aeEvent) throws InterfaceException {
 		List<ReturnDataSet> list = aeEvent.getReturnDataSet();
 
-		// Method for Checking for Reverse Calculations Based upon Negative
-		// Amounts
 		for (ReturnDataSet returnDataSet : list) {
 			returnDataSet.setLinkedTranId(aeEvent.getLinkedTranId());
 			returnDataSet.setUserBranch(aeEvent.getPostingUserBranch());
@@ -278,23 +233,12 @@ public class PostingsPreparationUtil implements Serializable {
 			}
 		}
 
-		if (!list.isEmpty()) {
-			if (aeEvent.isPostingSucess()) {
-				postingsDAO.saveBatch(list);
-			}
+		if (!list.isEmpty() && aeEvent.isPostingSucess()) {
+			postingsDAO.saveBatch(list);
 		}
 
-		return aeEvent;
 	}
 
-	/**
-	 * Method to prepare accounting entries for FinancePostings
-	 * 
-	 * @param JVPostingEntry (List)
-	 * @param Base           Currency (String)
-	 * @param Base           Currency Number (String)
-	 * @param Base           Currency Edit Field (int)
-	 */
 	private List<JVPostingEntry> procJVPostings(List<JVPostingEntry> jvPostings, String baseCcy, String baseCcyNumber,
 			int baseCcyEditField) {
 		List<JVPostingEntry> entryList = new ArrayList<>();
@@ -379,8 +323,6 @@ public class PostingsPreparationUtil implements Serializable {
 				internalAcEntryTwo.setTxnAmount_Ac(txnAmount_Ac.multiply(new BigDecimal(-1)));
 			}
 
-			logger.info(internalAcEntryOne.getAccount() + " ONE " + txnEntry + " " + txnAmount_Ac);
-			logger.info(internalAcEntryTwo.getAccount() + "  TWO " + txnEntry2 + " " + txnAmount_Ac);
 		}
 		if (addExt && externalAcEntry.getTxnEntry().equals(AccountConstants.TRANTYPE_DEBIT)) {
 			if (externalAcEntry.getTxnAmount_Ac().compareTo(BigDecimal.ZERO) > 0) {
@@ -468,17 +410,13 @@ public class PostingsPreparationUtil implements Serializable {
 			list.add(returnDataSet);
 		}
 
-		// FIXME: PV: 05MAY17 needs to fill return dataset
 		return list;
 	}
 
-	/**
-	 * Method to Prepare the accounting entries and save the postings to the Postings and accounts table
-	 * 
-	 * @param aeEvent
-	 * @param dataMap
-	 * @return
-	 */
+	public long getLinkedTranID() {
+		return postingsDAO.getLinkedTransId();
+	}
+
 	public AEEvent postAccounting(AEEvent aeEvent) {
 		logger.debug(Literal.ENTERING);
 
@@ -513,19 +451,9 @@ public class PostingsPreparationUtil implements Serializable {
 		return aeEvent;
 	}
 
-	/**
-	 * Method to Prepare the accounting entries and save the postings to the Postings and accounts table
-	 * 
-	 * @param aeEvent
-	 * @param dataMap
-	 * @return
-	 */
 	public AEEvent getAccounting(AEEvent aeEvent) {
 		logger.debug(Literal.ENTERING);
 
-		/*
-		 * if (aeEvent.getLinkedTranId() <= 0) { aeEvent.setLinkedTranId(getPostingsDAO().getLinkedTransId()); }
-		 */
 		engineExecution.getAccEngineExecResults(aeEvent);
 
 		logger.debug(Literal.LEAVING);
@@ -561,14 +489,6 @@ public class PostingsPreparationUtil implements Serializable {
 		return returnDataSets;
 	}
 
-	/**
-	 * 
-	 * @param linkedTranId
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws InterfaceException
-	 */
 	public List<ReturnDataSet> postReversalsByLinkedTranID(long linkedTranId) {
 		logger.debug(Literal.ENTERING);
 
@@ -595,14 +515,6 @@ public class PostingsPreparationUtil implements Serializable {
 		return newLinkedTranID;
 	}
 
-	/**
-	 * 
-	 * @param linkedTranId
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws InterfaceException
-	 */
 	public List<ReturnDataSet> postReversalsByPostRef(String postRef, long postingId, Date appDate) {
 		logger.debug(Literal.ENTERING);
 
@@ -616,14 +528,6 @@ public class PostingsPreparationUtil implements Serializable {
 		return returnDataSets;
 	}
 
-	/**
-	 * 
-	 * @param linkedTranId
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws InterfaceException
-	 */
 	public List<ReturnDataSet> getReversalsByLinkedTranID(long linkedTranId) {
 		logger.debug(Literal.ENTERING);
 
@@ -637,14 +541,6 @@ public class PostingsPreparationUtil implements Serializable {
 		return returnDataSets;
 	}
 
-	/**
-	 * 
-	 * @param postingId
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws InterfaceException
-	 */
 	public List<ReturnDataSet> getReversalsByPostRef(String postRef, long postingId, Date appDate) {
 		logger.debug(Literal.ENTERING);
 

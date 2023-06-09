@@ -544,6 +544,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		finEnq.setLovDescFinBranchName(fm.getLovDescFinBranchName());
 		finEnq.setLovDescCustCIF(frh.getCustCIF());
 		finEnq.setFinIsActive(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isFinIsActive());
+		finEnq.setClosingStatus(fm.getClosingStatus());
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("moduleCode", moduleCode);

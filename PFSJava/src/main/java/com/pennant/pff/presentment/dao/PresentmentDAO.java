@@ -149,9 +149,9 @@ public interface PresentmentDAO {
 
 	Map<String, Integer> batchSizeByInstrumentType();
 
-	List<String> getInstrumentTypes(long batchID);
+	List<PresentmentHeader> getInstrumentTypes(long batchID);
 
-	void groupByInclude(long batchID, String instrumentType, PresentmentEngine presentmentEngine,
+	void groupByInclude(long batchID, PresentmentHeader ph, PresentmentEngine presentmentEngine,
 			Map<Long, Integer> headerMap, Integer batchSize, List<PresentmentDetail> list);
 
 	void updateHeaderByInclude(List<PresentmentDetail> list);
@@ -164,4 +164,7 @@ public interface PresentmentDAO {
 
 	int updateRespProcessFlag(long batchID, int processFlag, String responseType);
 
+	int getQueueCount();
+
+	int deleteHeader(long batchID, Date Schdate);
 }

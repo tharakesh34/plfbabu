@@ -110,7 +110,6 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.FinanceUtil;
-import com.pennanttech.pff.core.util.LoanCancelationUtil;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.payment.model.LoanPayment;
@@ -1687,28 +1686,27 @@ public class RepaymentProcessUtil {
 				financeRepaymentsDAO.saveRpySchdList(rpySchdList, TableType.MAIN_TAB);
 			}
 		}
-		if (!LoanCancelationUtil.LOAN_CANCEL_REBOOK.equals(rch.getLoanCancellationType())) {
-			if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
-				FinExcessAmount excess = new FinExcessAmount();
-				excess.setFinID(rch.getFinID());
-				excess.setFinReference(rch.getReference());
-				excess.setAmountType(rch.getExcessAdjustTo());
+
+		if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
+			FinExcessAmount excess = new FinExcessAmount();
+			excess.setFinID(rch.getFinID());
+			excess.setFinReference(rch.getReference());
+			excess.setAmountType(rch.getExcessAdjustTo());
+			excess.setAmount(excessAmount);
+			excess.setUtilisedAmt(BigDecimal.ZERO);
+			excess.setBalanceAmt(excessAmount);
+			excess.setReservedAmt(BigDecimal.ZERO);
+			excess.setReceiptID(rch.getReceiptID());
+			excess.setValueDate(rch.getValueDate());
+			excess.setPostDate(SysParamUtil.getAppDate());
+
+			if (RepayConstants.PAYSTATUS_DEPOSITED.equals(rch.getReceiptModeStatus())) {
+				excess.setBalanceAmt(BigDecimal.ZERO);
+				excess.setReservedAmt(excessAmount);
 				excess.setAmount(excessAmount);
-				excess.setUtilisedAmt(BigDecimal.ZERO);
-				excess.setBalanceAmt(excessAmount);
-				excess.setReservedAmt(BigDecimal.ZERO);
-				excess.setReceiptID(rch.getReceiptID());
-				excess.setValueDate(rch.getValueDate());
-				excess.setPostDate(SysParamUtil.getAppDate());
-
-				if (RepayConstants.PAYSTATUS_DEPOSITED.equals(rch.getReceiptModeStatus())) {
-					excess.setBalanceAmt(BigDecimal.ZERO);
-					excess.setReservedAmt(excessAmount);
-					excess.setAmount(excessAmount);
-				}
-
-				finExcessAmountDAO.saveExcess(excess);
 			}
+
+			finExcessAmountDAO.saveExcess(excess);
 		}
 
 		allocationPaidMap = null;

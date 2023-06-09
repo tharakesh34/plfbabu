@@ -995,12 +995,8 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for event of Changing Repayments Amount
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnChangeReceipt(Event event)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnChangeReceipt(Event event) {
 		doClearMessage();
 		doSetValidation();
 		doWriteComponentsToBean();

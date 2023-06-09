@@ -5910,25 +5910,25 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		switch (tableType) {
 		case MAIN_TAB:
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
-			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference, RepayBaseRate, FinCcy");
 			sql.append(" From FinanceMain fm Where FinReference = ?");
 			break;
 		case TEMP_TAB:
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
-			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference, RepayBaseRate, FinCcy");
 			sql.append("  From FinanceMain_Temp fm Where FinReference = ?");
 			break;
 		case BOTH_TAB:
 			object = new Object[] { finReference, finReference };
 
 			sql.append("Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
-			sql.append(" , RepayProfitRate, FinStartDate, , FinReference From(");
+			sql.append(" , RepayProfitRate, FinStartDate, , FinReference, RepayBaseRate, FinCcy From(");
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
-			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference, RepayBaseRate, FinCcy");
 			sql.append("  From FinanceMain_Temp fm Where FinReference = ?");
 			sql.append(" Union All");
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
-			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference, RepayBaseRate, FinCcy");
 			sql.append("  From FinanceMain fm Where FinReference = ?");
 			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
 			sql.append(" ) fm");
@@ -5950,6 +5950,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setFinStartDate(rs.getDate("FinStartDate"));
 				fm.setRepayProfitRate(rs.getBigDecimal("RepayProfitRate"));
 				fm.setFinReference(rs.getString("FinReference"));
+				fm.setRepayBaseRate(rs.getString("RepayBaseRate"));
+				fm.setFinCcy(rs.getString("FinCcy"));
 
 				return fm;
 			}, object);
@@ -7080,7 +7082,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
 			sql.append(" From FinanceMain fm");
 			sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
-			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Left Join PSLDetail pd on pd.FinID = fm.FinID");
 			sql.append(" Where fm.FinID = ? ");
 			break;
 		case TEMP_TAB:
@@ -7093,7 +7095,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" Select CustID, CustRO1 From Customers c ");
 			sql.append(" Where not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
 			sql.append(" )) c on  c.CustID = fm.CustID");
-			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Left Join PSLDetail pd on pd.FinID = fm.FinID");
 			sql.append(" Where fm.FinID = ?");
 			break;
 		case BOTH_TAB:
@@ -7101,7 +7103,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
 			sql.append(" From FinanceMain fm");
 			sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
-			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Left Join PSLDetail pd on pd.FinID = fm.FinID");
 			sql.append(" Where fm.FinID = ? ");
 			sql.append(" Union All");
 			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
@@ -7113,7 +7115,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" Select CustID, CustRO1 From Customers c ");
 			sql.append(" Where not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
 			sql.append(" )) c on  c.CustID = fm.CustID");
-			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Left Join PSLDetail pd on pd.FinID = fm.FinID");
 			sql.append(" Where fm.FinID = ?");
 			sql.append(" Where not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
 		default:

@@ -142,38 +142,18 @@ public class LoanLetterUploadDAOImpl extends SequenceDao<LoanLetterUpload> imple
 	}
 
 	@Override
-	public List<LoanLetterUpload> getByReference(String reference) {
-		StringBuilder sql = new StringBuilder("Select noc.ID, noc.HeaderId, noc.RecordSeq");
-		sql.append(", noc.FinID, noc.FinReference, noc.LetterType, noc.ModeOfTransfer, noc.WaiverCharges");
-		sql.append(", noc.Progress, uh.ApprovedOn");
-		sql.append(" From Loan_Letter_Upload noc");
-		sql.append(" Inner Join File_Upload_Header uh on uh.ID = noc.HeaderId");
-		sql.append(" Where noc.FinReference = ? and noc.Progress = ?");
+	public boolean getByReference(long finID, String letterType) {
+		String sql = "Select count(FinID) From LOAN_LETTERS_STAGE Where FinID = ? and LetterType = ?";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-				LoanLetterUpload noc = new LoanLetterUpload();
-
-				noc.setId(rs.getLong("ID"));
-				noc.setHeaderId(rs.getLong("HeaderId"));
-				noc.setRecordSeq(rs.getLong("RecordSeq"));
-				noc.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
-				noc.setReference(rs.getString("FinReference"));
-				noc.setLetterType(rs.getString("LetterType"));
-				noc.setModeOfTransfer(rs.getString("ModeOfTransfer"));
-				noc.setWaiverCharges(rs.getString("WaiverCharges"));
-				noc.setProgress(rs.getInt("Progress"));
-				noc.setApprovedOn(rs.getTimestamp("ApprovedOn"));
-
-				return noc;
-
-			}, reference, 2);
+			return this.jdbcOperations.queryForObject(sql, Boolean.class, finID, letterType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
 		}
+
+		return false;
 	}
 
 	@Override

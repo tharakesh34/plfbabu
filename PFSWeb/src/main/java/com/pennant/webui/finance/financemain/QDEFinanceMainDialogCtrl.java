@@ -24,11 +24,9 @@
  */
 package com.pennant.webui.finance.financemain;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -2682,9 +2680,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		return idNumber;
 	}
 
-	public void onSelectCheckListDetailsTab(ForwardEvent event)
-			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
-
+	@Override
+	public void onSelectCheckListDetailsTab(ForwardEvent event) {
 		doWriteComponentsToBean(getFinanceDetail(), false);
 
 		if (getFinanceCheckListReferenceDialogCtrl() != null) {
@@ -2692,7 +2689,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			getFinanceCheckListReferenceDialogCtrl().doWriteBeanToComponents(getFinanceDetail().getCheckList(),
 					getFinanceDetail().getFinanceCheckList(), false);
 		}
-
 	}
 
 	public List<DocumentDetails> getDocumentDetails() {

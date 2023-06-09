@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.sql.DataSource;
 
@@ -111,7 +110,7 @@ public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexPro
 		}
 	}
 
-	public void extractData() throws SQLException {
+	public void extractData() {
 		Map<String, PosidexCustomer> customers = getCustomers();
 		setAddresses(customers);
 		setLoans(customers);
@@ -146,48 +145,44 @@ public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexPro
 		}
 	}
 
-	private void saveOrUpdate(PosidexCustomer customer) throws Exception {
-		try {
-			if (customer.getProcessType().equals("I")) {
-				save(customer, true);
+	private void saveOrUpdate(PosidexCustomer customer) {
+		if (customer.getProcessType().equals("I")) {
+			save(customer, true);
+		} else {
+			update(customer);
+		}
+
+		// Save to posidex tables
+		save(customer, false);
+
+		// Save customer addresses
+		for (PosidexCustomerAddress address : customer.getPosidexCustomerAddress()) {
+			if (address.getProcessType().equals("I")) {
+				save(address, true);
 			} else {
-				update(customer);
+				update(address);
 			}
 
 			// Save to posidex tables
-			save(customer, false);
-
-			// Save customer addresses
-			for (PosidexCustomerAddress address : customer.getPosidexCustomerAddress()) {
-				if (address.getProcessType().equals("I")) {
-					save(address, true);
-				} else {
-					update(address);
-				}
-
-				// Save to posidex tables
-				save(address, false);
-			}
-
-			// Save customer loans
-			for (PosidexCustomerLoan loan : customer.getPosidexCustomerLoans()) {
-				if (loan.getProcessType().equals("I")) {
-					save(loan, true);
-				} else {
-					update(loan);
-				}
-
-				// Save to posidex tables
-				save(loan, false);
-			}
-
-			delete(customer);
-		} catch (Exception e) {
-			throw e;
+			save(address, false);
 		}
+
+		// Save customer loans
+		for (PosidexCustomerLoan loan : customer.getPosidexCustomerLoans()) {
+			if (loan.getProcessType().equals("I")) {
+				save(loan, true);
+			} else {
+				update(loan);
+			}
+
+			// Save to posidex tables
+			save(loan, false);
+		}
+
+		delete(customer);
 	}
 
-	private void delete(PosidexCustomer cusotemr) throws Exception {
+	private void delete(PosidexCustomer cusotemr) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("CUST_ID", cusotemr.getCustomerNo());
 		parameterJdbcTemplate.update("DELETE FROM POSIDEX_CUSTOMERS WHERE CUST_ID=:CUST_ID", paramMap);
@@ -504,7 +499,7 @@ public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexPro
 
 	}
 
-	private Map<String, PosidexCustomer> getCustomers() throws SQLException {
+	private Map<String, PosidexCustomer> getCustomers() {
 		Map<String, PosidexCustomer> customers = new HashMap<>();
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select C.CUSTID, CUSTCIF, CUSTCOREBANK, CUSTFNAME, CUSTMNAME, CUSTLNAME, CUSTSHRTNAME, CUSTDOB,");
@@ -604,7 +599,7 @@ public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexPro
 				});
 	}
 
-	private void setAddresses(Map<String, PosidexCustomer> customers) throws SQLException {
+	private void setAddresses(Map<String, PosidexCustomer> customers) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select");
 		sql.append(" CA.CUSTID,");
@@ -629,7 +624,7 @@ public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexPro
 	}
 
 	private void extractAddresses(Map<String, PosidexCustomer> customers, StringBuilder sql)
-			throws DataAccessException, SQLException {
+			throws DataAccessException {
 		parameterJdbcTemplate.query(sql.toString(), paramMa, new RowCallbackHandler() {
 			Map<String, List<CustomerPhoneNumber>> phoneNumbers = getPhoneNumbers();
 			Map<String, List<CustomerEMail>> email = getEmail();
@@ -672,15 +667,12 @@ public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexPro
 						if (phoneNumber.getPhoneNumber().length() > 10) {
 							if (address.getLandline1() == null) {
 								address.setLandline1(phoneNumber.getPhoneNumber());
-								phoneNumber = null;
 							} else if (address.getLandline2() == null) {
 								address.setLandline2(phoneNumber.getPhoneNumber());
-								phoneNumber = null;
 							}
 						} else {
 							if (address.getMobile() == null) {
 								address.setMobile((phoneNumber.getPhoneNumber()));
-								phoneNumber = null;
 							}
 						}
 					}
@@ -714,7 +706,7 @@ public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexPro
 		});
 	}
 
-	private Map<String, List<CustomerPhoneNumber>> getPhoneNumbers() throws SQLException {
+	private Map<String, List<CustomerPhoneNumber>> getPhoneNumbers() {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT PHONECUSTID, PHONETYPECODE, PHONENUMBER, PHONETYPEPRIORITY");
 		sql.append(" from CUSTOMERPHONENUMBERS");
@@ -735,7 +727,7 @@ public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexPro
 						CustomerPhoneNumber phoneNumber = null;
 						Map<String, List<CustomerPhoneNumber>> phoneTypes = new ConcurrentHashMap<>();
 
-						List<CustomerPhoneNumber> list = new CopyOnWriteArrayList<>();
+						List<CustomerPhoneNumber> list;
 
 						while (rs.next()) {
 							phoneNumber = new CustomerPhoneNumber();
@@ -759,7 +751,7 @@ public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexPro
 				});
 	}
 
-	private Map<String, List<CustomerEMail>> getEmail() throws SQLException {
+	private Map<String, List<CustomerEMail>> getEmail() {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT CUSTID, CUSTEMAILTYPECODE, CUSTEMAIL, CUSTEMAILPRIORITY");
 		sql.append(" from CUSTOMEREMAILS");
@@ -805,7 +797,7 @@ public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexPro
 
 	}
 
-	private void setLoans(Map<String, PosidexCustomer> customers) throws SQLException {
+	private void setLoans(Map<String, PosidexCustomer> customers) {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" select FM.CUSTID, FM.FINREFERENCE, FM.CUSTOMER_TYPE, FM.FINTYPE, PROCESS_TYPE");

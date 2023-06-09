@@ -57,13 +57,15 @@ public final class CibilClient extends SocketClient {
 	}
 
 	public String readAll() throws IOException {
-		Reader r = new InputStreamReader(new DataInputStream(_input_));
-		BufferedReader reader = new BufferedReader(r);
-		StringBuilder sb = new StringBuilder();
-		String line;
-		while ((line = reader.readLine()) != null)
-			sb.append(line).append("\n");
-		return sb.toString();
+		try (Reader r = new InputStreamReader(new DataInputStream(_input_))) {
+			try (BufferedReader reader = new BufferedReader(r)) {
+				StringBuilder sb = new StringBuilder();
+				String line;
+				while ((line = reader.readLine()) != null)
+					sb.append(line).append("\n");
+				return sb.toString();
+			}
+		}
 	}
 
 }

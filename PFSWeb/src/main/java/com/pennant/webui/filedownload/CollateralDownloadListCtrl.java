@@ -28,7 +28,6 @@ package com.pennant.webui.filedownload;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -307,7 +306,7 @@ public class CollateralDownloadListCtrl extends GFCBaseListCtrl<CollateralSetup>
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -450,13 +449,13 @@ public class CollateralDownloadListCtrl extends GFCBaseListCtrl<CollateralSetup>
 		return renderList;
 	}
 
-	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException {
 		logger.debug(Literal.ENTERING);
 		doSearchCustomerCIF();
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
+	private void doSearchCustomerCIF() throws SuspendNotAllowedException {
 		logger.debug(Literal.ENTERING);
 		Map<String, Object> map = getDefaultArguments();
 		map.put("DialogCtrl", this);
@@ -466,8 +465,7 @@ public class CollateralDownloadListCtrl extends GFCBaseListCtrl<CollateralSetup>
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
-			throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) {
 		logger.debug(Literal.ENTERING);
 		this.depositorCif.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
@@ -531,7 +529,7 @@ public class CollateralDownloadListCtrl extends GFCBaseListCtrl<CollateralSetup>
 		}
 	}
 
-	public String downloadFromServer(String filePath) throws FileNotFoundException, IOException {
+	public String downloadFromServer(String filePath) throws IOException {
 		String Path = App.getProperty("external.interface.glems.Colletral.path");
 		String CustomerPath = Path.concat(File.separator);
 		String fileName = StringUtils.substringAfter(filePath, CustomerPath);

@@ -174,4 +174,6 @@ public interface FinReceiptHeaderDAO {
 	void updateClosureType(long receiptID, String closureType);
 
 	boolean isLoanEarlySetteled(String finReference);
+
+	BigDecimal getForeClosureAmount(long finID);
 }

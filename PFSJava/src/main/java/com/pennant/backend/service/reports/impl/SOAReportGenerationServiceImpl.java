@@ -2066,7 +2066,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				}
 
 				if (StringUtils.isBlank(closingStatus)
-						|| FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())) {
+						|| !FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())) {
 					String event = "";
 					for (FinOverDueCharges finODCAmount : odcAmounts) {
 						if (finODCAmount.getSchDate().compareTo(finSchdDetail.getSchDate()) == 0
@@ -2517,11 +2517,17 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					soaTranReport.setCreditAmount(rd.getAmount());
 
 					if ("EXCESS".equals(rpaymentType) || "PAYABLE".equals(rpaymentType)) {
-						soaTranReport.setDebitAmount(rd.getAmount());
-						soaTranReport.setCreditAmount(BigDecimal.ZERO);
+						if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())) {
+							soaTranReport.setDebitAmount(rd.getAmount());
+							soaTranReport.setCreditAmount(rd.getAmount());
+						} else {
+							soaTranReport.setDebitAmount(rd.getAmount());
+							soaTranReport.setCreditAmount(BigDecimal.ZERO);
+						}
 					} else {
 						soaTranReport.setDebitAmount(BigDecimal.ZERO);
 					}
+
 					soaTranReport.setPriority(10);
 					if (!RepayConstants.PAYSTATUS_CANCEL.equals(receiptModeStatus)) {
 						soaTransactionReports.add(soaTranReport);

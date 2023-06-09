@@ -27,7 +27,6 @@ package com.pennant.webui.rmtmasters.gstrate;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -246,7 +245,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException {
+	public void onClick$btnDelete(Event event) {
 		logger.debug(Literal.ENTERING);
 		doDelete();
 		logger.debug(Literal.LEAVING);
@@ -354,7 +353,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 
 		doSetLOVValidation();
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		ArrayList<WrongValueException> wve = new ArrayList<>();
 
 		// From State
 		try {
@@ -445,7 +444,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -453,7 +452,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onChange$taxType(Event event) throws ParseException {
+	public void onChange$taxType(Event event) {
 		onchangetaxType("");
 
 	}
@@ -472,7 +471,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		}
 	}
 
-	public void onChange$calcType(Event event) throws ParseException {
+	public void onChange$calcType(Event event) {
 		onchangeCalcType();
 	}
 
@@ -644,7 +643,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doDelete() throws InterruptedException {
+	private void doDelete() {
 		logger.debug(Literal.ENTERING);
 
 		final GSTRate aGSTRate = new GSTRate();
