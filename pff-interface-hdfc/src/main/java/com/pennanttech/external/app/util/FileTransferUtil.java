@@ -18,8 +18,9 @@ public class FileTransferUtil {
 	FileTransferConfig fic;
 
 	public FileTransferUtil(FileInterfaceConfig fic) {
-		FileTransferConfigUtil.setTransferConfig(fic);
+		fic.setFileTransferConfig(FileTransferConfigUtil.getFIConfig(fic.getFicNames()));
 		this.fic = fic.getFileTransferConfig();
+
 	}
 
 	public void uploadToSFTP(String localPath, String fileName) {

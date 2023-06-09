@@ -1,6 +1,5 @@
 package com.pennanttech.external.app.util;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
@@ -8,10 +7,11 @@ import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 
 public class FileInterfaceConfigUtil {
 
-	private static List<FileInterfaceConfig> fileInterfaceConfigList = new ArrayList<FileInterfaceConfig>();
+	private static List<FileInterfaceConfig> fileInterfaceConfigList = null;
+	private static ExtGenericDao extGenericDao;
 
-	public FileInterfaceConfigUtil(ExtGenericDao extGenericDao) {
-		fileInterfaceConfigList = extGenericDao.getExternalConfig();
+	public FileInterfaceConfigUtil() {
+		super();
 	}
 
 	public List<FileInterfaceConfig> getFileInterfaceConfigList() {
@@ -19,6 +19,10 @@ public class FileInterfaceConfigUtil {
 	}
 
 	public static FileInterfaceConfig getFIConfig(String key) {
+
+		if (fileInterfaceConfigList == null) {
+			fileInterfaceConfigList = extGenericDao.getExternalConfig();
+		}
 		if (fileInterfaceConfigList == null) {
 			return null;
 		}
@@ -29,6 +33,10 @@ public class FileInterfaceConfigUtil {
 			}
 		}
 		return null;
+	}
+
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		FileInterfaceConfigUtil.extGenericDao = extGenericDao;
 	}
 
 }

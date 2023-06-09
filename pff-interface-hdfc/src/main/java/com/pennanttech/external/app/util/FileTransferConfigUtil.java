@@ -4,31 +4,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
-import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.config.model.FileTransferConfig;
 
 public class FileTransferConfigUtil {
 
 	private static List<FileTransferConfig> fileTrasferConfigList = new ArrayList<FileTransferConfig>();
 
-	public FileTransferConfigUtil(ExtGenericDao extGenericDao) {
-		fileTrasferConfigList = extGenericDao.getFileTransferConfig();
+	private static ExtGenericDao extGenericDao;
+
+	public FileTransferConfigUtil() {
+		super();
 	}
 
 	public List<FileTransferConfig> getFileInterfaceConfigList() {
 		return fileTrasferConfigList;
 	}
 
-	public static void setTransferConfig(FileInterfaceConfig config) {
-		FileTransferConfig fileTransferConfig = new FileTransferConfig();
+	public static FileTransferConfig getFIConfig(String key) {
+
 		if (fileTrasferConfigList == null) {
-			config.setFileTransferConfig(fileTransferConfig);
+			fileTrasferConfigList = extGenericDao.getFileTransferConfig();
 		}
+		if (fileTrasferConfigList == null) {
+			return null;
+		}
+
 		for (FileTransferConfig transferConfig : fileTrasferConfigList) {
-			if (transferConfig.getFicName().equals(config.getFicNames())) {
-				config.setFileTransferConfig(transferConfig);
+			if (transferConfig.getFicName().equals(key)) {
+				return transferConfig;
 			}
 		}
-		config.setFileTransferConfig(fileTransferConfig);
+		return null;
+	}
+
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		FileTransferConfigUtil.extGenericDao = extGenericDao;
 	}
 }

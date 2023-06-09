@@ -51,11 +51,11 @@
 	</bean>
 	
 	<bean id="fileInterfaceConfigUtil" class="com.pennanttech.external.app.util.FileInterfaceConfigUtil">
-		<constructor-arg ref="extGenericDao" />
+		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 	
 	<bean id="fileTransferConfigUtil" class="com.pennanttech.external.app.util.FileTransferConfigUtil">
-		<constructor-arg ref="extGenericDao" />
+		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.ExtUcicDaoImpl">
