@@ -145,13 +145,10 @@ public class FileProcessGSTRespJob extends AbstractJob
 			while ((detail = dataCursorReader.read()) != null) {
 				try {
 
-					GSTRespDetail responseBean = null;
-
 					// Get extPresentment object from record data
-					responseBean = convertRecordToBean(detail);
+					GSTRespDetail responseBean = convertRecordToBean(detail);
 
 					if (responseBean != null) {
-
 						// Fetch GST VOUCHER from GST_VOUCHER_DETAILS based on ID, If not found error.
 						GSTVoucherDetails gstVoucherDetails = extGSTDao
 								.fetchVoucherDetails(responseBean.getTransactionUID());
@@ -164,11 +161,12 @@ public class FileProcessGSTRespJob extends AbstractJob
 							continue;
 						}
 
-						// FIXME Process GST amounts into Taxheader and Postings
-						processTaxDetails(responseBean);
-
 						// Save the Invoice details into the table
-						savetInvoiceDetail(responseBean);
+						GSTInvoiceDetail invoiceDetail = getInvoiceDetail(responseBean);
+						extGSTDao.saveGSTInvoiceDetails(invoiceDetail);
+
+						// FIXME Process GST amounts into Taxheader and Postings
+						saveTaxDetails(responseBean);
 
 						// Update GST VOUCHER ID in Response detail record for successful transaction
 						detail.setGstVoucherId(responseBean.getTransactionUID());
@@ -196,12 +194,12 @@ public class FileProcessGSTRespJob extends AbstractJob
 
 	}
 
-	private void processTaxDetails(GSTRespDetail responseBean) {
+	private void saveTaxDetails(GSTRespDetail responseBean) {
 		// TODO Auto-generated method stub
 
 	}
 
-	private void savetInvoiceDetail(GSTRespDetail respBean) {
+	private GSTInvoiceDetail getInvoiceDetail(GSTRespDetail respBean) {
 		GSTInvoiceDetail detail = new GSTInvoiceDetail();
 		detail.setCustomerName(respBean.getCustomerName());
 		detail.setCustomerAddress("");// FIXME Call db for customer address
@@ -225,9 +223,7 @@ public class FileProcessGSTRespJob extends AbstractJob
 		detail.setSac(respBean.getSac());
 		detail.setRegBankAddress("");// FIXME Registered address of FI/Bank
 		setHardcodedProperties(detail);
-
-		extGSTDao.saveGSTInvoiceDetails(detail);
-
+		return detail;
 	}
 
 	private void setHardcodedProperties(GSTInvoiceDetail detail) {
