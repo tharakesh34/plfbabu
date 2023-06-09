@@ -1,6 +1,7 @@
 package com.pennant.pff.noc.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
@@ -46,6 +48,7 @@ import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.pff.noc.upload.dao.LoanLetterUploadDAO;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.ISearch;
@@ -149,7 +152,27 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 	private AuditDetail validation(AuditDetail ah, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
+		GenerateLetter gl = (GenerateLetter) ah.getModelData();
 
+		List<FinFeeDetail> fees = gl.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
+
+		for (FinFeeDetail fee : fees) {
+			BigDecimal maxWaiverPer = fee.getMaxWaiverPerc();
+			BigDecimal waiverAmt = (fee.getCalculatedAmount().multiply(maxWaiverPer)).divide(new BigDecimal(100), 0,
+					RoundingMode.HALF_DOWN);
+
+			if (fee.getWaivedAmount().compareTo(waiverAmt) > 0) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "Waiver amount";
+				valueParm[1] = "Actual waiver amount:" + String.valueOf(waiverAmt);
+				valueParm[2] = fee.getFeeTypeCode();
+				ah.setErrorDetail(new ErrorDetail("90257", valueParm));
+			}
+		}
+
+		ah.setErrorDetails(ErrorUtil.getErrorDetails(ah.getErrorDetails(), usrLanguage));
+
+		logger.debug(Literal.LEAVING);
 		return ah;
 	}
 
