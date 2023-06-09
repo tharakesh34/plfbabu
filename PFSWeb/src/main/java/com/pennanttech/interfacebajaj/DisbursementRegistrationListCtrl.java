@@ -567,8 +567,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 				}
 			} else {
 				if (this.branchOrCluster.getValue() != null) {
-					String whereCondition = " Finreference In (Select Finreference from Financemain_view where FinBranch in (Select BranchCode From FinTypePartnerBanks where BranchCode in ("
-							+ this.branchOrCluster.getValue() + ")))";
+					String whereCondition = " Finreference In (Select Finreference from Financemain_view where FinBranch in (Select BranchCode From FinTypePartnerBanks where BranchCode in (" +"'" + this.branchOrCluster.getValue() + "'" + ")))";
 					searchObject.addWhereClause(whereCondition);
 				}
 			}
