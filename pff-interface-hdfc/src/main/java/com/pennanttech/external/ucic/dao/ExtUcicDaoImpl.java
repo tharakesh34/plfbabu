@@ -12,10 +12,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 import com.pennanttech.external.ucic.model.ExtUcicCust;
-import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicDao {
+public class ExtUcicDaoImpl implements ExtUcicDao {
 	private static final Logger logger = LogManager.getLogger(ExtUcicDaoImpl.class);
 	private NamedParameterJdbcTemplate mainNamedJdbcTemplate;
 
@@ -59,10 +58,12 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 		return status;
 	}
 
-	@Override
 	public long getSeqNumber(String tableName) {
-		setDataSource(mainNamedJdbcTemplate.getJdbcTemplate().getDataSource());
-		return getNextValue(tableName);
+
+		StringBuilder sql = new StringBuilder("select ").append(tableName).append(".NEXTVAL from DUAL");
+
+		return this.mainNamedJdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Long.class);
+
 	}
 
 	@Override
