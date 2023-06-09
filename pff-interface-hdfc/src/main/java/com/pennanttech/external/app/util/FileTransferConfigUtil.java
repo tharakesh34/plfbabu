@@ -1,6 +1,5 @@
 package com.pennanttech.external.app.util;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
@@ -8,7 +7,7 @@ import com.pennanttech.external.app.config.model.FileTransferConfig;
 
 public class FileTransferConfigUtil {
 
-	private static List<FileTransferConfig> fileTrasferConfigList = new ArrayList<FileTransferConfig>();
+	private static List<FileTransferConfig> fileTrasferConfigList = null;
 
 	private static ExtGenericDao extGenericDao;
 
