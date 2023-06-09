@@ -1013,4 +1013,8 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="35.1" author="goutham.ch">
+		<renameColumn newColumnName="FIC_NAME" oldColumnName="FIC_NAMES"	tableName="FILE_TRANSFER_CONFIG" />
+	</changeSet>
 </databaseChangeLog>
