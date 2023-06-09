@@ -48,4 +48,6 @@ public interface SecurityRoleService {
 
 	List<SecurityRole> getApprovedSecurityRoles();
 
+	List<SecurityRole> getApprovedRoles();
+
 }
