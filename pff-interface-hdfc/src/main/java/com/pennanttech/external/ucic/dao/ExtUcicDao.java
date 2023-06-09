@@ -1,14 +1,8 @@
 package com.pennanttech.external.ucic.dao;
 
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-
 import com.pennanttech.external.ucic.model.ExtUcicCust;
 
 public interface ExtUcicDao {
-
-	String executeSP(String spName, MapSqlParameterSource in);
-
-	String executeSP(String spName);
 
 	long getSeqNumber(String tableName);
 

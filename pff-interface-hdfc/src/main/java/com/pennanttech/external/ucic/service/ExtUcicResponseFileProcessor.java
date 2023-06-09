@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+import com.pennanttech.external.app.config.dao.ExternalDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
@@ -38,6 +39,8 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 	private ApplicationContext applicationContext;
 	private ExtUcicDao extUcicDao;
 	private DataSource dataSource;
+
+	private ExternalDao externalDao;
 
 	public void readFileAndExtracData() throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -112,7 +115,7 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 				MapSqlParameterSource inPrams = new MapSqlParameterSource();
 				inPrams.addValue("aFileName", file.getName());
 				// Now Run SP here to read file by ORACLE
-				String stat = extUcicDao.executeSP(SP_READ_UCIC_RESP_FILE, inPrams);
+				String stat = externalDao.executeSP(SP_READ_UCIC_RESP_FILE, inPrams);
 
 				// check if list is null
 				if ("SUCCESS".equals(stat)) {
@@ -138,6 +141,10 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 
 	public void setExtUcicDao(ExtUcicDao extUcicDao) {
 		this.extUcicDao = extUcicDao;
+	}
+
+	public void setExternalDao(ExternalDao externalDao) {
+		this.externalDao = externalDao;
 	}
 
 }

@@ -61,6 +61,10 @@
 	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.ExtUcicDaoImpl">
 		<property name="mainDataSource" ref="dataSource" />
 	</bean>
+	
+	<bean id="externalDao" class="com.pennanttech.external.app.config.dao.ExternalDao">
+		<property name="extDataSource" ref="dataSource" />
+	</bean>
 
 	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.ExtExtractionDaoImpl">
 		<property name="mainDataSource" ref="dataSource" />
@@ -98,9 +102,6 @@
 
 	<bean id="mandateProcesses" class="com.pennanttech.external.mandate.ExtMandateProcess" parent="abstractInterface" />
 
-	<bean id="extUcicExtractData" class="com.pennanttech.external.ucic.service.ExtUcicDataExtractor">
-		<property name="extUcicDao" ref="extUcicDao" />
-	</bean>
 
 	<bean id="extUcicResponseFolderReader" class="com.pennanttech.external.ucic.service.ExtUcicResponseFileReader">
 		<property name="extUcicDao" ref="extUcicDao" />
@@ -108,10 +109,12 @@
 
 	<bean id="extUcicResponseProcessor" class="com.pennanttech.external.ucic.service.ExtUcicResponseFileProcessor">
 		<property name="extUcicDao" ref="extUcicDao" />
+		<property name="externalDao" ref="externalDao" />
 	</bean>
 
 	<bean id="extUcicResponseAckFileWriter" class="com.pennanttech.external.ucic.service.ExtUcicResponseAckFileWriter">
 		<property name="extUcicDao" ref="extUcicDao" />
+		<property name="externalDao" ref="externalDao" />
 	</bean>
 
 

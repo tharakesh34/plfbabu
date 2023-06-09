@@ -22,12 +22,17 @@
 		<property name="stagingDataSource" ref="stagingDataSource" />
 	</bean>
 
+	<bean id="externalDao" class="com.pennanttech.external.app.config.dao.ExternalDao">
+		<property name="extDataSource" ref="dataSource" />
+	</bean>
+	
 	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.ExtUcicDaoImpl">
 		<property name="mainDataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="extUcicExtractData" class="com.pennanttech.external.ucic.service.ExtUcicDataExtractor">
 		<property name="extUcicDao" ref="extUcicDao" />
+		<property name="externalDao" ref="externalDao" />
 	</bean>
 
 

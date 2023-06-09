@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennanttech.external.extractions.model.AlmExtract;
@@ -19,10 +20,9 @@ import com.pennanttech.external.extractions.model.BaselOne;
 import com.pennanttech.external.extractions.model.BaselTwoExtract;
 import com.pennanttech.external.extractions.model.RPMSExtract;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
-import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtExtractionDaoImpl extends SequenceDao implements ExtExtractionDao {
+public class ExtExtractionDaoImpl implements ExtExtractionDao {
 	private static final Logger logger = LogManager.getLogger(ExtExtractionDaoImpl.class);
 
 	private NamedParameterJdbcTemplate mainNamedJdbcTemplate;
@@ -35,8 +35,9 @@ public class ExtExtractionDaoImpl extends SequenceDao implements ExtExtractionDa
 
 	@Override
 	public long getSeqNumber(String tableName) {
-		setDataSource(extNamedJdbcTemplate.getJdbcTemplate().getDataSource());
-		return getNextValue(tableName);
+		StringBuilder sql = new StringBuilder("select ").append(tableName).append(".NEXTVAL from DUAL");
+
+		return this.extNamedJdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Long.class);
 	}
 
 	@Override

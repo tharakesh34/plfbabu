@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.google.common.io.Files;
+import com.pennanttech.external.app.config.dao.ExternalDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
@@ -27,6 +28,8 @@ public class ExtUcicWeekFileService extends TextFileUtil
 	private static final Logger logger = LogManager.getLogger(ExtUcicWeekFileService.class);
 	private ExtUcicDao extUcicDao;
 	private FileInterfaceConfig ucicWeeklyConfig;
+
+	private ExternalDao externalDao;
 
 	public void processWeeklyFileRequest(Date appDate) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -48,7 +51,7 @@ public class ExtUcicWeekFileService extends TextFileUtil
 		inPrams.addValue("aFileName", fileName);
 
 		// Generate Request file from database server
-		String status = extUcicDao.executeSP(SP_UCIC_WRITE_WEEKLY_REQ_FILE, inPrams);
+		String status = externalDao.executeSP(SP_UCIC_WRITE_WEEKLY_REQ_FILE, inPrams);
 
 		if ("SUCCESS".equals(status)) {
 			// Fetch request file from DB Server location and store it in client SFTP
@@ -95,6 +98,10 @@ public class ExtUcicWeekFileService extends TextFileUtil
 
 	public void setExtUcicDao(ExtUcicDao extUcicDao) {
 		this.extUcicDao = extUcicDao;
+	}
+
+	public void setExternalDao(ExternalDao externalDao) {
+		this.externalDao = externalDao;
 	}
 
 }

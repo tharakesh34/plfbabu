@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennanttech.external.app.config.dao.ExternalDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
@@ -26,12 +27,14 @@ public class ExtUcicDataExtractor extends TextFileUtil implements InterfaceConst
 
 	private ExtUcicDao extUcicDao;
 
+	private ExternalDao externalDao;
+
 	public void processUCIC() {
 		logger.debug(Literal.ENTERING);
 
 		try {
 
-			String resp = extUcicDao.executeSP(SP_EXTRACT_UCIC_DATA);
+			String resp = externalDao.executeSP(SP_EXTRACT_UCIC_DATA);
 
 			if (resp != null && "SUCCESS".equals(resp)) {
 				logger.debug("Successfully extracted customers data.");
@@ -65,7 +68,7 @@ public class ExtUcicDataExtractor extends TextFileUtil implements InterfaceConst
 			inPrams.addValue("aFileName", fileName);
 
 			// Generate Request file from database server
-			String status = extUcicDao.executeSP(SP_UCIC_WRITE_REQ_FILE, inPrams);
+			String status = externalDao.executeSP(SP_UCIC_WRITE_REQ_FILE, inPrams);
 
 			if (!"SUCCESS".equals(status)) {
 				return;
@@ -123,6 +126,10 @@ public class ExtUcicDataExtractor extends TextFileUtil implements InterfaceConst
 
 	public void setExtUcicDao(ExtUcicDao extUcicDao) {
 		this.extUcicDao = extUcicDao;
+	}
+
+	public void setExternalDao(ExternalDao externalDao) {
+		this.externalDao = externalDao;
 	}
 
 }
