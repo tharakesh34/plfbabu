@@ -11,7 +11,6 @@ import javax.sql.DataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.CallableStatementCreator;
-import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -50,11 +49,10 @@ public class ExtExtractionDaoImpl implements ExtExtractionDao {
 				@Override
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
 
-					CallableStatement callableStatement = connection.prepareCall(spName);
-					return callableStatement;
+					return connection.prepareCall(spName);
 
 				}
-			}, new ArrayList<SqlParameter>());
+			}, new ArrayList<>());
 			status = "SUCCESS";
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -79,7 +77,7 @@ public class ExtExtractionDaoImpl implements ExtExtractionDao {
 					return callableStatement;
 
 				}
-			}, new ArrayList<SqlParameter>());
+			}, new ArrayList<>());
 			status = "SUCCESS";
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -103,7 +101,7 @@ public class ExtExtractionDaoImpl implements ExtExtractionDao {
 					return callableStatement;
 
 				}
-			}, new ArrayList<SqlParameter>());
+			}, new ArrayList<>());
 
 			status = "SUCCESS";
 		} catch (Exception e) {
@@ -166,7 +164,7 @@ public class ExtExtractionDaoImpl implements ExtExtractionDao {
 		stageNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 			ps.setString(index++, almExtract.getAlmReportType());
-			ps.setDate(index++, (Date) almExtract.getAlmReportDate());
+			ps.setDate(index++, JdbcUtil.getDate(almExtract.getAlmReportDate()));
 			ps.setString(index++, almExtract.getAccountNumber());
 			ps.setString(index++, almExtract.getAccrualBasis());
 			ps.setBigDecimal(index++, almExtract.getAccruedInterest());
@@ -178,17 +176,17 @@ public class ExtExtractionDaoImpl implements ExtExtractionDao {
 			ps.setString(index++, almExtract.getCurrencyCode());
 			ps.setBigDecimal(index++, almExtract.getCurrentBalance());
 
-			ps.setDate(index++, (Date) JdbcUtil.getDate(almExtract.getDueDate()));
+			ps.setDate(index++, JdbcUtil.getDate(almExtract.getDueDate()));
 			ps.setLong(index++, almExtract.getInitPaymentFreq());
 			ps.setBigDecimal(index++, almExtract.getInitRate());
 			ps.setBigDecimal(index++, almExtract.getLifeCeiling());
 			ps.setBigDecimal(index++, almExtract.getLifeFloor());
 			ps.setString(index++, almExtract.getLoanType());
-			ps.setDate(index++, (Date) JdbcUtil.getDate(almExtract.getMaturity()));
+			ps.setDate(index++, JdbcUtil.getDate(almExtract.getMaturity()));
 
 			ps.setBigDecimal(index++, almExtract.getOriginalBalance());
 			ps.setInt(index++, almExtract.getOriginalTerm());
-			ps.setDate(index++, (Date) almExtract.getOriginationDate());
+			ps.setDate(index++, JdbcUtil.getDate(almExtract.getOriginationDate()));
 			ps.setBigDecimal(index++, almExtract.getInstalment());
 			ps.setString(index++, almExtract.getPaymentFreq());
 			ps.setLong(index++, almExtract.getPaymentType());
@@ -238,8 +236,8 @@ public class ExtExtractionDaoImpl implements ExtExtractionDao {
 			ps.setLong(index++, baselTwo.getAgreementId());
 			ps.setLong(index++, baselTwo.getCustomerId());
 			ps.setString(index++, baselTwo.getIcnStatus());
-			ps.setDate(index++, (Date) baselTwo.getIcnAcquired());
-			ps.setDate(index++, (Date) baselTwo.getLoanApplDate());
+			ps.setDate(index++, JdbcUtil.getDate(baselTwo.getIcnAcquired()));
+			ps.setDate(index++, JdbcUtil.getDate(baselTwo.getLoanApplDate()));
 			ps.setInt(index++, baselTwo.getTotalEmis());
 			ps.setString(index++, baselTwo.getDnd());
 			ps.setString(index++, baselTwo.getAppliedBefore());
@@ -251,24 +249,24 @@ public class ExtExtractionDaoImpl implements ExtExtractionDao {
 			ps.setBigDecimal(index++, baselTwo.getManfDisc());
 			ps.setString(index++, baselTwo.getPromotionCode());
 			ps.setString(index++, baselTwo.getRcAvailStatus());
-			ps.setDate(index++, (Date) baselTwo.getRcAcquired());
+			ps.setDate(index++, JdbcUtil.getDate(baselTwo.getRcAcquired()));
 			ps.setString(index++, baselTwo.getEmiType());
 			ps.setString(index++, baselTwo.getRest());
 			ps.setString(index++, baselTwo.getCustAccount());
 			ps.setInt(index++, baselTwo.getNoBounces());
 			ps.setBigDecimal(index++, baselTwo.getChargesPaid());
-			ps.setDate(index++, (Date) baselTwo.getPrevNPA());
+			ps.setDate(index++, JdbcUtil.getDate(baselTwo.getPrevNPA()));
 			ps.setString(index++, baselTwo.getSecurtFlag());
-			ps.setDate(index++, (Date) baselTwo.getSecurtDt());
+			ps.setDate(index++, JdbcUtil.getDate(baselTwo.getSecurtDt()));
 			ps.setString(index++, baselTwo.getDpdString());
 			ps.setBigDecimal(index++, baselTwo.getTotAmtPaidMnthChq());
 			ps.setBigDecimal(index++, baselTwo.getTotAmtPaidMnthCash());
 			ps.setString(index++, baselTwo.getRescheduled());
-			ps.setDate(index++, (Date) baselTwo.getRescheduleEffDt());
+			ps.setDate(index++, JdbcUtil.getDate(baselTwo.getRescheduleEffDt()));
 			ps.setString(index++, baselTwo.getClosureType());
 			ps.setBigDecimal(index++, baselTwo.getPrinLossClosure());
-			ps.setDate(index++, (Date) baselTwo.getIbpcStart());
-			ps.setDate(index++, (Date) baselTwo.getIbpcEnd());
+			ps.setDate(index++, JdbcUtil.getDate(baselTwo.getIbpcStart()));
+			ps.setDate(index++, JdbcUtil.getDate(baselTwo.getIbpcEnd()));
 			ps.setInt(index++, baselTwo.getMonthsInPrevJob());
 			ps.setInt(index++, baselTwo.getMonthsIncurrJob());
 			ps.setInt(index++, baselTwo.getMonthsInCurrResidence());
