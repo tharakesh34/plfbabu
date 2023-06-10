@@ -163,7 +163,8 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	public void onClick$btnSearch(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		List<GenerateLetter> excludeCodes = this.generateLetterService.getResult(getSearchFilters());
+		List<GenerateLetter> excludeCodes = this.generateLetterService.getResult(getSearchFilters(),
+				getWorkFlowRoles());
 
 		this.lbGenerateLetter.setItemRenderer(new GenerateLetterModelItemRenderer());
 
@@ -267,8 +268,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	}
 
 	public void fillListData() {
-
-		List<GenerateLetter> letters = this.generateLetterService.getResult(getSearchFilters());
+		List<GenerateLetter> letters = this.generateLetterService.getResult(getSearchFilters(), getWorkFlowRoles());
 
 		this.lbGenerateLetter.setItemRenderer(new GenerateLetterModelItemRenderer());
 

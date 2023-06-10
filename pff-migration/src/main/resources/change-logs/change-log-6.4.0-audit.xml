@@ -579,9 +579,21 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#226779.1_pre" author="Gopal.p" dbms="mssql">
+    	<dropDefaultValue columnDataType="char(1)"  columnName="KnockOffType"  tableName="AdtFinReceiptHeader"/>
+	</changeSet>
 
 	<changeSet id="PSD#226779.1" author="Gopal.p">
 		<modifyDataType tableName="AdtFinReceiptHeader" columnName="KnockOffType" newDataType="varchar(2)" />
+	</changeSet>
+	
+	<changeSet id="PSD#226779.1_post" author="Gopal.p" dbms="mssql">
+      <sql>
+			<![CDATA[
+				ALTER TABLE AdtFinReceiptHeader ADD CONSTRAINT DK_ADTRECEIPTHEADER_KOF DEFAULT '' FOR KnockOffType;
+			]]>
+	  	</sql>
 	</changeSet>
 
 
@@ -688,6 +700,32 @@
 
 	<changeSet id="ST#1561.49" author="Mounika.M" dbms="postgresql, oracle">
 		<addDefaultValue tableName="ADTLOAN_LETTER_MANUAL" columnName="WaiverAmt" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.50" author="Gopal.P">
+		<addColumn tableName="ADTLoan_Letter_Manual">
+			<column name="ActualAmt" type ="decimal(18, 0)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1561.51" author="Gopal.P">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTLOAN_LETTER_MANUAL SET ACTUALAMT = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.52" author="Gopal.P" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTLOAN_LETTER_MANUAL ADD CONSTRAINT DF_AFT_ACTUALAMT DEFAULT 0 FOR ActualAmt;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1561.52" author="Gopal.P" dbms="postgresql, oracle">
+		<addDefaultValue tableName="ADTLOAN_LETTER_MANUAL" columnName="ActualAmt" defaultValue="0" />
 	</changeSet>
 	
 </databaseChangeLog>

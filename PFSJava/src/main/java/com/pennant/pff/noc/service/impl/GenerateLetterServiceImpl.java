@@ -73,8 +73,8 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	private LetterService letterService;
 
 	@Override
-	public List<GenerateLetter> getResult(ISearch searchFilters) {
-		return generateLetterDAO.getResult(searchFilters);
+	public List<GenerateLetter> getResult(ISearch searchFilters, List<String> roleCodes) {
+		return generateLetterDAO.getResult(searchFilters, roleCodes);
 	}
 
 	@Override
@@ -376,7 +376,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		schdData.setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
 		schdData.setFinFeeDetailList(finFeeDetailDAO.getFinFeeDetailByFinRef(finID, false, "_View"));
 
-		schdData.setFeeEvent(gl.getLetterType());
+		schdData.setFeeEvent(NOCConstants.getLetterType(gl.getLetterType()));
 		FinanceSummary summary = new FinanceSummary();
 
 		summary.setFinID(finID);

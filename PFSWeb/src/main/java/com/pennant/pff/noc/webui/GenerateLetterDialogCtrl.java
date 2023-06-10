@@ -53,6 +53,7 @@ import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.NOCConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.letter.LetterMode;
 import com.pennant.pff.letter.LetterUtil;
@@ -140,6 +141,8 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		setPageComponents(windowGenerateLetterDialog);
 
 		try {
+
+			getRole();
 
 			this.generateLetter = (GenerateLetter) arguments.get("generateLetter");
 			this.moduleCode = (String) arguments.get("moduleCode");
@@ -230,6 +233,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 		if (CollectionUtils.isNotEmpty(fee)) {
 			geneLtr.setWaiverAmt(fee.get(0).getWaivedAmount());
+			geneLtr.setActualAmt(fee.get(0).getActualAmount());
 		}
 
 		geneLtr.setRequestType(LetterMode.OTC.name());
@@ -533,7 +537,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 				Map<String, Object> map = getDefaultArguments();
 				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FEE));
 				map.put("moduleDefiner", this.moduleCode);
-				map.put("eventCode", this.generateLetter.getLetterType());
+				map.put("eventCode", NOCConstants.getLetterType(this.generateLetter.getLetterType()));
 				map.put("isReceiptsProcess", false);
 				map.put("numberOfTermsLabel", Labels.getLabel("label_FinanceMainDialog_NumberOfTerms.value"));
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinFeeDetailList.zul",

@@ -1554,6 +1554,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		finFeeDetails = sortFeesByFeeOrder(finFeeDetails);
 		setFinFeeDetailList(finFeeDetails);
 
+		getRole();
 		boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance");
 		if (financeMain.isQuickDisb() && readOnly && StringUtils.isBlank(this.moduleDefiner)) {
 			readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
@@ -1686,9 +1687,16 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					waiverBox.setDisabled(readOnly);
 				}
 
-				if (this.generateLetter != null && this.generateLetter.getWaiverAmt() != null
-						&& this.generateLetter.getWaiverAmt().compareTo(BigDecimal.ZERO) > 0) {
-					finFeeDetail.setWaivedAmount(this.generateLetter.getWaiverAmt());
+				if (this.generateLetter != null) {
+					if (this.generateLetter.getWaiverAmt() != null
+							&& this.generateLetter.getWaiverAmt().compareTo(BigDecimal.ZERO) > 0) {
+						finFeeDetail.setWaivedAmount(this.generateLetter.getWaiverAmt());
+					}
+
+					if (this.generateLetter.getActualAmt() != null
+							&& this.generateLetter.getActualAmt().compareTo(BigDecimal.ZERO) > 0) {
+						finFeeDetail.setActualAmount(this.generateLetter.getActualAmt());
+					}
 				}
 
 				waiverBox.setId(getComponentId(FEE_UNIQUEID_WAIVEDAMOUNT, finFeeDetail));
