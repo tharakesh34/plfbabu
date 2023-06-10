@@ -412,7 +412,7 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 
 	@Override
 	public List<AccountEngineEvent> getAccountEngineEvents(String categoryCode) {
-		StringBuilder sql = new StringBuilder("Select cwe.AEEventCode, bae.AEEventCodeDesc");
+		StringBuilder sql = new StringBuilder("Select cwe.AEEventCode, bae.AEEventCodeDesc, cwe.Mandatory");
 		sql.append(" From CategoryWiseEvents cwe");
 		sql.append(" Left Join BmtAeEvents bae on bae.AEEventCode = cwe.AEEventCode");
 		sql.append(" Where cwe.CategoryCode = ?");
@@ -425,7 +425,7 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 
 			aee.setAEEventCode(rs.getString("AEEventCode"));
 			aee.setAEEventCodeDesc(rs.getString("AEEventCodeDesc"));
-
+			aee.setMandatory(rs.getBoolean("Mandatory"));
 			return aee;
 		}, categoryCode);
 	}

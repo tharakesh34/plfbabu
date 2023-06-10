@@ -43,7 +43,7 @@
 
 	<bean id="extExtractionHook" class="com.pennanttech.external.extractions.service.EODExtractionsService">
 		<property name="extUcicExtractData" ref="extUcicExtractData" />
-		<property name="extDataSource" ref="extDataSource" />
+		<property name="externalDao" ref="externalDao" />
 	</bean>
 
 	<bean id="siService" class="com.pennanttech.external.presentment.service.SIService">
