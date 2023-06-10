@@ -306,11 +306,6 @@
 				rightName="menuItem_SystemMaster_DocumentType" />
 			<menuItem id="menu_Item_CovenantType" zulNavigation="/WEB-INF/pages/Finance/Covenant/CovenantTypeList.zul"
 				rightName="menuItem_CovenantType" />
-			<menuItem id="menu_Item_CommodityType"
-				zulNavigation="/WEB-INF/pages/ApplicationMaster/Commodity/CommodityTypeList.zul" rightName="menuItem_Commodity_Type" />
-			<menuItem id="menu_Item_Commodities"
-				zulNavigation="/WEB-INF/pages/ApplicationMaster/Commodity/CommoditiesList.zul"
-				rightName="menuItem_Commodity_Details" />
 			<!-- <menuItem id="menu_Item_CovenantTypeEnquiry" zulNavigation="/WEB-INF/pages/Finance/Covenant/CovenantTypeEnquiryList.zul" 
 				rightName="menuItem_CovenantTypeEnquiry" /> -->
 			<menuItem id="menu_Item_ExpenseType"
@@ -1203,7 +1198,7 @@
 			<menuItem id="menu_Item_ExternalUplaods"
 				zulNavigation="/WEB-INF/pages/ExternalUploads/ExternalUploadList.zul" rightName="menu_Item_ExternalUpload" />
 			<menuItem id="menu_Item_DataEngine_SettlementProcessUpload"
-				zulNavigation="/WEB-INF/pages/Financee/Cd/CDSettlementUpload.zul" rightName="menuItem_Settlement_Process_Upload" />
+				zulNavigation="/WEB-INF/pages/Finance/Cd/CDSettlementUpload.zul" rightName="menuItem_Settlement_Process_Upload" />
 			<menuItem id="menu_Item_DataEngine_SettlementProcessDownload"
 				zulNavigation="/WEB-INF/pages/Finance/Cd/CDSettlementDownload.zul" rightName="menuItem_Settlement_Process_Download" />
 			<menuItem id="menu_Item_DataEngine_ODSettlementProcessUpload"
