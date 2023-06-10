@@ -19766,5 +19766,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ERR99020" author="HariTeja.B">
+		<sql>
+			<![CDATA[
+				DELETE FROM ERRORDETAILS WHERE CODE = '99020';
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('99020', 'EN', 'E', 'No Bank details available or Invalid with ifsc {0}.', '', 'Approved', null, null, null, null, null, 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
 		
 </databaseChangeLog> 
