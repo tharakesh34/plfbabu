@@ -426,12 +426,12 @@ public class FinanceEnquiryController extends AbstractController {
 				loanDetail = new LoanDetail();
 				loanDetail.setFromDate(fm.getFinStartDate());
 				loanDetail.setToDate(fromDate == null ? fsi.getFromDate() : fromDate);
-				
+
 				if (!StringUtils.isEmpty(fm.getRepayBaseRate())) {
 					BaseRate b = getBaseRate(fm, loanDetail.getFromDate(), ld);
 					fm.setRepayProfitRate(b != null ? b.getBRRate() : BigDecimal.ZERO);
 				}
-				
+
 				loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
 				ldList.add(loanDetail);
 			}
@@ -441,12 +441,12 @@ public class FinanceEnquiryController extends AbstractController {
 				loanDetail = new LoanDetail();
 				loanDetail.setFromDate(fsiList.get(i - 1).getToDate());
 				loanDetail.setToDate(fromDate);
-			
+
 				if (StringUtils.isEmpty(fm.getRepayBaseRate())) {
 					BaseRate b = getBaseRate(fm, loanDetail.getFromDate(), ld);
 					fm.setRepayProfitRate(b != null ? b.getBRRate() : BigDecimal.ZERO);
 				}
-				
+
 				loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
 				ldList.add(loanDetail);
 			}
@@ -466,12 +466,12 @@ public class FinanceEnquiryController extends AbstractController {
 		LoanDetail loanDetail = new LoanDetail();
 		loanDetail.setFromDate(toDate);
 		loanDetail.setToDate(fm.getMaturityDate());
-		
+
 		if (StringUtils.isEmpty(fm.getRepayBaseRate())) {
 			BaseRate b = getBaseRate(fm, loanDetail.getFromDate(), ld);
 			fm.setRepayProfitRate(b != null ? b.getBRRate() : BigDecimal.ZERO);
 		}
-		
+
 		loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
 		ldList.add(loanDetail);
 	}
@@ -479,8 +479,8 @@ public class FinanceEnquiryController extends AbstractController {
 	private void setRateCahngeDetails(FinanceMain fm, LoanDetail ld) {
 		ld.setFromDate(fm.getFinStartDate());
 		ld.setToDate(fm.getMaturityDate());
-		
-		if (StringUtils.isEmpty(fm.getRepayBaseRate())) {
+
+		if (StringUtils.isNotEmpty(fm.getRepayBaseRate())) {
 			BaseRate b = getBaseRate(fm, fm.getFinStartDate(), ld);
 			fm.setRepayProfitRate(b != null ? b.getBRRate() : BigDecimal.ZERO);
 		}
@@ -489,6 +489,10 @@ public class FinanceEnquiryController extends AbstractController {
 	}
 
 	private BaseRate getBaseRate(FinanceMain fm, Date date, LoanDetail ld) {
+
+		if (CollectionUtils.isEmpty(ld.getBaseRates())) {
+			return null;
+		}
 
 		List<BaseRate> baseRates = ld.getBaseRates().stream()
 				.filter(baseRate -> baseRate.getBREffDate().compareTo(date) <= 0).toList();

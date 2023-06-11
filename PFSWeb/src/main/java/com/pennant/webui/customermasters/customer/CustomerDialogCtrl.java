@@ -8396,6 +8396,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void renderCustFullName(String fullName) {
 
 		String[] names = fullName.split(" ");
+		if (names.length == 0) {
+			return;
+		}
 
 		this.custFirstName.setValue(names[0]);
 		if (names.length == 3) {

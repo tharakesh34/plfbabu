@@ -26,7 +26,7 @@ public class SecRolesController extends ExtendedTestClass {
 
 		SecurityRoleDetail response = null;
 		try {
-			List<SecurityRole> secRoleList = securityRoleService.getApprovedSecurityRoles();
+			List<SecurityRole> secRoleList = securityRoleService.getApprovedRoles();
 			if (!secRoleList.isEmpty()) {
 				response = new SecurityRoleDetail();
 				response.setSecRoleList(secRoleList);

@@ -14,7 +14,7 @@ import com.pennanttech.pennapps.jdbc.search.ISearch;
 
 public interface GenerateLetterService {
 
-	List<GenerateLetter> getResult(ISearch searchFilters);
+	List<GenerateLetter> getResult(ISearch searchFilters, List<String> roleCodes);
 
 	List<ReportListDetail> getPrintLetters(List<String> workFlowRoles);
 

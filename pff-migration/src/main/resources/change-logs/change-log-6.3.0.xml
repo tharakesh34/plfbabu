@@ -4336,11 +4336,6 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2650.0" author="sandeepkumar.m" context="Dropping index">
-		<comment>Dropping index</comment>
-		<dropIndex tableName="FINEXCESSAMOUNT" indexName="IDX_FNEXCSSAMN_FINID_AMTTYPE" />
-	</changeSet>
-
 	<changeSet id="TK#2650.1" author="sandeepkumar.m">
 		<createIndex tableName="FINEXCESSAMOUNT" indexName="IDX_FNXCSAM_FID_AMTY_VLDT_REID" unique="true">
 			<column name="FINID" type="bigint" />

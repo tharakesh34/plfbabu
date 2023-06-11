@@ -1649,6 +1649,15 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			ffd.setRuleCode(fee.getRuleCode());
 			ffd.setAlwPreIncomization(fee.isAlwPreIncomization());
 
+			if ("GenerateLetter".equals(fd.getModuleDefiner()) && CollectionUtils.isNotEmpty(fd.getFinFeeDetails())) {
+				for (FinFeeDetail finFee : fd.getFinFeeDetails()) {
+					if (finFee.getFinEvent().equals(ffd.getFinEvent())) {
+						fee.setAmount(finFee.getActualAmount());
+						ffd.setWaivedAmount(finFee.getWaivedAmount());
+					}
+				}
+			}
+
 			BigDecimal feeAmount = fee.getAmount();
 			BigDecimal finAmount = CalculationUtil.roundAmount(feeAmount, roundingMode, roundingTarget);
 			fee.setAmount(finAmount);

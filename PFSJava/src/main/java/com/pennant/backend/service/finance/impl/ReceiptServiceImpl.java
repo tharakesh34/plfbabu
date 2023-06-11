@@ -8993,7 +8993,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 			if (dueAmount.compareTo(allocate.getPaidAmount()) != 0) {
 				String parm0 = "For allocation item: " + rch.getReceiptPurpose()
-						+ "is not allowed to do, since allocations are not fully adjusted";
+						+ " is not allowed to do, since allocations are not fully adjusted";
 				setError(schdData, "30550", parm0);
 				logger.info(Literal.LEAVING);
 			}

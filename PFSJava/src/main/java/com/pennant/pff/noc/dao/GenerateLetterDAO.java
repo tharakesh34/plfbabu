@@ -10,7 +10,7 @@ import com.pennanttech.pff.core.TableType;
 
 public interface GenerateLetterDAO {
 
-	List<GenerateLetter> getResult(ISearch searchFilters);
+	List<GenerateLetter> getResult(ISearch searchFilters, List<String> roleCodes);
 
 	List<ReportListDetail> getPrintLetters(List<String> workFlowRoles);
 

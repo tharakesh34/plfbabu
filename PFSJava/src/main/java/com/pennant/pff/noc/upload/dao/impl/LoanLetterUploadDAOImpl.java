@@ -129,7 +129,7 @@ public class LoanLetterUploadDAOImpl extends SequenceDao<LoanLetterUpload> imple
 
 	@Override
 	public String getCanceltype(String finReference) {
-		String sql = "Select CancelType From ReasonHeader Where Reference= ?";
+		String sql = "Select CancelType From ReasonHeader Where Reference = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 

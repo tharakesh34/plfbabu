@@ -832,6 +832,16 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1470.7_1" author="saikrihna.b">
+		<sql>
+			<![CDATA[
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('PAYMTINS_S', 		'Payment instructions For Settlement', 				1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('PAYMTINS_N', 		'Payment instructions For NPA', 					1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('PAYMTINS_W', 		'Payment instructions For Write-Off', 				1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#1470.8_pre" author="saikrihna.b" dbms="postgresql">
 		<sql>
@@ -11033,7 +11043,7 @@
 	<changeSet id="ST#4876.500_pre" author="Poojitha.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'customers_view');	
+				select deps_save_and_drop_dependencies ('plf', 'customers_view');
 			]]>
 		</sql>
 	</changeSet>
@@ -11508,7 +11518,7 @@
 	<changeSet id="ST#4876.500_post" author="Poojitha.m" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies('plf','customers_view');
+				select deps_restore_dependencies('plf','customers_view'); 
 			]]>
 		</sql>
 	</changeSet>
@@ -15376,10 +15386,23 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#226779.1_pre" author="Gopal.p" dbms="mssql">
+    	<dropDefaultValue columnDataType="char(1)"  columnName="KnockOffType"  tableName="FinReceiptHeader"/>
+	</changeSet>
 
 	<changeSet id="PSD#226779.1" author="Gopal.p">
 		<modifyDataType tableName="FinReceiptHeader" columnName="KnockOffType" newDataType="varchar(2)" />
 	</changeSet>
+	
+	<changeSet id="PSD#226779.1_post" author="Gopal.p" dbms="mssql">
+      <sql>
+			<![CDATA[
+				ALTER TABLE FinReceiptHeader ADD CONSTRAINT DK_RECEIPTHEADER_KOF DEFAULT '' FOR KnockOffType;
+			]]>
+	  	</sql>
+	</changeSet>
+  
 
 	<changeSet id="PSD#226779.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
@@ -15396,9 +15419,22 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#226779.2_pre" author="Gopal.p" dbms="mssql">
+    	<dropDefaultValue columnDataType="char(1)"  columnName="KnockOffType"  tableName="FinReceiptHeader_Temp"/>
+	</changeSet>
+
 
 	<changeSet id="PSD#226779.2" author="Gopal.p">
 		<modifyDataType tableName="FinReceiptHeader_Temp" columnName="KnockOffType" newDataType="varchar(2)" />
+	</changeSet>
+	
+	<changeSet id="PSD#226779.2_post" author="Gopal.p" dbms="mssql">
+      <sql>
+			<![CDATA[
+				ALTER TABLE FinReceiptHeader_Temp ADD CONSTRAINT DK_RECEIPTHEADER_T_KOF DEFAULT '' FOR KnockOffType;
+			]]>
+	  	</sql>
 	</changeSet>
 
 
@@ -15875,10 +15911,10 @@
 	<changeSet id="ST#110.5" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_AUTO_REFUND_QUEUE_THREADID DEFAULT 0 FOR THREADID;
-				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_AUTO_REFUND_QUEUE_PROGRESS DEFAULT 0 FOR PROGRESS;
-				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_AUTO_REFUND_QUEUE_RCID DEFAULT 0 FOR RESETCOUNTERID;
-				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_AUTO_REFUND_QUEUE_PCPF DEFAULT 0 FOR PICKUPFLAG;
+				ALTER TABLE AUTO_REFUND_QUEUE ADD CONSTRAINT DF_AUTO_REFUND_QUEUE_THREADID DEFAULT 0 FOR THREADID;
+				ALTER TABLE AUTO_REFUND_QUEUE ADD CONSTRAINT DF_AUTO_REFUND_QUEUE_PROGRESS DEFAULT 0 FOR PROGRESS;
+				ALTER TABLE AUTO_REFUND_QUEUE ADD CONSTRAINT DF_AUTO_REFUND_QUEUE_RCID DEFAULT 0 FOR RESETCOUNTERID;
+				ALTER TABLE AUTO_REFUND_QUEUE ADD CONSTRAINT DF_AUTO_REFUND_QUEUE_PCPF DEFAULT 0 FOR PICKUPFLAG;
 			]]>
 		</sql>
 	</changeSet>
@@ -16663,64 +16699,74 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#227320.1" author="sainaveen.y">
+	<changeSet id="PSD#227320.2" author="sainaveen.y">
 		<sql>
             <![CDATA[
-              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEEPERC' and RBEVENT = 'EARLYSTL' and RBFLDNAME = 'ClosureType';
+              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEEPERC' and RBEVENT = 'EARLYSTL' and RBFLDNAME = 'fm_ClosureType';
               	
-              	INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEEPERC', 'EARLYSTL', 'ClosureType', 'ClosureType', 'nvarchar',  12,  '0', '1', 'Closure_Types', 'static,global,dbvalue', 'ClosureType');
+              	INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEEPERC', 'EARLYSTL', 'fm_ClosureType', 'ClosureType', 'nvarchar',  12,  '0', '1', 'Closure_Types', 'static,global,dbvalue', 'ClosureType');
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1561.88" author="saikrishna.b">
+	<changeSet id="ST#1561.91" author="saikrishna.b">
 		<sql>
             <![CDATA[
               	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEES' and RBEVENT = 'NOCLTR';
               	
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'CustCtgCode',						'Customer Category Code', 													'nvarchar',  8, 	'0', '1', 'CustomerCategory', 	'dbvalue', 				'CustomerCategory');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'CustTypeCode', 						'Customer Type', 															'nvarchar',  8, 	'0', '1', 'CustomerType', 		'dbvalue', 				'CustomerType');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'custGenderCode', 					'Customer Gender', 															'nvarchar',  8, 	'0', '1', 'Gender', 			'dbvalue', 				'Gender');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'LoanClosureAge',  					'No of Days between Closure date and Application Date', 					'int', 		 10,  	'0', '1', '', 					'static,global,dbvalue', '');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'LoanCancellationAge', 				'No of Days between Cancellation Date and Application Date', 				'int', 		 10, 	'0', '1', '',   				'static,global,dbvalue', '');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'ClosureType',						'Closure Type', 															'nvarchar',  8, 	'0', '1', '', 					'static', 				 '');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'SequenceNo', 						'No of time same letter type is being issued for the same loan', 			'int', 		 10,    '0', '1', '', 					'static', 				 '');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'PrvLetterCourierDeliveryStatus',		'Status of previous letter’s courier status if shared through courier', 	'nvarchar',  8,     '0', '1', '',           		'static', 				 '');    
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_custCtgCode',						'Customer Category Code', 													'nvarchar',  8, 	'0', '1', 'CustomerCategory', 	'dbvalue', 				'CustomerCategory');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_custTypeCode', 						'Customer Type', 															'nvarchar',  8, 	'0', '1', 'CustomerType', 		'dbvalue', 				'CustomerType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_custGenderCode', 					'Customer Gender', 															'nvarchar',  8, 	'0', '1', 'Gender', 			'dbvalue', 				'Gender');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_loanClosureAge',  					'No of Days between Closure date and Application Date', 					'int', 		 10,  	'0', '1', '', 					'static,global,dbvalue', '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_loanCancellationAge', 				'No of Days between Cancellation Date and Application Date', 				'int', 		 10, 	'0', '1', '',   				'static,global,dbvalue', '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_closureType',						'Closure Type', 															'nvarchar',  8, 	'0', '1', '', 					'static', 				 '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_sequenceNo', 						'No of time same letter type is being issued for the same loan', 			'int', 		 10,    '0', '1', '', 					'static', 				 '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_prvLetterCourierDeliveryStatus',		'Status of previous letter’s courier status if shared through courier', 	'nvarchar',  8,     '0', '1', '',           		'static', 				 '');    
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1561.89" author="saikrishna.b">
+	<changeSet id="ST#1561.92" author="saikrishna.b">
 		<sql>
             <![CDATA[
               	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEES' and RBEVENT = 'CANCLLTR';
 
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'CustCtgCode',						'Customer Category Code', 													'nvarchar',  8, 	'0', '1', 'CustomerCategory', 	'dbvalue', 				'CustomerCategory');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'CustTypeCode', 					'Customer Type', 															'nvarchar',  8, 	'0', '1', 'CustomerType', 		'dbvalue', 				'CustomerType');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'custGenderCode', 					'Customer Gender', 															'nvarchar',  8, 	'0', '1', 'Gender', 			'dbvalue', 				'Gender');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'LoanClosureAge',  					'No of Days between Closure date and Application Date', 					'int', 		 10,  	'0', '1', '', 					'static,global,dbvalue', '');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'LoanCancellationAge', 				'No of Days between Cancellation Date and Application Date', 				'int', 		 10, 	'0', '1', '',   				'static,global,dbvalue', '');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'ClosureType',						'Closure Type', 															'nvarchar',  8, 	'0', '1', '', 					'static', 				 '');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'SequenceNo', 						'No of time same letter type is being issued for the same loan', 			'int', 		 10,    '0', '1', '', 					'static', 				 '');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'PrvLetterCourierDeliveryStatus',	'Status of previous letter’s courier status if shared through courier', 	'nvarchar',  8,     '0', '1', '',           		'static', 				 '');    
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_custCtgCode',						'Customer Category Code', 													'nvarchar',  8, 	'0', '1', 'CustomerCategory', 	'dbvalue', 				'CustomerCategory');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_custTypeCode', 					'Customer Type', 															'nvarchar',  8, 	'0', '1', 'CustomerType', 		'dbvalue', 				'CustomerType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_custGenderCode', 					'Customer Gender', 															'nvarchar',  8, 	'0', '1', 'Gender', 			'dbvalue', 				'Gender');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_loanClosureAge',  					'No of Days between Closure date and Application Date', 					'int', 		 10,  	'0', '1', '', 					'static,global,dbvalue', '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_loanCancellationAge', 				'No of Days between Cancellation Date and Application Date', 				'int', 		 10, 	'0', '1', '',   				'static,global,dbvalue', '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_closureType',						'Closure Type', 															'nvarchar',  8, 	'0', '1', '', 					'static', 				 '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_sequenceNo', 						'No of time same letter type is being issued for the same loan', 			'int', 		 10,    '0', '1', '', 					'static', 				 '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_prvLetterCourierDeliveryStatus',	'Status of previous letter’s courier status if shared through courier', 	'nvarchar',  8,     '0', '1', '',           		'static', 				 '');    
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1561.90" author="saikrishna.b">
+	<changeSet id="ST#1561.93" author="saikrishna.b">
 		<sql>
             <![CDATA[
               	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE = 'FEES' and RBEVENT = 'CLOSELTR';
 
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'CustCtgCode',						'Customer Category Code', 													'nvarchar',  8, 	'0', '1', 'CustomerCategory', 	'dbvalue', 				'CustomerCategory');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'CustTypeCode', 					'Customer Type', 															'nvarchar',  8, 	'0', '1', 'CustomerType', 		'dbvalue', 				'CustomerType');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'custGenderCode', 					'Customer Gender', 															'nvarchar',  8, 	'0', '1', 'Gender', 			'dbvalue', 				'Gender');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'LoanClosureAge',  					'No of Days between Closure date and Application Date', 					'int', 		 10,  	'0', '1', '', 					'static,global,dbvalue', '');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'LoanCancellationAge', 				'No of Days between Cancellation Date and Application Date', 				'int', 		 10, 	'0', '1', '',   				'static,global,dbvalue', '');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'ClosureType',						'Closure Type', 															'nvarchar',  8, 	'0', '1', '', 					'static', 				 '');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'SequenceNo', 						'No of time same letter type is being issued for the same loan', 			'int', 		 10,    '0', '1', '', 					'static', 				 '');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'PrvLetterCourierDeliveryStatus',	'Status of previous letter’s courier status if shared through courier', 	'nvarchar',  8,     '0', '1', '',           		'static', 				 '');    
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_custCtgCode',						'Customer Category Code', 													'nvarchar',  8, 	'0', '1', 'CustomerCategory', 	'dbvalue', 				'CustomerCategory');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_custTypeCode', 					'Customer Type', 															'nvarchar',  8, 	'0', '1', 'CustomerType', 		'dbvalue', 				'CustomerType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_custGenderCode', 					'Customer Gender', 															'nvarchar',  8, 	'0', '1', 'Gender', 			'dbvalue', 				'Gender');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_loanClosureAge',  					'No of Days between Closure date and Application Date', 					'int', 		 10,  	'0', '1', '', 					'static,global,dbvalue', '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_loanCancellationAge', 				'No of Days between Cancellation Date and Application Date', 				'int', 		 10, 	'0', '1', '',   				'static,global,dbvalue', '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_closureType',						'Closure Type', 															'nvarchar',  8, 	'0', '1', '', 					'static', 				 '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_sequenceNo', 						'No of time same letter type is being issued for the same loan', 			'int', 		 10,    '0', '1', '', 					'static', 				 '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_prvLetterCourierDeliveryStatus',	'Status of previous letter’s courier status if shared through courier', 	'nvarchar',  8,     '0', '1', '',           		'static', 				 '');    
 			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.94" author="saikrishna.b">
+		<sql>
+            <![CDATA[
+            	DELETE FROM RULES WHERE RULEEVENT = 'NOCLTR';
+				DELETE FROM RULES WHERE RULEEVENT = 'CLOSELTR';
+				DELETE FROM RULES WHERE RULEEVENT = 'CANCLLTR';
+            ]]>
 		</sql>
 	</changeSet>
 
@@ -16934,7 +16980,6 @@
 			]]>
 		</sql>
 	</changeSet>
-
 
 	<changeSet id="PSD#226779" author="saikiran.n">
 		<sql>
@@ -19356,5 +19401,378 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#3007_101_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmttransactionentry_aeview');
+			]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="ST#3007_101" author="Gopal.p">
+		<createView viewName="RMTTRANSACTIONENTRY_AEVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ACCOUNTSETID,
+					T1.TRANSORDER,
+					T1.TRANSDESC,
+					T1.DEBITCREDIT,
+					T1.SHADOWPOSTING,
+					T1.ACCOUNT,
+					T1.ACCOUNTTYPE,
+					T1.ACCOUNTSUBHEADRULE,
+					T1.TRANSCATIONCODE,
+					T1.RVSTRANSACTIONCODE,
+					T1.AMOUNTRULE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.ACCOUNTBRANCH,
+					T1.FEECODE,
+					T2.EVENTCODE LOVDESCEVENTCODENAME,
+					T1.CHARGETYPE,
+					T1.ENTRYBYINVESTMENT,
+					T1.OPENNEWFINAC,
+					T1.POSTTOSYS,
+					T3.AEEVENTCODEDESC LOVDESCEVENTCODEDESC,
+					T1.DERIVEDTRANORDER,
+					T2.ACCOUNTSETCODENAME LOVDESCACCSETCODENAME,
+					T1.FEEREPEAT,
+				   	T1.RECEIVABLEORPAYABLE, 
+				   	T1.ASSIGNMENTENTRY, 
+			   		T1.BULKING
+				FROM RMTTRANSACTIONENTRY T1
+				JOIN RMTACCOUNTINGSET T2 ON T1.ACCOUNTSETID = T2.ACCOUNTSETID
+				JOIN BMTAEEVENTS T3 ON T2.EVENTCODE = T3.AEEVENTCODE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#3007_101_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+		    	select deps_restore_dependencies ('plf', 'rmttransactionentry_aeview');
+		 	]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#3007_102_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'paymenttransaction_pview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#3007_102" author="Gopal.p">
+		<createView viewName="PAYMENTTRANSACTION_PVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					PT.TRANMODULE, 
+					PH.PAYMENTID,
+					PT.TRANSTATUS, 
+					PT.TRANSACTIONID, 
+					PT.TRANREFERENCE, 
+					PT.TRANBATCH,
+					PT.STATUSCODE, 
+					PT.STATUSDESC
+				FROM PAYMENTTRANSACTION PT 
+				INNER JOIN PAYMENTHEADER PH ON PT.PAYMENTID = PH.PAYMENTID AND PT.TRANMODULE = 'PYMT'
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = PH.FINID
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#3007_102_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+		    	select deps_restore_dependencies ('plf', 'paymenttransaction_pview');
+		 	]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#3007_103_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtaccountingset_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#3007_103" author="Gopal.p">
+		<createView viewName="RMTACCOUNTINGSET_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				 SELECT T1.ACCOUNTSETID,
+				 	T1.EVENTCODE, 
+				 	T1.ACCOUNTSETCODE, 
+				 	T1.ACCOUNTSETCODENAME, 
+				 	T1.VERSION, 
+				 	T1.LASTMNTBY, 
+				 	T1.LASTMNTON, 
+				 	T1.RECORDSTATUS, 
+                    T1.ROLECODE, 
+                    T1.NEXTROLECODE, 
+                    T1.TASKID, 
+                    T1.NEXTTASKID, 
+                    T1.RECORDTYPE, 
+                    T1.WORKFLOWID, 
+                    BA.AEEVENTCODEDESC LOVDESCEVENTCODENAME,
+                    T1.SYSTEMDEFAULT, 
+                    T1.ENTRYBYINVESTMENT
+				FROM RMTACCOUNTINGSET T1 
+				INNER JOIN BMTAEEVENTS BA ON T1.EVENTCODE =  BA.AEEVENTCODE
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#3007_103_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+		    	select deps_restore_dependencies ('plf', 'rmtaccountingset_aview');
+		 	]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#3007_104_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'paymenttransaction_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#3007_104" author="Gopal.p">
+		<createView viewName="PAYMENTTRANSACTION_VIEW" replaceIfExists="true">
+			<![CDATA[
+				 SELECT FM.FINID,
+				 	FM.FINREFERENCE, 
+				 	PT.TRANMODULE, 
+				 	FA.PAYMENTID ,
+				 	PT.TRANSTATUS, 
+				 	PT.TRANSACTIONID, 
+				 	PT.TRANREFERENCE, 
+				 	PT.TRANBATCH, 
+				 	PT.STATUSCODE, 
+				 	PT.STATUSDESC
+				FROM PAYMENTTRANSACTION PT 
+				INNER JOIN FINADVANCEPAYMENTS FA ON PT.PAYMENTID = FA.PAYMENTID
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = FA.FINID
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#3007_104_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+		    	select deps_restore_dependencies ('plf', 'paymenttransaction_view');
+		 	]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#3007_105" author="Gopal.p">
+		<addColumn tableName="FinSuspHold">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="ST#3007_106" author="murthy.y">
+		<addColumn tableName="FinSuspHold_Temp">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="ST#3007_107" author="murthy.y">
+		<sql>
+			<![CDATA[
+				UPDATE FINSUSPHOLD SET FINID = (SELECT M.FINID FROM FINANCEMAIN_TEMP M UNION ALL SELECT M.FINID FROM FINANCEMAIN M WHERE NOT EXISTS (SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = M.FINID) and FINSUSPHOLD.FINREFERENCE = M.FINREFERENCE);
+				UPDATE FINSUSPHOLD_TEMP SET FINID = (SELECT M.FINID FROM FINANCEMAIN_TEMP M UNION ALL SELECT M.FINID FROM FINANCEMAIN M WHERE NOT EXISTS (SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = M.FINID) and FINSUSPHOLD_TEMP.FINREFERENCE = M.FINREFERENCE);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#3007_108" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_finsusphold_finid"
+			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="FinSuspHold"
+			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="ST#3007_109" author="murthy.y">
+		<createIndex tableName="FinSuspHold" indexName="idx_finsusphold_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3007_110" author="murthy.y">
+		<createIndex tableName="FinSuspHold_Temp" indexName="idx_finsusphold_t_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3007_111_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finsusphold_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#3007_111" author="Gopal.p">
+		<createView viewName="FINSUSPHOLD_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.SUSPHOLDID, 
+				 	T1.PRODUCT, 
+				 	T2.PRODUCTDESC, 
+				 	T3.FINTYPEDESC,
+				 	T1.FINTYPE, 
+				 	T1.FINID,
+				 	T1.FINREFERENCE, 
+				 	T1.CUSTID, 
+				 	T4.CUSTCIF,
+            		T4.CUSTSHRTNAME, 
+            		T1.ACTIVE, 
+            		T1.VERSION, 
+            		T1.LASTMNTBY, 
+            		T1.LASTMNTON, 
+            		T1.RECORDSTATUS, 
+            		T1.ROLECODE,
+            		T1.NEXTROLECODE, 
+            		T1.TASKID, 
+            		T1.NEXTTASKID,
+            		T1.RECORDTYPE, 
+            		T1.WORKFLOWID
+				FROM FINSUSPHOLD_TEMP T1 
+				LEFT OUTER JOIN BMTPRODUCT T2 ON T1.PRODUCT = T2.PRODUCTCODE 
+				LEFT OUTER JOIN RMTFINANCETYPES T3  ON T1.FINTYPE = T3.FINTYPE 
+				LEFT OUTER JOIN CUSTOMERS T4  ON T1.CUSTID = T4.CUSTID
+				UNION ALL
+				SELECT T1.SUSPHOLDID, 
+					T1.PRODUCT, 
+					T2.PRODUCTDESC, 
+					T3.FINTYPEDESC,
+					T1.FINTYPE, 
+					T1.FINID,
+				 	T1.FINREFERENCE, 
+					T1.CUSTID, 
+					T4.CUSTCIF,
+            		T4.CUSTSHRTNAME,
+            		T1.ACTIVE, 
+            		T1.VERSION, 
+            		T1.LASTMNTBY, 
+            		T1.LASTMNTON, 
+            		T1.RECORDSTATUS, 
+            		T1.ROLECODE,
+            		T1.NEXTROLECODE, 
+            		T1.TASKID, 
+            		T1.NEXTTASKID,
+            		T1.RECORDTYPE, 
+            		T1.WORKFLOWID
+				FROM FINSUSPHOLD T1 
+				LEFT OUTER JOIN BMTPRODUCT T2 ON T1.PRODUCT = T2.PRODUCTCODE 
+				LEFT OUTER JOIN RMTFINANCETYPES T3  ON T1.FINTYPE = T3.FINTYPE 
+				LEFT OUTER JOIN CUSTOMERS T4  ON T1.CUSTID = T4.CUSTID
+				WHERE NOT EXISTS (SELECT 1 FROM FINSUSPHOLD_TEMP WHERE SUSPHOLDID = T1.SUSPHOLDID)
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#3007_111_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+		    	select deps_restore_dependencies ('plf', 'finsusphold_view');
+		 	]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.70_Pre1" author="Gopal.P">
+		<sql>
+			<![CDATA[
+				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN, IS_MASKINGDATA) values ('LETTER_GENERATE_MANUAL', 'ActualAmt', 'NUMBER', '18,0', ' Actual amount', ' Used to captured actual amount while generating letter', 'Optional', 0, null, null, 0, null, CURRENT_TIMESTAMP, 'Gopal.P', null, null, 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.70" author="Gopal.p">
+		<addColumn tableName="Loan_Letter_Manual">
+			<column name="ActualAmt" type = "decimal(18, 0)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1561.71_Pre1" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN, IS_MASKINGDATA) values ('LETTER_GENERATE_MANUAL_TEMP', 'ActualAmt', 'NUMBER', '18,0', ' Actual amount', ' Used to captured actual amount while generating letter', 'Optional', 0, null, null, 0, null, CURRENT_TIMESTAMP, 'Gopal.P', null, null, 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.71" author="Gopal.p">
+		<addColumn tableName="Loan_Letter_Manual_Temp">
+			<column name="ActualAmt" type ="decimal(18, 0)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1561.72" author="Gopal.p">
+		<sql>
+			<![CDATA[	
+				UPDATE LOAN_LETTER_MANUAL_TEMP SET ACTUALAMT = 0;
+				UPDATE LOAN_LETTER_MANUAL SET ACTUALAMT = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.73" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE LOAN_LETTER_MANUAL_TEMP ADD CONSTRAINT DF_FTT_ACTUALAMT DEFAULT 0 FOR ActualAmt;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1561.73" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue tableName="LOAN_LETTER_MANUAL_TEMP" columnName="ActualAmt" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.74" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE LOAN_LETTER_MANUAL ADD CONSTRAINT DF_FT_ACTUALAMT DEFAULT 0 FOR ActualAmt;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1561.74" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue tableName="LOAN_LETTER_MANUAL" columnName="ActualAmt" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.75" author="Gopal.p">
+		<sql>
+			<![CDATA[	
+				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'GENERATE_LETTER_DOWNLOAD');
+				DELETE FROM SECROLES WHERE ROLECD = 'GENERATE_LETTER_DOWNLOAD';
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_DOWNLOAD');
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_DOWNLOAD';
+
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'GENERATE_LETTER_DOWNLOAD',     'GENERATE LETTER DOWNLOAD',  	1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'GENERATE_LETTER_DOWNLOAD',    'Download role for Genarate Letter',    '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
+
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_DOWNLOAD'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'GENERATE_LETTER_DOWNLOAD'),    0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ERR99020" author="HariTeja.B">
+		<sql>
+			<![CDATA[
+				DELETE FROM ERRORDETAILS WHERE CODE = '99020';
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('99020', 'EN', 'E', 'No Bank details available or Invalid with ifsc {0}.', '', 'Approved', null, null, null, null, null, 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+		
 </databaseChangeLog> 

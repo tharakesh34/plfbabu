@@ -349,7 +349,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 			return;
 		}
 
-		ListField listField = ListField.getField(id.split("\\-")[0]);
+		ListField listField = ListField.getField(id.split("\\_")[0]);
 
 		if (listField == null) {
 			return;
@@ -973,7 +973,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 
 		comboBox.addForward(Events.ON_CHANGE, windowLoanTypeLetterMappingDialog, "onChangeLetterType", listItem);
 
-		comboBox.setId(ListField.LETTER_TYPE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
+		comboBox.setId(ListField.LETTER_TYPE.name().concat("_").concat(String.valueOf(mapping.getKeyValue())));
 
 		readOnlyComponent(isReadOnly, comboBox);
 
@@ -991,7 +991,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 	private void appendAutoGeneration(Listitem listItem, LoanTypeLetterMapping mapping, boolean isReadOnly) {
 		Checkbox checkBox = new Checkbox();
 		checkBox.setChecked(mapping.isAutoGeneration());
-		checkBox.setId(ListField.AUTO_GENERATION.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
+		checkBox.setId(ListField.AUTO_GENERATION.name().concat("_").concat(String.valueOf(mapping.getKeyValue())));
 		readOnlyComponent(isReadOnly, checkBox);
 
 		Hbox hbox = new Hbox();
@@ -1007,7 +1007,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 	private void appendMode(Listitem listItem, LoanTypeLetterMapping mapping, boolean isReadOnly) {
 		Combobox comboBox = new Combobox();
 		fillComboBox(comboBox, mapping.getLetterMode(), letterModeList);
-		comboBox.setId(ListField.MODE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
+		comboBox.setId(ListField.MODE.name().concat("_").concat(String.valueOf(mapping.getKeyValue())));
 		readOnlyComponent(isReadOnly, comboBox);
 
 		Hbox hbox = new Hbox();
@@ -1028,7 +1028,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 		combobox.setDescColumn("TemplateDesc");
 		combobox.setValidateColumns(new String[] { "TemplateCode" });
 
-		combobox.setId(ListField.EMAIL_TEMPLATE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
+		combobox.setId(ListField.EMAIL_TEMPLATE.name().concat("_").concat(String.valueOf(mapping.getKeyValue())));
 		readOnlyComponent(isReadOnly, combobox);
 
 		Hbox hbox = new Hbox();
@@ -1049,7 +1049,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 		agreementCode.setValueColumn("AggCode");
 		agreementCode.setDescColumn("AggName");
 		agreementCode.setValidateColumns(new String[] { "AggCode" });
-		agreementCode.setId(ListField.AGREEMENT_CODE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
+		agreementCode.setId(ListField.AGREEMENT_CODE.name().concat("_").concat(String.valueOf(mapping.getKeyValue())));
 		readOnlyComponent(isReadOnly, agreementCode);
 
 		Hbox hbox = new Hbox();

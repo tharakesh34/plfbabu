@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -35,13 +36,14 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	}
 
 	@Override
-	public List<GenerateLetter> getResult(ISearch search) {
+	public List<GenerateLetter> getResult(ISearch search, List<String> roleCodes) {
 		List<Object> value = new ArrayList<>();
 
+		String whereCondition = QueryUtil.buildWhereClause(search, value);
 		StringBuilder sql = new StringBuilder("select");
 		sql.append(" Id, FinID, LetterType, Finreference, CustAcctHolderName");
 		sql.append(", CustCoreBank, CustCIF, FinBranch, Product");
-		sql.append(", WaiverAmt, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
+		sql.append(", WaiverAmt, ActualAmt, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From (");
@@ -49,7 +51,16 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		sql.append(" Union All ");
 		sql.append(getSqlQuery(TableType.MAIN_TAB));
 		sql.append(" Where not exists (Select 1 From Loan_Letter_Manual_Temp Where Id = gl.Id)) gl");
-		sql.append(QueryUtil.buildWhereClause(search, value));
+
+		if (!StringUtils.isEmpty(whereCondition)) {
+			sql.append(whereCondition);
+			sql.append(" and (NextRoleCode is null or NextRoleCode = '' or NextRoleCode in (");
+		} else {
+			sql.append(" Where (NextRoleCode is null or NextRoleCode = '' or NextRoleCode in (");
+		}
+
+		sql.append(JdbcUtil.getInCondition(roleCodes));
+		sql.append("))");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -58,6 +69,10 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 
 			for (Object object : value) {
 				ps.setObject(++index, object);
+			}
+
+			for (String roleCode : roleCodes) {
+				ps.setString(++index, roleCode);
 			}
 		}, new GenerateLetterRM());
 	}
@@ -121,7 +136,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		StringBuilder sql = new StringBuilder("select");
 		sql.append(" ID, FinID, LetterType, Finreference, CustAcctHolderName");
 		sql.append(", CustCoreBank, CustCIF, FinBranch, Product, LetterType");
-		sql.append(", WaiverAmt, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
+		sql.append(", WaiverAmt, ActualAmt, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From (");
@@ -176,6 +191,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			sb.setFinBranch(rs.getString("FinBranch"));
 			sb.setProduct(rs.getString("Product"));
 			sb.setWaiverAmt(rs.getBigDecimal("WaiverAmt"));
+			sb.setActualAmt(rs.getBigDecimal("ActualAmt"));
 			sb.setVersion(rs.getInt("Version"));
 			sb.setCreatedBy(rs.getLong("CreatedBy"));
 			sb.setCreatedOn(rs.getTimestamp("CreatedOn"));
@@ -199,8 +215,8 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" gl.Id, gl.FinID, gl.lettertype, fm.Finreference, cu.Custshrtname CustAcctHolderName");
 		sql.append(", cu.CustCoreBank, cu.CustCIF, fm.FinBranch, ft.fintypedesc Product");
-		sql.append(", gl.WaiverAmt, gl.Version, gl.CreatedBy, gl.CreatedOn, gl.ApprovedBy, gl.ApprovedOn");
-		sql.append(", gl.LastMntBy, gl.LastMntOn, gl.RecordStatus, gl.RoleCode");
+		sql.append(", gl.WaiverAmt, gl.ActualAmt, gl.Version, gl.CreatedBy, gl.CreatedOn, gl.ApprovedBy");
+		sql.append(", gl.ApprovedOn, gl.LastMntBy, gl.LastMntOn, gl.RecordStatus, gl.RoleCode");
 		sql.append(", gl.NextRoleCode, gl.TaskId, gl.NextTaskId, gl.RecordType, gl.WorkflowId");
 		sql.append(" From Loan_Letter_Manual").append(tableType.getSuffix()).append(" gl");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = gl.FinID");
@@ -224,8 +240,8 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			bc.setfieldString02(rs.getString("CustAcctHolderName"));
 			bc.setfieldString03(rs.getString("CustCoreBank"));
 			bc.setfieldString04(rs.getString("FinBranch"));
-			bc.setfieldString04(rs.getString("Product"));
-			bc.setfieldString04(rs.getString("LetterType"));
+			bc.setfieldString05(rs.getString("Product"));
+			bc.setfieldString06(rs.getString("LetterType"));
 
 			return bc;
 		}
@@ -299,10 +315,10 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		StringBuilder sql = new StringBuilder("Insert Into Loan_Letter_Manual");
 		sql.append(type.getSuffix());
 		sql.append("(LetterType, FinReference, FinID, CustCIF, CoreBankId, FinBranch, WaiverAmt");
-		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy");
+		sql.append(", ActualAmt, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -317,6 +333,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 				ps.setString(++index, gl.getCoreBankId());
 				ps.setString(++index, gl.getFinBranch());
 				ps.setBigDecimal(++index, gl.getWaiverAmt());
+				ps.setBigDecimal(++index, gl.getActualAmt());
 				ps.setInt(++index, gl.getVersion());
 				ps.setLong(++index, gl.getCreatedBy());
 				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
@@ -344,7 +361,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	public void update(GenerateLetter gl, TableType type) {
 		StringBuilder sql = new StringBuilder("Update Loan_Letter_Manual");
 		sql.append(type.getSuffix());
-		sql.append(" Set LetterType = ?");
+		sql.append(" Set LetterType = ?, ActualAmt = ?, WaiverAmt = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where Id = ?");
@@ -356,6 +373,8 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 				int index = 0;
 
 				ps.setString(++index, gl.getLetterType());
+				ps.setBigDecimal(++index, gl.getActualAmt());
+				ps.setBigDecimal(++index, gl.getWaiverAmt());
 				ps.setInt(++index, gl.getVersion());
 				ps.setLong(++index, gl.getLastMntBy());
 				ps.setTimestamp(++index, gl.getLastMntOn());

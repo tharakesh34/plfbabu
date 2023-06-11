@@ -414,6 +414,9 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 
 		BigDecimal sum = BigDecimal.ZERO;
 		for (UploadAlloctionDetail cru : newlist) {
+			if (Allocation.EMI.equals(cru.getReferenceCode())) {
+				continue;
+			}
 			sum = sum.add(cru.getPaidAmount());
 		}
 

@@ -1,6 +1,7 @@
 package com.pennant.pff.noc.upload.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -252,12 +253,14 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 						List<FinFeeDetail> ffd = rd.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 						if (CollectionUtils.isNotEmpty(ffd)) {
 							for (FinFeeDetail fee : ffd) {
-								if (PennantConstants.YES.equals(detail.getWaiverCharges())) {
-									fee.setRemainingFee(BigDecimal.ZERO);
-									fee.setRemainingFeeGST(BigDecimal.ZERO);
-									fee.setRemainingFeeGST(BigDecimal.ZERO);
-									fee.setWaivedAmount(fee.getActualAmount());
+								BigDecimal maxWaiverPer = fee.getMaxWaiverPerc();
+								if (maxWaiverPer.compareTo(BigDecimal.ZERO) > 0) {
+									BigDecimal waiverAmt = (fee.getCalculatedAmount().multiply(maxWaiverPer))
+											.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+									fee.setRemainingFee(fee.getRemainingFee().subtract(waiverAmt));
+									fee.setWaivedAmount(waiverAmt);
 								}
+
 								fee.setFeeID(finFeeDetailDAO.save(fee, false, ""));
 								gl.setFeeID(fee.getFeeID());
 							}

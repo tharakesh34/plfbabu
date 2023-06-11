@@ -46,17 +46,17 @@ public class ChangePasswordModel {
 	private static final String DEFAULT_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=[^\\s]+$)(?=.*[!@#$%^&*_-])";
 
 	/**
-	 * Compares whether both the parameters are same or not.
+	 * Verifies the encoded password obtained from storage matches the submitted raw password after it too is encoded.
 	 * 
-	 * @param oldPassword Protected
-	 * @param password    Unprotected
-	 * @return boolean
+	 * @param encodedPassword The encoded password from storage to compare with.
+	 * @param rawPassword     The raw password to encode and match.
+	 * @return <code>true</code> if the raw password, after encoding, matches the encoded password from storage.
 	 */
-	public boolean isPaswordsSame(String encriptedPassword, String password) {
+	public boolean isPaswordsSame(String encodedPassword, String rawPassword) {
 		logger.debug(Literal.ENTERING);
 
 		PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");
-		if (!pwdEncoder.matches(password, encriptedPassword)) {
+		if (!pwdEncoder.matches(rawPassword, encodedPassword)) {
 			return false;
 		}
 

@@ -6022,13 +6022,6 @@
 		<dropIndex tableName="FINEXCESSAMOUNT" indexName="IDX_FNEXCSSAMN_FINREF_AMTTYPE" />
 	</changeSet>
 
-	<changeSet id="ST#99.22" author="murthy.y">
-		<createIndex tableName="FINEXCESSAMOUNT" indexName="idx_fnexcssamn_finid_amttype" unique="true">
-			<column name="FINID" type="bigint" />
-			<column name="AMOUNTTYPE" type="varchar(8)" />
-		</createIndex>
-	</changeSet>
-
 	<changeSet id="PSD#209027.1" author="NagaVamsi.P">
 		<sql>
 			<![CDATA[

@@ -1014,6 +1014,16 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="011.05" author="goutham.ch">
+		<sql>
+			<![CDATA[
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',			'CR2011', 	'Agreement Id not found in PLF.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',			'CR2012', 	'Agency Id not found in PLF.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',			'CR2013', 	'Receipt Channel not found in PLF.');
+				  ]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="35.1" author="goutham.ch">
 		<renameColumn newColumnName="FIC_NAME" oldColumnName="FIC_NAMES"	tableName="FILE_TRANSFER_CONFIG" />
 	</changeSet>
