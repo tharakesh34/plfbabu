@@ -1649,11 +1649,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				actualBox.setWidth("85px");
 				actualBox.setMaxlength(18);
 				actualBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-				if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, finFeeDetail.getTaxComponent())) {
-					actualBox.setDisabled(true);
-				} else {
-					actualBox.setDisabled(readOnly ? true : !finFeeDetail.isAlwModifyFee());
-				}
+				actualBox.setDisabled(readOnly || !finFeeDetail.isAlwModifyFee());
 
 				if (finFeeDetail.isRestructureFee()
 						|| (getFinanceDetail().getFinScheduleData().getRestructureDetail() != null
