@@ -3,6 +3,7 @@ package com.pennant.pff.noc.service.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -158,13 +160,13 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 		for (FinFeeDetail fee : fees) {
 			BigDecimal maxWaiverPer = fee.getMaxWaiverPerc();
-			BigDecimal waiverAmt = (fee.getCalculatedAmount().multiply(maxWaiverPer)).divide(new BigDecimal(100), 0,
+			BigDecimal waiverAmt = (fee.getActualAmount().multiply(maxWaiverPer)).divide(new BigDecimal(100), 0,
 					RoundingMode.HALF_DOWN);
 
 			if (fee.getWaivedAmount().compareTo(waiverAmt) > 0) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Waiver amount";
-				valueParm[1] = "Actual waiver amount:" + String.valueOf(waiverAmt);
+				valueParm[1] = "Actual waiver amount:" + CurrencyUtil.format(waiverAmt);
 				valueParm[2] = fee.getFeeTypeCode();
 				ah.setErrorDetail(new ErrorDetail("90257", valueParm));
 			}
@@ -281,7 +283,8 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		List<FinFeeDetail> fees = gl.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 		if (CollectionUtils.isNotEmpty(fees)) {
 			for (FinFeeDetail fee : fees) {
-				fee.setRemainingFee(fee.getRemainingFee().subtract(fee.getWaivedAmount()));
+				fee.setFinReference(gl.getFinReference());
+				fee.setFinID(gl.getFinID());
 				fee.setFeeID(finFeeDetailDAO.save(fee, false, ""));
 				gl.setFeeID(fee.getFeeID());
 			}
@@ -376,6 +379,20 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		schdData.setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
 		schdData.setFinFeeDetailList(finFeeDetailDAO.getFinFeeDetailByFinRef(finID, false, "_View"));
 
+		if (gl.getActualAmt().compareTo(BigDecimal.ZERO) > 0 || gl.getWaiverAmt().compareTo(BigDecimal.ZERO) > 0) {
+			List<FinFeeDetail> fees = new ArrayList<>();
+
+			FinFeeDetail fee = new FinFeeDetail();
+
+			fee.setFinEvent(NOCConstants.getLetterType(gl.getLetterType()));
+			fee.setActualAmount(gl.getActualAmt());
+			fee.setWaivedAmount(gl.getWaiverAmt());
+
+			fees.add(fee);
+			fd.setFinFeeDetails(fees);
+			fd.setModuleDefiner("GenerateLetter");
+		}
+
 		schdData.setFeeEvent(NOCConstants.getLetterType(gl.getLetterType()));
 		FinanceSummary summary = new FinanceSummary();
 
@@ -457,29 +474,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 	@Override
 	public List<ManualAdvise> getManualAdvises(long finID) {
-		return manualAdviseDAO.getManualAdvise(finID, true);
-	}
-
-	private String getLetterType(GenerateLetter gl) {
-		String letterType = null;
-
-		switch (gl.getLetterType()) {
-		case "NOC": {
-			letterType = "NOCLTR";
-			break;
-		}
-		case "CLOSURE": {
-			letterType = "CLOSELTR";
-			break;
-		}
-		case "CANCELLATION": {
-			letterType = "CANCLLTR";
-			break;
-		}
-		default:
-			break;
-		}
-		return letterType;
+		return manualAdviseDAO.getPaybleAdvises(finID, "");
 	}
 
 	private void prepareProfitDetailSummary(FinanceSummary summary, FinScheduleData schdData) {

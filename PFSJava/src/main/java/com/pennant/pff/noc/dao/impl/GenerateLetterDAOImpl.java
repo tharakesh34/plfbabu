@@ -240,8 +240,8 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			bc.setfieldString02(rs.getString("CustAcctHolderName"));
 			bc.setfieldString03(rs.getString("CustCoreBank"));
 			bc.setfieldString04(rs.getString("FinBranch"));
-			bc.setfieldString04(rs.getString("Product"));
-			bc.setfieldString04(rs.getString("LetterType"));
+			bc.setfieldString05(rs.getString("Product"));
+			bc.setfieldString06(rs.getString("LetterType"));
 
 			return bc;
 		}
@@ -361,7 +361,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	public void update(GenerateLetter gl, TableType type) {
 		StringBuilder sql = new StringBuilder("Update Loan_Letter_Manual");
 		sql.append(type.getSuffix());
-		sql.append(" Set LetterType = ?");
+		sql.append(" Set LetterType = ?, ActualAmt = ?, WaiverAmt = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where Id = ?");
@@ -373,6 +373,8 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 				int index = 0;
 
 				ps.setString(++index, gl.getLetterType());
+				ps.setBigDecimal(++index, gl.getActualAmt());
+				ps.setBigDecimal(++index, gl.getWaiverAmt());
 				ps.setInt(++index, gl.getVersion());
 				ps.setLong(++index, gl.getLastMntBy());
 				ps.setTimestamp(++index, gl.getLastMntOn());

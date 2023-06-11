@@ -142,8 +142,6 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 		try {
 
-			getRole();
-
 			this.generateLetter = (GenerateLetter) arguments.get("generateLetter");
 			this.moduleCode = (String) arguments.get("moduleCode");
 			if (this.generateLetter == null) {
@@ -526,7 +524,6 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 			}
 
 			if (isLoadProcess) {
-
 				Tabpanel tabPanel = getTabpanel(AssetConstants.UNIQUE_ID_FEE);
 				if (tabPanel != null) {
 					tabPanel.getChildren().clear();

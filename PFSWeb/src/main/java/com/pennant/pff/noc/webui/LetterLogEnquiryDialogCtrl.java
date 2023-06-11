@@ -2,7 +2,9 @@ package com.pennant.pff.noc.webui;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -138,6 +140,13 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void fillEnquirly(GenerateLetter genLtr) {
 		List<GenerateLetter> letterInfo = generateLetterService.getLetterInfo(genLtr);
+
+		if (CollectionUtils.isEmpty(letterInfo)) {
+			return;
+		}
+
+		letterInfo = letterInfo.stream().sorted((l1, l2) -> DateUtil.compare(l1.getCreatedDate(), l2.getCreatedDate()))
+				.collect(Collectors.toList());
 
 		this.listBoxLetterLog.setModel(new GroupsModelArray(letterInfo.toArray(), new LogLetterEnquiryComparator()));
 		this.listBoxLetterLog.setItemRenderer(new LogLetterEnquiryModelItemRenderer());

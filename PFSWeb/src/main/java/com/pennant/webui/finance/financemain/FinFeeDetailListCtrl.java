@@ -1687,18 +1687,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					waiverBox.setDisabled(readOnly);
 				}
 
-				if (this.generateLetter != null) {
-					if (this.generateLetter.getWaiverAmt() != null
-							&& this.generateLetter.getWaiverAmt().compareTo(BigDecimal.ZERO) > 0) {
-						finFeeDetail.setWaivedAmount(this.generateLetter.getWaiverAmt());
-					}
-
-					if (this.generateLetter.getActualAmt() != null
-							&& this.generateLetter.getActualAmt().compareTo(BigDecimal.ZERO) > 0) {
-						finFeeDetail.setActualAmount(this.generateLetter.getActualAmt());
-					}
-				}
-
 				waiverBox.setId(getComponentId(FEE_UNIQUEID_WAIVEDAMOUNT, finFeeDetail));
 				waiverBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getWaivedAmount(), formatter));
 				lc = new Listcell();
@@ -2398,6 +2386,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 				feeSchdMthdBox.setDisabled(feeSchdMthdDisable);
 			}
+
+			if ("GenerateLetter".equals(this.moduleDefiner)) {
+				feeSchdMthdBox.setValue(Labels.getLabel("label_CreateReceivable_Advise"));
+				feeSchdMthdBox.setDisabled(true);
+			}
 		}
 
 		this.dataChanged = true;
@@ -2858,6 +2851,16 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			// unFormating feeResult
 			feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
 
+			if ("GenerateLetter".equals(this.moduleDefiner)
+					&& CollectionUtils.isNotEmpty(financeDetail.getFinFeeDetails())) {
+				for (FinFeeDetail ffd : financeDetail.getFinFeeDetails()) {
+					if (ffd.getFinEvent().equals(fee.getFinEvent())) {
+						feeResult = ffd.getActualAmount();
+						fee.setWaivedAmount(ffd.getWaivedAmount());
+					}
+				}
+			}
+
 			fee.setCalculatedAmount(feeResult);
 
 			if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(fee.getTaxComponent())) {
@@ -2901,6 +2904,17 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 			if (PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE.equals(finFeeDetail.getCalculationType())) {
 				BigDecimal calPercentageFee = getCalculatedPercentageFee(finFeeDetail, finScheduleData, valueDate);
+
+				if ("GenerateLetter".equals(this.moduleDefiner)
+						&& CollectionUtils.isNotEmpty(financeDetail.getFinFeeDetails())) {
+					for (FinFeeDetail ffd : financeDetail.getFinFeeDetails()) {
+						if (ffd.getFinEvent().equals(finFeeDetail.getFinEvent())) {
+							calPercentageFee = ffd.getActualAmount();
+							finFeeDetail.setWaivedAmount(ffd.getWaivedAmount());
+						}
+					}
+				}
+
 				finFeeDetail.setCalculatedAmount(calPercentageFee);
 
 				if (CalculationConstants.REMFEE_WAIVED_BY_BANK.equals(finFeeDetail.getFeeScheduleMethod())) {
