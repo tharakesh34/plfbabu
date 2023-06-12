@@ -247,6 +247,7 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 
 		if (collectionData.getExcessAmount().compareTo(collectionData.getGrandTotal()) > 0) {
 			extRcd.setErrorCode(CR2010);
+			return;
 		}
 
 		List<String> validTypes = new ArrayList<>();
@@ -304,7 +305,6 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 
 			if (!receiptValues.contains(collectionData.getReceiptChannel())) {
 				extRcd.setErrorCode(CR2013);
-				return;
 			}
 		}
 
