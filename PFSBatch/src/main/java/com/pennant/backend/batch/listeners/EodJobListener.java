@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -261,8 +263,8 @@ public class EodJobListener implements JobExecutionListener {
 	private EODStatus setEODStatus(String subject, String eodStatus, JobExecution jobExecution) {
 		EODStatus eod = new EODStatus();
 
-		Date startTime = jobExecution.getStartTime();
-		Date endTime = jobExecution.getEndTime();
+		LocalDateTime startTime = jobExecution.getStartTime();
+		LocalDateTime endTime = jobExecution.getEndTime();
 
 		try {
 			eod.setSubject(subject);
@@ -272,9 +274,12 @@ public class EodJobListener implements JobExecutionListener {
 			eod.setValueDate(DateUtil.format(SysParamUtil.getAppValueDate(), DateFormat.LONG_DATE));
 			eod.setTotalCustomers(String.valueOf(StepUtil.PREPARE_CUSTOMER_QUEUE.getTotalRecords()));
 			eod.setProcessedCustomers(String.valueOf(StepUtil.PREPARE_CUSTOMER_QUEUE.getProcessedRecords()));
-			eod.setStartTime(DateUtil.format(startTime, DateFormat.LONG_TIME));
-			eod.setEndTime(DateUtil.format(endTime, DateFormat.LONG_TIME));
-			eod.setCompletedTime(DateUtil.timeBetween(endTime, startTime));
+			eod.setStartTime(startTime.format(DateTimeFormatter.ISO_TIME));
+			eod.setEndTime(endTime.format(DateTimeFormatter.ISO_TIME));
+
+			String duration = "";
+
+			// eod.setCompletedTime(DateUtil.timeBetween(endTime, startTime)); FIXME - Spring-Upgrade
 			eod.setTotalLoans("0");
 
 			for (StepExecution stepExecution : jobExecution.getStepExecutions()) {

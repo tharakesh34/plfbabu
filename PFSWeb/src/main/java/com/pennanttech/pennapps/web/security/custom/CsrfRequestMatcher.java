@@ -2,9 +2,9 @@ package com.pennanttech.pennapps.web.security.custom;
 
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Simple strategy to match an <tt>HttpServletRequest</tt>.

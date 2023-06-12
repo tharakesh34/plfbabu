@@ -72,8 +72,8 @@ import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.eod.constants.EodConstants;
-import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.batch.model.BatchProcessStatus;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class AMZProcess implements Tasklet {
@@ -95,7 +95,8 @@ public class AMZProcess implements Tasklet {
 		Map<String, Object> stepExecutionContext = context.getStepContext().getStepExecutionContext();
 		final int threadId = Integer.parseInt(stepExecutionContext.get(EodConstants.THREAD).toString());
 
-		DataEngineStatus status = (DataEngineStatus) stepExecutionContext.get("amzProcess:" + String.valueOf(threadId));
+		BatchProcessStatus status = (BatchProcessStatus) stepExecutionContext
+				.get("amzProcess:" + String.valueOf(threadId));
 		long processedCount = 1;
 		long failedCount = 0;
 		logger.info("process Statred by the Thread {} with date {}", threadId, appDate.toString());

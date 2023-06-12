@@ -1,6 +1,7 @@
 package com.pennanttech.pff.batch.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class BatchProcessStatus implements Serializable {
@@ -17,12 +18,17 @@ public class BatchProcessStatus implements Serializable {
 	private long processedRecords;
 	private long successRecords;
 	private long failedRecords;
-	private Date startTime;
-	private Date endTime;
+	private LocalDateTime startTime;
+	private LocalDateTime endTime;
 	private String remarks;
 
 	public BatchProcessStatus() {
-	    super();
+		super();
+	}
+
+	public BatchProcessStatus(String name) {
+		super();
+		this.name = name;
 	}
 
 	public long getId() {
@@ -113,19 +119,19 @@ public class BatchProcessStatus implements Serializable {
 		this.failedRecords = failedRecords;
 	}
 
-	public Date getStartTime() {
+	public LocalDateTime getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(Date startTime) {
+	public void setStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
 	}
 
-	public Date getEndTime() {
+	public LocalDateTime getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(Date endTime) {
+	public void setEndTime(LocalDateTime endTime) {
 		this.endTime = endTime;
 	}
 

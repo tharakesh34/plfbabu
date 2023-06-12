@@ -7,6 +7,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
@@ -19,7 +20,6 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.service.finance.covenant.impl.CovenantAlerts;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -30,7 +30,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluation>
 		implements ItemWriter<CollateralRevaluation> {
-	private static Logger logger = LogManager.getLogger(CovenantAlerts.class);
+	private static Logger logger = LogManager.getLogger(CollateralRevaluationItemWriter.class);
 
 	private SecurityUserDAO securityUserDAO;
 	private FinanceMainDAO financeMainDAO;
@@ -176,6 +176,12 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 		}
 	}
 
+	@Override
+	public void write(Chunk<? extends CollateralRevaluation> chunk) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
 	private long sendNotification(FinanceDetail financeDetail, Notification notification) {
 		if (CollectionUtils.isEmpty(notification.getEmails())) {
 			return 0;
@@ -204,4 +210,5 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
 	}
+
 }

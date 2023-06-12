@@ -1,6 +1,7 @@
 package com.pennant.pff.batch.job.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class StepDetail implements Serializable {
@@ -14,8 +15,8 @@ public class StepDetail implements Serializable {
 	private long processedRecords;
 	private long successRecords;
 	private long failedRecords;
-	private Date startTime;
-	private Date endTime;
+	private LocalDateTime startTime;
+	private LocalDateTime endTime;
 	private long userId;
 	private String remarks;
 	private String status;
@@ -90,19 +91,19 @@ public class StepDetail implements Serializable {
 		this.failedRecords = failedRecords;
 	}
 
-	public Date getStartTime() {
+	public LocalDateTime getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(Date startTime) {
+	public void setStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
 	}
 
-	public Date getEndTime() {
+	public LocalDateTime getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(Date endTime) {
+	public void setEndTime(LocalDateTime endTime) {
 		this.endTime = endTime;
 	}
 

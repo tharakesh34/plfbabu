@@ -68,9 +68,9 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.eod.cache.RuleConfigCache;
-import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.batch.model.BatchProcessStatus;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class MicroEOD implements Tasklet {
@@ -105,7 +105,8 @@ public class MicroEOD implements Tasklet {
 		logger.info("Micro EOD Start on {} for the application date {} with Thread ID {}", sysDate, strAppDate,
 				threadId);
 
-		DataEngineStatus status = (DataEngineStatus) stepExecutionContext.get("microEOD:" + String.valueOf(threadId));
+		BatchProcessStatus status = (BatchProcessStatus) stepExecutionContext
+				.get("microEOD:" + String.valueOf(threadId));
 		long processedCount = 1;
 		long failedCount = 0;
 
@@ -201,7 +202,7 @@ public class MicroEOD implements Tasklet {
 					logger.info("Preparing EOD Events for the Customer ID {} >> completed.", custId);
 					customerQueuing.setLoanExist(true);
 				}
-				
+
 				txStatus = transactionManager.getTransaction(txDef);
 
 				if (customerQueuing.isLoanExist()) {

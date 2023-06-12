@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletRequest;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.Response;
 
@@ -34,6 +33,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.util.APILogDetailDAO;
 import com.pennanttech.ws.log.model.APILogDetail;
+
+import jakarta.servlet.ServletRequest;
 
 /**
  * A simple logging handler to log incoming request details.

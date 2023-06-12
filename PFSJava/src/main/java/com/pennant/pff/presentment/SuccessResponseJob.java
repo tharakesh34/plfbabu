@@ -50,7 +50,7 @@ public class SuccessResponseJob extends BatchConfiguration {
 	private boolean initialize = false;
 
 	@Scheduled(cron = "0 */5 * ? * *")
-	public void successResponseJob() throws Exception {
+	public void successResponseJob() {
 		logger.info("Presentment Success Response Job invoked at {}", DateUtil.getSysDate(DateFormat.LONG_DATE_TIME));
 
 		if (this.initialize) {
@@ -116,8 +116,8 @@ public class SuccessResponseJob extends BatchConfiguration {
 	}
 
 	@Bean
-	public Job peSuccessJob() throws Exception {
-		super.job = this.jobBuilderFactory.get("peSuccessJob")
+	public Job peSuccessJob() {
+		super.job = jobBuilder("peSuccessJob")
 
 				.listener(new PresentmentJobListener(presentmentDAO))
 
@@ -136,9 +136,9 @@ public class SuccessResponseJob extends BatchConfiguration {
 		return super.job;
 	}
 
-	private Step masterStep() throws Exception {
+	private Step masterStep() {
 		ResponsePartitioner partitioner = new ResponsePartitioner(bjqDAO);
-		return stepBuilderFactory.get("SUCCESS_RESPONSE_MASTER")
+		return stepBuilder("SUCCESS_RESPONSE_MASTER")
 
 				.partitioner(masterTasklet())
 
@@ -149,31 +149,21 @@ public class SuccessResponseJob extends BatchConfiguration {
 				.build();
 	}
 
-	private Step updateHeaderStep() throws Exception {
-		return this.stepBuilderFactory.get("UPDATE_HEADER").tasklet(new UpdateResponseTasklet(presentmentDAO)).build();
-
+	private Step updateHeaderStep() {
+		return this.taskletStep("UPDATE_HEADER", new UpdateResponseTasklet(presentmentDAO));
 	}
 
 	private TaskletStep masterTasklet() {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
 
-		return this.stepBuilderFactory
-
-				.get("SUCCESS_RESPONSE")
-
-				.tasklet(new SuccessResponseTasklet(bjqDAO, presentmentEngine, transactionManager,
-						eventPropertiesService))
-
-				.transactionAttribute(attribute)
-
-				.taskExecutor(taskExecutor("SUCCESS_RESPONSE_"))
-
-				.build();
+		SuccessResponseTasklet tasklet = new SuccessResponseTasklet(bjqDAO, presentmentEngine, transactionManager,
+				eventPropertiesService);
+		return taskletStep("SUCCESS_RESPONSE", tasklet, attribute);
 	}
 
 	private TaskletStep clear() {
-		return this.stepBuilderFactory.get("CLEAR").tasklet(clearQueueTasklet()).build();
+		return taskletStep("CLEAR", clearQueueTasklet());
 	}
 
 	private ResponseClearTasklet clearQueueTasklet() {
