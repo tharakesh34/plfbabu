@@ -49,6 +49,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -108,6 +109,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 	private transient FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private transient FinanceMainDAO financeMainDAO;
 	private CrossLoanKnockOffListCtrl crossLoanKnockOffListCtrl;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
 	private long custId = Long.MIN_VALUE;
 	private FinReceiptData receiptData = new FinReceiptData();
@@ -577,10 +579,11 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	public void doSetCustomer(Object nCustomer) {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) {
 		logger.debug(Literal.ENTERING);
 
 		this.custCIF.clearErrorMessage();
+		this.custCIFSearchObject = newSearchObject;
 		addFilter((Customer) nCustomer);
 
 		logger.debug(Literal.LEAVING);
