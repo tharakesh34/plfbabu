@@ -307,10 +307,6 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 
 	}
 
-	public ExtCollectionReceiptDao getExtCollectionReceiptDao() {
-		return extCollectionReceiptDao;
-	}
-
 	public void setExtCollectionReceiptDao(ExtCollectionReceiptDao extCollectionReceiptDao) {
 		this.extCollectionReceiptDao = extCollectionReceiptDao;
 	}
