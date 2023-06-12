@@ -33,8 +33,6 @@
  */
 package com.pennant.backend.endofday.main;
 
-import java.time.LocalDateTime;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.BatchStatus;
@@ -50,6 +48,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class PFSBatchAdmin {
 	private static final Logger logger = LogManager.getLogger(PFSBatchAdmin.class);
@@ -109,7 +108,7 @@ public class PFSBatchAdmin {
 		jobExecution = getJobExecution();
 		jobExecution.setStatus(BatchStatus.STOPPED);
 		jobExecution.setExitStatus(ExitStatus.STOPPED);
-		jobExecution.setEndTime(LocalDateTime.now());
+		jobExecution.setEndTime(DateUtil.getSysDate());
 		jobRepository.update(jobExecution);
 
 		logger.debug(Literal.LEAVING);

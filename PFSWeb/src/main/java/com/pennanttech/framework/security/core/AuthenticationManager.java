@@ -39,6 +39,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,7 +78,6 @@ import com.pennanttech.pennapps.core.security.user.UserAuthenticationException;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 import eu.bitwalker.useragentutils.UserAgent;
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This class is called from spring AOP as an aspect and is for logging.

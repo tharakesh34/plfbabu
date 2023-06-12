@@ -1,7 +1,6 @@
 package com.pennant.pff.batch.job.model;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,8 +18,8 @@ public class BatchJob implements Serializable {
 	private Long jobExecutionId;
 	private Date nextBusinessDate;
 	private Long userId;
-	private LocalDateTime startTime;
-	private LocalDateTime endTime;
+	private Date startTime;
+	private Date endTime;
 	private String status;
 	private String exitCode;
 	private String exitDescription;
@@ -32,7 +31,7 @@ public class BatchJob implements Serializable {
 	private int processRecords;
 	private int successRecords;
 	private int failedRecords;
-	private String remarks;
+	private String Remarks;
 	private int progress;
 	private int processedRecords;
 
@@ -88,19 +87,19 @@ public class BatchJob implements Serializable {
 		this.userId = userId;
 	}
 
-	public LocalDateTime getStartTime() {
+	public Date getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(LocalDateTime startTime) {
+	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
 
-	public LocalDateTime getEndTime() {
+	public Date getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(LocalDateTime endTime) {
+	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
 
@@ -193,11 +192,11 @@ public class BatchJob implements Serializable {
 	}
 
 	public String getRemarks() {
-		return remarks;
+		return Remarks;
 	}
 
 	public void setRemarks(String remarks) {
-		this.remarks = remarks;
+		Remarks = remarks;
 	}
 
 	public int getProgress() {

@@ -37,8 +37,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -68,13 +66,13 @@ public class BatchMonitor {
 	private static SimpleJobExplorer jobMonitorExplorer;
 
 	private static DataSource dataSource;
-	private static List<StepExecution> stepExecutions = new ArrayList<>();
+	private static List<StepExecution> stepExecutions = new ArrayList<StepExecution>();
 
 	public static long jobExecutionId = 0;
 	public static long avgTime = 0;
 	private static String processingTime = "00:00:00";
-	private static LocalDateTime jobStartTime = null;
-	private static LocalDateTime jobEndTime = null;
+	private static Date jobStartTime = null;
+	private static Date jobEndTime = null;
 	private static Calendar calendar = Calendar.getInstance();
 
 	private BatchMonitor() {
@@ -121,11 +119,11 @@ public class BatchMonitor {
 				jobEndTime = jobExecution.getEndTime();
 
 				if (jobExecution.isRunning()) {
-					jobEndTime = LocalDateTime.now();
+					jobEndTime = new Date(System.currentTimeMillis());
 				}
 
 				if (jobEndTime != null) {
-					timeTaken1 = Duration.between(jobStartTime, jobEndTime).toMillis();
+					timeTaken1 = jobEndTime.getTime() - jobStartTime.getTime();
 				}
 				timeTaken2 = timeTaken2 + timeTaken1;
 

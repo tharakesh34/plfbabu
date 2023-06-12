@@ -2,15 +2,15 @@ package org.zkoss.support.patch;
 
 import java.io.IOException;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
+
 import org.zkoss.zk.au.http.AuUploader;
 import org.zkoss.zk.au.http.DHtmlUpdateServlet;
 import org.zkoss.zk.ui.WebApp;
 import org.zkoss.zk.ui.util.WebAppInit;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
-import jakarta.servlet.http.HttpServletResponse;
 
 public class AuUploadWebAppInit extends AuUploader implements WebAppInit {
 	public void init(WebApp wapp) throws Exception {

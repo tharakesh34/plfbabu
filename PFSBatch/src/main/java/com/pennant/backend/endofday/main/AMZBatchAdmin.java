@@ -34,7 +34,6 @@
 package com.pennant.backend.endofday.main;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,6 +50,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class AMZBatchAdmin implements Serializable {
 
@@ -110,7 +110,7 @@ public class AMZBatchAdmin implements Serializable {
 		jobExecution = getJobExecution();
 		jobExecution.setStatus(BatchStatus.STOPPED);
 		jobExecution.setExitStatus(ExitStatus.STOPPED);
-		jobExecution.setEndTime(LocalDateTime.now());
+		jobExecution.setEndTime(DateUtil.getSysDate());
 		jobRepository.update(jobExecution);
 
 		logger.debug(Literal.LEAVING);

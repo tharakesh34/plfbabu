@@ -28,8 +28,9 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -266,7 +267,7 @@ public abstract class JsonService<T> {
 	private RestTemplate getTemplateWithCertificate(JsonServiceDetail jsonServiceDetail) throws IOException {
 		RestTemplate restTemplate = new RestTemplate();
 		FileInputStream fi = null;
-
+	
 		try {
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
 			fi = new FileInputStream(jsonServiceDetail.getCertificateFileName());
@@ -298,7 +299,7 @@ public abstract class JsonService<T> {
 			sslContext2.init(kms, tms, new SecureRandom());
 			SSLContext.setDefault(sslContext2);
 
-			HttpClient client = null;// HttpClients.custom().setSSLContext(sslContext2).build(); // FIXME Spring-Upgrade
+			HttpClient client = HttpClients.custom().setSSLContext(sslContext2).build();
 			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 			requestFactory.setHttpClient(client);
 

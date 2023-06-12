@@ -50,8 +50,8 @@ public class BatchProcessStatusDAOImpl extends BasicDao<BatchProcessStatus> impl
 
 					bps.setName(rs.getString("Name"));
 					bps.setStatus(rs.getString("Status"));
-					bps.setStartTime(rs.getTimestamp("StartTime").toLocalDateTime());
-					bps.setEndTime(rs.getTimestamp("EndTime").toLocalDateTime());
+					bps.setStartTime(rs.getTimestamp("StartTime"));
+					bps.setEndTime(rs.getTimestamp("EndTime"));
 
 					return bps;
 				}
@@ -97,7 +97,7 @@ public class BatchProcessStatusDAOImpl extends BasicDao<BatchProcessStatus> impl
 					ps.setString(index++, bps.getReference());
 					ps.setTimestamp(index++, new Timestamp(bps.getValueDate().getTime()));
 					ps.setLong(index++, bps.getTotalRecords());
-					ps.setTimestamp(index, Timestamp.valueOf(bps.getStartTime()));
+					ps.setTimestamp(index, new Timestamp(bps.getStartTime().getTime()));
 				}
 			});
 		} catch (DuplicateKeyException e) {
@@ -134,7 +134,7 @@ public class BatchProcessStatusDAOImpl extends BasicDao<BatchProcessStatus> impl
 					ps.setLong(index++, bps.getProcessedRecords());
 					ps.setLong(index++, bps.getSuccessRecords());
 					ps.setLong(index++, bps.getFailedRecords());
-					ps.setTimestamp(index++, Timestamp.valueOf(bps.getEndTime()));
+					ps.setTimestamp(index++, new Timestamp(bps.getEndTime().getTime()));
 					ps.setString(index++, bps.getRemarks());
 
 					ps.setString(index, bps.getName());

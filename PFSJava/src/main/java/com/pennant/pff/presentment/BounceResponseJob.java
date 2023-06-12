@@ -49,7 +49,7 @@ public class BounceResponseJob extends BatchConfiguration {
 	private BatchJobQueueDAO bjqDAO;
 
 	@Scheduled(cron = "0 */5 * ? * *")
-	public void bounceResponseJob() {
+	public void bounceResponseJob() throws Exception {
 		logger.info("Presentment Bounce Response Job invoked at {}", DateUtil.getSysDate(DateFormat.LONG_DATE_TIME));
 
 		if (bjqDAO.getQueueCount() > 0) {
@@ -110,8 +110,8 @@ public class BounceResponseJob extends BatchConfiguration {
 	}
 
 	@Bean
-	public Job peBounceJob() {
-		super.job = super.jobBuilder("peBounceJob")
+	public Job peBounceJob() throws Exception {
+		super.job = this.jobBuilderFactory.get("peBounceJob")
 
 				.listener(new PresentmentJobListener(presentmentDAO))
 
@@ -130,9 +130,9 @@ public class BounceResponseJob extends BatchConfiguration {
 		return super.job;
 	}
 
-	private Step masterStep() {
+	private Step masterStep() throws Exception {
 		ResponsePartitioner partitioner = new ResponsePartitioner(bjqDAO);
-		return stepBuilder("BOUNCE_RESPONSE_MASTER")
+		return stepBuilderFactory.get("BOUNCE_RESPONSE_MASTER")
 
 				.partitioner(bounceRespMasterStep())
 
@@ -143,8 +143,8 @@ public class BounceResponseJob extends BatchConfiguration {
 				.build();
 	}
 
-	private Step updateHeaderStep() {
-		return taskletStep("UPDATE_HEADER", new UpdateResponseTasklet(presentmentDAO));
+	private Step updateHeaderStep() throws Exception {
+		return this.stepBuilderFactory.get("UPDATE_HEADER").tasklet(new UpdateResponseTasklet(presentmentDAO)).build();
 
 	}
 
@@ -152,13 +152,22 @@ public class BounceResponseJob extends BatchConfiguration {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
 
-		return taskletStep("BOUNCE_RESPONSE",
-				new BounceResponseTasklet(bjqDAO, presentmentEngine, transactionManager, eventPropertiesService),
-				attribute);
+		return this.stepBuilderFactory
+
+				.get("BOUNCE_RESPONSE")
+
+				.tasklet(new BounceResponseTasklet(bjqDAO, presentmentEngine, transactionManager,
+						eventPropertiesService))
+
+				.transactionAttribute(attribute)
+
+				.taskExecutor(taskExecutor("BOUNCE_RESPONSE_"))
+
+				.build();
 	}
 
 	private TaskletStep clear() {
-		return taskletStep("CLEAR", clearQueueTasklet());
+		return this.stepBuilderFactory.get("CLEAR").tasklet(clearQueueTasklet()).build();
 	}
 
 	private ResponseClearTasklet clearQueueTasklet() {

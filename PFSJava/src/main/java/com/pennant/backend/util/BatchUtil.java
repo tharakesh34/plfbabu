@@ -5,21 +5,21 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.scope.context.StepContext;
 
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pff.batch.model.BatchProcessStatus;
 
 public class BatchUtil {
-	public static BatchProcessStatus EXECUTING = null;
+	public static DataEngineStatus EXECUTING = null;
 
-	public static BatchProcessStatus getRunningStatus(StepExecution stepExecution) {
-		BatchProcessStatus executionStatus = null;
+	public static DataEngineStatus getRunningStatus(StepExecution stepExecution) {
+		DataEngineStatus executionStatus = null;
 		ExitStatus exitStatus = stepExecution.getExitStatus();
 		String exitCode = exitStatus.getExitCode();
 
 		if ("EXECUTING".equals(exitCode) || "UNKNOWN".equals(exitCode)) {
 			return BatchUtil.EXECUTING;
 		} else {
-			executionStatus = (BatchProcessStatus) stepExecution.getExecutionContext().get("STATUS");
+			executionStatus = (DataEngineStatus) stepExecution.getExecutionContext().get("STATUS");
 		}
 
 		if (executionStatus == null) {
@@ -34,7 +34,7 @@ public class BatchUtil {
 		return executionStatus;
 	}
 
-	public static void setExecutionStatus(ChunkContext context, BatchProcessStatus status) {
+	public static void setExecutionStatus(ChunkContext context, DataEngineStatus status) {
 		StepContext stepContext = context.getStepContext();
 		StepExecution stepExecution = stepContext.getStepExecution();
 
