@@ -1036,4 +1036,205 @@
 	<changeSet id="35.1" author="goutham.ch">
 		<renameColumn newColumnName="FIC_NAME" oldColumnName="FIC_NAMES"	tableName="FILE_TRANSFER_CONFIG" />
 	</changeSet>
+	
+	
+	<changeSet id="36" author="goutham.ch">
+		<createTable tableName="GST_REQUEST_DETAIL">
+			<column name="REQUESTTYPE" type="VARCHAR(1)" />
+			<column name="CUSTOMERID" type="VARCHAR(35)" />
+			<column name="ACCOUNTID" type="VARCHAR(20)" />
+			<column name="GSTIN" type="VARCHAR(20)" />
+			<column name="SERVICECODE" type="VARCHAR(8) " />
+			<column name="HSN" type="VARCHAR(15)" />
+			<column name="TRANSACTIONCODE" type="VARCHAR(8) " />
+			<column name="TRANSACTIONVOLUME" type="decimal(18,2)" />
+			<column name="TRANSACTIONVALUE" type="decimal(18,2)" />
+			<column name="TRANSACTIONPRICEDCHARGE" type="decimal(18,2)" />
+			<column name="CHARGEINCLUSIVEOFTAX" type="VARCHAR(1)" />
+			<column name="TAXAMOUNT" type="decimal(18,2)" />
+			<column name="TRANSACTIONDATE" type="datetime" />
+			<column name="TRANSACTIONUID" type="VARCHAR(30)" />
+			<column name="SOURCEBRANCH" type="VARCHAR(20)" />
+			<column name="SOURCESTATE" type="VARCHAR(30)" />
+			<column name="DESTINATIONBRANCH" type="VARCHAR(20)" />
+			<column name="DESTINATIONSTATE" type="VARCHAR(30)" />
+			<column name="CURRENCYCODE" type="VARCHAR(3) " />
+			<column name="CHANNEL" type="VARCHAR(20)" />
+			<column name="SOURCESYSTEM" type="VARCHAR(20)" />
+			<column name="CUSTOMEREXEMPT" type="VARCHAR(1) " />
+			<column name="ACCOUNTEXEMPT" type="VARCHAR(1) " />
+			<column name="BRANCHEXEMPT" type="VARCHAR(1) " />
+			<column name="SERVICECHARGEEXEMPT" type="VARCHAR(1) " />
+			<column name="TRANSACTIONEXEMPT" type="VARCHAR(1) " />
+			<column name="RELATEDENTITY" type="VARCHAR(1) " />
+			<column name="STANDARDFEE" type="decimal(16,4)" />
+			<column name="REVERSALTRANSACTIONFLAG" type="VARCHAR(1) " />
+			<column name="ORIGINALTRANSACTIONID" type="VARCHAR(30)" />
+			<column name="TAXSPLITINSOURCESYSTEM" type="VARCHAR(1) " />
+			<column name="CGSTVALUE" type="decimal(18,2)" />
+			<column name="SGSTVALUE" type="decimal(18,2)" />
+			<column name="IGSTVALUE" type="decimal(18,2)" />
+			<column name="UTGSTVALUE" type="decimal(18,2)" />
+			<column name="CGSTSGSTUTGSTSTATE" type="VARCHAR(30) " />
+			<column name="GLACCOUNTID" type="VARCHAR(30) " />
+			<column name="GSTINVOICENUMBER" type="VARCHAR(30) " />
+			<column name="USERCFIELD1" type="VARCHAR(100)" />
+			<column name="USERCFIELD2" type="VARCHAR(100)" />
+			<column name="USERCFIELD3" type="VARCHAR(100)" />
+			<column name="USERCFIELD4" type="VARCHAR(500)" />
+			<column name="USERCFIELD5" type="VARCHAR(500)" />
+			<column name="USERNFIELD1" type="decimal(18,2)" />
+			<column name="USERNFIELD2" type="decimal(18,2)" />
+			<column name="USERDFIELD1" type="datetime     " />
+			<column name="USERDFIELD2" type="datetime     " />
+			<column name="ACTUALUSERID" type="VARCHAR(20)  " />
+			<column name="USERDEPARTMENT" type="VARCHAR(20)  " />
+			<column name="REQUESTdatetime" type="datetime " />
+			<column name="REVENUEACCOUNTNUMBER" type="VARCHAR(20)  " />
+			<column name="IGSTACCOUNTNUMBER" type="VARCHAR(20)  " />
+			<column name="CGSTACCOUNTNUMBER" type="VARCHAR(20)  " />
+			<column name="SGSTACCOUNTNUMBER" type="VARCHAR(20)  " />
+			<column name="UTGSTACCOUNTNUMBER" type="VARCHAR(20)  " />
+			<column name="CGSTCESS1" type="decimal(18,2)" />
+			<column name="CGSTCESS2" type="decimal(18,2)" />
+			<column name="CGSTCESS3" type="decimal(18,2)" />
+			<column name="SGSTCESS1" type="decimal(18,2)" />
+			<column name="SGSTCESS2" type="decimal(18,2)" />
+			<column name="SGSTCESS3" type="decimal(18,2)" />
+			<column name="IGSTCESS1" type="decimal(18,2)" />
+			<column name="IGSTCESS2" type="decimal(18,2)" />
+			<column name="IGSTCESS3" type="decimal(18,2)" />
+			<column name="UTGSTCESS1" type="decimal(18,2)" />
+			<column name="UTGSTCESS2" type="decimal(18,2)" />
+			<column name="UTGSTCESS3" type="decimal(18,2)" />
+			<column name="GSTRATE" type="decimal(18,2)" />
+			<column name="CGSTRATE" type="decimal(18,2)" />
+			<column name="SGSTRATE" type="decimal(18,2)" />
+			<column name="IGSTRATE" type="decimal(18,2)" />
+			<column name="UTGSTRATE" type="decimal(18,2)" />
+			<column name="CUSTOMERNAME" type="VARCHAR(100)" />
+			<column name="CESSAPPLICABLE" type="VARCHAR(1)  " />
+			<column name="BUSINESSUNIT" type="VARCHAR(20) " />
+			<column name="GSTRFIELD1" type="VARCHAR(50) " />
+			<column name="GSTRFIELD2" type="VARCHAR(50) " />
+			<column name="GSTRFIELD3" type="VARCHAR(50) " />
+			<column name="GSTRFIELD4" type="VARCHAR(50) " />
+			<column name="GSTRFIELD5" type="VARCHAR(50) " />
+			<column name="GSTRFIELD6" type="VARCHAR(50) " />
+			<column name="GSTRFIELD7" type="VARCHAR(50) " />
+			<column name="GSTRFIELD8" type="VARCHAR(50) " />
+			<column name="GSTRFIELD9" type="VARCHAR(50) " />
+			<column name="GSTRFIELD10" type="VARCHAR(50) " />
+			<column name="GSTRFIELD11" type="VARCHAR(50) " />
+			<column name="GSTRFIELD12" type="VARCHAR(50) " />
+			<column name="GSTRFIELD13" type="datetime" />
+			<column name="GSTRFIELD14" type="VARCHAR(50) " />
+			<column name="GSTRFIELD15" type="VARCHAR(50) " />
+			<column name="USERCFIELD6" type="VARCHAR(100)" />
+			<column name="USERCFIELD7" type="VARCHAR(100)" />
+			<column name="USERCFIELD8" type="VARCHAR(100)" />
+			<column name="USERCFIELD9" type="VARCHAR(100)" />
+			<column name="USERCFIELD10" type="VARCHAR(100)" />
+			<column name="USERCFIELD11" type="VARCHAR(100)" />
+			<column name="USERCFIELD12" type="VARCHAR(100)" />
+			<column name="USERCFIELD13" type="VARCHAR(100)" />
+			<column name="USERCFIELD14" type="VARCHAR(100)" />
+			<column name="USERCFIELD15" type="VARCHAR(100)" />
+			<column name="USERNFIELD3" type="decimal(18,2)" />
+			<column name="USERNFIELD4" type="decimal(18,2)" />
+			<column name="USERDFIELD3" type="datetime" />
+			<column name="USERDFIELD4" type="datetime" />
+			<column name="STATUS" type="int" defaultValue="0" />
+		</createTable>
+	</changeSet>
+	
+		<changeSet id="37" author="goutham.ch">
+			<createTable tableName="GST_VOUCHER_DETAILS ">
+				<column name="GST_VOUCHER_ID" type="bigint" autoIncrement="true">
+					<constraints primaryKey="true" nullable="false" />
+				</column>
+				<column name="FINREFERENCE" type="VARCHAR(20)" />
+				<column name="AMOUNT_TYPE" type="VARCHAR(10)" />
+				<column name="REFERENCE_FIELD1" type="bigint" />
+				<column name="REFERENCE_FIELD2" type="bigint" />
+				<column name="REFERENCE_AMOUNT" type="decimal(18,2)" />
+				<column name="ACTUAL_AMOUNT" type="decimal(18,2)" />
+				<column name="PROCESSED" type="int" defaultValue="0" />
+				<column name="REQ_FILE_ID" type="bigint" defaultValue="0" />
+				<column name="CREATED_DATE" type="datetime" />
+			</createTable>
+	</changeSet>
+	
+	<changeSet id="38" author="goutham.ch">
+		<createTable tableName="GSTHEADER ">
+		<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FILE_NAME" type="VARCHAR(200)" />
+			<column name="STATUS" type="int" />
+			<column name="FILE_LOCATION" type="VARCHAR(2000)" />
+			<column name="EXTRACTION" type="int" />
+			<column name="ERROR_CODE" type="VARCHAR(20)" />
+			<column name="ERROR_MESSAGE" type="VARCHAR(2000)" />
+			<column name="CREATED_DATE" type="datetime" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="39" author="goutham.ch">
+		<createTable tableName="GSTDETAILS ">
+		<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="HEADER_ID" type="bigint" />
+			<column name="RECORD_DATA" type="VARCHAR(2000)" />
+			<column name="STATUS" type="int" />
+			<column name="GST_VOUCHER_ID" type="int" />
+			<column name="ERROR_CODE" type="VARCHAR(20)" />
+			<column name="ERROR_MESSAGE" type="VARCHAR(2000)" />
+			<column name="CREATED_DATE" type="datetime" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="40" author="goutham.ch">
+			<createTable tableName="GST_INVOICE_DETAILS ">
+				<column name="CUSTOMER_NAME"            type="VARCHAR(100)"/> 
+				<column name="CUSTOMER_ADDRESS"         type="VARCHAR(250)"/> 
+				<column name="CURRENT_GSTIN "           type="VARCHAR(50)" />
+				<column name="LOAN_BRANCH_ADDRESS"      type="VARCHAR(250)"/> 
+				<column name="GSTIN"                    type="VARCHAR(50)" />
+				<column name="TRANSACTION_DATE"         type="datetime" />      
+				<column name="INVOICE_NUMBER"           type="VARCHAR(50)" />
+				<column name="CHARGE_DESCRIPTION"       type="VARCHAR(250)"/>
+				<column name="CHARGE_AMOUNT"            type="decimal(18,2)" />
+				<column name="CGST_RATE"                type="decimal(10,2)" />
+				<column name="CGST_AMOUNT"              type="decimal(18,2)" />
+				<column name="SGST_RATE"                type="decimal(10,2)" />
+				<column name="SGST_AMOUNT"              type="decimal(18,2)" />
+				<column name="IGST_RATE"                type="decimal(10,2)" />
+				<column name="IGST_AMOUNT"              type="decimal(18,2)" />
+				<column name="UGST_RATE"                type="decimal(10,2)" />
+				<column name="UGST_AMOUNT"              type="decimal(18,2)" />
+				<column name="CESS_AMOUNT"              type="decimal(18,2)" />
+				<column name="POP"                      type="VARCHAR(50)" />
+				<column name="POS"                      type="VARCHAR(50)" />
+				<column name="CIN"                      type="VARCHAR(50)" />
+				<column name="PAN"                      type="VARCHAR(50)" />
+				<column name="SAC"                      type="VARCHAR(50)" />
+				<column name="WEBSITE_ADDRESS"          type="VARCHAR(150)"/>
+				<column name="EMAILID"                  type="VARCHAR(100)"/>
+				<column name="REG_BANK_ADDRESS"         type="VARCHAR(250)"/>
+				<column name="DISCLAIMER"               type="VARCHAR(500)"/>
+			</createTable>
+	 </changeSet>
+	 
+	 <changeSet id="41" author="goutham.ch">
+		<createTable tableName="GST_REQUEST_FILE">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FILE_NAME"       type="VARCHAR(200)"/> 
+			<column name="FILE_LOCATION"   type="VARCHAR(250)"/> 
+			<column name="CREATED_DATE "   type="datetime" />
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
