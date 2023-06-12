@@ -77,6 +77,8 @@ public interface ErrorCodesConstants {
 	String GS1006 = "GS1006";
 	String GS1007 = "GS1007";
 	String GS1008 = "GS1008";
+	String GS1009 = "GS1009";
+	String GS1010 = "GS1010";
 
 	// UCIC Interface Error Codes
 	String UC1000 = "UC1000";

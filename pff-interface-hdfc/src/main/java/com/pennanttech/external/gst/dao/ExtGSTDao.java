@@ -15,7 +15,7 @@ public interface ExtGSTDao {
 
 	void extractDetailsFromForGstCalculation();
 
-	void saveExtractedDetailsToRequestTable(long headerId);
+	long saveExtractedDetailsToRequestTable(long headerId);
 
 	List<GSTRequestDetail> fetchRecords();
 
