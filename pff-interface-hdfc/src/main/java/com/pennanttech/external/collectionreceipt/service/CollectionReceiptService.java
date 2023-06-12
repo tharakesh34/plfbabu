@@ -246,15 +246,16 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 			}
 
 			List<ValueLabel> receiptTypes = PennantStaticListUtil.getReceiptChannels();
+			List<String> receiptValues = new ArrayList<>();
+
 			for (ValueLabel val : receiptTypes) {
-				if (val.getValue().equals(collectionData.getReceiptType())) {
-					continue;
-				} else {
-					extRcd.setErrorCode(CR2013);
-					return;
-				}
+				receiptValues.add(val.getValue());
 			}
 
+			if (!receiptValues.contains(collectionData.getReceiptChannel())) {
+				extRcd.setErrorCode(CR2013);
+				return;
+			}
 		}
 
 		if (!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) {
