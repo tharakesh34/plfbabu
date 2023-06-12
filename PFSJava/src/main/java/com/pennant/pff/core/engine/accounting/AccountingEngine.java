@@ -197,12 +197,12 @@ public class AccountingEngine {
 	public static Long getAccountSetID(FinanceMain fm, String eventCode, int moduleID) {
 		String derivedEventCode = null;
 
-		if (fm.isUnderSettlement()) {
-			derivedEventCode = eventCode + "_S";
+		if (fm.isWriteoffLoan()) {
+			derivedEventCode = eventCode + "_W";
 		} else if (fm.isUnderNpa()) {
 			derivedEventCode = eventCode + "_N";
-		} else if (fm.isWriteoffLoan()) {
-			derivedEventCode = eventCode + "_W";
+		} else if (fm.isUnderSettlement()) {
+			derivedEventCode = eventCode + "_S";
 		}
 
 		Long accountSetID = null;
