@@ -139,8 +139,6 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 							if (rowNumber == 3 && !lineData.trim().startsWith(HEADER)) {
 								extReceiptHeader.setErrorCode(CR1008);
 							}
-
-						} else {
 							if (rowNumber > 3) {
 								CollReceiptDetail crd = new CollReceiptDetail();
 								crd.setHeaderId(extReceiptHeader.getId());
@@ -148,43 +146,44 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 								crd.setReceiptId(0);
 								extCollectionLineList.add(crd);
 							}
-
 						}
 
 					}
 
-					String sharedTotChecksum = extCollectionLineList.get(extCollectionLineList.size() - 1)
-							.getRecordData();
-					String[] row1Str = sharedTotChecksum.split("\\|", -1);
-					if (row1Str != null && row1Str.length > 2) {
-						sharedTotChecksum = row1Str[1];
-					}
-
-					int gTotalChk = 0;
-					for (CollReceiptDetail lineData : extCollectionLineList) {
-
-						String[] dataArray = lineData.getRecordData().split("\\|");
-						String checksum = TextFileUtil.getItem(dataArray, 32);
-						long rowNum = TextFileUtil.getLongItem(dataArray, 31);
-
-						String qualifiedChk = collectionReceiptService.calculateCheckSum(dataArray, rowNum);
-
-						if (!qualifiedChk.equals(checksum)) {
-							extReceiptHeader.setErrorCode(CR1009);
+					if (!extCollectionLineList.isEmpty()) {
+						String sharedTotChecksum = extCollectionLineList.get(extCollectionLineList.size() - 1)
+								.getRecordData();
+						String[] row1Str = sharedTotChecksum.split("\\|", -1);
+						if (row1Str != null && row1Str.length > 2) {
+							sharedTotChecksum = row1Str[1];
 						}
 
-						gTotalChk = gTotalChk + Integer.parseInt(qualifiedChk);
+						int gTotalChk = 0;
+						for (CollReceiptDetail lineData : extCollectionLineList) {
 
+							String[] dataArray = lineData.getRecordData().split("\\|");
+							String checksum = TextFileUtil.getItem(dataArray, 32);
+							long rowNum = TextFileUtil.getLongItem(dataArray, 31);
+
+							String qualifiedChk = collectionReceiptService.calculateCheckSum(dataArray, rowNum);
+
+							if (!qualifiedChk.equals(checksum)) {
+								extReceiptHeader.setErrorCode(CR1009);
+							}
+
+							gTotalChk = gTotalChk + Integer.parseInt(qualifiedChk);
+
+						}
+
+						if (!sharedTotChecksum.equals((extCollectionLineList.size() - 1) + "" + gTotalChk)) {
+							extReceiptHeader.setErrorCode(CR1013);
+						}
+
+						extCollectionLineList.remove(extCollectionLineList.size() - 1);
+
+						extCollectionReceiptDao.saveFileExtractionList(extCollectionLineList, extReceiptHeader.getId());
+						extReceiptHeader.setExtraction(COMPLETED);
 					}
-
-					if (!sharedTotChecksum.equals((extCollectionLineList.size() - 1) + "" + gTotalChk)) {
-						extReceiptHeader.setErrorCode(CR1013);
-					}
-
-					extCollectionLineList.remove(extCollectionLineList.size() - 1);
-
-					extCollectionReceiptDao.saveFileExtractionList(extCollectionLineList, extReceiptHeader.getId());
-					extReceiptHeader.setExtraction(COMPLETED);
 
 					if (!extReceiptHeader.isValid()) {
 						extReceiptHeader.setWriteResponse(ENABLED);
