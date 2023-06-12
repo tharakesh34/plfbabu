@@ -13,14 +13,14 @@
  */
 package org.zkoss.spring;
 
+import javax.servlet.ServletContext;
+
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
-
-import jakarta.servlet.ServletContext;
 
 /**
  * SpringUtil, a Spring utility.

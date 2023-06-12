@@ -52,7 +52,7 @@ public class ExtractionJob extends BatchConfiguration {
 
 	@Bean
 	public Job peExtractionJob() throws Exception {
-		this.job = super.jobBuilder("peExtractionJob")
+		this.job = this.jobBuilderFactory.get("peExtractionJob")
 
 				.listener(presentmentJobListener())
 
@@ -86,16 +86,17 @@ public class ExtractionJob extends BatchConfiguration {
 	}
 
 	private TaskletStep groupingStep() {
-		return taskletStep("GROUPING", new GroupingTasklet(dataSource, presentmentEngine));
+		return this.stepBuilderFactory.get("GROUPING").tasklet(new GroupingTasklet(dataSource, presentmentEngine))
+				.build();
 	}
 
 	private TaskletStep extractionQueueStep() {
-		return taskletStep("EXTRACTION_QUIENG", new ExtractionQueueTasklet(ebjqDAO));
+		return this.stepBuilderFactory.get("EXTRACTION_QUIENG").tasklet(new ExtractionQueueTasklet(ebjqDAO)).build();
 	}
 
-	private Step extractionMasterStep() {
+	private Step extractionMasterStep() throws Exception {
 		ExtractionPartitioner partitioner = new ExtractionPartitioner(ebjqDAO);
-		return stepBuilder("EXTRACTION_MASTER")
+		return stepBuilderFactory.get("EXTRACTION_MASTER")
 
 				.partitioner(extractionStep())
 
@@ -107,25 +108,37 @@ public class ExtractionJob extends BatchConfiguration {
 	}
 
 	private Step groupingByIncludeStep() {
-		return this.taskletStep("GROUPING_INCLUDE", new GroupingByIncludeTasklet(presentmentEngine));
+		return this.stepBuilderFactory.get("GROUPING_INCLUDE").tasklet(new GroupingByIncludeTasklet(presentmentEngine))
+				.build();
 	}
 
 	private TaskletStep extractionStep() {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
 
-		return taskletStep("EXTRACTION",
-				new ExtractionTasklet(ebjqDAO, presentmentEngine, transactionManager, presentmentDAO), attribute);
+		return this.stepBuilderFactory
 
+				.get("EXTRACTION")
+
+				.tasklet(new ExtractionTasklet(ebjqDAO, presentmentEngine, transactionManager, presentmentDAO))
+
+				.transactionAttribute(attribute)
+
+				.taskExecutor(taskExecutor("PRESENTMENT_EXTRACTION_"))
+
+				.allowStartIfComplete(true)
+
+				.build();
 	}
 
 	private TaskletStep approvalQueueStep() {
-		return taskletStep("APPROVAL_QUIENG", new ApprovalQueueTasklet(ebjqDAO, presentmentDAO));
+		return this.stepBuilderFactory.get("APPROVAL_QUIENG").tasklet(new ApprovalQueueTasklet(ebjqDAO, presentmentDAO))
+				.build();
 	}
 
-	private Step approvalMasterStep() {
+	private Step approvalMasterStep() throws Exception {
 		ApprovalPartitioner partitioner = new ApprovalPartitioner(ebjqDAO);
-		return stepBuilder("APPROVAL_MASTER")
+		return stepBuilderFactory.get("APPROVAL_MASTER")
 
 				.partitioner(approvalStep())
 
@@ -142,16 +155,28 @@ public class ExtractionJob extends BatchConfiguration {
 
 		ApprovalTasklet tasklet = new ApprovalTasklet(ebjqDAO, presentmentEngine, presentmentDAO, transactionManager);
 		tasklet.setEventPropertiesService(eventPropertiesService);
+		return this.stepBuilderFactory
 
-		return taskletStep("APPROVAL", tasklet, attribute);
+				.get("APPROVAL")
+
+				.tasklet(tasklet)
+
+				.transactionAttribute(attribute)
+
+				.taskExecutor(taskExecutor("PRESENTMENT_APPROVAL_"))
+
+				.allowStartIfComplete(true)
+
+				.build();
 	}
 
 	private TaskletStep createBatchesStep() {
-		return this.taskletStep("BATCH_CREATION", new CreateBatchesTasklet(presentmentEngine));
+		return this.stepBuilderFactory.get("BATCH_CREATION").tasklet(new CreateBatchesTasklet(presentmentEngine))
+				.build();
 	}
 
 	private TaskletStep clear() {
-		return this.taskletStep("CLEAR", clearQueueTasklet());
+		return this.stepBuilderFactory.get("CLEAR").tasklet(clearQueueTasklet()).build();
 	}
 
 	private ExtractionClearTasklet clearQueueTasklet() {

@@ -77,13 +77,14 @@ import com.pennanttech.dataengine.util.DataEngineUtil;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.model.cibil.CibilFileInfo;
 import com.pennanttech.pff.model.cibil.CibilMemberDetail;
 import com.pennanttech.pff.overdraft.dao.OverdraftScheduleDetailDAO;
 
 public class RetailCibilReport extends BasicDao<Object> {
 	private static final Logger logger = LoggerFactory.getLogger(RetailCibilReport.class);
-	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus();
+	public static DataEngineStatus EXTRACT_STATUS = StepUtil.CIBIL_EXTRACT_RETAIL;
 
 	private static final String MEMBER_FIELDS = "Reporting Member ID, Short Name, Cycle Identification, DateReported, Reporting Password, Authentication Method,	Future Use,	Member Data";
 	private static final String HEADER_FIELDS = "Consumer Name,Date Of Birth,Gender,Income Tax ID Number,Passport Number,Passport Issue Date,Passport Expiry Date,Voter ID Number,Driving License Number,Driving License Issue Date,Driving License Expiry Date,Ration Card Number,Universal ID Number,Additional ID #1,Additional ID #2,Telephone No.Mobile,Telephone No.Residence,Telephone No.Office,Extension Office,Telephone No.Other ,Extension Other,Email ID 1,Email ID 2,Address Line1,State Code1,PIN Code,Address Category 1,Residence Code 1,Address 2,State Code 2,PIN Code2,Address Category 2,Residence Code 2,Current/New Member Code,Current/New Member Short Name,Current New Account Number,Account Type,Ownership Indicator,Date Opened/Disbursed,Date Of Last Payment,Date Closed,Date Reported,High Credit/Sanctioned Amount,Current Balance,Amount Overdue,Number Of Days Past Due,Old Member Code,Old Member Short Name,Old Account Number,Old Acc Type,Old Ownership Indicator,Suit Filed / Wilful Default,Written-off and Settled Status,Asset Classification,Value of Collateral,Type of Collateral,Credit Limit,Cash Limit,Rate of Interest,RepaymentTenure,EMI Amount,Writtenoff Amount Total ,Writtenoff Principal Amount,Settlement Amt,Payment Frequency,Actual Payment Amt,Occupation Code,Income,Net/Gross Income Indicator,Monthly/AnnualIncome Indicator";

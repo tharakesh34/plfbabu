@@ -6,11 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
+import org.zkoss.zk.ui.http.WebManager;
 
 import com.pennant.app.util.SessionUtil;
 import com.pennant.backend.model.administration.SecurityRole;
@@ -20,10 +25,6 @@ import com.pennant.backend.service.messages.MessagesService;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
-
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletContextEvent;
-import jakarta.servlet.ServletContextListener;
 
 public class EventManager implements ServletContextListener {
 	public static final String QUEUE_NAME = "AppNotificationQueue";
@@ -79,12 +80,10 @@ public class EventManager implements ServletContextListener {
 		data[3] = to;
 
 		// Publish the event
-		EventQueue<Event> queue = null;
+		EventQueue<Event> queue;
 
 		if (Executions.getCurrent() == null) {
-			// FIXME - Spring-Upgrade.
-			// queue = EventQueues.lookup(QUEUE_NAME, WebManager.getWebManager(servletContext).getWebApp(), true);
-
+			queue = EventQueues.lookup(QUEUE_NAME, WebManager.getWebManager(servletContext).getWebApp(), true);
 		} else {
 			queue = EventQueues.lookup(QUEUE_NAME, EventQueues.APPLICATION, true);
 		}

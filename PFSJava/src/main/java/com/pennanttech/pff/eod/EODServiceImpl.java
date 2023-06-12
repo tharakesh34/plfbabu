@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Locale;
 
@@ -75,13 +72,13 @@ public class EODServiceImpl implements EODService {
 		bps.setName("PLF_EOD");
 		bps = bpsService.getBatchStatus(bps);
 
-		LocalDateTime sysDate = LocalDateTime.now();
+		Date sysDate = DateUtil.getSysDate();
 
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_MULITIPLE_EODS_ON_SAME_DAY)
 				&& bps.getEndTime() != null) {
-			long days = ChronoUnit.DAYS.between(sysDate, bps.getEndTime());
+			int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
 			if (days == 0) {
-				long timeBetween = ChronoUnit.HOURS.between(sysDate, bps.getEndTime());
+				int timeBetween = Integer.parseInt(DateUtil.timeBetween(sysDate, bps.getEndTime(), "HH"));
 				if (timeBetween < 20) {
 					logger.debug("EOD is already processed for this System Date {$}.", sysDate);
 					return;
@@ -97,9 +94,7 @@ public class EODServiceImpl implements EODService {
 		}
 
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_EOD_START_ON_SAME_DAY)) {
-			Date date = Date.from(sysDate.atZone(ZoneId.systemDefault()).toInstant());
-
-			if (DateUtil.getDaysBetween(SysParamUtil.getNextBusinessdate(), date) != 0) {
+			if (DateUtil.getDaysBetween(SysParamUtil.getNextBusinessdate(), sysDate) != 0) {
 				logger.debug("System Date and Next BUsiness Date are not equal");
 				return;
 			}

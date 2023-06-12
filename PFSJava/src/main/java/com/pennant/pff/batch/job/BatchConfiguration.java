@@ -20,45 +20,42 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersIncrementer;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.configuration.DuplicateJobException;
+import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.support.MapJobRegistry;
 import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
-import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.launch.NoSuchJobException;
+import org.springframework.batch.core.launch.NoSuchJobExecutionException;
+import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobOperator;
-import org.springframework.batch.core.launch.support.TaskExecutorJobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
-import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.builder.TaskletStepBuilder;
-import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.interceptor.TransactionAttribute;
 
 import com.pennant.pff.batch.job.model.BatchJob;
 import com.pennant.pff.batch.job.model.StepDetail;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public abstract class BatchConfiguration {
+public abstract class BatchConfiguration implements BatchConfigurer {
 	protected static Logger logger = LogManager.getLogger(BatchConfiguration.class.getClass());
 
-	protected JobBuilder jobBuilder;
+	public JobBuilderFactory jobBuilderFactory;
+	public StepBuilderFactory stepBuilderFactory;
 
-	protected String jobName;
 	protected Job job;
 	protected DataSource dataSource;
 	protected DataSourceTransactionManager transactionManager;
@@ -67,13 +64,13 @@ public abstract class BatchConfiguration {
 	private String threadNamePrefix;
 	private CustomSerializer serializer;
 	private DefaultLobHandler lobHandler;
-	protected JobRepository jobRepository;
+	private JobRepository jobRepository;
 	private JobLauncher jobLauncher;
 	private JobExplorer jobExplorer;
 	private MapJobRegistry jobRegistry;
 	private JobOperator jobOperator;
 
-	protected BatchConfiguration(DataSource dataSource, String tablePrefix, String threadNamePrefix) throws Exception {
+	public BatchConfiguration(DataSource dataSource, String tablePrefix, String threadNamePrefix) throws Exception {
 		this.dataSource = dataSource;
 		this.tablePrefix = tablePrefix;
 		this.threadNamePrefix = threadNamePrefix;
@@ -90,10 +87,11 @@ public abstract class BatchConfiguration {
 		getJobExplorer();
 		jobRegistry();
 		jobOperator();
-		// jobBuilderFactory();
-		// stepBuilderFactory();
+		jobBuilderFactory();
+		stepBuilderFactory();
 	}
 
+	@Override
 	public JobRepository getJobRepository() throws Exception {
 		JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
 		factory.setDataSource(dataSource);
@@ -108,12 +106,14 @@ public abstract class BatchConfiguration {
 
 	}
 
+	@Override
 	public PlatformTransactionManager getTransactionManager() throws Exception {
 		return this.transactionManager = new DataSourceTransactionManager(this.dataSource);
 	}
 
+	@Override
 	public JobLauncher getJobLauncher() throws Exception {
-		TaskExecutorJobLauncher simpleLobLauncher = new TaskExecutorJobLauncher();
+		SimpleJobLauncher simpleLobLauncher = new SimpleJobLauncher();
 		simpleLobLauncher.setJobRepository(jobRepository);
 		simpleLobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor(threadNamePrefix));
 		simpleLobLauncher.afterPropertiesSet();
@@ -121,6 +121,7 @@ public abstract class BatchConfiguration {
 		return this.jobLauncher = simpleLobLauncher;
 	}
 
+	@Override
 	public JobExplorer getJobExplorer() throws Exception {
 		JobExplorerFactoryBean factory = new JobExplorerFactoryBean();
 		factory.setDataSource(dataSource);
@@ -155,8 +156,12 @@ public abstract class BatchConfiguration {
 		return simpleJobOperator;
 	}
 
-	public JobBuilder jobBuilder(String jobName) {
-		return new JobBuilder(jobName, jobRepository);
+	public JobBuilderFactory jobBuilderFactory() {
+		return jobBuilderFactory = new JobBuilderFactory(jobRepository);
+	}
+
+	public StepBuilderFactory stepBuilderFactory() {
+		return stepBuilderFactory = new StepBuilderFactory(jobRepository, transactionManager);
 	}
 
 	@Bean
@@ -177,23 +182,6 @@ public abstract class BatchConfiguration {
 		};
 	}
 
-	protected StepBuilder stepBuilder(String stepName) {
-		return new StepBuilder(stepName, jobRepository);
-	}
-
-	protected TaskletStep taskletStep(String stepName, Tasklet tasklet) {
-		return new TaskletStepBuilder(stepBuilder(stepName)).tasklet(tasklet, transactionManager).build();
-	}
-
-	protected TaskletStep taskletStep(String stepName, Tasklet tasklet, TransactionAttribute transactionAttribute) {
-		TaskletStep taskletStep = taskletStep(stepName, tasklet);
-		taskletStep.setTransactionAttribute(transactionAttribute);
-		taskletStep.setTransactionManager(transactionManager);
-
-		return taskletStep;
-
-	}
-
 	protected SimpleAsyncTaskExecutor taskExecutor(String threadNamePrefix) {
 		SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor(threadNamePrefix);
 		taskExecutor.setConcurrencyLimit(100);
@@ -209,19 +197,18 @@ public abstract class BatchConfiguration {
 		logger.info(Literal.LEAVING);
 	}
 
-	public void restart(long executionId) {
+	public void restart(long executionId) throws Exception {
 		try {
 			jobRegistry.getJob(this.job.getName());
 		} catch (NoSuchJobException e) {
-			try {
-				jobRegistry.register(new ReferenceJobFactory(this.job));
-			} catch (DuplicateJobException e1) {
-				//
-			}
+			jobRegistry.register(new ReferenceJobFactory(this.job));
 		}
 
 		try {
 			jobOperator.restart(executionId);
+		} catch (JobInstanceAlreadyCompleteException | NoSuchJobExecutionException | NoSuchJobException
+				| JobRestartException | JobParametersInvalidException e) {
+			logger.error(Literal.EXCEPTION, e);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -251,7 +238,7 @@ public abstract class BatchConfiguration {
 			}
 		}
 
-		return new ArrayList<>(stepExecutions.values());
+		return new ArrayList<StepExecution>(stepExecutions.values());
 	}
 
 	public void setRunningJobExecutionDetails(BatchJob eodJob) throws Exception {
@@ -278,7 +265,7 @@ public abstract class BatchConfiguration {
 		eodJob.setStartTime(jobExecution.getStartTime());
 		eodJob.setEndTime(jobExecution.getEndTime());
 
-		eodJob.setStatus(batchStatus.name());
+		eodJob.setStatus(batchStatus.getBatchStatus().name());
 
 		eodJob.setExitCode(exitStatus.getExitCode());
 		eodJob.setExitDescription(exitStatus.getExitDescription());
