@@ -171,12 +171,14 @@
 		<property name="extExtractionDao" ref="extExtractionDao" />
 	</bean>
 
-	<bean id="collectionReceiptService"
-		class="com.pennanttech.external.collectionreceipt.service.CollectionReceiptService" />
+	
 		
 	<bean id="extCollectionReceiptDao"
 		class="com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDaoImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
+	<bean id="collectionReceiptService" 	class="com.pennanttech.external.collectionreceipt.service.CollectionReceiptService" >
+		<property name="extCollectionReceiptDao" ref="extCollectionReceiptDao" />
+		</bean>
 </beans>
