@@ -9,9 +9,13 @@ import com.pennanttech.external.collectionreceipt.service.FetchFileCollectionReq
 import com.pennanttech.external.collectionreceipt.service.FileExtractCollectionReqJob;
 import com.pennanttech.external.collectionreceipt.service.FileProcessCollectionReqJob;
 import com.pennanttech.external.collectionreceipt.service.FileWriteCollectionRespJob;
+import com.pennanttech.external.gst.service.FetchFileGSTRespJob;
+import com.pennanttech.external.gst.service.FileExtractGSTRespJob;
+import com.pennanttech.external.gst.service.FileProcessGSTRespJob;
+import com.pennanttech.external.gst.service.FileWriteGSTReqJob;
 import com.pennanttech.external.presentment.service.ExtPresentmentTableReaderJob;
-import com.pennanttech.external.presentment.service.FileExtractPresentmentRespJob;
 import com.pennanttech.external.presentment.service.FetchFilePresentmentRespJob;
+import com.pennanttech.external.presentment.service.FileExtractPresentmentRespJob;
 import com.pennanttech.external.presentment.service.FileProcessPresentmentRespJob;
 import com.pennanttech.external.silien.service.LeinFileProcesserJob;
 import com.pennanttech.external.silien.service.LienFileReadingJob;
@@ -86,8 +90,8 @@ public class HDFCJobScheduler implements JobSchedulerExtension {
 		/**
 		 * 41. EXT_COLLECTION_FOLDER_READER_JOB
 		 */
-		args = new JobDataMap();
-		jobData = new JobData("EXT_COLLECTION_FOLDER_READER_JOB", FetchFileCollectionReqJob.class, args);
+		JobDataMap args = new JobDataMap();
+		JobData jobData = new JobData("EXT_COLLECTION_FOLDER_READER_JOB", FetchFileCollectionReqJob.class, args);
 		jobDataList.add(jobData);
 
 		/**
@@ -116,6 +120,22 @@ public class HDFCJobScheduler implements JobSchedulerExtension {
 		 */
 		args = new JobDataMap();
 		jobData = new JobData("SI_LIEN_FILE_PROCESSING_JOB", LeinFileProcesserJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		jobData = new JobData("EXT_GST_FOLDER_READER_JOB", FetchFileGSTRespJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		jobData = new JobData("EXT_GST_FILE_EXTRACTION_JOB", FileExtractGSTRespJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		jobData = new JobData("EXT_GST_FILE_PROCESSOR_JOB", FileProcessGSTRespJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		jobData = new JobData("EXT_GST_REQ_FILE_WRITE_JOB", FileWriteGSTReqJob.class, args);
 		jobDataList.add(jobData);
 
 		return jobDataList;
