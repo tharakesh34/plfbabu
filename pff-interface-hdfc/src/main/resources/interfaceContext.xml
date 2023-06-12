@@ -65,6 +65,11 @@
 	<bean id="externalDao" class="com.pennanttech.external.app.config.dao.ExternalDao">
 		<property name="extDataSource" ref="dataSource" />
 	</bean>
+	
+	<bean id="extGSTDao" class="com.pennanttech.external.gst.dao.ExtGSTDaoImpl">
+		<property name="extDataSource" ref="extDataSource" />
+		<property name="mainDataSource" ref="dataSource" />
+	</bean>
 
 	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.ExtExtractionDaoImpl">
 		<property name="mainDataSource" ref="dataSource" />
@@ -98,6 +103,10 @@
 
 	<bean id="lienFileWritingService" class="com.pennanttech.external.silien.service.LienFileWritingService">
 		<property name="externalLienMarkingDAO" ref="externalLienMarkingDAO" />
+	</bean>
+	
+	<bean id="extGSTService" class="com.pennanttech.external.gst.service.ExtGSTService">
+		<property name="extGSTDao" ref="extGSTDao" />
 	</bean>
 
 	<bean id="mandateProcesses" class="com.pennanttech.external.mandate.ExtMandateProcess" parent="abstractInterface" />
@@ -178,6 +187,7 @@
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
+	
 	<bean id="collectionReceiptService" 	class="com.pennanttech.external.collectionreceipt.service.CollectionReceiptService" >
 		<property name="extCollectionReceiptDao" ref="extCollectionReceiptDao" />
 		</bean>

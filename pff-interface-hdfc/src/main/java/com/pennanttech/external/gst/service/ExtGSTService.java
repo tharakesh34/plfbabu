@@ -85,11 +85,12 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 			long fileSeq = extGSTDao.getSeqNumber(SEQ_GST_INTF);
 			String fileSeqName = StringUtils.leftPad(String.valueOf(fileSeq), 5, "0");
 			String fileName = TextFileUtil.getFileName(reqConfig, appDate, fileSeqName);
-			String filePathWithName = reqConfig.getFileLocation() + File.separator + fileName;
+			String filePathWithName = App.getResourcePath(reqConfig.getFileLocation()) + File.separator + fileName;
 			super.writeDataToFile(filePathWithName, itemList);
 
 			// Write Done file
-			String doneFile = fileName + doneConfig.getFilePostpend();
+			String doneFile = App.getResourcePath(reqConfig.getFileLocation()) + File.separator + fileName
+					+ doneConfig.getFilePostpend();
 			List<StringBuilder> emptyList = new ArrayList<StringBuilder>();
 			emptyList.add(new StringBuilder(""));
 			super.writeDataToFile(doneFile, emptyList);
@@ -237,15 +238,12 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 		try {
 			// Now upload file to SFTP of client
 			fileTransferUtil.uploadToSFTP(baseFilePath, fileName);
-			logger.debug("Ext_GST:ReqFile upload Successful to Destination");
 
 			// Now upload done file to SFTP of client location as per configuration
 			fileTransferUtil.uploadToSFTP(baseFilePath, completeFileName);
-			logger.debug("Ext_GST:Completefile upload Sucessful to Destination");
 			fileBackup(reqConfig, fileName, completeFileName);
 		} catch (Exception e) {
 			logger.debug("Ext_GST:Unable to upload files from local path to destination.", e);
-			return;
 		}
 	}
 
@@ -255,7 +253,6 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 
 		String localBkpLocation = serverConfig.getFileLocalBackupLocation();
 		if (localBkpLocation == null || "".equals(localBkpLocation)) {
-			logger.debug("Ext_GST: Local backup location not configured, so returning.");
 			return;
 		}
 		File mainFile = new File(mainFilePath);
@@ -266,7 +263,11 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 		File completeFileBkp = new File(localBackupLocation + File.separator + completeFileToUpload.getName());
 		Files.copy(mainFile, mainFileBkp);
 		Files.copy(completeFileToUpload, completeFileBkp);
-		logger.debug("Ext_GST: MainFile & Completefile backup Successful");
 		logger.debug(Literal.LEAVING);
 	}
+
+	public void setExtGSTDao(ExtGSTDao extGSTDao) {
+		this.extGSTDao = extGSTDao;
+	}
+
 }
