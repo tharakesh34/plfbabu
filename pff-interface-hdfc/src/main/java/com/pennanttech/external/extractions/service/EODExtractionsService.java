@@ -44,6 +44,16 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	}
 
 	@Override
+	public void processALMReportExtarction() {
+		externalDao.executeSP(SP_ALM_REPORT);
+	}
+
+	@Override
+	public void processBaselOneExtarction() {
+		externalDao.executeSP(SP_BASEL_ONE);
+	}
+
+	@Override
 	public void processExtRBIADFExtarction() {
 		externalDao.executeSP(SP_RBIADF);
 
@@ -150,16 +160,6 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 
 	public void setExternalDao(ExternalDao externalDao) {
 		this.externalDao = externalDao;
-	}
-
-	@Override
-	public void processBaselOneExtarction() {
-		externalDao.executeSP(SP_BASEL_ONE);
-	}
-
-	@Override
-	public void processALMReportExtarction() {
-		externalDao.executeSP(SP_ALM_REPORT);
 	}
 
 }
