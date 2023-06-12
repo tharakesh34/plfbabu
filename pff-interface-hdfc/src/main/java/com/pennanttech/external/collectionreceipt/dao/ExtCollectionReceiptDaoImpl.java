@@ -248,8 +248,8 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 	}
 
 	@Override
-	public boolean validateAgreementNumber(long agreementNumber) {
-		String sql = "select * from financemain where FINREFERENCE=?;";
+	public boolean validateAgreementNumber(String agreementNumber) {
+		String sql = "SELECT COUNT(*) FROM FINANCEMAIN WHERE FINREFERENCE = ?";
 		logger.debug(Literal.SQL + sql);
 		try {
 			return mainNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, Integer.class, agreementNumber) > 0;
@@ -260,7 +260,7 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 
 	@Override
 	public boolean validateAgencyId(long agencyId) {
-		String sql = "select * from FinReceiptHeader where agencyId=?;";
+		String sql = "SELECT COUNT(*) FROM FINRECEIPTHEADER WHERE COLLECTIONAGENTID = ?";
 		logger.debug(Literal.SQL + sql);
 		try {
 			return mainNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, Integer.class, agencyId) > 0;

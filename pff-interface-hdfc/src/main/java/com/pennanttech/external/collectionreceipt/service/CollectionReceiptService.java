@@ -249,9 +249,12 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 			extRcd.setErrorCode(CR2010);
 		}
 
+		List<String> validTypes = new ArrayList<>();
+		validTypes.add("C");
+		validTypes.add("Q");
+
 		if (!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) {
-			if (!"C".equalsIgnoreCase(StringUtils.trimToEmpty(collectionData.getReceiptType()))
-					|| !"Q".equalsIgnoreCase(StringUtils.trimToEmpty(collectionData.getReceiptType()))) {
+			if (!validTypes.contains(collectionData.getReceiptType())) {
 				extRcd.setErrorCode(CR2004);
 				return;
 			}
@@ -280,7 +283,7 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 		if ((!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) && (collectionData.getAgencyId() != 0)
 				&& (collectionData.getAgreementNumber() != 0)) {
 			boolean isAgreementFound = extCollectionReceiptDao
-					.validateAgreementNumber(collectionData.getAgreementNumber());
+					.validateAgreementNumber(String.valueOf(collectionData.getAgreementNumber()));
 			if (!isAgreementFound) {
 				extRcd.setErrorCode(CR2011);
 				return;

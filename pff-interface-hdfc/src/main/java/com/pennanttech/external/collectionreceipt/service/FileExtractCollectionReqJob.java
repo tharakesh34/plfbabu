@@ -157,6 +157,7 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 						if (row1Str != null && row1Str.length > 2) {
 							sharedTotChecksum = row1Str[1];
 						}
+						extCollectionLineList.remove(extCollectionLineList.size() - 1);
 
 						int gTotalChk = 0;
 						for (CollReceiptDetail lineData : extCollectionLineList) {
@@ -175,11 +176,9 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 
 						}
 
-						if (!sharedTotChecksum.equals((extCollectionLineList.size() - 1) + "" + gTotalChk)) {
+						if (!sharedTotChecksum.equals((extCollectionLineList.size()) + "" + gTotalChk)) {
 							extReceiptHeader.setErrorCode(CR1013);
 						}
-
-						extCollectionLineList.remove(extCollectionLineList.size() - 1);
 
 						extCollectionReceiptDao.saveFileExtractionList(extCollectionLineList, extReceiptHeader.getId());
 						extReceiptHeader.setExtraction(COMPLETED);

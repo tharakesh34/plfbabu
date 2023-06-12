@@ -27,7 +27,7 @@ public interface ExtCollectionReceiptDao {
 
 	CollReceiptHeader getErrorFromHeader(long p_id);
 
-	boolean validateAgreementNumber(long agreementNumber);
+	boolean validateAgreementNumber(String agreementNumber);
 
 	boolean validateAgencyId(long agencyId);
 }
