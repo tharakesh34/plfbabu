@@ -99,7 +99,7 @@ public class LetterService {
 				continue;
 			}
 
-			if ((letterType == LetterType.CANCELLATION && !ClosureType.isCancel(closureType)
+			if ((letterType == LetterType.CANCELLATION
 					&& FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())
 					&& !LoanCancelationUtil.LOAN_CANCEL_REBOOK.equals(fm.getCancelType()))
 					|| ((letterType == LetterType.NOC || letterType == LetterType.CLOSURE)
