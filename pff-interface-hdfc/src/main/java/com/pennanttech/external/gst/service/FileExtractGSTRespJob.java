@@ -33,7 +33,7 @@ public class FileExtractGSTRespJob extends AbstractJob implements InterfaceConst
 
 	private static final Logger logger = LogManager.getLogger(FileExtractGSTRespJob.class);
 	private static final String GST_COMP_RESPONSE_START = "G";
-	private static final String FETCH_QUERY = "Select * from GSTCOMPHEADER  Where STATUS=? AND EXTRACTION=?";
+	private static final String FETCH_QUERY = "Select * from GSTHEADER  Where STATUS=? AND EXTRACTION=?";
 
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {

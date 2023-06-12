@@ -106,17 +106,14 @@ public class FetchFileGSTRespJob extends AbstractJob
 
 		for (String doneFileName : doneFilesList) {
 
-			String respFileName = respConfig.getFilePrepend().concat(doneFileName)
-					.concat(respConfig.getFileExtension());
-
 			if (respFileNames.contains(doneFileName)) {
 				// Check if the file is already saved in table
-				boolean isRecordExist = extGSTDao.isFileProcessed(respFileName);
+				boolean isRecordExist = extGSTDao.isFileProcessed(doneFileName);
 				if (!isRecordExist) {
 					// Get response file
 					String respFolderPath = App.getResourcePath(respConfig.getFileLocation());
 
-					File responseFile = new File(respFolderPath + File.separator + respFileName);
+					File responseFile = new File(respFolderPath + File.separator + doneFileName);
 
 					// get all the records from file in a list of objects
 					List<String> fileRecordsList = prepareDataFromFile(responseFile);
@@ -126,7 +123,7 @@ public class FetchFileGSTRespJob extends AbstractJob
 
 					GSTCompHeader header = new GSTCompHeader();
 
-					header.setFileName(respFileName);
+					header.setFileName(doneFileName);
 					header.setFileLocation(respConfig.getFileLocation());
 
 					if (!isValidFile) {
