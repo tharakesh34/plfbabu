@@ -230,6 +230,53 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 			return;
 		}
 
+		if (collectionData.getDealingBankId() == 0) {
+			extRcd.setErrorCode(CR2006);
+			return;
+		}
+
+		if (StringUtils.trimToEmpty(collectionData.getReceiptDate()).isEmpty()) {
+			extRcd.setErrorCode(CR2007);
+			return;
+		}
+
+		if (DateUtil.compare(getFormattedDate(collectionData.getReceiptDate()), SysParamUtil.getAppDate()) > 0) {
+			extRcd.setErrorCode(CR2008);
+			return;
+		}
+
+		if (collectionData.getExcessAmount().compareTo(collectionData.getGrandTotal()) > 0) {
+			extRcd.setErrorCode(CR2010);
+		}
+
+		if (!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) {
+			if (!"C".equalsIgnoreCase(StringUtils.trimToEmpty(collectionData.getReceiptType()))
+					|| !"Q".equalsIgnoreCase(StringUtils.trimToEmpty(collectionData.getReceiptType()))) {
+				extRcd.setErrorCode(CR2004);
+				return;
+			}
+		}
+
+		if (!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) {
+			if ("Q".equalsIgnoreCase(StringUtils.trimToEmpty(collectionData.getReceiptType()))) {
+				if (collectionData.getChequeNumber() == 0) {
+					extRcd.setErrorCode(CR2005);
+					return;
+				}
+
+				if (StringUtils.trimToEmpty(collectionData.getChequeDate()).isEmpty()) {
+					extRcd.setErrorCode(CR2009);
+					return;
+				}
+
+				if (DateUtil.compare(getFormattedDate(collectionData.getChequeDate()),
+						getFormattedDate(collectionData.getReceiptDate())) > 0) {
+					extRcd.setErrorCode(CR2008);
+					return;
+				}
+			}
+		}
+
 		if ((!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) && (collectionData.getAgencyId() != 0)
 				&& (collectionData.getAgreementNumber() != 0)) {
 			boolean isAgreementFound = extCollectionReceiptDao
@@ -258,46 +305,6 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 			}
 		}
 
-		if (!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) {
-			if (!"C".equalsIgnoreCase(StringUtils.trimToEmpty(collectionData.getReceiptType()))
-					|| !"Q".equalsIgnoreCase(StringUtils.trimToEmpty(collectionData.getReceiptType()))) {
-				extRcd.setErrorCode(CR2004);
-				return;
-			}
-		}
-
-		if (!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) {
-			if ("Q".equalsIgnoreCase(StringUtils.trimToEmpty(collectionData.getReceiptType()))) {
-				if (collectionData.getChequeNumber() == 0) {
-					extRcd.setErrorCode(CR2005);
-					return;
-				}
-
-				if (StringUtils.trimToEmpty(collectionData.getChequeDate()).isEmpty()) {
-					extRcd.setErrorCode(CR2009);
-					return;
-				}
-			}
-		}
-
-		if (collectionData.getDealingBankId() == 0) {
-			extRcd.setErrorCode(CR2006);
-			return;
-		}
-
-		if (StringUtils.trimToEmpty(collectionData.getReceiptDate()).isEmpty()) {
-			extRcd.setErrorCode(CR2007);
-			return;
-		}
-
-		if (DateUtil.compare(getFormattedDate(collectionData.getReceiptDate()), SysParamUtil.getAppDate()) > 0) {
-			extRcd.setErrorCode(CR2008);
-			return;
-		}
-
-		if (collectionData.getExcessAmount().compareTo(collectionData.getGrandTotal()) > 0) {
-			extRcd.setErrorCode(CR2010);
-		}
 	}
 
 	public ExtCollectionReceiptDao getExtCollectionReceiptDao() {
