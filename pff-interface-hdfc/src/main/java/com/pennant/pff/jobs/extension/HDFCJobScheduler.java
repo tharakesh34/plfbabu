@@ -90,8 +90,8 @@ public class HDFCJobScheduler implements JobSchedulerExtension {
 		/**
 		 * 41. EXT_COLLECTION_FOLDER_READER_JOB
 		 */
-		JobDataMap args = new JobDataMap();
-		JobData jobData = new JobData("EXT_COLLECTION_FOLDER_READER_JOB", FetchFileCollectionReqJob.class, args);
+		args = new JobDataMap();
+		jobData = new JobData("EXT_COLLECTION_FOLDER_READER_JOB", FetchFileCollectionReqJob.class, args);
 		jobDataList.add(jobData);
 
 		/**
