@@ -272,6 +272,11 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 					extRcd.setErrorCode(CR2005);
 					return;
 				}
+
+				if (StringUtils.trimToEmpty(collectionData.getChequeDate()).isEmpty()) {
+					extRcd.setErrorCode(CR2009);
+					return;
+				}
 			}
 		}
 
@@ -287,11 +292,6 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 
 		if (DateUtil.compare(getFormattedDate(collectionData.getReceiptDate()), SysParamUtil.getAppDate()) > 0) {
 			extRcd.setErrorCode(CR2008);
-			return;
-		}
-
-		if (StringUtils.trimToEmpty(collectionData.getChequeDate()).isEmpty()) {
-			extRcd.setErrorCode(CR2009);
 			return;
 		}
 
