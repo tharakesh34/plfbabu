@@ -1505,11 +1505,12 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			fillComboBox(receiptPurpose, FinServiceEvent.SCHDRPY, PennantStaticListUtil.getReceiptPurpose(),
 					",EarlyPayment,FeePayment,");
 			receiptPurpose.setDisabled(false);
-		} else if (!financeMain.isFinIsActive() && !StringUtils.isEmpty(financeMain.getClosingStatus())) {
-			fillComboBox(receiptPurpose, FinServiceEvent.SCHDRPY, PennantStaticListUtil.getReceiptPurpose(),
-					",EarlyPayment,FeePayment,EarlySettlement,");
-			receiptPurpose.setDisabled(true);
 
+			if (!financeMain.isFinIsActive() && !StringUtils.isEmpty(financeMain.getClosingStatus())) {
+				fillComboBox(receiptPurpose, FinServiceEvent.SCHDRPY, PennantStaticListUtil.getReceiptPurpose(),
+						",EarlyPayment,FeePayment,EarlySettlement,");
+				receiptPurpose.setDisabled(true);
+			}
 		} else if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)) {
 			String excludeFields = ",FeePayment,EarlySettlement,";
 			if (FinanceConstants.PRODUCT_CD.equals(financeMain.getProductCategory())) {
