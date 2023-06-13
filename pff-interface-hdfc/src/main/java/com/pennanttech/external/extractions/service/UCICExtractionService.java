@@ -1,4 +1,4 @@
-package com.pennanttech.external.ucic.service;
+package com.pennanttech.external.extractions.service;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -21,12 +21,12 @@ import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtUcicDataExtractor extends TextFileUtil implements InterfaceConstants, ExtIntfConfigConstants {
-	private static final Logger logger = LogManager.getLogger(ExtUcicDataExtractor.class);
+public class UCICExtractionService extends TextFileUtil implements InterfaceConstants, ExtIntfConfigConstants {
 
+	private static final Logger logger = LogManager.getLogger(UCICExtractionService.class);
 	private ExternalDao externalDao;
 
-	public void processUCIC() {
+	public void processExtraction() {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -118,11 +118,9 @@ public class ExtUcicDataExtractor extends TextFileUtil implements InterfaceConst
 		}
 
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	public void setExternalDao(ExternalDao externalDao) {
 		this.externalDao = externalDao;
 	}
-
 }
