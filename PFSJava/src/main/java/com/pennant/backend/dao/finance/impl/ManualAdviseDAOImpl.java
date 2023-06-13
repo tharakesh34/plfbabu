@@ -2059,7 +2059,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(", FinSource, DueCreation, PresentmentId, Reason, Status");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent, TDSReq, BounceCode, PayableLinkTo");
+			sql.append(", FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent, TDSReq");
+			sql.append(", BounceCode, PayableLinkTo, BounceCodeDesc");
 		}
 
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
@@ -2122,6 +2123,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				ma.setTdsReq(rs.getBoolean("TDSReq"));
 				ma.setBounceCode(rs.getString("BounceCode"));
 				ma.setPayableLinkTo(rs.getString("PayableLinkTo"));
+				ma.setBounceCodeDesc(rs.getString("BounceCodeDesc"));
 			}
 
 			ma.setVersion(rs.getInt("Version"));
