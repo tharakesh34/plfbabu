@@ -64,7 +64,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="003" author="goutham.ch">
+	<changeSet id="003999" author="goutham.ch">
 		<createTable tableName="PRMNT_HEADER">
 			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
@@ -884,23 +884,6 @@
 			]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="002.13" author="goutham.ch">
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="ACCESS_KEY" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SECRET_KEY" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="HOST_NAME" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="PORT" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="PRIVATE_KEY" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SSE_ALGORITHM" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="PREFIX" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SFTP_LOCATION" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="LOCAL_BACKUP_LOCATION" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SFTP_BUCKET" />
-		<renameColumn newColumnName="FILE_TRANSFER" oldColumnName="IS_SFTP"	tableName="FILE_INTERFACE_CONFIG" />
-		<addColumn tableName="FILE_INTERFACE_CONFIG">
-			<column name="FIC_NAMES" type="VARCHAR(200)" />
-		</addColumn>
-	</changeSet>
 	
 	<changeSet id="35" author="goutham.ch">
 		<createTable tableName="FILE_TRANSFER_CONFIG ">
@@ -1237,4 +1220,32 @@
 			<column name="CREATED_DATE "   type="datetime" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="42" author="goutham.ch">
+		<createTable tableName="UCIC_CUSTOMERS_STATUS">
+
+			<column name="CUSTID" type="bigint" />
+			<column name="UCICID" type="VARCHAR(200)" />
+			<column name="STATUS" type="VARCHAR(20)" />
+			<column name="ERROR_DESC" type="VARCHAR(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="43" author="goutham.ch">
+		<createTable tableName="UCIC_RESP_FILES">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FILE_NAME" type="VARCHAR(2000)" />
+			<column name="STATUS" type="int" />
+			<column name="FILE_LOCATION" type="VARCHAR(2000)" />
+			<column name="CREATED_DATE" type="datetime" />
+			<column name="EXTRACTION" type="int" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="44" author="sreeram.r">
+	   <createSequence sequenceName="SEQ_RBIADF" incrementBy="1" startValue="1" minValue="1"
+		maxValue="9223372036854775807" />
+    </changeSet>
 </databaseChangeLog>

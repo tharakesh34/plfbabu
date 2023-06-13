@@ -1,9 +1,15 @@
 package com.pennanttech.external.extractions.service;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.pennanttech.external.EODExtractionsHook;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class EODExtractionsService implements EODExtractionsHook, ExtIntfConfigConstants {
+
+	private static final Logger logger = LogManager.getLogger(EODExtractionsService.class);
 
 	private UCICExtractionService ucicExtractionService;
 
@@ -21,37 +27,72 @@ public class EODExtractionsService implements EODExtractionsHook, ExtIntfConfigC
 
 	@Override
 	public void processUCICExtraction() {
-		ucicExtractionService.processExtraction();
+		logger.debug(Literal.ENTERING);
+		try {
+			ucicExtractionService.processExtraction();
+		} catch (Exception e) {
+			logger.debug(Literal.LEAVING, e);
+		}
 	}
 
 	@Override
 	public void processFinconGLExtraction() {
-		finconExtractionService.processExtraction();
+		logger.debug(Literal.ENTERING);
+		try {
+			finconExtractionService.processExtraction();
+		} catch (Exception e) {
+			logger.debug(Literal.LEAVING, e);
+		}
 	}
 
 	@Override
 	public void processALMReportExtraction() {
-		almExtractionService.processExtraction();
+		logger.debug(Literal.ENTERING);
+		try {
+			almExtractionService.processExtraction();
+		} catch (Exception e) {
+			logger.debug(Literal.LEAVING, e);
+		}
 	}
 
 	@Override
 	public void processBaselOneExtraction() {
-		baselOneExtractionService.processExtraction();
+		logger.debug(Literal.ENTERING);
+		try {
+			baselOneExtractionService.processExtraction();
+		} catch (Exception e) {
+			logger.debug(Literal.LEAVING, e);
+		}
 	}
 
 	@Override
 	public void processBaselTwoExtraction() {
-		baselTwoExtractionService.processExtraction();
+		logger.debug(Literal.ENTERING);
+		try {
+			baselTwoExtractionService.processExtraction();
+		} catch (Exception e) {
+			logger.debug(Literal.LEAVING, e);
+		}
 	}
 
 	@Override
 	public void processRPMSExtraction() {
-		rpmsExtractionService.processExtraction();
+		logger.debug(Literal.ENTERING);
+		try {
+			rpmsExtractionService.processExtraction();
+		} catch (Exception e) {
+			logger.debug(Literal.LEAVING, e);
+		}
 	}
 
 	@Override
 	public void processExtRBIADFExtraction() {
-		rbiAdfExtractionService.processExtraction();
+		logger.debug(Literal.ENTERING);
+		try {
+			rbiAdfExtractionService.processExtraction();
+		} catch (Exception e) {
+			logger.debug(Literal.LEAVING, e);
+		}
 	}
 
 	public void setUcicExtractionService(UCICExtractionService ucicExtractionService) {
