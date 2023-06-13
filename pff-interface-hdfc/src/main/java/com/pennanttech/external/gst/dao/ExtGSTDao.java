@@ -23,7 +23,7 @@ public interface ExtGSTDao {
 
 	void saveResponseFile(GSTCompHeader compHeader);
 
-	void updateFileStatus(long id, int status);
+	void updateFileStatus(GSTCompHeader header);
 
 	int saveExtGSTCompRecordsData(List<GSTCompDetail> compDetails);
 

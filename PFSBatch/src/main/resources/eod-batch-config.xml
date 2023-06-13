@@ -24,7 +24,7 @@
 		<listeners>
 			<listener ref="eodJobListener" />
 		</listeners>
-
+			
 		<step id="beforeEOD">
 			<tasklet ref="beforeEODTaskLet" />
 			<next on="*" to="loanCancel" />
@@ -321,24 +321,20 @@
 		</step>
 		<step id="waiverCancellation">
 			<tasklet ref="waiverCancellationTasklet" />
-			<next on="*" to="finconGLExtraction" />
-			<fail on="FAILED" />
-		</step>
-		<step id="finconGLExtraction">
-			<tasklet ref="finconGLExtractionTasklet" />
 			<next on="*" to="ucicExtraction" />
 			<fail on="FAILED" />
 		</step>
 		<step id="ucicExtraction">
 			<tasklet ref="ucicExtractionTasklet" />
-			<next on="*" to="extRBIADFExtraction" />
+			<next on="*" to="finconGLExtraction" />
 			<fail on="FAILED" />
 		</step>
-		<step id="extRBIADFExtraction">
-			<tasklet ref="extRBIADFExtractionTasklet" />
+		<step id="finconGLExtraction">
+			<tasklet ref="finconGLExtractionTasklet" />
 			<next on="*" to="endOfMonthDecider" />
 			<fail on="FAILED" />
 		</step>
+
 		<decision id="endOfMonthDecider" decider="endOfMonthDecider">
 			<next on="EndOfMonth" to="retailcibil" />
 			<end on="NotEndOfMonth" exit-code="COMPLETED" />
@@ -351,6 +347,31 @@
 		</step>
 		<step id="corporatecibil">
 			<tasklet ref="corporatecibilTaskLet" />
+			<next on="*" to="almExtraction" />
+			<fail on="FAILED" />
+		</step>
+		<step id="almExtraction">
+			<tasklet ref="almExtractionTasklet" />
+			<next on="*" to="baselOneExtraction" />
+			<fail on="FAILED" />
+		</step>
+		<step id="baselOneExtraction">
+			<tasklet ref="baselOneExtractionTasklet" />
+			<next on="*" to="baselTwoExtraction" />
+			<fail on="FAILED" />
+		</step>
+		<step id="baselTwoExtraction">
+			<tasklet ref="baselTwoExtractionTasklet" />
+			<next on="*" to="rpmsExtraction" />
+			<fail on="FAILED" />
+		</step>
+		<step id="rpmsExtraction">
+			<tasklet ref="rpmsExtractionTasklet" />
+			<next on="*" to="rbiAdfExtraction" />
+			<fail on="FAILED" />
+		</step>	
+		<step id="rbiAdfExtraction">
+			<tasklet ref="rbiAdfExtractionTasklet" />
 			<fail on="FAILED" />
 			<end on="*" exit-code="COMPLETED" />
 		</step>

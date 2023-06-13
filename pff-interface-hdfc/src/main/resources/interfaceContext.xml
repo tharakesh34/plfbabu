@@ -63,7 +63,7 @@
 	</bean>
 	
 	<bean id="externalDao" class="com.pennanttech.external.app.config.dao.ExternalDao">
-		<property name="extDataSource" ref="dataSource" />
+		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 	
 	<bean id="extGSTDao" class="com.pennanttech.external.gst.dao.ExtGSTDaoImpl">

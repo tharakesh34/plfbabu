@@ -13,15 +13,27 @@
 
 	<!-- prepareCustomerQueue -->
 	<bean id="prepareCustomerQueueTaskLet" class="com.pennant.backend.endofday.tasklet.PrepareCustomerQueue" />
+	
+	<!-- UCICEXTRACTION -->
+	<bean id="ucicExtractionTasklet" class="com.pennant.backend.endofday.tasklet.external.UCICExtractionTasklet" />
 
 	<!-- FINCONGLEXTRACTION -->
 	<bean id="finconGLExtractionTasklet" class="com.pennant.backend.endofday.tasklet.external.FinconGLExtractionTasklet" />
-
-	<!-- UCICEXTRACTION -->
-	<bean id="ucicExtractionTasklet" class="com.pennant.backend.endofday.tasklet.external.UCICExtractionTasklet" />
+	
+	<!-- ALMEXTRACTION -->
+	<bean id="almExtractionTasklet" class="com.pennant.backend.endofday.tasklet.external.ALMExtractionTasklet" />
+	
+	<!-- BASELONEEXTRACTION -->
+	<bean id="baselOneExtractionTasklet" class="com.pennant.backend.endofday.tasklet.external.BaselOneExtractionTasklet" />
+	
+	<!-- BASELTWOEXTRACTION -->
+	<bean id="baselTwoExtractionTasklet" class="com.pennant.backend.endofday.tasklet.external.BaselTwoExtractionTasklet" />
+	
+	<!-- RPMSEXTRACTION -->
+	<bean id="rpmsExtractionTasklet" class="com.pennant.backend.endofday.tasklet.external.RPMSExtractionTasklet" />
 	
 	<!-- RBIADFEXTRACTION -->
-	<bean id="extRBIADFExtractionTasklet" class="com.pennant.backend.endofday.tasklet.external.ExtRBIADFExtractionTasklet" />	
+	<bean id="rbiAdfExtractionTasklet" class="com.pennant.backend.endofday.tasklet.external.RBIADFExtractionTasklet" />	
 
 	<!-- MicroEOD -->
 	<bean id="microEODTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEOD" />

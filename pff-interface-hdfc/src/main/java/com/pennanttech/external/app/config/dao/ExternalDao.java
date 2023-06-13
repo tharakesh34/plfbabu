@@ -14,10 +14,12 @@ public class ExternalDao {
 
 	private static final Logger logger = LogManager.getLogger(ExternalDao.class);
 
-	DataSource extDataSource;
+	private DataSource extDataSource;
+	private NamedParameterJdbcTemplate extNamedJdbcTemplate;
 
 	public void setExtDataSource(DataSource extDataSource) {
 		this.extDataSource = extDataSource;
+		this.extNamedJdbcTemplate = new NamedParameterJdbcTemplate(extDataSource);
 	}
 
 	public String executeSP(String spName, MapSqlParameterSource in) {
@@ -57,7 +59,7 @@ public class ExternalDao {
 	public long getSeqNumber(String tableName) {
 		StringBuilder sql = new StringBuilder("select ").append(tableName).append(".NEXTVAL from DUAL");
 
-		return new NamedParameterJdbcTemplate(extDataSource).queryForObject(sql.toString(), new MapSqlParameterSource(),
-				Long.class);
+		return extNamedJdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Long.class);
+
 	}
 }

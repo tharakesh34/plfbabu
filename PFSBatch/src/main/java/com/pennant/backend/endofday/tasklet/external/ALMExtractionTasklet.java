@@ -12,12 +12,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import com.pennanttech.external.EODExtractionsHook;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtRBIADFExtractionTasklet implements Tasklet {
+public class ALMExtractionTasklet implements Tasklet {
 
-	private static Logger logger = LogManager.getLogger(ExtRBIADFExtractionTasklet.class);
+	private static Logger logger = LogManager.getLogger(ALMExtractionTasklet.class);
 	private EODExtractionsHook extExtractionHook;
 
-	public ExtRBIADFExtractionTasklet() {
+	public ALMExtractionTasklet() {
 		super();
 	}
 
@@ -26,7 +26,7 @@ public class ExtRBIADFExtractionTasklet implements Tasklet {
 		logger.debug(Literal.ENTERING);
 
 		if (extExtractionHook != null) {
-			extExtractionHook.processExtRBIADFExtarction();
+			extExtractionHook.processALMReportExtraction();
 		}
 
 		return RepeatStatus.FINISHED;

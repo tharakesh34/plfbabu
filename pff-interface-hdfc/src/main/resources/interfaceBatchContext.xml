@@ -23,27 +23,55 @@
 	</bean>
 
 	<bean id="externalDao" class="com.pennanttech.external.app.config.dao.ExternalDao">
-		<property name="extDataSource" ref="dataSource" />
+		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 	
 	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.ExtUcicDaoImpl">
 		<property name="mainDataSource" ref="dataSource" />
 	</bean>
 
-	<bean id="extUcicExtractData" class="com.pennanttech.external.ucic.service.ExtUcicDataExtractor">
-		<property name="externalDao" ref="externalDao" />
-	</bean>
-
-
 	<bean id="externalPresentmentDAO" class="com.pennanttech.external.presentment.dao.ExtPresentmentDAOImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 		<property name="stagingDataSource" ref="stagingDataSource" />
 	</bean>
+	
+	<bean id="ucicExtractionService" class="com.pennanttech.external.extractions.service.UCICExtractionService">
+		<property name="externalDao" ref="externalDao" />
+	</bean>
+	
+	<bean id="finconExtractionService" class="com.pennanttech.external.extractions.service.FinconExtractionService">
+		<property name="externalDao" ref="externalDao" />
+	</bean>
+	
+	<bean id="almExtractionService" class="com.pennanttech.external.extractions.service.ALMExtractionService">
+		<property name="externalDao" ref="externalDao" />
+	</bean>
+	
+	<bean id="baselOneExtractionService" class="com.pennanttech.external.extractions.service.BaselOneExtractionService">
+		<property name="externalDao" ref="externalDao" />
+	</bean>
+	
+	<bean id="baselTwoExtractionService" class="com.pennanttech.external.extractions.service.BaselTwoExtractionService">
+		<property name="externalDao" ref="externalDao" />
+	</bean>
+	
+	<bean id="rpmsExtractionService" class="com.pennanttech.external.extractions.service.RPMSExtractionService">
+		<property name="externalDao" ref="externalDao" />
+	</bean>
+	
+		<bean id="rbiAdfExtractionService" class="com.pennanttech.external.extractions.service.RBIADFExtractionService">
+		<property name="externalDao" ref="externalDao" />
+	</bean>
 
 	<bean id="extExtractionHook" class="com.pennanttech.external.extractions.service.EODExtractionsService">
-		<property name="extUcicExtractData" ref="extUcicExtractData" />
-		<property name="externalDao" ref="externalDao" />
+		<property name="ucicExtractionService" ref="ucicExtractionService" />
+		<property name="finconExtractionService" ref="finconExtractionService" />
+		<property name="almExtractionService" ref="almExtractionService" />
+		<property name="baselOneExtractionService" ref="baselOneExtractionService" />
+		<property name="baselTwoExtractionService" ref="baselTwoExtractionService" />
+		<property name="rpmsExtractionService" ref="rpmsExtractionService" />
+		<property name="rbiAdfExtractionService" ref="rbiAdfExtractionService" />
 	</bean>
 
 	<bean id="siService" class="com.pennanttech.external.presentment.service.SIService">
