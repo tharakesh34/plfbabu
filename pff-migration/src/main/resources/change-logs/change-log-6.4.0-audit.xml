@@ -728,4 +728,83 @@
 		<addDefaultValue tableName="ADTLOAN_LETTER_MANUAL" columnName="ActualAmt" defaultValue="0" />
 	</changeSet>
 	
+		
+	<changeSet id="ST#15956.100_1" author="Gopal.p">
+		<renameTable newTableName="ADTLOAN_LETTER_MANUAL_BKP" oldTableName="ADTLOAN_LETTER_MANUAL" />
+	</changeSet>
+	
+	<changeSet id="ST#15956.100_2" author="Gopal.p">
+		<createTable tableName="ADTLOAN_LETTER_MANUAL">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="Id" type="bigint" />
+			<column name="LetterType" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CoreBankId" type="varchar(50)" />
+			<column name="CustCIF" type="varchar(20)" />
+			<column name="FinID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)" />
+			<column name="FinBranch" type="varchar(12)" />
+			<column name="ActualAmt" type ="decimal(18, 0)"/>
+			<column name="WaiverAmt" type ="decimal(18, 0)"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#15956.100_3" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTLOAN_LETTER_MANUAL ADD CONSTRAINT DF_FTT_WAIVERAMT DEFAULT 0 FOR WaiverAmt;
+				ALTER TABLE ADTLOAN_LETTER_MANUAL ADD CONSTRAINT DF_FTT_ACTUALAMT DEFAULT 0 FOR ActualAmt;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#15956.100_3" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue tableName="ADTLOAN_LETTER_MANUAL" columnName="WaiverAmt" defaultValue="0" />
+		<addDefaultValue tableName="ADTLOAN_LETTER_MANUAL" columnName="ActualAmt" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#15956.100_4" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				INSERT INTO ADTLOAN_LETTER_MANUAL (AUDITID, AUDITDATE, AUDITSEQ, AUDITIMAGE, ID, LETTERTYPE, FINREFERENCE, FINID, CUSTCIF, COREBANKID, FINBRANCH, WAIVERAMT, ACTUALAMT, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) SELECT AUDITID, AUDITDATE, AUDITSEQ, AUDITIMAGE, ID, LETTERTYPE, FINREFERENCE, FINID, CUSTCIF, COREBANKID, FINBRANCH, WAIVERAMT, ACTUALAMT, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID FROM ADTLOAN_LETTER_MANUAL_BKP;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#15956.100_5" author="Gopal.p">
+		<dropTable tableName="ADTLOAN_LETTER_MANUAL_BKP"/>
+	</changeSet>
+	
 </databaseChangeLog>

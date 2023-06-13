@@ -1580,6 +1580,18 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					continue;
 				}
 
+				if (this.generateLetter != null) {
+					if (this.generateLetter.getWaiverAmt() != null
+							&& this.generateLetter.getWaiverAmt().compareTo(BigDecimal.ZERO) > 0) {
+						finFeeDetail.setWaivedAmount(this.generateLetter.getWaiverAmt());
+					}
+
+					if (this.generateLetter.getActualAmt() != null
+							&& this.generateLetter.getActualAmt().compareTo(BigDecimal.ZERO) > 0) {
+						finFeeDetail.setActualAmount(this.generateLetter.getActualAmt());
+					}
+				}
+
 				// setting paid amount and remaining amount
 				if (isDisbServ) {
 					finFeeDetail.setPaidAmount(BigDecimal.ZERO);
@@ -2328,6 +2340,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			if (!finFeeDetail.isTaxApplicable()) {
 				finFeeDetail.setActualAmount(PennantApplicationUtil.unFormateAmount(actualBox.getValue(), formatter));
 				finFeeDetail.setActualAmountGST(PennantApplicationUtil.unFormateAmount(BigDecimal.ZERO, formatter));
+			} else {
+				if ("GenerateLetter".equals(this.moduleDefiner)) {
+					finFeeDetail
+							.setActualAmount(PennantApplicationUtil.unFormateAmount(actualBox.getValue(), formatter));
+				}
 			}
 
 			finFeeDetail.setWaivedAmount(PennantApplicationUtil.unFormateAmount(waiverBox.getValue(), formatter));
@@ -2386,6 +2403,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			if ("GenerateLetter".equals(this.moduleDefiner)) {
 				feeSchdMthdBox.setValue(Labels.getLabel("label_CreateReceivable_Advise"));
 				feeSchdMthdBox.setDisabled(true);
+			}
+
+			if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
+				actualBox.setValue(actualBox.getValue().subtract(netFeeGstBox.getValue()));
 			}
 		}
 

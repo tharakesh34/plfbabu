@@ -237,7 +237,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 
 		String whereCond = "Where Id = ?";
 
-		if (doCheckAuthority(letters, whereCond, new Object[] { letters.getFinID() })) {
+		if (doCheckAuthority(letters, whereCond, new Object[] { letters.getId() })) {
 			if (isWorkFlowEnabled() && letters.getWorkflowId() == 0) {
 				letters.setWorkflowId(getWorkFlowId());
 			}

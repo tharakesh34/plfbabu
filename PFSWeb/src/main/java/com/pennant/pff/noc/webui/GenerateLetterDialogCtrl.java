@@ -226,12 +226,18 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	}
 
 	private void doWriteComponentsToBean(GenerateLetter geneLtr) {
-		List<FinFeeDetail> fee = geneLtr.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
+		List<FinFeeDetail> fees = geneLtr.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 		Date appDate = SysParamUtil.getAppDate();
 
-		if (CollectionUtils.isNotEmpty(fee)) {
-			geneLtr.setWaiverAmt(fee.get(0).getWaivedAmount());
-			geneLtr.setActualAmt(fee.get(0).getActualAmount());
+		if (CollectionUtils.isNotEmpty(fees)) {
+			FinFeeDetail fee = fees.get(0);
+			geneLtr.setWaiverAmt(fee.getWaivedAmount());
+			geneLtr.setActualAmt(fee.getActualAmount());
+
+			if (geneLtr.getActualAmt().subtract(fee.getWaivedAmount()).compareTo(BigDecimal.ZERO) > 0
+					&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(fee.getTaxComponent())) {
+				geneLtr.setActualAmt(geneLtr.getActualAmt().subtract(fee.getActualAmountGST()));
+			}
 		}
 
 		geneLtr.setRequestType(LetterMode.OTC.name());
@@ -336,7 +342,11 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 					ah = generateLetterService.delete(ah);
 					deleteNotes = true;
 				} else {
-					ah = generateLetterService.saveOrUpdate(ah);
+					if ("GENERATE_LETTER_DOWNLOAD".equals(aBounceCode.getNextRoleCode())) {
+						ah = generateLetterService.doApprove(ah);
+					} else {
+						ah = generateLetterService.saveOrUpdate(ah);
+					}
 				}
 			} else {
 				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {

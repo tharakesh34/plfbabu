@@ -309,16 +309,16 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	@Override
 	public long save(GenerateLetter gl, TableType type) {
 		if (gl.getId() == 0 || gl.getId() == Long.MIN_VALUE) {
-			gl.setId(getNextValue("SEQ_Letter_Generate_Manual"));
+			gl.setId(getNextValue("SEQ_LOAN_LETTER_MANUAL"));
 		}
 
 		StringBuilder sql = new StringBuilder("Insert Into Loan_Letter_Manual");
 		sql.append(type.getSuffix());
-		sql.append("(LetterType, FinReference, FinID, CustCIF, CoreBankId, FinBranch, WaiverAmt");
+		sql.append("(ID, LetterType, FinReference, FinID, CustCIF, CoreBankId, FinBranch, WaiverAmt");
 		sql.append(", ActualAmt, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -326,6 +326,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 0;
 
+				ps.setLong(++index, gl.getId());
 				ps.setString(++index, gl.getLetterType());
 				ps.setString(++index, gl.getFinReference());
 				ps.setLong(++index, gl.getFinID());

@@ -318,10 +318,10 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 	@Override
 	public long save(GenerateLetter gl, TableType type) {
 		if (gl.getId() == 0 || gl.getId() == Long.MIN_VALUE) {
-			gl.setId(getNextValue("SEQ_Letter_Generate_Manual"));
+			gl.setId(getNextValue("SEQ_LOAN_LETTER_MANUAL"));
 		}
 
-		StringBuilder sql = new StringBuilder("Insert Into LOAN_LETTER_MANUAL ");
+		StringBuilder sql = new StringBuilder("Insert Into LOAN_LETTER_MANUAL");
 		sql.append(type.getSuffix());
 		sql.append("(LetterType, FinID");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy");

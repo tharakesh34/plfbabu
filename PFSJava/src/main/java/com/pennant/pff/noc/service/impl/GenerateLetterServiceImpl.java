@@ -474,7 +474,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 	@Override
 	public List<ManualAdvise> getManualAdvises(long finID) {
-		return manualAdviseDAO.getPaybleAdvises(finID, "");
+		return manualAdviseDAO.getManualAdvise(finID, true);
 	}
 
 	private void prepareProfitDetailSummary(FinanceSummary summary, FinScheduleData schdData) {

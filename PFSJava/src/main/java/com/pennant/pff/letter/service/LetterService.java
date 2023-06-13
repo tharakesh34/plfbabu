@@ -505,6 +505,10 @@ public class LetterService {
 
 		BigDecimal remainingFee = finFeeDetail.getRemainingFee();
 
+		if (remainingFee.compareTo(BigDecimal.ZERO) <= 0) {
+			return;
+		}
+
 		ManualAdvise manualAdvise = new ManualAdvise();
 		manualAdvise.setAdviseID(Long.MIN_VALUE);
 		manualAdvise.setAdviseType(AdviseType.RECEIVABLE.id());
