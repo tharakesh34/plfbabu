@@ -36,7 +36,6 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.SchdUtil;
 import com.pennanttech.pff.rs.financeenquiry.FinanceEnquiryRestService;
-import com.pennanttech.ws.model.statement.FinStatementRequest;
 
 public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements FinanceEnquiryRestService {
 

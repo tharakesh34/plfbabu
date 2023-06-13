@@ -39,6 +39,7 @@ import com.pennanttech.pff.overdraft.OverdraftConstants;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.staticlist.AppStaticList;
 import com.pennanttech.pff.staticlist.ExtFieldStaticList;
@@ -5528,7 +5529,7 @@ public class PennantStaticListUtil {
 	public static List<String> getAllowedExcessTypeList() {
 		if (allowedExcessTypeList == null) {
 			allowedExcessTypeList = new ArrayList<>(1);
-			allowedExcessTypeList.add(RepayConstants.EXAMOUNTTYPE_EXCESS);
+			allowedExcessTypeList.add(ExcessType.EXCESS);
 		}
 		return allowedExcessTypeList;
 	}

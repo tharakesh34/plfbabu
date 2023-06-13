@@ -89,6 +89,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.external.SubReceiptPaymentModes;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.web.util.ComponentUtil;
 
@@ -989,7 +990,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		schdData.setFinServiceInstruction(new FinServiceInstruction());
 		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
 		if (!fm.isFinIsActive()) {
-			fsi.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+			fsi.setExcessAdjustTo(ExcessType.EXCESS);
 		}
 		if (fm.isUnderSettlement()) {
 			fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_SETTLEMENT);

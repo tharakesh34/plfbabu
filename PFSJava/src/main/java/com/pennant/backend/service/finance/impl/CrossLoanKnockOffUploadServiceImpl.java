@@ -64,6 +64,7 @@ import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<CrossLoanKnockoffUpload> {
@@ -156,11 +157,11 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 
 					clk.setEntityCode(header.getEntityCode());
 
-					if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(clk.getExcessType())) {
+					if (ExcessType.EXCESS.equals(clk.getExcessType())) {
 						clk.setExcessList(finExcessAmountDAO.getExcessAmountsByRefAndType(fromFm.getFinID(),
 								clk.getExcessType()));
 					} else {
-						if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(clk.getExcessType())) {
+						if (ExcessType.PAYABLE.equals(clk.getExcessType())) {
 							List<ManualAdvise> mbList = manualAdviseDAO.getManualAdviseByRefAndFeeCode(
 									fromFm.getFinID(), AdviseType.PAYABLE.id(), clk.getFeeTypeCode());
 
@@ -245,11 +246,11 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 
 		clk.setFinType(finType);
 		prepareUserDetails(header, clk);
-		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(clk.getExcessType())) {
+		if (ExcessType.EXCESS.equals(clk.getExcessType())) {
 			ahList.addAll(prepareCLOForExcess(header, clk, fromFm, toFm));
 		}
 
-		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(clk.getExcessType())) {
+		if (ExcessType.PAYABLE.equals(clk.getExcessType())) {
 			ahList.addAll(prepareCLOForAdvises(header, clk, fromFm, toFm));
 		}
 
@@ -406,7 +407,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 		clko.setNewRecord(true);
 		clko.setCrossLoanKnockoffUpload(clk);
 
-		String receiptMode = RepayConstants.EXAMOUNTTYPE_EXCESS.equals(clk.getExcessType()) ? ReceiptMode.EXCESS
+		String receiptMode = ExcessType.EXCESS.equals(clk.getExcessType()) ? ReceiptMode.EXCESS
 				: ReceiptMode.PAYABLE;
 
 		clko.setFinServiceInstruction(getFSI(header, clk, payableAmount, receiptMode, receiptDt));
@@ -495,8 +496,8 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 			return;
 		}
 
-		if (!(RepayConstants.EXAMOUNTTYPE_EXCESS.equals(clk.getExcessType())
-				|| RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(clk.getExcessType()))) {
+		if (!(ExcessType.EXCESS.equals(clk.getExcessType())
+				|| ExcessType.PAYABLE.equals(clk.getExcessType()))) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_003);
 			return;
 		}
@@ -516,7 +517,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 			return;
 		}
 
-		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(clk.getExcessType())
+		if (ExcessType.PAYABLE.equals(clk.getExcessType())
 				&& StringUtils.isEmpty(clk.getFeeTypeCode())) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_021);
 		}
@@ -599,7 +600,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 	private BigDecimal getBalanceAmount(CrossLoanKnockoffUpload clk, List<FinExcessAmount> excessList,
 			List<ManualAdvise> maList) {
 
-		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(clk.getExcessType())) {
+		if (ExcessType.EXCESS.equals(clk.getExcessType())) {
 			if (CollectionUtils.isEmpty(excessList)) {
 				setError(clk, CrossLoanKnockOffUploadError.CLKU_013);
 				return BigDecimal.ZERO;

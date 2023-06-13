@@ -264,6 +264,7 @@ import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
@@ -3546,7 +3547,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		String receiptMode = fsi.getPaymentMode();
 
 		if (!fm.isFinIsActive()) {
-			fsi.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+			fsi.setExcessAdjustTo(ExcessType.EXCESS);
 		}
 
 		FinReceiptHeader rch = rd.getReceiptHeader();
@@ -4169,9 +4170,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return;
 		}
 
-		String excess = RepayConstants.EXAMOUNTTYPE_EXCESS;
-		String emiInAdvance = RepayConstants.EXAMOUNTTYPE_EMIINADV;
-		String tExcess = RepayConstants.EXAMOUNTTYPE_TEXCESS;
+		String excess = ExcessType.EXCESS;
+		String emiInAdvance = ExcessType.EMIINADV;
+		String tExcess = ExcessType.TEXCESS;
 
 		if (!excess.equals(excessAdjustTo) && !emiInAdvance.equals(excessAdjustTo) && !tExcess.equals(excessAdjustTo)) {
 			setError(schdData, "90337", EXCESS_ADJUST_TO + excessAdjustTo, excess + "," + emiInAdvance + "," + tExcess);
@@ -7198,11 +7199,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 	@Override
 	public FinReceiptData updateExcessPay(FinReceiptData receiptData, String rcMode, long id, BigDecimal amount) {
-		if (!StringUtils.equals(RepayConstants.EXAMOUNTTYPE_EMIINADV, rcMode)
-				&& !StringUtils.equals(RepayConstants.EXAMOUNTTYPE_EXCESS, rcMode)
-				&& !StringUtils.equals(RepayConstants.EXAMOUNTTYPE_PAYABLE, rcMode)
-				&& !StringUtils.equals(RepayConstants.EXAMOUNTTYPE_CASHCLT, rcMode)
-				&& !StringUtils.equals(RepayConstants.EXAMOUNTTYPE_DSF, rcMode)) {
+		if (!StringUtils.equals(ExcessType.EMIINADV, rcMode) && !StringUtils.equals(ExcessType.EXCESS, rcMode)
+				&& !StringUtils.equals(ExcessType.PAYABLE, rcMode) && !StringUtils.equals(ExcessType.CASHCLT, rcMode)
+				&& !StringUtils.equals(ExcessType.DSF, rcMode)) {
 			return receiptData;
 		}
 
@@ -7231,17 +7230,17 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	private String payType(String mode) {
 		String payType = "";
 		if (StringUtils.equals(mode, ReceiptMode.EMIINADV)) {
-			payType = RepayConstants.EXAMOUNTTYPE_EMIINADV;
+			payType = ExcessType.EMIINADV;
 		} else if (StringUtils.equals(mode, ReceiptMode.EXCESS)) {
-			payType = RepayConstants.EXAMOUNTTYPE_EXCESS;
+			payType = ExcessType.EXCESS;
 		} else if (StringUtils.equals(mode, ReceiptMode.PAYABLE)) {
-			payType = RepayConstants.EXAMOUNTTYPE_PAYABLE;
+			payType = ExcessType.PAYABLE;
 		} else if (StringUtils.equals(mode, ReceiptMode.CASHCLT)) {
-			payType = RepayConstants.EXAMOUNTTYPE_CASHCLT;
+			payType = ExcessType.CASHCLT;
 		} else if (StringUtils.equals(mode, ReceiptMode.DSF)) {
-			payType = RepayConstants.EXAMOUNTTYPE_DSF;
+			payType = ExcessType.DSF;
 		} else if (StringUtils.equals(mode, ReceiptMode.TEXCESS)) {
-			payType = RepayConstants.EXAMOUNTTYPE_TEXCESS;
+			payType = ExcessType.TEXCESS;
 		}
 		return payType;
 	}
@@ -7583,19 +7582,19 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 			String payableType = payable.getPayableType();
 			switch (payableType) {
-			case RepayConstants.EXAMOUNTTYPE_EMIINADV:
+			case ExcessType.EMIINADV:
 				rcd.setPaymentType(ReceiptMode.EMIINADV);
 				break;
-			case RepayConstants.EXAMOUNTTYPE_EXCESS:
+			case ExcessType.EXCESS:
 				rcd.setPaymentType(ReceiptMode.EXCESS);
 				break;
-			case RepayConstants.EXAMOUNTTYPE_CASHCLT:
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_CASHCLT);
+			case ExcessType.CASHCLT:
+				rcd.setPaymentType(ExcessType.CASHCLT);
 				break;
-			case RepayConstants.EXAMOUNTTYPE_DSF:
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_DSF);
+			case ExcessType.DSF:
+				rcd.setPaymentType(ExcessType.DSF);
 				break;
-			case RepayConstants.EXAMOUNTTYPE_TEXCESS:
+			case ExcessType.TEXCESS:
 				rcd.setPaymentType(ReceiptMode.TEXCESS);
 				break;
 			case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:

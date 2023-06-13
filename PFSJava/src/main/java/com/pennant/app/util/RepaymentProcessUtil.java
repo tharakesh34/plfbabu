@@ -117,6 +117,7 @@ import com.pennanttech.pff.payment.service.LoanPaymentService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
@@ -613,32 +614,32 @@ public class RepaymentProcessUtil {
 			addZeroifNotContains(extMap, feeCode + "_TDS_P");
 
 			switch (payableType) {
-			case RepayConstants.EXAMOUNTTYPE_EXCESS:
+			case ExcessType.EXCESS:
 				extMap.put("EX_ReceiptAmount", extMap.get("EX_ReceiptAmount").add(xcess.getTotPaidNow()));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_EMIINADV:
+			case ExcessType.EMIINADV:
 				extMap.put("EA_ReceiptAmount", extMap.get("EA_ReceiptAmount").add(totPaidNow));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_ADVINT:
+			case ExcessType.ADVINT:
 				extMap.put("EAI_ReceiptAmount", extMap.get("EAI_ReceiptAmount").add(totPaidNow));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_ADVEMI:
+			case ExcessType.ADVEMI:
 				extMap.put("EAM_ReceiptAmount", extMap.get("EAM_ReceiptAmount").add(totPaidNow));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_CASHCLT:
+			case ExcessType.CASHCLT:
 				extMap.put("CACLT_ReceiptAmount", extMap.get("CACLT_ReceiptAmount").add(totPaidNow));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_DSF:
+			case ExcessType.DSF:
 				extMap.put("DSF_ReceiptAmount", extMap.get("DSF_ReceiptAmount").add(totPaidNow));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_TEXCESS:
+			case ExcessType.TEXCESS:
 				extMap.put("ET_ReceiptAmount", extMap.get("ET_ReceiptAmount").add(totPaidNow));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_SETTLEMENT:
+			case ExcessType.SETTLEMENT:
 				extMap.put("SETTLE_ReceiptAmount", extMap.get("SETTLE_ReceiptAmount").add(totPaidNow));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_PAYABLE:
-				if (amountCodes.isIntAdv() && RepayConstants.EXAMOUNTTYPE_ADVINT.equals(feeCode)) {
+			case ExcessType.PAYABLE:
+				if (amountCodes.isIntAdv() && ExcessType.ADVINT.equals(feeCode)) {
 					extMap.put("EX_AdvIntPayable", totPaidNow);
 				}
 				break;

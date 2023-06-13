@@ -98,6 +98,7 @@ import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
 
@@ -729,7 +730,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			receiptDetails.add(rcd);
 
 			XcessPayables xp = new XcessPayables();
-			xp.setPayableType(RepayConstants.EXAMOUNTTYPE_EMIINADV);
+			xp.setPayableType(ExcessType.EMIINADV);
 			xp.setAmount(advanceAmt);
 			xp.setTotPaidNow(advanceAmt);
 			rch.getXcessPayables().add(xp);
@@ -795,7 +796,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		rch.setReceiptID(receiptId);
 		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-		rch.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+		rch.setExcessAdjustTo(ExcessType.EXCESS);
 		rch.setAllocationType(AllocationType.AUTO);
 		rch.setReceivedFrom(RepayConstants.RECEIVED_CUSTOMER);
 		rch.setReceiptAmount(pd.getPresentmentAmt());
@@ -821,7 +822,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			rcd.setAmount(pd.getAdvanceAmt());
 			rcd.setDueAmount(pd.getAdvanceAmt());
 			XcessPayables xcessPayable = new XcessPayables();
-			xcessPayable.setPayableType(RepayConstants.EXAMOUNTTYPE_EMIINADV);
+			xcessPayable.setPayableType(ExcessType.EMIINADV);
 			xcessPayable.setAmount(pd.getAdvanceAmt());
 			xcessPayable.setTotPaidNow(pd.getAdvanceAmt());
 			rch.getXcessPayables().add(xcessPayable);
@@ -907,7 +908,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		rch.setReceiptID(receiptId);
 		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-		rch.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+		rch.setExcessAdjustTo(ExcessType.EXCESS);
 		rch.setAllocationType(AllocationType.AUTO);
 		rch.setReceivedFrom(RepayConstants.RECEIVED_CUSTOMER);
 		rch.setReceiptAmount(pd.getPresentmentAmt());

@@ -161,6 +161,7 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 
@@ -1476,9 +1477,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private String payType(String mode) {
 		switch (mode) {
-		case RepayConstants.EXAMOUNTTYPE_EMIINADV:
+		case ExcessType.EMIINADV:
 			return ReceiptMode.EMIINADV;
-		case RepayConstants.EXAMOUNTTYPE_EXCESS:
+		case ExcessType.EXCESS:
 			return ReceiptMode.EXCESS;
 		case ReceiptMode.ADVEMI:
 		case ReceiptMode.ADVINT:

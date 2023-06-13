@@ -120,6 +120,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.autorefund.RefundBeneficiary;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 
 /**
  * This is the controller class for the /WEB-INF/pages/payment/PaymentHeader/paymentHeaderDialog.zul file. <br>
@@ -1497,7 +1498,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		List<FinExcessAmount> filterList = new ArrayList<>();
 		for (FinExcessAmount fea : excessList) {
-			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equalsIgnoreCase(fea.getAmountType())) {
+			if (ExcessType.EXCESS.equalsIgnoreCase(fea.getAmountType())) {
 				filterList.add(fea);
 			}
 		}
@@ -1997,7 +1998,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			BigDecimal paidAmount = pd.getAmount();
 			String desc = "";
 
-			if (!RepayConstants.EXAMOUNTTYPE_EXCESS.equals(pd.getAmountType())) {
+			if (!ExcessType.EXCESS.equals(pd.getAmountType())) {
 				desc = pd.getFeeTypeCode().concat(("-")).concat(pd.getFeeTypeDesc());
 				TaxHeader taxHeader = pd.getTaxHeader();
 				if (taxHeader != null) {

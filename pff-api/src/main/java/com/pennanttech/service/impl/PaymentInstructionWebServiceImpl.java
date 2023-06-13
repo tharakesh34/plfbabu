@@ -17,13 +17,13 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.PaymentInstructionController;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pffws.PaymentInstructionRestService;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
@@ -96,7 +96,7 @@ public class PaymentInstructionWebServiceImpl extends ExtendedTestClass implemen
 		}
 
 		if (StringUtils.isNotBlank(ph.getPaymentType())) {
-			if (!StringUtils.equals(RepayConstants.EXAMOUNTTYPE_EXCESS, ph.getPaymentType())
+			if (!StringUtils.equals(ExcessType.EXCESS, ph.getPaymentType())
 					&& !StringUtils.equals("MANADV", ph.getPaymentType())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Payment Type Not Valid";
@@ -104,11 +104,11 @@ public class PaymentInstructionWebServiceImpl extends ExtendedTestClass implemen
 			}
 			if (StringUtils.equals("MANADV", ph.getPaymentType())) {
 				for (int i = 0; i < ph.getPaymentDetailList().size(); i++) {
-					if (!StringUtils.equals(RepayConstants.EXAMOUNTTYPE_EMIINADV,
+					if (!StringUtils.equals(ExcessType.EMIINADV,
 							ph.getPaymentDetailList().get(i).getAmountType())
-							&& !StringUtils.equals(RepayConstants.EXAMOUNTTYPE_ADVEMI,
+							&& !StringUtils.equals(ExcessType.ADVEMI,
 									ph.getPaymentDetailList().get(i).getAmountType())
-							&& !StringUtils.equals(RepayConstants.EXAMOUNTTYPE_ADVINT,
+							&& !StringUtils.equals(ExcessType.ADVINT,
 									ph.getPaymentDetailList().get(i).getAmountType())) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "Fee Type Not Valid";

@@ -74,6 +74,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.web.util.ComponentUtil;
 
@@ -732,7 +733,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		schdData.setFinServiceInstruction(new FinServiceInstruction());
 		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
 		if (!fm.isFinIsActive()) {
-			fsi.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+			fsi.setExcessAdjustTo(ExcessType.EXCESS);
 		}
 
 		fsi.setReceiptDetail(new FinReceiptDetail());

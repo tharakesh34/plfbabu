@@ -55,17 +55,7 @@ public class ReceiptMode {
 
 	public static String getReceiptMode(String receiptMode) {
 		switch (receiptMode) {
-		case EXPERIA:
-		case IMPS:
-		case NEFT:
-		case RTGS:
-		case BILLDESK:
-		case PAYU:
-		case PAYTM:
-		case PORTAL:
-		case ESCROW:
-		case DIGITAL:
-		case RTRNGDS:
+		case EXPERIA, IMPS, NEFT, RTGS, BILLDESK, PAYU, PAYTM, PORTAL, ESCROW, DIGITAL, RTRNGDS:
 			return ONLINE;
 		case RESTRUCT:
 			return RESTRUCT;
@@ -82,12 +72,9 @@ public class ReceiptMode {
 
 	public static String getReceiptChannel(String receiptMode) {
 		switch (receiptMode) {
-		case PORTAL:
-		case BILLDESK:
+		case PORTAL, BILLDESK:
 			return DisbursementConstants.RECEIPT_CHANNEL_POR;
-		case CASH:
-		case CHEQUE:
-		case DD:
+		case CASH, CHEQUE, DD:
 			return DisbursementConstants.PAYMENT_TYPE_OTC;
 		default:
 			return "";
@@ -101,8 +88,7 @@ public class ReceiptMode {
 		}
 
 		switch (receiptMode) {
-		case ONLINE:
-		case MOBILE:
+		case ONLINE, MOBILE:
 			return true;
 		default:
 			return false;
@@ -111,9 +97,7 @@ public class ReceiptMode {
 
 	public static boolean isOfflineMode(String receiptMode) {
 		switch (receiptMode) {
-		case CHEQUE:
-		case DD:
-		case CASH:
+		case CHEQUE, DD, CASH:
 			return true;
 		default:
 			return false;
@@ -123,8 +107,7 @@ public class ReceiptMode {
 	public static boolean isValidReceiptChannel(String receiptMode, String channel) {
 		if (isOfflineMode(receiptMode)) {
 			switch (channel) {
-			case DisbursementConstants.PAYMENT_TYPE_OTC:
-			case DisbursementConstants.PAYMENT_TYPE_MOB:
+			case DisbursementConstants.PAYMENT_TYPE_OTC, DisbursementConstants.PAYMENT_TYPE_MOB:
 				return true;
 			default:
 				return false;
@@ -148,10 +131,7 @@ public class ReceiptMode {
 
 	public static boolean isFundingAccountReq(String receiptMode) {
 		switch (receiptMode) {
-		case CHEQUE:
-		case DD:
-		case ONLINE:
-		case RESTRUCT:
+		case CHEQUE, DD, ONLINE, RESTRUCT:
 			return true;
 		default:
 			return false;
@@ -203,4 +183,5 @@ public class ReceiptMode {
 				&& !ReceiptMode.SETTLEMENT.equals(paymentType);
 
 	}
+
 }

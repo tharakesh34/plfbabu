@@ -66,6 +66,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class SettlementServiceImpl extends GenericService<FinSettlementHeader> implements SettlementService {
@@ -621,8 +622,8 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 			finRepayHeader.setFinID(rch.getFinID());
 			financeRepaymentsDAO.updateLinkedTranId(finRepayHeader);
 
-			FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(rch.getFinID(),
-					RepayConstants.EXAMOUNTTYPE_SETTLEMENT, receiptID);
+			FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(rch.getFinID(), ExcessType.SETTLEMENT,
+					receiptID);
 
 			finExcessAmountDAO.updateUtiliseOnly(fea.getExcessID(), fea.getBalanceAmt());
 
@@ -724,7 +725,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 		rch.setFinType(schdData.getFinanceMain().getFinType());
 		rch.setReceiptAmount(fsh.getSettlementAmount());
 		rch.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
-		rch.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+		rch.setExcessAdjustTo(ExcessType.EXCESS);
 		rch.setReceiptMode(ReceiptMode.EXCESS);
 		rch.setAllocationType(AllocationType.AUTO);
 		rch.setEffectSchdMethod(CalculationConstants.EARLYPAY_ADJMUR);
@@ -863,8 +864,8 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 		for (FinReceiptHeader receipt : rl) {
 			long recID = receipt.getReceiptID();
 
-			FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(fsh.getFinID(),
-					RepayConstants.EXAMOUNTTYPE_SETTLEMENT, recID);
+			FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(fsh.getFinID(), ExcessType.SETTLEMENT,
+					recID);
 
 			finExcessAmountDAO.updateUtiliseOnly(fea.getExcessID(), fea.getBalanceAmt());
 

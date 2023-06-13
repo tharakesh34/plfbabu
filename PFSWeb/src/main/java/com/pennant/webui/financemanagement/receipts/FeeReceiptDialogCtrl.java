@@ -147,6 +147,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.web.util.ComponentUtil;
 import com.pennapps.core.util.ObjectUtil;
@@ -2206,7 +2207,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		try {
 			if ("#".equals(getComboboxValue(excessAdjustTo))) {
-				header.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+				header.setExcessAdjustTo(ExcessType.EXCESS);
 			} else {
 				header.setExcessAdjustTo(getComboboxValue(excessAdjustTo));
 			}

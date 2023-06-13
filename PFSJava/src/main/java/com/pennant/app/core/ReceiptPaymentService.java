@@ -52,6 +52,7 @@ import com.pennanttech.pff.payment.model.LoanPayment;
 import com.pennanttech.pff.payment.service.LoanPaymentService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
 
@@ -174,7 +175,7 @@ public class ReceiptPaymentService {
 			rch.setReceiptDetails(list);
 
 			XcessPayables xcessPayable = new XcessPayables();
-			xcessPayable.setPayableType(RepayConstants.EXAMOUNTTYPE_EMIINADV);
+			xcessPayable.setPayableType(ExcessType.EMIINADV);
 			xcessPayable.setAmount(advanceAmt);
 			xcessPayable.setTotPaidNow(advanceAmt);
 

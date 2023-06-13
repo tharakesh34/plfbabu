@@ -164,6 +164,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.pennapps.core.util.ObjectUtil;
@@ -1594,15 +1595,15 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	private String payType(String mode) {
 		String payType = "";
 		if (ReceiptMode.EMIINADV.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_EMIINADV;
+			payType = ExcessType.EMIINADV;
 		} else if (ReceiptMode.EXCESS.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_EXCESS;
+			payType = ExcessType.EXCESS;
 		} else if (ReceiptMode.CASHCLT.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_CASHCLT;
+			payType = ExcessType.CASHCLT;
 		} else if (ReceiptMode.DSF.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_DSF;
+			payType = ExcessType.DSF;
 		} else {
-			payType = RepayConstants.EXAMOUNTTYPE_PAYABLE;
+			payType = ExcessType.PAYABLE;
 		}
 		return payType;
 	}
@@ -1629,18 +1630,18 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 
-			if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(payable.getPayableType())) {
+			if (ExcessType.EMIINADV.equals(payable.getPayableType())) {
 				rcd.setPaymentType(ReceiptMode.EMIINADV);
-			} else if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(payable.getPayableType())) {
+			} else if (ExcessType.EXCESS.equals(payable.getPayableType())) {
 				rcd.setPaymentType(ReceiptMode.EXCESS);
-			} else if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(payable.getPayableType())) {
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_ADVINT);
-			} else if (RepayConstants.EXAMOUNTTYPE_ADVEMI.equals(payable.getPayableType())) {
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_ADVEMI);
-			} else if (RepayConstants.EXAMOUNTTYPE_CASHCLT.equals(payable.getPayableType())) {
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_CASHCLT);
-			} else if (RepayConstants.EXAMOUNTTYPE_DSF.equals(payable.getPayableType())) {
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_DSF);
+			} else if (ExcessType.ADVINT.equals(payable.getPayableType())) {
+				rcd.setPaymentType(ExcessType.ADVINT);
+			} else if (ExcessType.ADVEMI.equals(payable.getPayableType())) {
+				rcd.setPaymentType(ExcessType.ADVEMI);
+			} else if (ExcessType.CASHCLT.equals(payable.getPayableType())) {
+				rcd.setPaymentType(ExcessType.CASHCLT);
+			} else if (ExcessType.DSF.equals(payable.getPayableType())) {
+				rcd.setPaymentType(ExcessType.DSF);
 			} else {
 				rcd.setPaymentType(ReceiptMode.PAYABLE);
 			}

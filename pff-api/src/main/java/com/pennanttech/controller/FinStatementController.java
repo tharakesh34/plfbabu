@@ -95,6 +95,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.util.SchdUtil;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.model.statement.FinStatementResponse;
@@ -858,7 +859,7 @@ public class FinStatementController extends AbstractController {
 
 				// Advance EMI
 				for (FinExcessAmount finExcessAmount : excessList) {
-					if (StringUtils.equals(finExcessAmount.getAmountType(), RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
+					if (StringUtils.equals(finExcessAmount.getAmountType(), ExcessType.EMIINADV)) {
 						closureReport.setAdvInsts(
 								PennantApplicationUtil.formateAmount(finExcessAmount.getBalanceAmt(), formatter));
 					}
@@ -1121,7 +1122,7 @@ public class FinStatementController extends AbstractController {
 
 			// Advance EMI
 			for (FinExcessAmount finExcessAmount : excessList) {
-				if (StringUtils.equals(finExcessAmount.getAmountType(), RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
+				if (StringUtils.equals(finExcessAmount.getAmountType(), ExcessType.EMIINADV)) {
 					closureReport.setAdvInsts(finExcessAmount.getBalanceAmt());
 				}
 			}

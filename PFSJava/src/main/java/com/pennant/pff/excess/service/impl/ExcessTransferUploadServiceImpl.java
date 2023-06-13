@@ -22,7 +22,6 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
-import com.pennant.pff.excess.ExcessHead;
 import com.pennant.pff.excess.ExcessTransferError;
 import com.pennant.pff.excess.dao.ExcessTransferUploadDAO;
 import com.pennant.pff.excess.model.ExcessTransferUpload;
@@ -35,6 +34,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennapps.core.util.ObjectUtil;
 
 public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl<ExcessTransferUpload> {
@@ -94,12 +94,12 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl<ExcessTr
 			return;
 		}
 
-		if (!ExcessHead.isValidExcessTransferHead(transferFrom)) {
+		if (!ExcessType.isTransferAllowed(transferFrom)) {
 			setError(detail, ExcessTransferError.EXT_007);
 			return;
 		}
 
-		if (!ExcessHead.isValidExcessTransferHead(transferToType)) {
+		if (!ExcessType.isTransferAllowed(transferToType)) {
 			setError(detail, ExcessTransferError.EXT_007);
 			return;
 		}

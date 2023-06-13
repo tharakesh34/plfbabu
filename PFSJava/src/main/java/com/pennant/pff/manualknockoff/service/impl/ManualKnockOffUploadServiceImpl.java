@@ -53,6 +53,7 @@ import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.upload.ReceiptDataValidator;
 
@@ -290,11 +291,11 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		prepareUserDetails(header, fc);
 
 		List<FinServiceInstruction> fsiList = new ArrayList<>();
-		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(fc.getExcessType())) {
+		if (ExcessType.EXCESS.equals(fc.getExcessType())) {
 			fsiList.addAll(prepareRCDForExcess(header, fc));
 		}
 
-		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(fc.getExcessType())) {
+		if (ExcessType.PAYABLE.equals(fc.getExcessType())) {
 			fsiList.addAll(prepareRCDForPayable(header, fc));
 		}
 

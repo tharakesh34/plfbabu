@@ -52,6 +52,7 @@ import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class EodService {
@@ -132,7 +133,7 @@ public class EodService {
 
 			List<FinExcessAmount> finExcessAmounts = finEODEvent.getFinExcessAmounts();
 			for (FinExcessAmount fea : finExcessAmounts) {
-				if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(fea.getAmountType())
+				if (ExcessType.EMIINADV.equals(fea.getAmountType())
 						&& DateUtil.compare(schedule.getSchDate(), fea.getValueDate()) > 0) {
 					emiInAdvance.add(fea);
 					balanceAmt = balanceAmt.add(fea.getBalanceAmt());

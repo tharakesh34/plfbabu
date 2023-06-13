@@ -132,6 +132,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.soa.SOAReportService;
 
@@ -592,7 +593,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								ccyEditField);
 						String actualAmt = PennantApplicationUtil.amountFormate(finExcessAmount.getAmount(),
 								ccyEditField);
-						if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(finExcessAmount.getAmountType())) {
+						if (ExcessType.EMIINADV.equals(finExcessAmount.getAmountType())) {
 							statementOfAccount.setAdvEMIAmt(actualAmt + " / " + balanceAmt);
 							int advEMITerms = finMain.getAdvTerms();
 							statementOfAccount.setAdvInstAmt(actualAmt + " / " + advEMITerms);
@@ -635,13 +636,13 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					for (FinExcessAmount finExcessAmount : finExcessAmountsList) {
 						String balanceAmt = PennantApplicationUtil.amountFormate(finExcessAmount.getBalanceAmt(),
 								ccyEditField);
-						if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(finExcessAmount.getAmountType())) {
+						if (ExcessType.EMIINADV.equals(finExcessAmount.getAmountType())) {
 							statementOfAccount.setAdvEMIAmt(balanceAmt);
 						} else if (AdvanceRuleCode.CASHCLT.name().equals(finExcessAmount.getAmountType())) {
 							statementOfAccount.setCashCollAmt(balanceAmt);
 						} else if (AdvanceRuleCode.DSF.name().equals(finExcessAmount.getAmountType())) {
 							statementOfAccount.setDsraAmt(balanceAmt);
-						} else if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(finExcessAmount.getAmountType())) {
+						} else if (ExcessType.EXCESS.equals(finExcessAmount.getAmountType())) {
 							statementOfAccount.setBalanceAmt(PennantApplicationUtil
 									.formateAmount(finExcessAmount.getBalanceAmt(), ccyEditField));
 						}

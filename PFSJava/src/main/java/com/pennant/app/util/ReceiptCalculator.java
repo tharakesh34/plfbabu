@@ -120,6 +120,7 @@ import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.pennapps.core.util.ObjectUtil;
@@ -1347,7 +1348,7 @@ public class ReceiptCalculator {
 		BigDecimal amount = BigDecimal.ZERO;
 
 		FinReceiptHeader rch = rd.getReceiptHeader();
-		if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(amountType)
+		if (ExcessType.ADVINT.equals(amountType)
 				&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose()) && AdvanceType.hasAdvInterest(fm)
 				&& fm.isTDSApplicable()) {
 			amount = rd.getIntTdsUnpaid();
@@ -2226,7 +2227,7 @@ public class ReceiptCalculator {
 		}
 
 		for (XcessPayables xcess : rch.getXcessPayables()) {
-			if (!RepayConstants.EXAMOUNTTYPE_ADVINT.equals(xcess.getPayableType())) {
+			if (!ExcessType.ADVINT.equals(xcess.getPayableType())) {
 				continue;
 			}
 
@@ -2282,7 +2283,7 @@ public class ReceiptCalculator {
 			if (rch.getXcessPayables() != null && rch.getXcessPayables().size() > 0) {
 				receiptData = adjustAdvanceInt(receiptData);
 				for (XcessPayables xcess : rch.getXcessPayables()) {
-					if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(xcess.getPayableType())) {
+					if (ExcessType.ADVINT.equals(xcess.getPayableType())) {
 						continue;
 					}
 					BigDecimal balAmount = xcess.getBalanceAmt();
@@ -4795,9 +4796,9 @@ public class ReceiptCalculator {
 	private String payType(String mode) {
 		String payType = "";
 		if (ReceiptMode.EMIINADV.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_EMIINADV;
+			payType = ExcessType.EMIINADV;
 		} else if (ReceiptMode.EXCESS.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_EXCESS;
+			payType = ExcessType.EXCESS;
 			/*
 			 * while doing EarlySettlement or Closure receipt is used below payments, if we again open the same record
 			 * below mode of payments are shown as Zero to fix this we are adding these PayemtTypes here.
@@ -4813,7 +4814,7 @@ public class ReceiptCalculator {
 		} else if (ReceiptMode.TEXCESS.equals(mode)) {
 			payType = ReceiptMode.TEXCESS;
 		} else {
-			payType = RepayConstants.EXAMOUNTTYPE_PAYABLE;
+			payType = ExcessType.PAYABLE;
 		}
 		return payType;
 	}
