@@ -52,6 +52,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennant.pff.settlement.dao.SettlementDAO;
 import com.pennant.pff.settlement.dao.SettlementScheduleDAO;
 import com.pennant.pff.settlement.model.FinSettlementHeader;
@@ -812,7 +813,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 
 		receiptData.setTotalPastDues(receiptCalculator.getTotalNetPastDue(receiptData));
 		rch.setReceiptAmount(actualReceiptAmount);
-		rch.setClosureType("Settled");
+		rch.setClosureType(ClosureType.SETTLED.code());
 		for (XcessPayables xcess : rch.getXcessPayables()) {
 			BigDecimal balAmount = xcess.getBalanceAmt();
 			if (actualReceiptAmount.compareTo(BigDecimal.ZERO) <= 0) {
