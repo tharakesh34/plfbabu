@@ -14,8 +14,10 @@ import org.springframework.transaction.TransactionStatus;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.presentment.dao.RePresentmentUploadDAO;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.presentment.model.RePresentmentUploadDetail;
@@ -36,6 +38,7 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresent
 	private RePresentmentUploadDAO representmentUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
+	private MandateDAO mandateDAO;
 
 	public RePresentmentUploadServiceImpl() {
 		super();
@@ -149,6 +152,15 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresent
 
 		detail.setFm(fm);
 		detail.setReferenceID(fm.getFinID());
+
+		long mandateId = financeMainDAO.getMandateIdByRef(detail.getReferenceID(), "");
+		String mandateType = mandateDAO.getMandateTypeById(mandateId, "");
+
+		if (InstrumentType.SI.code().equals(mandateType) || InstrumentType.SII.code().equals(mandateType)
+				|| InstrumentType.IPDC.code().equals(mandateType)) {
+			setError(detail, PresentmentError.REPRMNT524);
+			return;
+		}
 
 		if (!fm.isFinIsActive()) {
 			setError(detail, PresentmentError.REPRMNT515);
@@ -269,5 +281,10 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresent
 	@Autowired
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
+	}
+
+	@Autowired
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
 	}
 }

@@ -591,23 +591,19 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		return true;
 	}
 
-	/**
-	 * Method to fill the combobox with given list of values
-	 * 
-	 * @param combobox
-	 * @param value
-	 * @param list
-	 */
 	public void fillComboBox(Combobox combobox, String value, List<ValueLabel> list, String excludeFields) {
 		logger.trace(Literal.ENTERING);
 
 		combobox.getChildren().clear();
+
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue(PennantConstants.List_Select);
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
+
 		combobox.appendChild(comboitem);
 		combobox.setSelectedItem(comboitem);
 		combobox.setReadonly(true);
+
 		for (ValueLabel valueLabel : list) {
 			if (!excludeFields.contains("," + valueLabel.getValue() + ",")) {
 				comboitem = new Comboitem();

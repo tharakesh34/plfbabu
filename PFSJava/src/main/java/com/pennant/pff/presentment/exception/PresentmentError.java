@@ -48,6 +48,8 @@ public enum PresentmentError {
 
 	REPRMNT523(""),
 
+	REPRMNT524("SI Mandate not allowed for Representment."),
+
 	FC_601("Fate correction already proceessed for this schedule."),
 
 	FC_602("Presentment is not found for this respective schedule."),
