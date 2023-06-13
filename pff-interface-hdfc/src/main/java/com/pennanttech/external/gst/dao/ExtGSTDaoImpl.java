@@ -315,15 +315,18 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 	}
 
 	@Override
-	public void updateFileStatus(long id, int status) {
-		String sql = "UPDATE GSTHEADER SET STATUS = ? WHERE ID= ?";
+	public void updateFileStatus(GSTCompHeader header) {
+		String sql = "UPDATE GSTHEADER SET STATUS = ?,EXTRACTION=?,ERROR_CODE=?,ERROR_MESSAGE=? WHERE ID= ?";
 
 		logger.debug(Literal.SQL + sql);
 
 		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
-			ps.setLong(index++, status);
-			ps.setLong(index, id);
+			ps.setLong(index++, header.getStatus());
+			ps.setLong(index++, header.getExtraction());
+			ps.setString(index++, header.getErrorCode());
+			ps.setString(index++, header.getErrorMessage());
+			ps.setLong(index, header.getId());
 		});
 
 	}

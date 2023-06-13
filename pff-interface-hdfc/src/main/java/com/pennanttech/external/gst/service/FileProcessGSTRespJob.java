@@ -87,16 +87,23 @@ public class FileProcessGSTRespJob extends AbstractJob
 			while ((header = cursorItemReader.read()) != null) {
 				try {
 					// update the file status as processing
-					extGSTDao.updateFileStatus(header.getId(), INPROCESS);
+					header.setStatus(INPROCESS);
+					extGSTDao.updateFileStatus(header);
 
 					// Process records in the file
 					processFileRecords(header);
 
 					// Update file status as processed
-					extGSTDao.updateFileStatus(header.getId(), COMPLETED);
+					header.setStatus(COMPLETED);
+					header.setExtraction(COMPLETED);
+					extGSTDao.updateFileStatus(header);
 				} catch (Exception e) {
 					logger.debug(Literal.EXCEPTION, e);
-					extGSTDao.updateFileStatus(header.getId(), EXCEPTION);
+					header.setErrorCode(GS1002);
+					header.setErrorMessage(e.getMessage());
+					header.setStatus(EXCEPTION);
+					header.setExtraction(FAILED);
+					extGSTDao.updateFileStatus(header);
 				}
 			}
 
@@ -165,7 +172,7 @@ public class FileProcessGSTRespJob extends AbstractJob
 						GSTInvoiceDetail invoiceDetail = getInvoiceDetail(responseBean);
 						extGSTDao.saveGSTInvoiceDetails(invoiceDetail);
 
-						// FIXME Process GST amounts into Taxheader and Postings
+						// Process GST amounts into Taxheader and Postings
 						saveTaxDetails(responseBean);
 
 						// Update GST VOUCHER ID in Response detail record for successful transaction
