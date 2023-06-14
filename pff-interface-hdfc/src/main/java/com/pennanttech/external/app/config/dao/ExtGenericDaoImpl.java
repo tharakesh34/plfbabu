@@ -79,7 +79,7 @@ public class ExtGenericDaoImpl implements ExtGenericDao {
 
 		List<FileInterfaceConfig> list = new ArrayList<FileInterfaceConfig>();
 		queryStr = "SELECT INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,"
-				+ "FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR ,BACKUP_LOCATION,FIC_NAMES FROM FILE_INTERFACE_CONFIG";
+				+ "FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR ,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES FROM FILE_INTERFACE_CONFIG";
 
 		extNamedJdbcTemplate.getJdbcOperations().query(queryStr, rs -> {
 			FileInterfaceConfig extConfig = new FileInterfaceConfig();
@@ -94,6 +94,7 @@ public class ExtGenericDaoImpl implements ExtGenericDao {
 			extConfig.setSuccessIndicator(rs.getString("SUCCESS_INDICATOR"));
 			extConfig.setFailIndicator(rs.getString("FAIL_INDICATOR"));
 			extConfig.setFileLocalBackupLocation(rs.getString("BACKUP_LOCATION"));
+			extConfig.setFileTransfer(rs.getString("FILE_TRANSFER"));
 			extConfig.setFicNames(rs.getString("FIC_NAMES"));
 			list.add(extConfig);
 		});
