@@ -35,7 +35,7 @@ public class ExternalDao {
 			logger.error(Literal.EXCEPTION, e);
 			status = "Error In Calling Procedure";
 		}
-		logger.info("UCIC request file writing Completed.");
+		logger.info("Procedure Execution Completed.");
 		return status;
 	}
 
@@ -52,7 +52,7 @@ public class ExternalDao {
 			logger.error(Literal.EXCEPTION, e);
 			status = "Error In Calling Procedure";
 		}
-		logger.info("UCIC request file writing Completed.");
+		logger.info("Procedure Execution Completed.");
 		return status;
 	}
 

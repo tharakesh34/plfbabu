@@ -2195,4 +2195,8 @@
 			<column name="FINID" 					type="bigint" /> 
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="24.3" author="sreeram.r">
+		<modifyDataType tableName="FINCON_GL_STG" columnName="JOURNAL_CATEGORY"	newDataType="VARCHAR(200)" />
+	</changeSet>
 </databaseChangeLog>
