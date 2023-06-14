@@ -141,13 +141,17 @@ public class ManualAdviceUtil {
 		for (ManualAdviseMovements movement : movements) {
 			TaxHeader taxHeader = movement.getTaxHeader();
 
+			List<Taxes> taxDetails = new ArrayList<>();
+
+			if (taxHeader != null) {
+				taxDetails = taxHeader.getTaxDetails();
+			}
+
 			Taxes cgstTax = new Taxes();
 			Taxes sgstTax = new Taxes();
 			Taxes igstTax = new Taxes();
 			Taxes ugstTax = new Taxes();
 			Taxes cessTax = new Taxes();
-
-			List<Taxes> taxDetails = taxHeader.getTaxDetails();
 
 			if (CollectionUtils.isNotEmpty(taxDetails)) {
 				for (Taxes taxes : taxDetails) {
