@@ -38,7 +38,7 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 
 	private ApplicationContext applicationContext;
 	private ExtUcicDao extUcicDao;
-	private DataSource dataSource;
+	private DataSource extDataSource;
 
 	private ExternalDao externalDao;
 
@@ -46,7 +46,7 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 		logger.debug(Literal.ENTERING);
 
 		applicationContext = ApplicationContextProvider.getApplicationContext();
-		dataSource = applicationContext.getBean("dataSource", DataSource.class);
+		extDataSource = applicationContext.getBean("extDataSource", DataSource.class);
 
 		// Get Response file and complete file configuration
 		FileInterfaceConfig ucicDBServerConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_PLF_DB_SERVER);
@@ -65,7 +65,7 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 
 		// Read 10 files at a time using file status = 0
 		JdbcCursorItemReader<ExtUcicFile> cursorItemReader = new JdbcCursorItemReader<ExtUcicFile>();
-		cursorItemReader.setDataSource(dataSource);
+		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(10);
 		cursorItemReader.setSql(FETCH_QUERY);
 		cursorItemReader.setRowMapper(new RowMapper<ExtUcicFile>() {

@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennanttech.external.ucic.model.ExtUcicCust;
@@ -19,14 +18,6 @@ public class ExtUcicDaoImpl implements ExtUcicDao {
 
 	public ExtUcicDaoImpl() {
 		super();
-	}
-
-	public long getSeqNumber(String tableName) {
-
-		StringBuilder sql = new StringBuilder("select ").append(tableName).append(".NEXTVAL from DUAL");
-
-		return this.mainNamedJdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Long.class);
-
 	}
 
 	@Override

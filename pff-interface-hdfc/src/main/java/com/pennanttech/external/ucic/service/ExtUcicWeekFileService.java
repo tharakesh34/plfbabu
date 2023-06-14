@@ -19,14 +19,12 @@ import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
-import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtUcicWeekFileService extends TextFileUtil
 		implements InterfaceConstants, ExtIntfConfigConstants, ErrorCodesConstants {
 	private static final Logger logger = LogManager.getLogger(ExtUcicWeekFileService.class);
-	private ExtUcicDao extUcicDao;
 	private FileInterfaceConfig ucicWeeklyConfig;
 
 	private ExternalDao externalDao;
@@ -94,10 +92,6 @@ public class ExtUcicWeekFileService extends TextFileUtil
 		File mainFileBkp = new File(localBackupLocation + File.separator + mainFile.getName());
 		Files.copy(mainFile, mainFileBkp);
 		logger.debug(Literal.LEAVING);
-	}
-
-	public void setExtUcicDao(ExtUcicDao extUcicDao) {
-		this.extUcicDao = extUcicDao;
 	}
 
 	public void setExternalDao(ExternalDao externalDao) {

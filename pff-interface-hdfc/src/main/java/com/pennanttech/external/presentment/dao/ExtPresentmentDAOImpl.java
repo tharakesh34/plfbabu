@@ -41,7 +41,6 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 
 	private NamedParameterJdbcTemplate mainNamedJdbcTemplate;
 	private NamedParameterJdbcTemplate extNamedJdbcTemplate;
-	private NamedParameterJdbcTemplate stageNamedJdbcTemplate;
 
 	public ExtPresentmentDAOImpl() {
 		super();
@@ -883,7 +882,7 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		stageNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
 			int index = 1;
 			ps.setString(index++, pickFlag);
 			ps.setTimestamp(index++, curTimeStamp);
@@ -899,7 +898,7 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		stageNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
 			int index = 1;
 			ps.setString(index++, errorFlag);
 			ps.setString(index++, errorDesc);
@@ -915,9 +914,4 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 	public void setMainDataSource(DataSource mainDataSource) {
 		this.mainNamedJdbcTemplate = new NamedParameterJdbcTemplate(mainDataSource);
 	}
-
-	public void setStagingDataSource(DataSource stagingDataSource) {
-		this.stageNamedJdbcTemplate = new NamedParameterJdbcTemplate(stagingDataSource);
-	}
-
 }

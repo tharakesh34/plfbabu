@@ -50,7 +50,7 @@ public class FileProcessPresentmentRespJob extends AbstractJob
 
 	private static final String FETCH_DATA_QUERY = "Select * from PRMNT_DETAILS  Where STATUS = ? AND HEADER_ID = ?";
 
-	private DataSource dataSource;
+	private DataSource extDataSource;
 	private SIService siService;
 	private SIInternalService siInternalService;
 	private ACHService achService;
@@ -66,7 +66,7 @@ public class FileProcessPresentmentRespJob extends AbstractJob
 		// Get all the required DAO's
 		applicationContext = ApplicationContextProvider.getApplicationContext();
 		externalPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
-		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
+		extDataSource = applicationContext.getBean("extDataSource", DataSource.class);
 		siService = applicationContext.getBean(SIService.class);
 		siInternalService = applicationContext.getBean(SIInternalService.class);
 		achService = applicationContext.getBean(ACHService.class);
@@ -92,7 +92,7 @@ public class FileProcessPresentmentRespJob extends AbstractJob
 
 		// Read 10 files at a time using file status = 0
 		JdbcCursorItemReader<ExtPresentment> cursorItemReader = new JdbcCursorItemReader<ExtPresentment>();
-		cursorItemReader.setDataSource(dataSource);
+		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(1);
 		cursorItemReader.setSql(FETCH_QUERY);
 		cursorItemReader.setRowMapper(new RowMapper<ExtPresentment>() {
@@ -176,7 +176,7 @@ public class FileProcessPresentmentRespJob extends AbstractJob
 
 		// Fetch 100 records at a time
 		JdbcCursorItemReader<ExtPresentmentData> dataCursorReader = new JdbcCursorItemReader<ExtPresentmentData>();
-		dataCursorReader.setDataSource(dataSource);
+		dataCursorReader.setDataSource(extDataSource);
 		dataCursorReader.setFetchSize(100);
 		dataCursorReader.setSql(FETCH_DATA_QUERY);
 		dataCursorReader.setRowMapper(new RowMapper<ExtPresentmentData>() {

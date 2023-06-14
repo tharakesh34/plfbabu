@@ -25,6 +25,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
+import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.casavalidation.model.CasaAccountValidationReq;
 import com.pennanttech.external.casavalidation.model.CasaAccountValidationResp;
 import com.pennanttech.logging.model.InterfaceLogDetail;
@@ -33,11 +34,10 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.BankAccountValidationService;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
-public class CasaAccountValidationService implements BankAccountValidationService {
+public class CasaAccountValidationService implements BankAccountValidationService, ExtIntfConfigConstants {
 
 	private static final Logger logger = LogManager.getLogger(CasaAccountValidationService.class);
 	private InterfaceLoggingDAO interfaceLoggingDAO;
-	private static final String CASA_ACC_VALIDATILON = "CASA_ACC_VALIDATION_INTERFACE";
 
 	public boolean validateBankAccount(BankAccountValidation bankAccountValidation) {
 		boolean accStatus = false;

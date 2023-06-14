@@ -26,7 +26,6 @@ public class ExtExtractionDaoImpl implements ExtExtractionDao {
 
 	private NamedParameterJdbcTemplate mainNamedJdbcTemplate;
 	private NamedParameterJdbcTemplate extNamedJdbcTemplate;
-	private NamedParameterJdbcTemplate stageNamedJdbcTemplate;
 
 	public ExtExtractionDaoImpl() {
 		super();
@@ -78,7 +77,7 @@ public class ExtExtractionDaoImpl implements ExtExtractionDao {
 
 		logger.debug(Literal.SQL + sql);
 
-		stageNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
+		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 
 			ps.setString(index++, baselOne.getAgreementId());
@@ -113,7 +112,7 @@ public class ExtExtractionDaoImpl implements ExtExtractionDao {
 
 		logger.debug(Literal.SQL + sql);
 
-		stageNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
+		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 			ps.setString(index++, almExtract.getAlmReportType());
 			ps.setDate(index++, JdbcUtil.getDate(almExtract.getAlmReportDate()));
@@ -183,7 +182,7 @@ public class ExtExtractionDaoImpl implements ExtExtractionDao {
 
 		logger.debug(Literal.SQL + sql);
 
-		stageNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
+		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 			ps.setLong(index++, baselTwo.getAgreementId());
 			ps.setLong(index++, baselTwo.getCustomerId());
@@ -253,7 +252,7 @@ public class ExtExtractionDaoImpl implements ExtExtractionDao {
 
 		logger.debug(Literal.SQL + sql);
 
-		stageNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
+		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 			ps.setLong(index++, rpmsExtract.getAgreementId());
 			ps.setLong(index++, rpmsExtract.getCustomerId());
@@ -288,7 +287,7 @@ public class ExtExtractionDaoImpl implements ExtExtractionDao {
 
 	@Override
 	public void truncateStageTable(String tableName) {
-		stageNamedJdbcTemplate.getJdbcOperations().update("TRUNCATE TABLE " + tableName);
+		extNamedJdbcTemplate.getJdbcOperations().update("TRUNCATE TABLE " + tableName);
 	}
 
 	public void setExtDataSource(DataSource extDataSource) {
@@ -297,10 +296,6 @@ public class ExtExtractionDaoImpl implements ExtExtractionDao {
 
 	public void setMainDataSource(DataSource mainDataSource) {
 		this.mainNamedJdbcTemplate = new NamedParameterJdbcTemplate(mainDataSource);
-	}
-
-	public void setStagingDataSource(DataSource stagingDataSource) {
-		this.stageNamedJdbcTemplate = new NamedParameterJdbcTemplate(stagingDataSource);
 	}
 
 }

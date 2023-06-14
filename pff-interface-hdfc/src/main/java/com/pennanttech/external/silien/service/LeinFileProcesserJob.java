@@ -21,7 +21,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
-import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
@@ -49,8 +48,7 @@ public class LeinFileProcesserJob extends AbstractJob
 
 	private ExtLienMarkingDAO externalLienMarkingDAO;
 	private FileInterfaceConfig lienConfig;
-	private DataSource dataSource;
-	private ExtGenericDao extGenericDao;
+	private DataSource extDataSource;
 	private ApplicationContext applicationContext;
 
 	@Override
@@ -61,8 +59,7 @@ public class LeinFileProcesserJob extends AbstractJob
 			// Get all the required DAO's
 			applicationContext = ApplicationContextProvider.getApplicationContext();
 			externalLienMarkingDAO = applicationContext.getBean(ExtLienMarkingDAO.class);
-			extGenericDao = applicationContext.getBean(ExtGenericDao.class);
-			dataSource = applicationContext.getBean("extDataSource", DataSource.class);
+			extDataSource = applicationContext.getBean("extDataSource", DataSource.class);
 
 		}
 
@@ -77,7 +74,7 @@ public class LeinFileProcesserJob extends AbstractJob
 		lienConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_LIEN_RESP);
 
 		JdbcCursorItemReader<LienFileStatus> cursorItemReader = new JdbcCursorItemReader<LienFileStatus>();
-		cursorItemReader.setDataSource(dataSource);
+		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(1);
 		cursorItemReader.setSql(FETCH_QUERY);
 		cursorItemReader.setRowMapper(new RowMapper<LienFileStatus>() {

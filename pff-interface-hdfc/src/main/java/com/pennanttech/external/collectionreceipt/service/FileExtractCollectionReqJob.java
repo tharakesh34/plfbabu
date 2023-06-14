@@ -48,14 +48,14 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 		logger.debug(Literal.ENTERING);
 
 		ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
-		DataSource dataSource = applicationContext.getBean("extDataSource", DataSource.class);
+		DataSource extDataSource = applicationContext.getBean("extDataSource", DataSource.class);
 		ExtCollectionReceiptDao extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao",
 				ExtCollectionReceiptDao.class);
 		CollectionReceiptService collectionReceiptService = applicationContext.getBean(CollectionReceiptService.class);
 
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<CollReceiptHeader> cursorItemReader = new JdbcCursorItemReader<CollReceiptHeader>();
-		cursorItemReader.setDataSource(dataSource);
+		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(1);
 		cursorItemReader.setSql(FETCH_QUERY);
 		cursorItemReader.setRowMapper(new RowMapper<CollReceiptHeader>() {

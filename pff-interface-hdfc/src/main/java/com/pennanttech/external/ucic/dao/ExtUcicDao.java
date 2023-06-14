@@ -4,8 +4,6 @@ import com.pennanttech.external.ucic.model.ExtUcicCust;
 
 public interface ExtUcicDao {
 
-	long getSeqNumber(String tableName);
-
 	public boolean isFileProcessed(String fileName);
 
 	public void saveResponseFile(String fileName, String fileLocation, int fileStatus, String errorCode,

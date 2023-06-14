@@ -41,12 +41,12 @@ public class FileExtractGSTRespJob extends AbstractJob implements InterfaceConst
 		logger.debug(Literal.ENTERING);
 
 		ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
-		DataSource dataSource = applicationContext.getBean("extDataSource", DataSource.class);
+		DataSource extDataSource = applicationContext.getBean("extDataSource", DataSource.class);
 		ExtGSTDao extGSTDao = applicationContext.getBean(ExtGSTDao.class);
 
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<GSTCompHeader> cursorItemReader = new JdbcCursorItemReader<GSTCompHeader>();
-		cursorItemReader.setDataSource(dataSource);
+		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(1);
 		cursorItemReader.setSql(FETCH_QUERY);
 		cursorItemReader.setRowMapper(new RowMapper<GSTCompHeader>() {

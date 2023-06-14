@@ -46,7 +46,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 
 	private static final String FETCH_QUERY = "Select * from COLL_RECEIPT_HEADER  Where WRITE_RESPONSE = ? AND RESP_FILE_STATUS =?";
 
-	private DataSource dataSource;
+	private DataSource extDataSource;
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
 	private ExtPresentmentDAO extPresentmentDAO;
 	private ApplicationContext applicationContext;
@@ -64,7 +64,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
 		applicationContext = ApplicationContextProvider.getApplicationContext();
-		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
+		extDataSource = applicationContext.getBean("extDataSource", DataSource.class);
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
 		extPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
 		collectionReceiptService = applicationContext.getBean(CollectionReceiptService.class);
@@ -74,7 +74,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<CollReceiptHeader> cursorItemReader = new JdbcCursorItemReader<CollReceiptHeader>();
-		cursorItemReader.setDataSource(dataSource);
+		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(1);
 		cursorItemReader.setSql(FETCH_QUERY);
 		cursorItemReader.setRowMapper(new RowMapper<CollReceiptHeader>() {

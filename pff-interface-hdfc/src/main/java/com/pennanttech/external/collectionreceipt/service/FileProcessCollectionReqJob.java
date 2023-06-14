@@ -40,7 +40,7 @@ public class FileProcessCollectionReqJob extends AbstractJob implements Interfac
 
 	private static final String FETCH_QUERY = "Select * from COLL_RECEIPT_HEADER  Where STATUS=? AND EXTRACTION = ?";
 
-	private DataSource dataSource;
+	private DataSource extDataSource;
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
 	private ApplicationContext applicationContext;
 	private PlatformTransactionManager transactionManager;
@@ -52,7 +52,7 @@ public class FileProcessCollectionReqJob extends AbstractJob implements Interfac
 		logger.debug(Literal.ENTERING);
 
 		applicationContext = ApplicationContextProvider.getApplicationContext();
-		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
+		extDataSource = applicationContext.getBean("extDataSource", DataSource.class);
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
 		transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
 		extReceiptServiceHook = applicationContext.getBean(ExtReceiptServiceHook.class);
@@ -64,7 +64,7 @@ public class FileProcessCollectionReqJob extends AbstractJob implements Interfac
 
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<CollReceiptHeader> cursorItemReader = new JdbcCursorItemReader<CollReceiptHeader>();
-		cursorItemReader.setDataSource(dataSource);
+		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(1);
 		cursorItemReader.setSql(FETCH_QUERY);
 		cursorItemReader.setRowMapper(new RowMapper<CollReceiptHeader>() {

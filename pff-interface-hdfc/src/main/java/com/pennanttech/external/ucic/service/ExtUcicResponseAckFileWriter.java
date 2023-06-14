@@ -22,7 +22,6 @@ import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.FileTransferUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
-import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -30,8 +29,6 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil
 		implements InterfaceConstants, ExtIntfConfigConstants, ErrorCodesConstants {
 
 	private static final Logger logger = LogManager.getLogger(ExtUcicResponseAckFileWriter.class);
-
-	private ExtUcicDao extUcicDao;
 
 	private ExternalDao externalDao;
 
@@ -138,10 +135,6 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil
 		emptyList.add(new StringBuilder(""));
 		super.writeDataToFile(completeFileName, emptyList);
 		return completeFileName;
-	}
-
-	public void setExtUcicDao(ExtUcicDao extUcicDao) {
-		this.extUcicDao = extUcicDao;
 	}
 
 	public void setExternalDao(ExternalDao externalDao) {

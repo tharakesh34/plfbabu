@@ -39,7 +39,6 @@
 	<bean id="externalPresentmentDAO" class="com.pennanttech.external.presentment.dao.ExtPresentmentDAOImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
-		<property name="stagingDataSource" ref="stagingDataSource" />
 	</bean>
 
 	<bean id="extGenericDao" class="com.pennanttech.external.app.config.dao.ExtGenericDaoImpl">
@@ -74,7 +73,6 @@
 	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.ExtExtractionDaoImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
-		<property name="stagingDataSource" ref="stagingDataSource" />
 	</bean>
 
 	<bean id="externalLienMarkingDAO" class="com.pennanttech.external.silien.dao.ExtLienMarkingDAOImpl">
@@ -122,7 +120,6 @@
 	</bean>
 
 	<bean id="extUcicResponseAckFileWriter" class="com.pennanttech.external.ucic.service.ExtUcicResponseAckFileWriter">
-		<property name="extUcicDao" ref="extUcicDao" />
 		<property name="externalDao" ref="externalDao" />
 	</bean>
 
@@ -135,9 +132,9 @@
 	<bean id="extMandateExtension" class="com.pennanttech.external.mandate.ExtMandateHandler" />
 
 	<bean id="ucicWeeklyWritingService" class="com.pennanttech.external.ucic.service.ExtUcicWeekFileService">
-		<property name="extUcicDao" ref="extUcicDao" />
-	</bean>
-
+	 	<property name="externalDao" ref="externalDao" />
+ 	</bean>
+	
 	<bean id="externalPresentmentHook" class="com.pennanttech.external.presentment.service.PresentmentRequestHandler">
 		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
 		<property name="siService" ref="siService" />
