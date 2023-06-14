@@ -122,7 +122,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 0;
 
-				ps.setLong(++index, letter.getFeeID());
+				ps.setObject(++index, letter.getFeeID());
 				ps.setInt(++index, letter.getGenerated());
 				ps.setDate(++index, JdbcUtil.getDate(letter.getGeneratedDate()));
 				ps.setDate(++index, JdbcUtil.getDate(letter.getGeneratedOn()));
