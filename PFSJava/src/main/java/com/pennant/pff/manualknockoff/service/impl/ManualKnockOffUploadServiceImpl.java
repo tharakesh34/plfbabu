@@ -491,7 +491,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		rud.setValueDate(valueDate);
 		rud.setRealizationDate(valueDate);
 		rud.setReceivedDate(valueDate);
-		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		rud.setExcessAdjustTo(ExcessType.EXCESS);
 		rud.setReceiptMode(receiptMode);
 		rud.setReceiptPurpose("SP");
 		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);

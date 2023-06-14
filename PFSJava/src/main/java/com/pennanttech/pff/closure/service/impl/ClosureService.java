@@ -34,7 +34,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.ReceiptService;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.core.loan.util.LoanClosureCalculator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -43,6 +42,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
 
@@ -129,7 +129,7 @@ public class ClosureService {
 
 		/* Payment Mode should be empty for Closer receipt with Termination Excess */
 		fsi.setPaymentMode(" ");
-		fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+		fsi.setExcessAdjustTo(ExcessType.TEXCESS);
 		fsi.setPanNumber(receiptDTO.getCustomer().getCustCRCPR());
 		fsi.setReqType("Post");
 		fsi.setNonStp(true);
@@ -186,7 +186,7 @@ public class ClosureService {
 			long excessID = finex.getExcessID();
 			BigDecimal excesAmt = finex.getBalanceAmt();
 
-			if (RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(finex.getAmountType())) {
+			if (ExcessType.TEXCESS.equals(finex.getAmountType())) {
 				if (receiptAmt.compareTo(excesAmt) >= 0) {
 					balance = BigDecimal.ZERO;
 					utilized = excesAmt;
@@ -257,7 +257,7 @@ public class ClosureService {
 
 	private void updateUtilizedExcess(List<FinExcessAmount> finExcessAmounts, boolean isReserve) {
 		for (FinExcessAmount fea : finExcessAmounts) {
-			if (!RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(fea.getAmountType())) {
+			if (!ExcessType.TEXCESS.equals(fea.getAmountType())) {
 				continue;
 			}
 
@@ -278,7 +278,7 @@ public class ClosureService {
 		BigDecimal excessAmt = BigDecimal.ZERO;
 
 		for (FinExcessAmount fea : finExcessAmounts) {
-			if (!RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(fea.getAmountType())) {
+			if (!ExcessType.TEXCESS.equals(fea.getAmountType())) {
 				continue;
 			}
 

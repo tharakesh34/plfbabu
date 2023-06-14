@@ -52,13 +52,13 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.web.util.ComponentUtil;
 
 public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
@@ -77,7 +77,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	private FinOverDueService finOverDueService;
 	private ManualAdviseService manualAdviseService;
 
-	List<String> allowedExcesTypes = PennantStaticListUtil.getAllowedExcessTypeList();
+	List<String> allowedExcesTypes = ExcessType.getAllowedTypes();
 
 	public SelectPaymentHeaderDialogCtrl() {
 		super();

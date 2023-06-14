@@ -123,6 +123,7 @@ import com.pennanttech.pff.core.util.LoanCancelationUtil;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennapps.core.util.ObjectUtil;
 
@@ -1127,7 +1128,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		fsi.setReceivedDate(rd.getReceivedDate());
 		fsi.setRemarks(LoanCancelationUtil.LOAN_CANCEL_REMARKS);
 		fsi.setPaymentMode(ReceiptMode.EXCESS);
-		fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		fsi.setExcessAdjustTo(ExcessType.EXCESS);
 		fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		fsi.setReceiptdetailExits(false);
 		fsi.setUploadAllocationDetails(new ArrayList<>());

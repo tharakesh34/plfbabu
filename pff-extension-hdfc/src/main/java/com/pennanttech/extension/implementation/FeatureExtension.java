@@ -2,10 +2,12 @@ package com.pennanttech.extension.implementation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.pennanttech.pff.npa.NpaScope;
 import com.pennanttech.pff.provision.ProvisionBook;
 import com.pennanttech.pff.provision.ProvisionReversalStage;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 
 public class FeatureExtension implements IFeatureExtension {
 	static Map<String, Object> customConstants = new HashMap<>();
@@ -19,6 +21,7 @@ public class FeatureExtension implements IFeatureExtension {
 	static Map<String, Object> receiptExtensions = new HashMap<>();
 	static Map<String, Object> lppExtensions = new HashMap<>();
 	static Map<String, Object> npaAndProvisionExtensions = new HashMap<>();
+	static Map<String, Object> excessExtensions = new HashMap<>();
 
 	/**
 	 * <p>
@@ -155,6 +158,8 @@ public class FeatureExtension implements IFeatureExtension {
 		lppExtensions();
 
 		npaAndProvisionExtensions();
+
+		excessExtensions();
 	}
 
 	@Override
@@ -211,6 +216,11 @@ public class FeatureExtension implements IFeatureExtension {
 	@Override
 	public Map<String, Object> getNpaAndProvisionExtensions() {
 		return npaAndProvisionExtensions;
+	}
+
+	@Override
+	public Map<String, Object> getExcessExtensions() {
+		return excessExtensions;
 	}
 
 	private void customerExtensions() {
@@ -283,6 +293,20 @@ public class FeatureExtension implements IFeatureExtension {
 		npaAndProvisionExtensions.put("ALLOW_MANUAL_PROVISION", true);
 
 		npaAndProvisionExtensions.put("NPA_FOR_WRIREOFF_LOANS", true);
+	}
+
+	private void excessExtensions() {
+		Set<String> defaultAdjustments = ExcessType.defaultAdjustToList();
+		defaultAdjustments.remove(ExcessType.CASHCLT);
+		defaultAdjustments.remove(ExcessType.DSF);
+
+		excessExtensions.put("ALLOWED_ADJUSTMENTS", defaultAdjustments);
+
+		Set<String> defaultKnockOffFromList = ExcessType.defaultKnockOffFromList();
+		defaultKnockOffFromList.remove(ExcessType.CASHCLT);
+		defaultKnockOffFromList.remove(ExcessType.DSF);
+
+		excessExtensions.put("ALLOWED_KNOCKOFF_FROM", defaultKnockOffFromList);
 	}
 
 }

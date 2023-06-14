@@ -592,16 +592,16 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 			extDataMap.put("ae_toExcessAmt", rch.getReceiptAmount());
 
 			switch (rch.getExcessAdjustTo()) {
-			case RepayConstants.EXCESSADJUSTTO_EXCESS:
+			case ExcessType.EXCESS:
 				extDataMap.put("ae_toExcessAmt", rch.getReceiptAmount());
 				break;
-			case RepayConstants.EXCESSADJUSTTO_EMIINADV:
+			case ExcessType.EMIINADV:
 				extDataMap.put("ae_toEmiAdvance", rch.getReceiptAmount());
 				break;
-			case RepayConstants.EXCESSADJUSTTO_TEXCESS:
+			case ExcessType.TEXCESS:
 				extDataMap.put("ae_toTExcessAmt", rch.getReceiptAmount());
 				break;
-			case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
+			case ExcessType.SETTLEMENT:
 				extDataMap.put("ae_toSettlement", rch.getReceiptAmount());
 				break;
 			default:
@@ -615,7 +615,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 
 			rch.getReceiptDetails().get(0).getRepayHeader().setLinkedTranId(aeEvent.getLinkedTranId());
-			finReceiptHeaderDAO.updateExcessAdjustTo(receiptID, RepayConstants.EXCESSADJUSTTO_EXCESS);
+			finReceiptHeaderDAO.updateExcessAdjustTo(receiptID, ExcessType.EXCESS);
 
 			FinRepayHeader finRepayHeader = new FinRepayHeader();
 			finRepayHeader.setRepayID(repayID);
@@ -648,7 +648,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 		FinExcessAmount excess = new FinExcessAmount();
 		excess.setFinID(fea.getFinID());
 		excess.setFinReference(fea.getFinReference());
-		excess.setAmountType(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		excess.setAmountType(ExcessType.EXCESS);
 		excess.setAmount(fea.getBalanceAmt());
 		excess.setUtilisedAmt(BigDecimal.ZERO);
 		excess.setBalanceAmt(fea.getBalanceAmt());

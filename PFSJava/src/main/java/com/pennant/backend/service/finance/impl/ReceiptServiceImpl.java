@@ -1770,8 +1770,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			throw new AppException("Not allowed to approve the receipt, since the loan schedule under maintenance.");
 		}
 
-		if (RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(rch.getExcessAdjustTo())
-				&& !financeMainDAO.isFinActive(finID)) {
+		if (ExcessType.TEXCESS.equals(rch.getExcessAdjustTo()) && !financeMainDAO.isFinActive(finID)) {
 			throw new AppException("Excess adjustment to termination excess is not allowed for inactive loans");
 		}
 
@@ -2100,8 +2099,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		if (!overdueList.isEmpty()) {
 			finODDetailsDAO.updatePaidPenalties(overdueList);
 
-			if (RepayConstants.EXCESSADJUSTTO_TEXCESS
-					.equals(scheduleData.getFinServiceInstruction().getExcessAdjustTo())
+			if (ExcessType.TEXCESS.equals(scheduleData.getFinServiceInstruction().getExcessAdjustTo())
 					&& RequestSource.EOD.equals(scheduleData.getFinServiceInstruction().getRequestSource())) {
 				scheduleData.setFinODDetails(finODDetailsDAO.getFinODDetailsByFinRef(finID));
 			}
@@ -3615,14 +3613,14 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		if (!fsi.isClosureReceipt() && RequestSource.EOD == requestSource
 				&& totalDues.compareTo(rh.getReceiptAmount().add(rh.getClosureThresholdLimit())) > 0
-				&& !RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(excessAdjustTo)) {
+				&& !ExcessType.TEXCESS.equals(excessAdjustTo)) {
 			setError(schdData, "RU0051");
 			return;
 		}
 
 		if (RequestSource.UPLOAD == requestSource
 				&& totalDues.compareTo(rh.getReceiptAmount().add(rh.getClosureThresholdLimit())) <= 0
-				&& RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(excessAdjustTo)) {
+				&& ExcessType.TEXCESS.equals(excessAdjustTo)) {
 			fsi.setAllocationType(AllocationType.AUTO);
 			fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		}
@@ -3781,10 +3779,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		String excessAdjustTo = fsi.getExcessAdjustTo();
-		if (!RepayConstants.EXCESSADJUSTTO_EXCESS.equals(excessAdjustTo)
-				&& !RepayConstants.EXCESSADJUSTTO_EMIINADV.equals(excessAdjustTo)
-				&& !RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(excessAdjustTo)
-				&& !PennantConstants.List_Select.equals(excessAdjustTo)) {
+		if (!ExcessType.EXCESS.equals(excessAdjustTo) && !ExcessType.EMIINADV.equals(excessAdjustTo)
+				&& !ExcessType.TEXCESS.equals(excessAdjustTo) && !PennantConstants.List_Select.equals(excessAdjustTo)) {
 			setError(schdData, "90281", "Excess Adjustment", "E/A");
 			return;
 		}
@@ -4007,7 +4003,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			fsi.setEntity(fm.getEntityCode());
 		}
 
-		if (RepayConstants.EXCESSADJUSTTO_EXCESS.equals(fsi.getExcessAdjustTo()) && ProductUtil.isOverDraft(fm)
+		if (ExcessType.EXCESS.equals(fsi.getExcessAdjustTo()) && ProductUtil.isOverDraft(fm)
 				&& FinServiceEvent.SCHDRPY.equals(fsi.getReceiptPurpose())) {
 			setError(schdData, "90281", "Excess Adjustment", "A");
 			return;
@@ -4291,14 +4287,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				return;
 			}
 
-			if (RepayConstants.EXCESSADJUSTTO_EXCESS.equals(excessAdjustTo)
-					&& RepayConstants.EXCESSADJUSTTO_EMIINADV.equals(alcType)
-					&& RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(alcType)) {
+			if (ExcessType.EXCESS.equals(excessAdjustTo) && ExcessType.EMIINADV.equals(alcType)
+					&& ExcessType.TEXCESS.equals(alcType)) {
 				setError(schdData, "90503", "Allocation Item");
 				logger.info(Literal.LEAVING);
 				return;
-			} else if (RepayConstants.EXCESSADJUSTTO_EMIINADV.equals(excessAdjustTo)
-					&& RepayConstants.EXCESSADJUSTTO_EXCESS.equals(alcType)) {
+			} else if (ExcessType.EMIINADV.equals(excessAdjustTo) && ExcessType.EXCESS.equals(alcType)) {
 				setError(schdData, "90504", "Allocation Item");
 				logger.info(Literal.LEAVING);
 				return;
@@ -4541,7 +4535,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 					return;
 				}
 
-				rd.setExcessType(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+				rd.setExcessType(ExcessType.TEXCESS);
 			}
 		}
 
@@ -4559,7 +4553,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 					return;
 				}
 
-				rd.setExcessType(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+				rd.setExcessType(ExcessType.TEXCESS);
 			}
 
 			String receiptModeSts = rch.getReceiptModeStatus();
@@ -4572,7 +4566,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 						return;
 					}
 
-					rd.setExcessType(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+					rd.setExcessType(ExcessType.TEXCESS);
 				}
 			}
 
@@ -4584,7 +4578,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 					return;
 				}
 
-				rd.setExcessType(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+				rd.setExcessType(ExcessType.TEXCESS);
 			}
 		}
 	}
@@ -4664,9 +4658,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return;
 		}
 
-		if (RepayConstants.EXCESSADJUSTTO_EMIINADV.equals(excessAdjustTo)) {
-			setError(schdData, "90337", EXCESS_ADJUST_TO + fsi.getExcessAdjustTo(),
-					RepayConstants.EXCESSADJUSTTO_EXCESS);
+		if (ExcessType.EMIINADV.equals(excessAdjustTo)) {
+			setError(schdData, "90337", EXCESS_ADJUST_TO + fsi.getExcessAdjustTo(), ExcessType.EXCESS);
 		}
 	}
 
@@ -4998,7 +4991,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		if (StringUtils.isBlank(fsi.getExcessAdjustTo())) {
 			fsi.setExcessAdjustTo(PennantConstants.List_Select);
 			if (receiptPurpose == ReceiptPurpose.SCHDRPY || receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
-				fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+				fsi.setExcessAdjustTo(ExcessType.EXCESS);
 			}
 		}
 
@@ -5858,7 +5851,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		List<FinReceiptDetail> recDtls = rch.getReceiptDetails();
 		List<FinReceiptDetail> newRecDtls = new ArrayList<>();
 
-		List<String> excessList = PennantStaticListUtil.getExcessList();
+		List<String> excessList = ExcessType.getExcessList();
 		for (FinReceiptDetail rcd : recDtls) {
 			if (!excessList.contains(rcd.getPaymentType())) {
 				FinRepayHeader rph = new FinRepayHeader();
@@ -6466,6 +6459,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return fd;
 		}
 
+		if (!ExcessType.isAllowedForAdjustment(fsi.getExcessAdjustTo())) {
+			setError(schdData, "90505",
+					"Excess Amount Adjustment not allowed for Excess Type" + fsi.getExcessAdjustTo());
+			return fd;
+		}
+
 		FinReceiptData rd = prepareFinReceiptData(fsi, fd);
 
 		validateReceiptData(rd);
@@ -6951,7 +6950,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return;
 		}
 
-		if (RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(rd.getExcessType())) {
+		if (ExcessType.TEXCESS.equals(rd.getExcessType())) {
 			FinServiceInstruction instruction = rd.getFinanceDetail().getFinScheduleData().getFinServiceInstruction();
 			List<ReceiptAllocationDetail> allocations = rd.getReceiptHeader().getAllocations();
 
@@ -7143,7 +7142,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 			String excessAdjustTo = fsi.getExcessAdjustTo();
 
-			if (RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(excessAdjustTo)
+			if (ExcessType.TEXCESS.equals(excessAdjustTo)
 					&& (RequestSource.API.equals(requestSource) && !rd.isDueAdjusted())) {
 				rd.setExcessType(excessAdjustTo);
 				return;
@@ -7170,7 +7169,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return;
 		}
 
-		if (RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(rd.getExcessType())) {
+		if (ExcessType.TEXCESS.equals(rd.getExcessType())) {
 			logger.info("Receipt amount adjusted to termination excess incase of backdated early settlement");
 			return;
 		}
@@ -7256,7 +7255,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		int receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(rch.getReceiptPurpose());
 
 		if (fm.isUnderSettlement() && receiptPurposeCtg == 0) {
-			rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_SETTLEMENT);
+			rch.setExcessAdjustTo(ExcessType.SETTLEMENT);
 			rch.setAllocationType(AllocationType.NO_ALLOC);
 		}
 
@@ -7597,8 +7596,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			case ExcessType.TEXCESS:
 				rcd.setPaymentType(ReceiptMode.TEXCESS);
 				break;
-			case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
-				rcd.setPaymentType(RepayConstants.EXCESSADJUSTTO_SETTLEMENT);
+			case ExcessType.SETTLEMENT:
+				rcd.setPaymentType(ExcessType.SETTLEMENT);
 				break;
 			default:
 				rcd.setPaymentType(ReceiptMode.PAYABLE);

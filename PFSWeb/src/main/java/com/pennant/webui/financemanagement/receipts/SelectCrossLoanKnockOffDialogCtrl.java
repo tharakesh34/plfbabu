@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -273,8 +275,21 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 
 		this.module = getArgument("module");
 		if (FinanceConstants.CROSS_LOAN_KNOCKOFF_MAKER.equals(this.module)) {
-			fillComboBox(this.knockOffFrom, "", PennantStaticListUtil.getKnockOffFromVlaues(),
-					",EMIINADV,BOUNCE,SETTLE,TEXCESS,CASHCLT,DSF,");
+
+			Set<String> excludes = new HashSet<>();
+
+			excludes.add(ExcessType.EMIINADV);
+			excludes.add(ExcessType.BOUNCE);
+			excludes.add(ExcessType.SETTLEMENT);
+			excludes.add(ExcessType.TEXCESS);
+			excludes.add(ExcessType.CASHCLT);
+			excludes.add(ExcessType.DSF);
+			excludes.add(ExcessType.PRESENTMENT);
+
+			List<ValueLabel> excludeComboBox = excludeComboBox(ExcessType.getKnockOffFromList(), excludes);
+
+			fillComboBox(this.knockOffFrom, "", excludeComboBox);
+
 			fillComboBox(this.receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(),
 					",FeePayment,EarlySettlement,");
 
@@ -1107,7 +1122,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 
 		this.knockOffFrom.setConstraint(
 				new PTListValidator<ValueLabel>(Labels.getLabel("label_LoanClosurePayment_kncockoffFrom.value"),
-						PennantStaticListUtil.getKnockOffFromVlaues(), true));
+						ExcessType.getKnockOffFromList(), true));
 
 	}
 

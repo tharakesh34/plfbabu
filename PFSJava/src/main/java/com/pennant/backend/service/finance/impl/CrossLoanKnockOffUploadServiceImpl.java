@@ -407,8 +407,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 		clko.setNewRecord(true);
 		clko.setCrossLoanKnockoffUpload(clk);
 
-		String receiptMode = ExcessType.EXCESS.equals(clk.getExcessType()) ? ReceiptMode.EXCESS
-				: ReceiptMode.PAYABLE;
+		String receiptMode = ExcessType.EXCESS.equals(clk.getExcessType()) ? ReceiptMode.EXCESS : ReceiptMode.PAYABLE;
 
 		clko.setFinServiceInstruction(getFSI(header, clk, payableAmount, receiptMode, receiptDt));
 		return clko;
@@ -496,8 +495,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 			return;
 		}
 
-		if (!(ExcessType.EXCESS.equals(clk.getExcessType())
-				|| ExcessType.PAYABLE.equals(clk.getExcessType()))) {
+		if (!(ExcessType.EXCESS.equals(clk.getExcessType()) || ExcessType.PAYABLE.equals(clk.getExcessType()))) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_003);
 			return;
 		}
@@ -517,8 +515,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 			return;
 		}
 
-		if (ExcessType.PAYABLE.equals(clk.getExcessType())
-				&& StringUtils.isEmpty(clk.getFeeTypeCode())) {
+		if (ExcessType.PAYABLE.equals(clk.getExcessType()) && StringUtils.isEmpty(clk.getFeeTypeCode())) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_021);
 		}
 
@@ -759,7 +756,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 		rud.setValueDate(valueDate);
 		rud.setRealizationDate(valueDate);
 		rud.setReceivedDate(valueDate);
-		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		rud.setExcessAdjustTo(ExcessType.EXCESS);
 		rud.setReceiptMode(receiptMode);
 		rud.setReceiptPurpose("SP");
 		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);

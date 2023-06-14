@@ -599,7 +599,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		rh.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		rh.setReceiptID(receiptId);
 		rh.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-		rh.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		rh.setExcessAdjustTo(ExcessType.EXCESS);
 		rh.setAllocationType(AllocationType.AUTO);
 		rh.setReceiptAmount(pd.getPresentmentAmt());
 		rh.setEffectSchdMethod(PennantConstants.List_Select);
@@ -703,7 +703,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		rch.setReceiptID(receiptId);
 		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-		rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		rch.setExcessAdjustTo(ExcessType.EXCESS);
 		rch.setAllocationType(AllocationType.AUTO);
 		rch.setReceiptAmount(advanceAmt);
 		rch.setEffectSchdMethod(PennantConstants.List_Select);

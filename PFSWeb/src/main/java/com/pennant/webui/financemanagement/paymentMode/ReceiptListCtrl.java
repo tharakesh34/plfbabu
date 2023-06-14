@@ -73,6 +73,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
@@ -917,8 +918,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		if (receiptService.doProcessTerminationExcess(finReceiptData)) {
 			String msg = "Receipt Amount is insuffient to settle the loan, do you wish to move the receipt amount to termination excess?";
 			if (MessageUtil.YES == MessageUtil.confirm(msg)) {
-				finReceiptData.getReceiptHeader().setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_TEXCESS);
-				finReceiptData.setExcessType(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+				finReceiptData.getReceiptHeader().setExcessAdjustTo(ExcessType.TEXCESS);
+				finReceiptData.setExcessType(ExcessType.TEXCESS);
 				List<FinFeeDetail> finFeeDetailList = new ArrayList<>();
 
 				List<FinTypeFees> finTypeFeesList = new ArrayList<>();

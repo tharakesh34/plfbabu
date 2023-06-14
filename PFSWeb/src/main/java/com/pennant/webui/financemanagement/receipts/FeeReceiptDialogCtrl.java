@@ -1473,8 +1473,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		FinReceiptHeader header = getReceiptHeader();
 		int finFormatter = CurrencyUtil.getFormat(header.getFinCcy());
 		fillComboBox(this.receiptPurpose, FinServiceEvent.FEEPAYMENT, PennantStaticListUtil.getReceiptPurpose(), "");
-		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
-				"");
+		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), ExcessType.getAdjustmentList(), "");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModesByFeePayment(),
 				",EXCESS,MOBILE,");
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
@@ -1932,7 +1931,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					Labels.getLabel("label_FeeReceiptDialog_ReceiptMode.value")));
 		}
 		if (!this.excessAdjustTo.isDisabled()) {
-			this.excessAdjustTo.setConstraint(new StaticListValidator(PennantStaticListUtil.getExcessAdjustmentTypes(),
+			this.excessAdjustTo.setConstraint(new StaticListValidator(ExcessType.getAdjustmentList(),
 					Labels.getLabel("label_FeeReceiptDialog_ExcessAdjustTo.value")));
 		}
 		if (!this.allocationMethod.isDisabled()) {

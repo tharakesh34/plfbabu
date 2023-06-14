@@ -22,7 +22,6 @@ public class ReceiptMode {
 	public static final String EXPERIA = "EXPERIA";
 	public static final String PORTAL = "PORTAL";
 	public static final String PAYU = "PAYU";
-	public static final String EXCESS = "EXCESS";
 	public static final String ESCROW = "ESCROW";
 	public static final String REPLEDGE = "REPLEDGE";
 	public static final String ONLINE = "ONLINE";
@@ -31,6 +30,16 @@ public class ReceiptMode {
 	public static final String RESTRUCT = "RESTRUCT";
 	public static final String DIGITAL = "DIGITAL";
 	public static final String BANKDEPOSIT = "BANKDEPT";
+
+	public static final String BBPS = "BBPS";
+	public static final String IFT = "IFT";
+	public static final String RTRNGDS = "RTRNGDS";
+	public static final String NACH = "NACH";
+	public static final String PAYMENTGATEWAY = "PAYMENTGATEWAY";
+	public static final String UPI = "UPI";
+	public static final String ZERORECEIPT = "FULLWAIVER";
+
+	public static final String EXCESS = "EXCESS";
 	public static final String EMIINADV = "EMIINADV";
 	public static final String ADVINT = "ADVINT";
 	public static final String ADVEMI = "ADVEMI";
@@ -40,14 +49,6 @@ public class ReceiptMode {
 	public static final String DSF = "DSF";
 	public static final String TEXCESS = "T";
 	public static final String SETTLEMENT = "S";
-
-	public static final String BBPS = "BBPS";
-	public static final String IFT = "IFT";
-	public static final String RTRNGDS = "RTRNGDS";
-	public static final String NACH = "NACH";
-	public static final String PAYMENTGATEWAY = "PAYMENTGATEWAY";
-	public static final String UPI = "UPI";
-	public static final String ZERORECEIPT = "FULLWAIVER";
 
 	private ReceiptMode() {
 		super();

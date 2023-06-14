@@ -1975,7 +1975,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				amountCodes.setPartnerBankAcType(rcd.getPartnerBankAcType());
 				amountCodes.setToExcessAmt(BigDecimal.ZERO);
 				amountCodes.setToEmiAdvance(BigDecimal.ZERO);
-				if (RepayConstants.EXCESSADJUSTTO_EXCESS.equals(repayHeader.getFinEvent())) {
+				if (ExcessType.EXCESS.equals(repayHeader.getFinEvent())) {
 					amountCodes.setToExcessAmt(repayHeader.getRepayAmount());
 				} else {
 					amountCodes.setToEmiAdvance(repayHeader.getRepayAmount());

@@ -86,6 +86,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennattech.pff.cd.dao.ManufacturerDAO;
 
 public class CashBackProcessServiceImpl implements CashBackProcessService {
@@ -597,7 +598,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		fsi.setReceivedDate(valueDate);
 		fsi.setRemarks("Cash Back");
 		fsi.setPaymentMode(RepayConstants.PAYTYPE_PAYABLE);
-		fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		fsi.setExcessAdjustTo(ExcessType.EXCESS);
 		fsi.setEntity(partnerBank.getEntity());
 		fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		fsi.setReceiptdetailExits(false);
@@ -810,7 +811,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		fsi.setReceivedDate(rd.getRestructureDate());
 		fsi.setRemarks("Restructure Capitalization");
 		fsi.setPaymentMode(RepayConstants.PAYTYPE_RESTRUCT);
-		fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		fsi.setExcessAdjustTo(ExcessType.EXCESS);
 		fsi.setEntity(fm.getEntityCode());
 		fsi.setReceiptPurpose(FinServiceEvent.RESTRUCTURE);
 		fsi.setReceiptdetailExits(false);

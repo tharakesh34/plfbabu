@@ -375,7 +375,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)) {
 			isKnockOff = true;
-			fillComboBox(this.knockOffFrom, "", PennantStaticListUtil.getKnockOffFromVlaues(), "");
+			fillComboBox(this.knockOffFrom, "", ExcessType.getKnockOffFromList());
 			fillComboBox(this.receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(),
 					",FeePayment,EarlySettlement,");
 
@@ -702,8 +702,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 					if (receiptService.doProcessTerminationExcess(receiptData)) {
 						String msg = "Receipt Amount is insuffient to settle the loan, do you wish to move the receipt amount to termination excess?";
 						if (MessageUtil.YES == MessageUtil.confirm(msg)) {
-							receiptData.getReceiptHeader().setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_TEXCESS);
-							receiptData.setExcessType(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+							receiptData.getReceiptHeader().setExcessAdjustTo(ExcessType.TEXCESS);
+							receiptData.setExcessType(ExcessType.TEXCESS);
 						}
 					}
 				}
@@ -993,7 +993,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			fsi.setExcessAdjustTo(ExcessType.EXCESS);
 		}
 		if (fm.isUnderSettlement()) {
-			fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_SETTLEMENT);
+			fsi.setExcessAdjustTo(ExcessType.SETTLEMENT);
 		}
 		fsi.setReceiptDetail(new FinReceiptDetail());
 		FinReceiptDetail rcd = fsi.getReceiptDetail();
@@ -1469,7 +1469,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		this.knockOffFrom.setConstraint(
 				new PTListValidator<ValueLabel>(Labels.getLabel("label_LoanClosurePayment_kncockoffFrom.value"),
-						PennantStaticListUtil.getKnockOffFromVlaues(), true));
+						ExcessType.getKnockOffFromList(), true));
 		// this.receiptAmount
 		// .setConstraint(new
 		// PTDecimalValidator(Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO"),

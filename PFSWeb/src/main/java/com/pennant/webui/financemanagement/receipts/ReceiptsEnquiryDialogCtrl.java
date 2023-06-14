@@ -1198,7 +1198,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.receivedFrom.setValue(rch.getReceivedFrom());
 		this.panNumber.setValue(rch.getPanNumber());
 		fillComboBox(allocationMethod, rch.getAllocationType(), PennantStaticListUtil.getAllocationMethods(), "");
-		fillComboBox(excessAdjustTo, rch.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
+		fillComboBox(excessAdjustTo, rch.getExcessAdjustTo(), ExcessType.getAdjustmentList(), "");
 		this.collectionAgentId.setValue(rch.getCollectionAgentCode(), rch.getCollectionAgentDesc());
 
 		this.remarks.setValue(rch.getRemarks());
@@ -1294,9 +1294,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			scheduleLabel.setValue(Labels.getLabel("label_ReceiptPayment_ExcessAmountAdjustment.value"));
 			this.excessAdjustTo.setVisible(true);
 			this.excessAdjustTo.setDisabled(true);
-			fillComboBox(excessAdjustTo, rch.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
+			fillComboBox(excessAdjustTo, rch.getExcessAdjustTo(), ExcessType.getAdjustmentList(), "");
 			if (receiptPurposeCtg == 2) {
-				fillComboBox(excessAdjustTo, "E", PennantStaticListUtil.getExcessAdjustmentTypes(), ",A,");
+				fillComboBox(excessAdjustTo, "E", ExcessType.getAdjustmentList(), ",A,");
 				this.excessAdjustTo.setDisabled(true);
 			}
 

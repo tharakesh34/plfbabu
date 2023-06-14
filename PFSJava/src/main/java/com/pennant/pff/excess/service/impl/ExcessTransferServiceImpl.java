@@ -38,6 +38,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 
 public class ExcessTransferServiceImpl extends GenericService<FinExcessTransfer> implements ExcessTransferService {
 	private static Logger logger = LogManager.getLogger(ExcessTransferServiceImpl.class);
@@ -359,16 +360,16 @@ public class ExcessTransferServiceImpl extends GenericService<FinExcessTransfer>
 
 	private void prepareDataMap(FinExcessTransfer transfer, Map<String, Object> map, BigDecimal amount) {
 		switch (transfer.getTransferToType()) {
-		case RepayConstants.EXCESSADJUSTTO_EXCESS:
+		case ExcessType.EXCESS:
 			map.put("ae_toExcessAmt", amount);
 			break;
-		case RepayConstants.EXCESSADJUSTTO_EMIINADV:
+		case ExcessType.EMIINADV:
 			map.put("ae_toEmiAdvance", amount);
 			break;
-		case RepayConstants.EXCESSADJUSTTO_TEXCESS:
+		case ExcessType.TEXCESS:
 			map.put("ae_toTExcessAmt", amount);
 			break;
-		case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
+		case ExcessType.SETTLEMENT:
 			map.put("ae_toSettlement", amount);
 			break;
 		default:
@@ -376,16 +377,16 @@ public class ExcessTransferServiceImpl extends GenericService<FinExcessTransfer>
 		}
 
 		switch (transfer.getTransferFromType()) {
-		case RepayConstants.EXCESSADJUSTTO_EXCESS:
+		case ExcessType.EXCESS:
 			map.put("EX_ReceiptAmount", amount);
 			break;
-		case RepayConstants.EXCESSADJUSTTO_EMIINADV:
+		case ExcessType.EMIINADV:
 			map.put("EA_ReceiptAmount", amount);
 			break;
-		case RepayConstants.EXCESSADJUSTTO_TEXCESS:
+		case ExcessType.TEXCESS:
 			map.put("ET_ReceiptAmount", amount);
 			break;
-		case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
+		case ExcessType.SETTLEMENT:
 			map.put("SETTLE_ReceiptAmount", amount);
 			break;
 		default:

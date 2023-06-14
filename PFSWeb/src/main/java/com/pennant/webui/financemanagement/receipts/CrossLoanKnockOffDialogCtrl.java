@@ -590,10 +590,9 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				exclude.add("S");
 			}
 
-			List<ValueLabel> excessAdjustmentTypes = PennantStaticListUtil.getExcessAdjustmentTypes();
+			List<ValueLabel> excessAdjustmentTypes = ExcessType.getAdjustmentList();
 
-			fillComboBox(this.excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EXCESS,
-					excludeComboBox(excessAdjustmentTypes, exclude));
+			fillComboBox(this.excessAdjustTo, ExcessType.EXCESS, excludeComboBox(excessAdjustmentTypes, exclude));
 		}
 	}
 
@@ -2151,19 +2150,11 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		fillComboBox(this.receiptPurpose, rch.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(),
 				",FeePayment,");
 		this.receiptPurpose.setDisabled(true);
-		/*
-		 * fillComboBox(this.excessAdjustTo, rch.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
-		 * "");
-		 */
-
-		if (finType.isDeveloperFinance()) {
-			fillComboBox(this.receiptMode, rch.getReceiptMode(), PennantStaticListUtil.getKnockOffFromVlaues(), "");
-		} else {
-			fillComboBox(this.receiptMode, rch.getReceiptMode(), PennantStaticListUtil.getKnockOffFromVlaues(), "");
-		}
 
 		if (isKnockOff) {
-			fillComboBox(this.receiptMode, rch.getReceiptMode(), PennantStaticListUtil.getKnockOffFromVlaues(), "A,P");
+			fillComboBox(this.receiptMode, rch.getReceiptMode(), ExcessType.getKnockOffFromList(), "A,P");
+		} else {
+			fillComboBox(this.receiptMode, rch.getReceiptMode(), ExcessType.getKnockOffFromList(), "");
 		}
 
 		this.receiptMode.setDisabled(true);
@@ -2330,7 +2321,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				exclude.add("S");
 			}
 
-			List<ValueLabel> excessAdjustToList = PennantStaticListUtil.getExcessAdjustmentTypes();
+			List<ValueLabel> excessAdjustToList = ExcessType.getAdjustmentList();
 
 			fillComboBox(excessAdjustTo, rch.getExcessAdjustTo(), excludeComboBox(excessAdjustToList, exclude));
 		} else {
@@ -2343,17 +2334,9 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			List<ValueLabel> epyMethodList = getEffectiveSchdMethods();
 			String defaultMethod = "";
 
-			// final String defMethod = getFinanceDetail().getFinScheduleData().getFinanceType().getFinScheduleOn();
-
 			if (!epyMethodList.isEmpty()) {
 				defaultMethod = StringUtils.isEmpty(rch.getEffectSchdMethod()) ? epyMethodList.get(0).getValue()
 						: rch.getEffectSchdMethod();
-
-				// PSD : 165320
-				/*
-				 * if(epyMethodList.stream().filter(o -> o.getValue().equals(defMethod)).findFirst().isPresent()){
-				 * defaultMethod = defMethod; }
-				 */
 			}
 
 			if (!getFinanceMain().isManualSchedule()) {
@@ -3187,7 +3170,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 					Labels.getLabel("label_ReceiptDialog_ReceivedFrom.value")));
 		}
 		if (this.excessAdjustTo.isVisible() && !this.excessAdjustTo.isDisabled()) {
-			this.excessAdjustTo.setConstraint(new StaticListValidator(PennantStaticListUtil.getExcessAdjustmentTypes(),
+			this.excessAdjustTo.setConstraint(new StaticListValidator(ExcessType.getAdjustmentList(),
 					Labels.getLabel("label_ReceiptDialog_ExcessAdjustTo.value")));
 		}
 		if (!this.allocationMethod.isDisabled()) {
@@ -4681,7 +4664,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 
 	public void onAllocateNetPaidChange(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
-		// FIXME: PV: CODE REVIEW PENDING
+
 		int idx = (int) event.getData();
 		String id = "AllocateNetPaid_" + idx;
 
@@ -4700,12 +4683,9 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		BigDecimal totalPaid = receiptCalculator.getPaidAmount(allocate, paidAmount);
 		allocate.setTotalPaid(paidAmount);
 		allocate.setPaidAmount(paidAmount);
-		// allocate.setPaidAmount(allocate.getTotRecv());
 
 		// GST Calculations
 		if (StringUtils.isNotBlank(allocate.getTaxType())) {
-			// always paid amount we are taking the inclusive type here because
-			// we are doing reverse calculation here
 			allocate.setPaidCGST(BigDecimal.ZERO);
 			allocate.setPaidSGST(BigDecimal.ZERO);
 			allocate.setPaidUGST(BigDecimal.ZERO);

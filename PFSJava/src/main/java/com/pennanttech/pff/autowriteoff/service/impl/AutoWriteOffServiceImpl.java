@@ -43,7 +43,6 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinanceWriteoffService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -266,7 +265,7 @@ public class AutoWriteOffServiceImpl implements AutoWriteOffService {
 		fsi.setAmount(receiptAmt);
 
 		fsi.setPaymentMode(receiptMode);
-		fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		fsi.setExcessAdjustTo(ExcessType.EXCESS);
 		fsi.setPanNumber(receiptDTO.getCustomer().getCustCRCPR());
 		fsi.setReqType("Post");
 		fsi.setNonStp(true);

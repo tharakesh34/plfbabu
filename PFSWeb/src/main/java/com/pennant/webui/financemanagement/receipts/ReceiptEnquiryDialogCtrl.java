@@ -65,6 +65,7 @@ import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennapps.core.util.ObjectUtil;
 
@@ -520,8 +521,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount(), finFormatter));
 
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
-		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
-				"");
+		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), ExcessType.getAdjustmentList(), "");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), "");
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount(), finFormatter));
 		fillComboBox(this.allocationMethod, header.getAllocationType(), PennantStaticListUtil.getAllocationMethods(),
@@ -697,13 +697,13 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		// Excess / EMI In Advance Settlement Amount
-		if (StringUtils.equals(receiptHeader.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_EXCESS)
-				|| StringUtils.equals(receiptHeader.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_EMIINADV)
+		if (StringUtils.equals(receiptHeader.getExcessAdjustTo(), ExcessType.EXCESS)
+				|| StringUtils.equals(receiptHeader.getExcessAdjustTo(), ExcessType.EMIINADV)
 				|| StringUtils.equals(receiptHeader.getExcessAdjustTo(), ReceiptMode.CASHCLT)
 				|| StringUtils.equals(receiptHeader.getExcessAdjustTo(), ReceiptMode.DSF)) {
 			item = new Listitem();
 			lc = new Listcell(PennantApplicationUtil.getLabelDesc(getReceiptHeader().getExcessAdjustTo(),
-					PennantStaticListUtil.getExcessAdjustmentTypes()) + " Adjustment");
+					ExcessType.getAdjustmentList()) + " Adjustment");
 			lc.setStyle("font-weight:bold;color: #05b765;");
 			lc.setParent(item);
 

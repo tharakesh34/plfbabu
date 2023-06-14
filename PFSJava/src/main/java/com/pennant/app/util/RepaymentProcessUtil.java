@@ -777,30 +777,30 @@ public class RepaymentProcessUtil {
 
 		if (toExcess.compareTo(BigDecimal.ZERO) > 0) {
 			switch (rch.getExcessAdjustTo()) {
-			case RepayConstants.EXCESSADJUSTTO_EMIINADV:
+			case ExcessType.EMIINADV:
 				extMap.put("ae_toEmiAdvance", toExcess);
 				break;
-			case RepayConstants.EXCESSADJUSTTO_BOUNCE:
+			case ExcessType.BOUNCE:
 				extMap.put("ae_toBounce", toExcess);
 				break;
-			case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
+			case ExcessType.SETTLEMENT:
 				extMap.put("ae_toSettlement", toExcess);
 				break;
-			case RepayConstants.EXCESSADJUSTTO_EXCESS:
+			case ExcessType.EXCESS:
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
 				extMap.put("ae_toExcessAmt", toExcess);
 				break;
-			case ReceiptMode.DSF:
+			case ExcessType.DSF:
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
 				extMap.put("ae_toDSFAmt", toExcess);
 				dataMap.put("ae_toDSFAmt", toExcess);
 				break;
-			case ReceiptMode.CASHCLT:
+			case ExcessType.CASHCLT:
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
 				extMap.put("ae_toCashCollAmt", toExcess);
 				dataMap.put("ae_toCashCollAmt", toExcess);
 				break;
-			case RepayConstants.EXCESSADJUSTTO_TEXCESS:
+			case ExcessType.TEXCESS:
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
 				extMap.put("ae_toTExcessAmt", toExcess);
 				break;

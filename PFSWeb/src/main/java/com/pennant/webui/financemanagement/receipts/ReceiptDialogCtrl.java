@@ -670,7 +670,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			if (!(FinanceConstants.CLOSURE_APPROVER.equals(module) || FinanceConstants.CLOSURE_MAKER.equals(module))
 					&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())
-					&& RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(receiptData.getExcessType())) {
+					&& ExcessType.TEXCESS.equals(receiptData.getExcessType())) {
 				doProcessTerminationExcess(receiptData, rch);
 			}
 
@@ -1060,10 +1060,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				exclude.add("S");
 			}
 
-			List<ValueLabel> excessAdjustmentTypes = PennantStaticListUtil.getExcessAdjustmentTypes();
+			List<ValueLabel> excessAdjustmentTypes = ExcessType.getAdjustmentList();
 
-			fillComboBox(this.excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EXCESS,
-					excludeComboBox(excessAdjustmentTypes, exclude));
+			fillComboBox(this.excessAdjustTo, ExcessType.EXCESS, excludeComboBox(excessAdjustmentTypes, exclude));
 		}
 	}
 
@@ -3469,7 +3468,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				excldValues);
 
 		if (isKnockOff) {
-			fillComboBox(this.receiptMode, rch.getReceiptMode(), PennantStaticListUtil.getKnockOffFromVlaues(), "A,P");
+			fillComboBox(this.receiptMode, rch.getReceiptMode(), ExcessType.getKnockOffFromList(), "A,P");
 		}
 
 		this.receiptMode.setDisabled(true);
@@ -3732,7 +3731,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private void appendScheduleMethod(FinReceiptHeader rch) {
 		String excessAdjustTo = rch.getExcessAdjustTo();
 		Set<String> exclude = new HashSet<>();
-		List<ValueLabel> excessAdjustToList = PennantStaticListUtil.getExcessAdjustmentTypes();
+		List<ValueLabel> excessAdjustToList = ExcessType.getAdjustmentList();
 
 		if (receiptPurposeCtg != 1) {
 			scheduleLabel.setValue(Labels.getLabel("label_ReceiptPayment_ExcessAmountAdjustment.value"));
@@ -4741,7 +4740,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					Labels.getLabel("label_ReceiptDialog_ReceivedFrom.value")));
 		}
 		if (this.excessAdjustTo.isVisible() && !this.excessAdjustTo.isDisabled()) {
-			this.excessAdjustTo.setConstraint(new StaticListValidator(PennantStaticListUtil.getExcessAdjustmentTypes(),
+			this.excessAdjustTo.setConstraint(new StaticListValidator(ExcessType.getAdjustmentList(),
 					Labels.getLabel("label_ReceiptDialog_ExcessAdjustTo.value")));
 		}
 		if (!this.allocationMethod.isDisabled()) {
@@ -5588,7 +5587,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				amountCodes.setPartnerBankAcType(rcd.getPartnerBankAcType());
 				amountCodes.setToExcessAmt(BigDecimal.ZERO);
 				amountCodes.setToEmiAdvance(BigDecimal.ZERO);
-				if (RepayConstants.EXCESSADJUSTTO_EXCESS.equals(repayHeader.getFinEvent())) {
+				if (ExcessType.EXCESS.equals(repayHeader.getFinEvent())) {
 					amountCodes.setToExcessAmt(repayHeader.getRepayAmount());
 				} else {
 					amountCodes.setToEmiAdvance(repayHeader.getRepayAmount());
@@ -8279,7 +8278,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		receiptData.setEarlySettle(false);
 		receiptData.setValueDate(rch.getReceiptDate());
 		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-		rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+		rch.setExcessAdjustTo(ExcessType.TEXCESS);
 		rch.setClosureType(PennantConstants.List_Select);
 
 		rch.getAllocations().removeIf(al -> Allocation.FEE.equals(al.getAllocationType()));

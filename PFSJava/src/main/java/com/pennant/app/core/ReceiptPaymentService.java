@@ -389,7 +389,7 @@ public class ReceiptPaymentService {
 		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-		rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		rch.setExcessAdjustTo(ExcessType.EXCESS);
 		rch.setAllocationType(AllocationType.AUTO);
 		rch.setEffectSchdMethod(PennantConstants.List_Select);
 		rch.setActFinReceipt(true);

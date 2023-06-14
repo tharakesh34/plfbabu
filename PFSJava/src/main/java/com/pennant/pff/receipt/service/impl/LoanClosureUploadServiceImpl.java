@@ -66,6 +66,7 @@ import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosureUpload> {
@@ -227,7 +228,7 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		rud.setReceivedDate(appDate);
 		rud.setDepositDate(appDate);
 		rud.setReceiptAmount(lcu.getAmount());
-		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		rud.setExcessAdjustTo(ExcessType.EXCESS);
 		rud.setReceiptPurpose(ReceiptPurpose.EARLYSETTLE.code());
 		rud.setReceiptMode(PennantConstants.List_Select);
 		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);

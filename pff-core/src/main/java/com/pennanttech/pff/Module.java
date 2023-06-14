@@ -26,5 +26,8 @@ public enum Module {
 
 	LPP,
 
-	NPA_PROVISION
+	NPA_PROVISION,
+
+	EXCESS
+
 }

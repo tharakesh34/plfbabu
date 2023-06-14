@@ -195,7 +195,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private CrossLoanKnockOffDAO crossLoanKnockOffDAO;
 	protected boolean leiMandatory = false;
 
-	private List<String> allowedExcesTypes = PennantStaticListUtil.getAllowedExcessTypeList();
+	private List<String> allowedExcesTypes = ExcessType.getAllowedTypes();
 
 	/**
 	 * default constructor.<br>

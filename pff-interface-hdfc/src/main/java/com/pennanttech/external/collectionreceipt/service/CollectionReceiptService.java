@@ -22,6 +22,7 @@ import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.ExtCollectionReceiptData;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class CollectionReceiptService implements ErrorCodesConstants {
@@ -107,7 +108,7 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 		cru.setReceiptModeStatus("R");
 		cru.setRealizationDate(getFormattedDate(collectionData.getReceiptDate()));
 		cru.setReceiptAmount(getAbsoluteAmount(collectionData.getGrandTotal()));
-		cru.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		cru.setExcessAdjustTo(ExcessType.EXCESS);
 		cru.setReceiptPurpose("SP");
 		cru.setStatus(RepayConstants.PAYSTATUS_REALIZED);
 		cru.setReceiptChannel(PennantConstants.List_Select);

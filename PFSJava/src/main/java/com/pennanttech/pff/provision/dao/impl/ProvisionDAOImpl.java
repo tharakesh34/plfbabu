@@ -433,27 +433,27 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			sql.append(", ManualProvision = ?, ManProvsnPer = ?, ManProvsnAmt = ?");
 		} else {
 			sql.append(", RegProvsnPer = ?, RegProvsnAmt = RegProvsnAmt + ?");
-			sql.append(", RegSecProvsnPer = ?, RegSecProvsnAmt = RegSecProvsnAmt + ?");
-			sql.append(", RegUnSecProvsnPer = ?, RegUnSecProvsnAmt = RegUnSecProvsnAmt + ?");
-			sql.append(", TotRegProvsnAmt = TotRegProvsnAmt + ?");
-			sql.append(", IntProvsnPer = ?, IntProvsnAmt = IntProvsnAmt + ?");
-			sql.append(", IntSecProvsnPer = ?, IntSecProvsnAmt = IntSecProvsnAmt + ?");
-			sql.append(", IntUnSecProvsnPer = ?, IntUnSecProvsnAmt = IntUnSecProvsnAmt + ?");
-			sql.append(", TotIntProvsnAmt = TotIntProvsnAmt + ?");
-			sql.append(", ManualProvision = ?, ManProvsnPer = ?");
+			//sql.append(", RegSecProvsnPer = ?, RegSecProvsnAmt = RegSecProvsnAmt + ?");
+			//sql.append(", RegUnSecProvsnPer = ?, RegUnSecProvsnAmt = RegUnSecProvsnAmt + ?");
+			//sql.append(", TotRegProvsnAmt = TotRegProvsnAmt + ?");
+			//sql.append(", IntProvsnPer = ?, IntProvsnAmt = IntProvsnAmt + ?");
+			//sql.append(", IntSecProvsnPer = ?, IntSecProvsnAmt = IntSecProvsnAmt + ?");
+			//sql.append(", IntUnSecProvsnPer = ?, IntUnSecProvsnAmt = IntUnSecProvsnAmt + ?");
+			//sql.append(", TotIntProvsnAmt = TotIntProvsnAmt + ?");
+			//sql.append(", ManualProvision = ?, ManProvsnPer = ?");
 		}
 
-		sql.append(", ManProvsnAmt = ?, PastDueDays = ?, NpaAging = ?, EffNpaAging = ?");
-		sql.append(", NpaPastDueDays = ?, EffNpaPastDueDays = ?, NpaClassID = ?, EffNpaClassID = ?");
-		sql.append(", OsPrincipal = ?, OSProfit = ?, OdPrincipal = ?, OdProfit = ?");
-		sql.append(", ProfitAccruedAndDue = ?, ProfitAccruedAndNotDue = ?");
-		sql.append(", ManualAssetClassID = ?, ManualAssetSubClassID = ?");
-		sql.append(", OverrideProvision = ?, NewRegProvisionAmt = ?, NewRegProvisionPer = ?");
-		sql.append(", NewIntProvisionAmt = ?, NewIntProvisionPer = ?");
-		sql.append(", CollateralAmt = ?, InsuranceAmt = ?, LinkedTranId = ?, ChgLinkedTranId = ?");
-		sql.append(", Version = ?, CreatedBy= ?, CreatedOn = ?, ApprovedBy = ? ");
-		sql.append(", ApprovedOn = ?, LastMntBy = ?, LastMntOn= ?, RecordStatus = ?, RoleCode = ?");
-		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId= ?, RecordType = ?, WorkFlowId = ?");
+		//sql.append(", ManProvsnAmt = ?, PastDueDays = ?, NpaAging = ?, EffNpaAging = ?");
+		//sql.append(", NpaPastDueDays = ?, EffNpaPastDueDays = ?, NpaClassID = ?, EffNpaClassID = ?");
+		//sql.append(", OsPrincipal = ?, OSProfit = ?, OdPrincipal = ?, OdProfit = ?");
+		//sql.append(", ProfitAccruedAndDue = ?, ProfitAccruedAndNotDue = ?");
+		//sql.append(", ManualAssetClassID = ?, ManualAssetSubClassID = ?");
+		//sql.append(", OverrideProvision = ?, NewRegProvisionAmt = ?, NewRegProvisionPer = ?");
+		//sql.append(", NewIntProvisionAmt = ?, NewIntProvisionPer = ?");
+		//sql.append(", CollateralAmt = ?, InsuranceAmt = ?, LinkedTranId = ?, ChgLinkedTranId = ?");
+		//sql.append(", Version = ?, CreatedBy= ?, CreatedOn = ?, ApprovedBy = ? ");
+		//sql.append(", ApprovedOn = ?, LastMntBy = ?, LastMntOn= ?, RecordStatus = ?, RoleCode = ?");
+		//sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId= ?, RecordType = ?, WorkFlowId = ?");
 		sql.append(" Where ID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -464,59 +464,34 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setDate(++index, JdbcUtil.getDate(p.getProvisionDate()));
 			ps.setBigDecimal(++index, p.getRegProvsnPer());
 			ps.setBigDecimal(++index, p.getRegProvsnAmt());
-			ps.setBigDecimal(++index, p.getRegSecProvsnPer());
-			ps.setBigDecimal(++index, p.getRegSecProvsnAmt());
-			ps.setBigDecimal(++index, p.getRegUnSecProvsnPer());
-			ps.setBigDecimal(++index, p.getRegUnSecProvsnAmt());
-			ps.setBigDecimal(++index, p.getTotRegProvsnAmt());
-			ps.setBigDecimal(++index, p.getIntProvsnPer());
-			ps.setBigDecimal(++index, p.getIntProvsnAmt());
-			ps.setBigDecimal(++index, p.getIntSecProvsnPer());
-			ps.setBigDecimal(++index, p.getIntSecProvsnAmt());
-			ps.setBigDecimal(++index, p.getIntUnSecProvsnPer());
-			ps.setBigDecimal(++index, p.getIntUnSecProvsnAmt());
-			ps.setBigDecimal(++index, p.getTotIntProvsnAmt());
-			ps.setBoolean(++index, p.isManualProvision());
-			ps.setBigDecimal(++index, p.getManProvsnPer());
-			ps.setBigDecimal(++index, p.getManProvsnAmt());
-			ps.setInt(++index, p.getPastDueDays());
-			ps.setInt(++index, p.getNpaAging());
-			ps.setInt(++index, p.getEffNpaAging());
-			ps.setInt(++index, p.getNpaPastDueDays());
-			ps.setInt(++index, p.getEffNpaPastDueDays());
-			ps.setObject(++index, p.getNpaClassID());
-			ps.setObject(++index, p.getEffNpaClassID());
-			ps.setBigDecimal(++index, p.getOsPrincipal());
-			ps.setBigDecimal(++index, p.getOsProfit());
-			ps.setBigDecimal(++index, p.getOdPrincipal());
-			ps.setBigDecimal(++index, p.getOdProfit());
-			ps.setBigDecimal(++index, p.getTotPftAccrued());
-			ps.setBigDecimal(++index, p.getTillDateSchdPri());
-			ps.setObject(++index, p.getManualAssetClassID());
-			ps.setObject(++index, p.getManualAssetSubClassID());
-			ps.setBoolean(++index, p.isOverrideProvision());
-			ps.setBigDecimal(++index, p.getNewRegProvisionAmt());
-			ps.setBigDecimal(++index, p.getNewRegProvisionPer());
-			ps.setBigDecimal(++index, p.getNewIntProvisionAmt());
-			ps.setBigDecimal(++index, p.getNewIntProvisionPer());
-			ps.setBigDecimal(++index, p.getCollateralAmt());
-			ps.setBigDecimal(++index, p.getInsuranceAmt());
-			ps.setObject(++index, p.getLinkedTranId());
-			ps.setObject(++index, p.getChgLinkedTranId());
-			ps.setInt(++index, p.getVersion());
-			ps.setObject(++index, JdbcUtil.getLong(p.getCreatedBy()));
-			ps.setTimestamp(++index, p.getCreatedOn());
-			ps.setObject(++index, JdbcUtil.getLong(p.getApprovedBy()));
-			ps.setTimestamp(++index, p.getApprovedOn());
-			ps.setLong(++index, JdbcUtil.getLong(p.getLastMntBy()));
-			ps.setTimestamp(++index, p.getLastMntOn());
-			ps.setString(++index, p.getRecordStatus());
-			ps.setString(++index, p.getRoleCode());
-			ps.setString(++index, p.getNextRoleCode());
-			ps.setString(++index, p.getTaskId());
-			ps.setString(++index, p.getNextTaskId());
-			ps.setString(++index, p.getRecordType());
-			ps.setLong(++index, JdbcUtil.getLong(p.getWorkflowId()));
+			/*
+			 * ps.setBigDecimal(++index, p.getRegSecProvsnPer()); ps.setBigDecimal(++index, p.getRegSecProvsnAmt());
+			 * ps.setBigDecimal(++index, p.getRegUnSecProvsnPer()); ps.setBigDecimal(++index, p.getRegUnSecProvsnAmt());
+			 * ps.setBigDecimal(++index, p.getTotRegProvsnAmt()); ps.setBigDecimal(++index, p.getIntProvsnPer());
+			 * ps.setBigDecimal(++index, p.getIntProvsnAmt()); ps.setBigDecimal(++index, p.getIntSecProvsnPer());
+			 * ps.setBigDecimal(++index, p.getIntSecProvsnAmt()); ps.setBigDecimal(++index, p.getIntUnSecProvsnPer());
+			 * ps.setBigDecimal(++index, p.getIntUnSecProvsnAmt()); ps.setBigDecimal(++index, p.getTotIntProvsnAmt());
+			 * ps.setBoolean(++index, p.isManualProvision()); ps.setBigDecimal(++index, p.getManProvsnPer());
+			 * ps.setBigDecimal(++index, p.getManProvsnAmt()); ps.setInt(++index, p.getPastDueDays());
+			 * ps.setInt(++index, p.getNpaAging()); ps.setInt(++index, p.getEffNpaAging()); ps.setInt(++index,
+			 * p.getNpaPastDueDays()); ps.setInt(++index, p.getEffNpaPastDueDays()); ps.setObject(++index,
+			 * p.getNpaClassID()); ps.setObject(++index, p.getEffNpaClassID()); ps.setBigDecimal(++index,
+			 * p.getOsPrincipal()); ps.setBigDecimal(++index, p.getOsProfit()); ps.setBigDecimal(++index,
+			 * p.getOdPrincipal()); ps.setBigDecimal(++index, p.getOdProfit()); ps.setBigDecimal(++index,
+			 * p.getTotPftAccrued()); ps.setBigDecimal(++index, p.getTillDateSchdPri()); ps.setObject(++index,
+			 * p.getManualAssetClassID()); ps.setObject(++index, p.getManualAssetSubClassID()); ps.setBoolean(++index,
+			 * p.isOverrideProvision()); ps.setBigDecimal(++index, p.getNewRegProvisionAmt()); ps.setBigDecimal(++index,
+			 * p.getNewRegProvisionPer()); ps.setBigDecimal(++index, p.getNewIntProvisionAmt());
+			 * ps.setBigDecimal(++index, p.getNewIntProvisionPer()); ps.setBigDecimal(++index, p.getCollateralAmt());
+			 * ps.setBigDecimal(++index, p.getInsuranceAmt()); ps.setObject(++index, p.getLinkedTranId());
+			 * ps.setObject(++index, p.getChgLinkedTranId()); ps.setInt(++index, p.getVersion()); ps.setObject(++index,
+			 * JdbcUtil.getLong(p.getCreatedBy())); ps.setTimestamp(++index, p.getCreatedOn()); ps.setObject(++index,
+			 * JdbcUtil.getLong(p.getApprovedBy())); ps.setTimestamp(++index, p.getApprovedOn()); ps.setLong(++index,
+			 * JdbcUtil.getLong(p.getLastMntBy())); ps.setTimestamp(++index, p.getLastMntOn()); ps.setString(++index,
+			 * p.getRecordStatus()); ps.setString(++index, p.getRoleCode()); ps.setString(++index, p.getNextRoleCode());
+			 * ps.setString(++index, p.getTaskId()); ps.setString(++index, p.getNextTaskId()); ps.setString(++index,
+			 * p.getRecordType()); ps.setLong(++index, JdbcUtil.getLong(p.getWorkflowId()));
+			 */
 
 			ps.setLong(++index, p.getId());
 		});
