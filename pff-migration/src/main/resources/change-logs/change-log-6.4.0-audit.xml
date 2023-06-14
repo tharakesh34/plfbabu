@@ -807,4 +807,16 @@
 		<dropTable tableName="ADTLOAN_LETTER_MANUAL_BKP"/>
 	</changeSet>
 	
+	<changeSet id="TK#6522_1" author="Gireesh.g">
+		<dropNotNullConstraint tableName="AdtRMTAccountTypes" columnName="PROFITCENTERID"/>
+	</changeSet>
+	
+	<changeSet id="TK#6522_2" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				Update AdtRMTAccountTypes set PROFITCENTERID = null, COSTCENTERID = null;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

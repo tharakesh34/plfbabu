@@ -120,13 +120,13 @@
 									<checkbox id="controlAc" checked="false" />
 								</hbox>
 							</row>
-							<row visible="true">
+							<row visible="false">
 								<label id="label_AccountTypeDialog_ProfitCenter" value="${c:l('label_AccountTypeDialog_ProfitCenter.value')}" />
 								<hbox>
 									<extendedcombobox id="profitCenter" />
 								</hbox>
 							</row>
-							<row visible="true">
+							<row visible="false">
 								<label id="label_AccountTypeDialog_costCenter" value="${c:l('label_AccountTypeDialog_CostCenter.value')}" />
 								<hbox>
 									<extendedcombobox id="costCenter" />
@@ -155,7 +155,7 @@
 								</hbox>
 							</row>
 
-							<row visible="true">
+							<row visible="false">
 								<label id="label_AccountTypeDialog_RevChargeApplicable" value="${c:l('label_AccountTypeDialog_RevChargeApplicable.value')}" />
 								<hbox>
 									<space spacing="2px" />
