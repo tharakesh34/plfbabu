@@ -302,6 +302,7 @@ import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.pff.extension.FeeExtension;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.InstrumentType;
@@ -3304,8 +3305,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 									.unFormateAmount((this.finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
 											? this.finAssetValue.getActualValue()
 											: this.finAmount.getActualValue())
-											.subtract(this.downPayBank.getActualValue())
-											.subtract(this.downPaySupl.getActualValue()), formatter)
+													.subtract(this.downPayBank.getActualValue())
+													.subtract(this.downPaySupl.getActualValue()),
+											formatter)
 									.add(financeMain.getFeeChargeAmt());
 						} else {
 							utilizedAmt = PennantApplicationUtil
@@ -8057,7 +8059,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 					}
 
-					if (!proceed) {
+					if (AccountingExtension.VERIFY_ACCOUNTING && !proceed) {
 						MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 						ComponentsCtrl.applyForward(getTab(AssetConstants.UNIQUE_ID_ACCOUNTING), "onSelectTab");
 						return;
@@ -17995,7 +17997,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						.unFormateAmount((this.finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
 								? this.finAssetValue.getActualValue()
 								: this.finAmount.getActualValue()).subtract(this.downPayBank.getActualValue())
-								.subtract(this.downPaySupl.getActualValue()), formatter)
+										.subtract(this.downPaySupl.getActualValue()),
+								formatter)
 						.add(financeMain.getFeeChargeAmt());
 			} else {
 				UtilizedAmt = PennantApplicationUtil
@@ -18043,7 +18046,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						.unFormateAmount((this.finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
 								? this.finAssetValue.getActualValue()
 								: this.finAmount.getActualValue()).subtract(this.downPayBank.getActualValue())
-								.subtract(this.downPaySupl.getActualValue()), formatter)
+										.subtract(this.downPaySupl.getActualValue()),
+								formatter)
 						.add(fm.getFeeChargeAmt());
 			} else {
 				UtilizedAmt = PennantApplicationUtil
@@ -18111,9 +18115,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				// Commitment Stop draw down when rate Out of rage:
 				BigDecimal effRate = finMain.getEffectiveRateOfReturn() == null ? BigDecimal.ZERO
 						: finMain.getEffectiveRateOfReturn();
-				if (BigDecimal.ZERO
-						.compareTo(new BigDecimal(
-								PennantApplicationUtil.formatRate(commitment.getCmtPftRateMin().doubleValue(), 9))) != 0
+				if (BigDecimal.ZERO.compareTo(new BigDecimal(
+						PennantApplicationUtil.formatRate(commitment.getCmtPftRateMin().doubleValue(), 9))) != 0
 						&& BigDecimal.ZERO.compareTo(new BigDecimal(PennantApplicationUtil
 								.formatRate(commitment.getCmtPftRateMax().doubleValue(), 9))) != 0) {
 
@@ -20448,8 +20451,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								if (remStps > 0) {
 									spd.setInstallments(remStps);
 									tenorSplitPerc = (new BigDecimal(spd.getInstallments())
-											.multiply(new BigDecimal(100)))
-											.divide(new BigDecimal(curGrcTerms), 2, RoundingMode.HALF_DOWN);
+											.multiply(new BigDecimal(100))).divide(new BigDecimal(curGrcTerms), 2,
+													RoundingMode.HALF_DOWN);
 									spd.setTenorSplitPerc(tenorSplitPerc);
 									newSpdList.add(spd);
 									noOfGrcStps = noOfGrcStps + 1;

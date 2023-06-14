@@ -23,6 +23,8 @@ public class PresentmentExtension {
 	 */
 	public static final boolean AUTO_APPROVAL = getValueAsBoolean("AUTO_APPROVAL", true);
 
+	public static final boolean STAGE_ACCOUNTING_REQ = getValueAsBoolean("STAGE_ACCOUNTING_REQ", false);
+
 	private static boolean getValueAsBoolean(String key, boolean defaultValue) {
 		return FeatureExtension.getValueAsBoolean(Module.PRESENTMENT, key, defaultValue);
 	}

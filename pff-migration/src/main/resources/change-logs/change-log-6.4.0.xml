@@ -20120,4 +20120,12 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#216047" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'RECEIPTS_SHOW_ACCOUNTING_TAB';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog> 

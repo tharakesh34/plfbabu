@@ -110,7 +110,6 @@ public class ImplementationConstants {
 		ALW_ADV_INTEMI_ADVICE_CREATION = getValueAsBoolean("ALW_ADV_INTEMI_ADVICE_CREATION", false);
 		TAX_DFT_CR_INV_REQ = getValueAsBoolean("TAX_DFT_CR_INV_REQ", false);
 		ALLOW_IND_AS = getValueAsBoolean("ALLOW_IND_AS", false);
-		IND_AS_ACCOUNTING_REQ = getValueAsBoolean("IND_AS_ACCOUNTING_REQ", false);
 		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean("ALLOW_AUTO_KNOCK_OFF", false);
 		ALLOW_OLDEST_DUE = getValueAsBoolean("ALLOW_OLDEST_DUE", true);
 		ALLOW_DSF_CASHCLT = getValueAsBoolean("ALLOW_DSF_CASHCLT", false);
@@ -126,7 +125,6 @@ public class ImplementationConstants {
 		ALLOW_AUTO_GRACE_EXT = getValueAsBoolean("ALLOW_AUTO_GRACE_EXT", false);
 		ALLOW_LOAN_DOWNSIZING = getValueAsBoolean("ALLOW_LOAN_DOWNSIZING", false);
 		ALLOW_RESTRUCTURING = getValueAsBoolean("ALLOW_RESTRUCTURING", false);
-		LOAN_DOWNSIZING_ACCOUNTING_REQ = getValueAsBoolean("LOAN_DOWNSIZING_ACCOUNTING_REQ", false);
 
 		// FROM HL
 		ALLOW_LOAN_SPLIT = getValueAsBoolean("ALLOW_LOAN_SPLIT", false);
@@ -153,7 +151,6 @@ public class ImplementationConstants {
 		NOC_GENERATION_MULTIPLE = getValueAsBoolean("NOC_GENERATION_MULTIPLE", false);
 		NOC_LINKED_LOANS_CHECK_REQ = getValueAsBoolean("NOC_LINKED_LOANS_CHECK_REQ", false);
 
-		ACCOUNTING_VALIDATION = getValueAsBoolean("ACCOUNTING_VALIDATION", false);
 		RCU_DOC_FIELDS_DISABLED = getValueAsBoolean("RCU_DOC_FIELDS_DISABLED", false);
 
 		CUSTOMIZED_TEMPLATES = getValueAsBoolean("CUSTOMIZED_TEMPLATES", false);
@@ -176,7 +173,7 @@ public class ImplementationConstants {
 		ALLOW_NEGATIVE_VALUES_EXTFIELDS = getValueAsBoolean("ALLOW_NEGATIVE_VALUES_EXTFIELDS", false);
 		FINREFERENCE_ALW_SWIFT_CODE = getValueAsBoolean("FINREFERENCE_ALW_SWIFT_CODE", false);
 		DISB_PAID_CANCELLATION_REQ = getValueAsBoolean("DISB_PAID_CANCELLATION_REQ", false);
-		PRESENTMENT_STAGE_ACCOUNTING_REQ = getValueAsBoolean("PRESENTMENT_STAGE_ACCOUNTING_REQ", false);
+
 		ALLOW_LOAN_VAS_RATIO_CALC = getValueAsBoolean("ALLOW_LOAN_VAS_RATIO_CALC", false);
 		ALLOW_ED_FIELDS_IN_NPA = getValueAsBoolean("ALLOW_ED_FIELDS_IN_NPA", false);
 		FRQ_15DAYS_REQ = getValueAsBoolean("FRQ_15DAYS_REQ", false);
@@ -396,7 +393,6 @@ public class ImplementationConstants {
 	public static boolean ALW_ADV_INTEMI_ADVICE_CREATION;
 	public static boolean TAX_DFT_CR_INV_REQ;
 	public static boolean ALLOW_IND_AS;
-	public static boolean IND_AS_ACCOUNTING_REQ;
 	public static boolean ALLOW_AUTO_KNOCK_OFF;
 	public static boolean ALLOW_OLDEST_DUE;
 	public static boolean ALLOW_DSF_CASHCLT;
@@ -432,7 +428,6 @@ public class ImplementationConstants {
 	public static boolean POPULATE_DFT_INCOME_DETAILS;
 	public static boolean CUST_MOB_MANDATORY;
 	public static boolean NOC_LINKED_LOANS_CHECK_REQ;
-	public static boolean ACCOUNTING_VALIDATION;
 	public static boolean RCU_DOC_FIELDS_DISABLED;
 	public static boolean NOC_GENERATION_MULTIPLE;
 	public static boolean CUSTOMIZED_TEMPLATES;
@@ -445,7 +440,7 @@ public class ImplementationConstants {
 	public static boolean ALLOW_AUTO_GRACE_EXT;
 	public static boolean ALLOW_LOAN_DOWNSIZING;
 	public static boolean ALLOW_RESTRUCTURING;
-	public static boolean LOAN_DOWNSIZING_ACCOUNTING_REQ;
+
 	public static boolean DEFAULT_VAS_MODE_OF_PAYMENT;
 	public static boolean PRESENTMENT_EXTRACT_DEALER_MAN;
 	public static boolean ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE;
@@ -468,7 +463,6 @@ public class ImplementationConstants {
 	public static boolean DISB_PAID_CANCELLATION_REQ;
 	public static boolean ALLOW_LOAN_VAS_RATIO_CALC;
 	public static boolean ALLOW_ED_FIELDS_IN_NPA;
-	public static boolean PRESENTMENT_STAGE_ACCOUNTING_REQ;
 	public static boolean FRQ_15DAYS_REQ;
 	public static boolean NON_FRQ_CAPITALISATION;
 	public static boolean ALW_DOWNPAY_IN_LOANENQ_AND_SOA;

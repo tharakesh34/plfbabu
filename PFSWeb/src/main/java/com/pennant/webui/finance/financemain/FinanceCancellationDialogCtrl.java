@@ -62,6 +62,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.pff.extension.FeeExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -890,7 +891,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		// Finance Accounting Details
 		if (!recSave && getAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
-			if (!getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
+			if (AccountingExtension.VERIFY_ACCOUNTING && !getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 				return;
 			}

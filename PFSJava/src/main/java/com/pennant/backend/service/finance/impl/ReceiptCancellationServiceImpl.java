@@ -167,6 +167,7 @@ import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.eod.cache.FeeTypeConfigCache;
 import com.pennant.pff.extension.LPPExtension;
+import com.pennant.pff.extension.PresentmentExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.presentment.exception.PresentmentException;
@@ -3216,7 +3217,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		long postingId = postingsDAO.getPostingId();
 
-		if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
+		if (PresentmentExtension.STAGE_ACCOUNTING_REQ) {
 			if (!ReceiptMode.PRESENTMENT.equals(receiptMode)) {
 				rdSet = postingsPreparationUtil.postReversalsByPostRef(receiptID, postingId, appDate);
 			}

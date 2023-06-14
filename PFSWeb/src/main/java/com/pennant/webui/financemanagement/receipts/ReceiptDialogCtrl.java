@@ -212,6 +212,7 @@ import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.document.DocVerificationUtil;
 import com.pennant.pff.document.model.DocVerificationHeader;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.knockoff.KnockOffType;
@@ -2982,15 +2983,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			doWriteComponentsToBean();
 
 			// Accounting Details Validations
-			if (SysParamUtil.isAllowed(SMTParameterConstants.RECEIPTS_SHOW_ACCOUNTING_TAB)) {
-				if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) != null
-						&& getTab(AssetConstants.UNIQUE_ID_ACCOUNTING).isVisible()) {
-					boolean validate = false;
-					validate = validateAccounting(validate);
-					if (validate && !isAccountingExecuted) {
-						MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
-						return;
-					}
+			if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) != null
+					&& getTab(AssetConstants.UNIQUE_ID_ACCOUNTING).isVisible()) {
+				boolean validate = false;
+				validate = validateAccounting(validate);
+				if (AccountingExtension.VERIFY_ACCOUNTING && validate && !isAccountingExecuted) {
+					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
+					return;
 				}
 			}
 
@@ -3295,7 +3294,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (!recSave && getAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
-			if (!getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
+			if (AccountingExtension.VERIFY_ACCOUNTING && !getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 				return;
 			}
@@ -3640,10 +3639,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.earlySettlementReason.setButtonDisabled(true);
 			}
 		}
-		// Show Accounting Tab Details Based upon Role Condition using Work flow
-		if (isApprover() && SysParamUtil.isAllowed(SMTParameterConstants.RECEIPTS_SHOW_ACCOUNTING_TAB)) {
-			appendAccountingDetailTab(true);
-		}
+
+		appendAccountingDetailTab(true);
+
 		fillComboBox(this.sourceofFund, receiptHeader.getSourceofFund(), sourceofFundList, "");
 
 		// append Extended Fields

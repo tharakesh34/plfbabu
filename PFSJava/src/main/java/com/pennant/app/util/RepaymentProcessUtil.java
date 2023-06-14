@@ -97,6 +97,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.MandateExtension;
+import com.pennant.pff.extension.PresentmentExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.holdmarking.service.HoldMarkingService;
 import com.pennant.pff.letter.service.LetterService;
@@ -2329,7 +2330,7 @@ public class RepaymentProcessUtil {
 	private String getEventCode(String finEvent, String receiptMode) {
 		switch (finEvent) {
 		case FinServiceEvent.SCHDRPY:
-			if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
+			if (PresentmentExtension.STAGE_ACCOUNTING_REQ) {
 				if (ReceiptMode.PRESENTMENT.equals(receiptMode)) {
 					return AccountingEvent.PRSNT;
 				}

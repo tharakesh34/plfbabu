@@ -140,6 +140,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.component.extendedfields.ExtendedFieldsGenerator;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -704,7 +705,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 
 		// Accounting Details Validations
-		if (getAccountingDetailDialogCtrl() != null && isAccountingExecuted) {
+		if (AccountingExtension.VERIFY_ACCOUNTING && getAccountingDetailDialogCtrl() != null && isAccountingExecuted) {
 			MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 			return;
 		}

@@ -101,6 +101,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.feerefund.FeeRefundUtil;
 import com.pennant.pff.payment.model.PaymentDetail;
@@ -911,7 +912,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			validate = validateAccounting(validate);
 			// Accounting Details Validations
 			if (validate) {
-				if (!isAccountingExecuted) {
+				if (AccountingExtension.VERIFY_ACCOUNTING && !isAccountingExecuted) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 					return;
 				}

@@ -39,7 +39,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -85,6 +84,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -200,7 +200,7 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 
 		amountCodes.setFinType(fm.getFinType());
 
-		if (ImplementationConstants.IND_AS_ACCOUNTING_REQ) {
+		if (AccountingExtension.IND_AS_ACCOUNTING_REQ) {
 
 			Map<String, Object> dataMap = aeEvent.getDataMap();
 			dataMap.putAll(amountCodes.getDeclaredFieldValues());
