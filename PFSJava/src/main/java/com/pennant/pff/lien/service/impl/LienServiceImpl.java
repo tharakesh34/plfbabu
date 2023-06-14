@@ -36,6 +36,7 @@ public class LienServiceImpl implements LienService {
 		super();
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void save(FinanceDetail fd, boolean isMandate) {
 		logger.debug(Literal.ENTERING);
@@ -64,6 +65,9 @@ public class LienServiceImpl implements LienService {
 			lh = lienHeaderDAO.getLienByAccAndStatus(accNumber, true);
 		}
 
+		if (lh != null && Labels.getLabel("label_Lien_Type_Awaiting_Confirmation").equals(lh.getInterfaceStatus())) {
+			return;
+		}
 		long headerID = 0;
 
 		if (lh == null) {
@@ -114,9 +118,8 @@ public class LienServiceImpl implements LienService {
 					lh.setLienStatus(true);
 					lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
 					lh.setMarking(Labels.getLabel("label_Lien_Type_Auto"));
-					lh.setMarkingDate(fm.getFinStartDate());
-					if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
-						lh.setMarkingDate(appDate);
+					if (!FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
+						lh.setMarkingDate(fm.getFinStartDate());
 					} 
 					lienHeaderDAO.update(lh);
 
@@ -125,9 +128,8 @@ public class LienServiceImpl implements LienService {
 					lu.setLienStatus(true);
 					lu.setMarking(Labels.getLabel("label_Lien_Type_Auto"));
 					lu.setDemarking("");
-					lu.setMarkingDate(fm.getFinStartDate());
-					if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
-						lu.setMarkingDate(appDate);
+					if (!FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
+						lu.setMarkingDate(fm.getFinStartDate());
 					} 
 					setLienMarkStatus(lu, fm.getModuleDefiner());
 					lienDetailsDAO.update(lu);
@@ -192,6 +194,11 @@ public class LienServiceImpl implements LienService {
 		}
 
 		for (LienHeader lh : lienheader) {
+
+			if (Labels.getLabel("label_Lien_Type_Awaiting_Confirmation").equals(lh.getInterfaceStatus())) {
+				return;
+			}
+
 			if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())
 					&& !lh.getAccountNumber().equals(accNum)) {
 				continue;
