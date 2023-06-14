@@ -569,20 +569,6 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="023" author="sreeram.r">
-		<createTable tableName="EXTAPILOG">
-			<column name="ID" type="bigint" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="API_NAME" type="VARCHAR(200)" />
-			<column name="API_REQUEST" type="blob" />
-			<column name="API_REQ_TIME" type="datetime" />
-			<column name="API_RESPONSE" type="blob" />
-			<column name="API_RESP_TIME" type="datetime" />
-			<column name="ERROR" type="VARCHAR(4000)" />
-		</createTable>
-	</changeSet>
-
 	<changeSet id="024" author="goutham.ch">
 		<createTable tableName="FINCON_GL_STG">
 			<column name="ACCOUNT" type="VARCHAR(50)" />
@@ -825,20 +811,6 @@
 					UPDATE FILE_INTERFACE_CONFIG SET FILE_EXTENSION='.EBF' WHERE INTERFACE_TYPE='SILIEN_RESP';
 			]]>
 		</sql>
-	</changeSet>
-	
-	
-	<changeSet id="31" author="goutham.ch">
-		<createTable tableName="UCIC_RESP_FILES">
-			<column name="ID" type="bigint" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="FILE_NAME" type="VARCHAR(2000)" />
-			<column name="STATUS" type="int" />
-			<column name="FILE_LOCATION" type="VARCHAR(2000)" />
-			<column name="CREATED_DATE" type="datetime" />
-			<column name="EXTRACTION" type="int" />
-		</createTable>
 	</changeSet>
 
 	<changeSet id="32" author="goutham.ch">
@@ -1356,10 +1328,10 @@
 			<column name="APPLIED_BEFORE" type="VARCHAR(1)" />
 			<column name="OLD_AGMTNO" type="VARCHAR(50)" />
 			<column name="MICR_LOCATION" type="VARCHAR(50)" />
-			<column name="FEES" type="bigint" />
+			<column name="FEES" type="decimal(18,2)" />
 			<column name="FIXED_FLOAT" type="varchar(1)" />
-			<column name="DEALER_COMM" type="bigint" />
-			<column name="MANF_DISC" type="bigint" />
+			<column name="DEALER_COMM" type="decimal(18,2)" />
+			<column name="MANF_DISC" type="decimal(18,2)" />
 			<column name="PROMOTION_CODE" type="varchar(20)" />
 			<column name="RC_AVAIL_STATUS" type="varchar(1)" />
 			<column name="RC_ACQUIRED" type="datetime" />
@@ -1367,23 +1339,23 @@
 			<column name="REST" type="varchar(5)" />
 			<column name="CUST_ACCOUNT" type="varchar(50)" />
 			<column name="NO_BOUNCES" type="bigint" />
-			<column name="CHARGES_PAID" type="bigint" />
+			<column name="CHARGES_PAID" type="decimal(18,2)" />
 			<column name="PREV_NPA" type="datetime" />
 			<column name="SECURT_FLAG" type="varchar(1)" />
 			<column name="SECURT_DT" type="datetime" />
 			<column name="DPD_STRING" type="VARCHAR(250)" />
-			<column name="TOT_AMT_PAID_MNTH_CHQ" type="bigint" />
-			<column name="TOT_AMT_PAID_MNTH_CASH" type="bigint" />
+			<column name="TOT_AMT_PAID_MNTH_CHQ" type="decimal(18,2)" />
+			<column name="TOT_AMT_PAID_MNTH_CASH" type="decimal(18,2)" />
 			<column name="RESCHEDULED" type="varchar(1)" />
 			<column name="RESCHEDULE_EFF_DT" type="datetime" />
 			<column name="CLOSURE_TYPE" type="varchar(10)" />
-			<column name="PRIN_LOSS_CLOSURE" type="bigint" />
+			<column name="PRIN_LOSS_CLOSURE" type="decimal(18,2)" />
 			<column name="IBPC_START" type="datetime" />
 			<column name="IBPC_END" type="datetime" />
 			<column name="MONTHS_IN_PREV_JOB" type="int" />
 			<column name="MONTHS_IN_CURR_JOB" type="int" />
 			<column name="MONTHS_IN_CURR_RESIDENCE" type="int" />
-			<column name="RENT_PM" type="bigint" />
+			<column name="RENT_PM" type="decimal(18,2)" />
 			<column name="DEVIATION" type="VARCHAR(1)" />
 			<column name="VEHICLE_AGE" type="int" />
 			<column name="APP_SCORE" type="int" />
@@ -1393,8 +1365,8 @@
 			<column name="EMPLOYER_CATEGORY" type="VARCHAR(1)" />
 			<column name="MONTHS_IN_CITY" type="int" />
 			<column name="ELIGIBILITY" type="VARCHAR(1)" />
-			<column name="OBLIGATIONS" type="bigint" />
-			<column name="OBLIGATIONS_N" type="bigint" />
+			<column name="OBLIGATIONS" type="decimal(18,2)" />
+			<column name="OBLIGATIONS_N" type="decimal(18,2)" />
 		</createTable>
 	</changeSet>
 	
@@ -1412,20 +1384,20 @@
 			<column name="REPO_SETTLED_FLAG" type="VARCHAR(2)" />
 			<column name="CLOSURE_REASON" type="VARCHAR(200)" />
 			<column name="CLOSURE_DATE" type="datetime" />
-			<column name="POS_ON_CLOSURE" type="bigint" />
+			<column name="POS_ON_CLOSURE" type="decimal(18,2)" />
 			<column name="PDC_FLAG" type="VARCHAR(1)" />
-			<column name="TOT_PRIN_WAIVE_OFF" type="bigint" />
-			<column name="TOT_INT_WAIVE_OFF" type="bigint" />
-			<column name="WOFF_CHQBOUNCE_CHARGES" type="bigint" />
-			<column name="WOFF_OVERDUE_CHARGE" type="bigint" />
-			<column name="WOFF_OTHERS" type="bigint" />
+			<column name="TOT_PRIN_WAIVE_OFF" type="decimal(18,2)" />
+			<column name="TOT_INT_WAIVE_OFF" type="decimal(18,2)" />
+			<column name="WOFF_CHQBOUNCE_CHARGES" type="decimal(18,2)" />
+			<column name="WOFF_OVERDUE_CHARGE" type="decimal(18,2)" />
+			<column name="WOFF_OTHERS" type="decimal(18,2)" />
 			<column name="RAM_ID" type="varchar(18)" />
 			<column name="TURNOVER_IN_YEAR_ONE" type="VARCHAR(8)" />
-			<column name="TURNOVER_AMT_YEAR_ONE" type="bigint" />
+			<column name="TURNOVER_AMT_YEAR_ONE" type="decimal(18,2)" />
 			<column name="TURNOVER_IN_YEAR_TWO" type="VARCHAR(8)" />
-			<column name="TURNOVER_AMT_YEAR_TWO" type="bigint" />
+			<column name="TURNOVER_AMT_YEAR_TWO" type="decimal(18,2)" />
 			<column name="TURNOVER_IN_YEAR_THREE" type="VARCHAR(8)" />
-			<column name="TURNOVER_AMT_YEAR_THREE" type="bigint" />
+			<column name="TURNOVER_AMT_YEAR_THREE" type="decimal(18,2)" />
 		</createTable>
 	</changeSet>
 	
@@ -2106,4 +2078,20 @@
 			<column name="EMI_COLLECTED" type="decimal(18,2)" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="020.01" author="sreeram.r">
+		<addColumn tableName="UCIC_CUSTOMERS_HISTORY">
+			<column name="FINID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="020.02" author="sreeram.r">
+		<modifyDataType tableName="UCIC_CUSTOMERS_HISTORY" columnName="CUSTID" newDataType="bigint" />
+	</changeSet>
+	
+	<changeSet id="019.02" author="sreeram.r">
+		<modifyDataType tableName="UCIC_CUSTOMERS" columnName="FINID" newDataType="bigint" />
+		<modifyDataType tableName="UCIC_CUSTOMERS" columnName="CUSTID" newDataType="bigint" />
+	</changeSet>
+	
 </databaseChangeLog>
