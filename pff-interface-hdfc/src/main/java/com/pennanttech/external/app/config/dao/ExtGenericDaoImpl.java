@@ -77,13 +77,13 @@ public class ExtGenericDaoImpl implements ExtGenericDao {
 
 		String queryStr;
 
-		List<FileInterfaceConfig> list = new ArrayList<FileInterfaceConfig>();
-		queryStr = "SELECT INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,"
+		List<FileInterfaceConfig> list = new ArrayList<>();
+		queryStr = "SELECT INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,"
 				+ "FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR ,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES FROM FILE_INTERFACE_CONFIG";
 
 		extNamedJdbcTemplate.getJdbcOperations().query(queryStr, rs -> {
 			FileInterfaceConfig extConfig = new FileInterfaceConfig();
-			extConfig.setInterfaceName(rs.getString("INTERFACE_TYPE"));
+			extConfig.setInterfaceName(rs.getString("INTERFACE_NAME"));
 			extConfig.setNoOfRecords(rs.getLong("NO_OF_RECORDS"));
 			extConfig.setFileLocation(rs.getString("FILE_LOCATION"));
 			extConfig.setHodlType(rs.getInt("HOLD_TYPE"));

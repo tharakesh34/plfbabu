@@ -2,7 +2,7 @@ package com.pennanttech.external.app.config.model;
 
 public class FileInterfaceConfig {
 	private String interfaceName = "";
-	private long NoOfRecords;
+	private long noOfRecords;
 	private String fileLocation = "";
 	private int hodlType;
 	private String filePrepend;
@@ -26,11 +26,11 @@ public class FileInterfaceConfig {
 	}
 
 	public long getNoOfRecords() {
-		return NoOfRecords;
+		return noOfRecords;
 	}
 
 	public void setNoOfRecords(long noOfRecords) {
-		NoOfRecords = noOfRecords;
+		this.noOfRecords = noOfRecords;
 	}
 
 	public String getFileLocation() {
