@@ -1305,4 +1305,10 @@
 	   <createSequence sequenceName="SEQ_GST_INTF" incrementBy="1" startValue="1" minValue="1"
 		maxValue="9223372036854775807" />
     </changeSet>
+    
+    	<changeSet id="019.01" author="sreeram.r">
+			<addColumn tableName="UCIC_CUSTOMERS">
+			<column name="PROCESS_DATE" type="datetime" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
