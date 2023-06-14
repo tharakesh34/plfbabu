@@ -64,7 +64,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="003999" author="goutham.ch">
+	<changeSet id="003" author="goutham.ch">
 		<createTable tableName="PRMNT_HEADER">
 			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
