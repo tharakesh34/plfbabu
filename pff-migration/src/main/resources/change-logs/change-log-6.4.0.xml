@@ -20065,7 +20065,7 @@
 			begin
 			select COALESCE(max(T.ID),0)+1 into v_maxval from
 			(select
-			ID from LOAN_LETTER_MANUAL union all select USRID from LOAN_LETTER_MANUAL_Temp) T;
+			ID from LOAN_LETTER_MANUAL union all select ID from LOAN_LETTER_MANUAL_Temp) T;
 			EXECUTE IMMEDIATE 'alter sequence SEQ_LOAN_LETTER_MANUAL restart start with ' || v_maxval;
 			end;
 		]]>
@@ -20110,5 +20110,14 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+	
+	<changeSet id="PSD#230316" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTLIST WHERE CODE = 'FinTypeWriteOff';
+				
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('FinTypeWriteOff', 'FinTypeWriteOff', 'listheader_LoanType.label,label.RecordStatus,label.RecordType', 'loanType,recordstatus,recordType', 'String,String,String', '', 'ReportList03', 'Loan Type Auto Write Off', 'Application Masters', 1, 1001, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog> 

@@ -1412,24 +1412,15 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					fee.setPaidAmountGST(taxSplit.gettGST());
 				}
 
-				// Waived Amounts
-				taxSplit = GSTCalculator.getInclusiveGST(waivedAmount, taxPercentages);
-				cgstTax.setWaivedTax(taxSplit.getcGST());
-				sgstTax.setWaivedTax(taxSplit.getsGST());
-				igstTax.setWaivedTax(taxSplit.getiGST());
-				ugstTax.setWaivedTax(taxSplit.getuGST());
-				cessTax.setWaivedTax(taxSplit.getCess());
-				fee.setWaivedGST(taxSplit.gettGST());
-
 				// Remaining Fee
 				BigDecimal remainingAmountOriginal = fee.getActualAmountOriginal().subtract(fee.getPaidAmountOriginal())
 						.subtract(waivedAmount);
 				// taxSplit = GSTCalculator.getInclusiveGST(remainingAmountOriginal, taxPercentages);
-				cgstTax.setRemFeeTax(cgstTax.getNetTax().subtract(cgstTax.getPaidTax().add(cgstTax.getWaivedTax())));
-				sgstTax.setRemFeeTax(sgstTax.getNetTax().subtract(sgstTax.getPaidTax().add(sgstTax.getWaivedTax())));
-				igstTax.setRemFeeTax(igstTax.getNetTax().subtract(igstTax.getPaidTax().add(igstTax.getWaivedTax())));
-				ugstTax.setRemFeeTax(ugstTax.getNetTax().subtract(ugstTax.getPaidTax().add(ugstTax.getWaivedTax())));
-				cessTax.setRemFeeTax(cessTax.getNetTax().subtract(cessTax.getPaidTax().add(cessTax.getWaivedTax())));
+				cgstTax.setRemFeeTax(cgstTax.getNetTax().subtract(cgstTax.getPaidTax()));
+				sgstTax.setRemFeeTax(sgstTax.getNetTax().subtract(sgstTax.getPaidTax()));
+				igstTax.setRemFeeTax(igstTax.getNetTax().subtract(igstTax.getPaidTax()));
+				ugstTax.setRemFeeTax(ugstTax.getNetTax().subtract(ugstTax.getPaidTax()));
+				cessTax.setRemFeeTax(cessTax.getNetTax().subtract(cessTax.getPaidTax()));
 
 				BigDecimal totRemGST = cgstTax.getRemFeeTax().add(sgstTax.getRemFeeTax()).add(igstTax.getRemFeeTax())
 						.add(ugstTax.getRemFeeTax()).add(cessTax.getRemFeeTax());
@@ -1438,6 +1429,14 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				fee.setRemTDS(fee.getNetTDS().subtract(fee.getPaidTDS()));
 				fee.setRemainingFee(remainingAmountOriginal.add(totRemGST).subtract(fee.getRemTDS()));
 
+				// Waived Amounts
+				taxSplit = GSTCalculator.getInclusiveGST(waivedAmount, taxPercentages);
+				cgstTax.setWaivedTax(taxSplit.getcGST());
+				sgstTax.setWaivedTax(taxSplit.getsGST());
+				igstTax.setWaivedTax(taxSplit.getiGST());
+				ugstTax.setWaivedTax(taxSplit.getuGST());
+				cessTax.setWaivedTax(taxSplit.getCess());
+				fee.setWaivedGST(taxSplit.gettGST());
 			}
 		} else {
 

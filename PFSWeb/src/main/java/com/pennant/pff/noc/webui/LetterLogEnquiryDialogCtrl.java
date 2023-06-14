@@ -145,7 +145,8 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 			return;
 		}
 
-		letterInfo = letterInfo.stream().sorted((l1, l2) -> DateUtil.compare(l1.getCreatedDate(), l2.getCreatedDate()))
+		letterInfo = letterInfo.stream()
+				.sorted((l1, l2) -> DateUtil.compare(l1.getGeneratedDate(), l2.getGeneratedDate()))
 				.collect(Collectors.toList());
 
 		this.listBoxLetterLog.setModel(new GroupsModelArray(letterInfo.toArray(), new LogLetterEnquiryComparator()));

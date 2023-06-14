@@ -1661,7 +1661,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				actualBox.setWidth("85px");
 				actualBox.setMaxlength(18);
 				actualBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-				actualBox.setDisabled(readOnly || !finFeeDetail.isAlwModifyFee());
+
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
+					actualBox.setDisabled(true);
+				} else {
+					actualBox.setDisabled(readOnly && !finFeeDetail.isAlwModifyFee());
+				}
 
 				if (finFeeDetail.isRestructureFee()
 						|| (getFinanceDetail().getFinScheduleData().getRestructureDetail() != null
@@ -2403,10 +2408,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			if ("GenerateLetter".equals(this.moduleDefiner)) {
 				feeSchdMthdBox.setValue(Labels.getLabel("label_CreateReceivable_Advise"));
 				feeSchdMthdBox.setDisabled(true);
-			}
-
-			if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
-				actualBox.setValue(actualBox.getValue().subtract(netFeeGstBox.getValue()));
 			}
 		}
 

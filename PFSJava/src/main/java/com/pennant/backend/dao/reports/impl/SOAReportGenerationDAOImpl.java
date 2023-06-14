@@ -1423,6 +1423,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(", clt.ToFinReference, clt.TransferAmount, clt.ExcessId, clt.ToLinkedTranId");
 		sql.append(", clt.FromLinkedTranId, clt.ExcessAmount, clt.UtiliseAmount, clt.ReserveAmount");
 		sql.append(", clt.AvailableAmount, clt.ToExcessId, clt.ExcessType, frh.ValueDate, frh.ReceivedDate");
+		sql.append(", frh.ReceiptModeStatus");
 		sql.append(" from Cross_Loan_Transfer clt");
 		sql.append(" Inner Join FinReceiptHeader frh on frh.ReceiptID = clt.ReceiptId");
 
@@ -1457,6 +1458,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 			clt.setExcessType(rs.getString("ExcessType"));
 			clt.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
 			clt.setPostDate(JdbcUtil.getDate(rs.getDate("ReceivedDate")));
+			clt.setReceiptModeStatus(rs.getString("ReceiptModeStatus"));
 
 			return clt;
 		});

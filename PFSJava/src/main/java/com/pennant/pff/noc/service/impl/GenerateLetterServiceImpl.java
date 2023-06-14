@@ -269,7 +269,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 			gl.setEmailTemplate(ltlp.getEmailTemplateId());
 			gl.setModeofTransfer(LetterMode.OTC.name());
 
-			Long letterId = autoLetterGenerationDAO.getAutoLetterId(gl.getFinID(), gl.getLetterType(), "A");
+			Long letterId = autoLetterGenerationDAO.getAutoLetterId(gl.getFinID(), gl.getLetterType());
 			if (letterId == null) {
 				return autoLetterGenerationDAO.save(gl);
 			}
@@ -317,8 +317,10 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		letter.setLoanCancellationAge(DateUtil.getDaysBetween(fm.getClosedDate(), appDate));
 
 		if (CollectionUtils.isNotEmpty(letterInfo)) {
-			letter.setSequenceNo(letterInfo.size());
+			letter.setSequenceNo(letterInfo.size() + 1);
 			letter.setStatusOfpreviousletters(letterInfo.get(letterInfo.size() - 1).getStatus());
+		} else {
+			letter.setSequenceNo(1);
 		}
 
 		fm.setLoanLetter(letter);
@@ -436,8 +438,9 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 	@Override
 	public LoanLetter generateLetter(GenerateLetter gl) {
-
-		saveFees(gl);
+		if ("Submit".equals(gl.getRecordType())) {
+			saveFees(gl);
+		}
 
 		long letterID = saveLoanLetterdetails(gl);
 
@@ -450,23 +453,14 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 			letter.setStatus("B");
 			letter.setRemarks(BLOCKED_MSG);
 		} else {
-			letterService.createAdvise(letter);
-
 			letter.setGenerated(1);
 			letter.setStatus("S");
 		}
 
 		if ("Submit".equals(gl.getRecordType())) {
+			letterService.createAdvise(letter);
 			letterService.update(letter);
-
 			generateLetterDAO.delete(gl, TableType.MAIN_TAB);
-		} else {
-			autoLetterGenerationDAO.deleteFromStage(letterID);
-
-			if (gl.getFeeID() != null) {
-				finFeeDetailDAO.getFinFeeDetail(gl.getFeeID());
-			}
-
 		}
 
 		return letter;
@@ -475,6 +469,11 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	@Override
 	public List<ManualAdvise> getManualAdvises(long finID) {
 		return manualAdviseDAO.getManualAdvise(finID, true);
+	}
+
+	@Override
+	public List<ManualAdvise> getpayableAdvises(long finID) {
+		return manualAdviseDAO.getPaybleAdvises(finID, "");
 	}
 
 	private void prepareProfitDetailSummary(FinanceSummary summary, FinScheduleData schdData) {

@@ -110,7 +110,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	@Override
 	public void update(LoanLetter letter) {
 		StringBuilder sql = new StringBuilder("Update LOAN_LETTERS_STAGE");
-		sql.append(" Set Generated = ?, GeneratedDate = ?, GeneratedOn = ?");
+		sql.append(" Set FeeID = ?, Generated = ?, GeneratedDate = ?, GeneratedOn = ?");
 		sql.append(", LetterName = ?, FileName = ?, LetterLocation = ?");
 		sql.append(", AdviseID = ?, EmailID = ?, EmailNotificationID = ?");
 		sql.append(", Status = ?, Remarks = ?, ApprovedBy = ?, GeneratedBy = ?, ApprovedOn = ?, ModeofTransfer = ?");
@@ -122,6 +122,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 0;
 
+				ps.setLong(++index, letter.getFeeID());
 				ps.setInt(++index, letter.getGenerated());
 				ps.setDate(++index, JdbcUtil.getDate(letter.getGeneratedDate()));
 				ps.setDate(++index, JdbcUtil.getDate(letter.getGeneratedOn()));
@@ -267,12 +268,13 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	}
 
 	@Override
-	public Long getAutoLetterId(Long finID, String letterType, String requestType) {
-		String sql = "Select ID From LOAN_LETTERS_STAGE Where FinID = ? and LetterType = ? and RequestType = ? ";
+	public Long getAutoLetterId(Long finID, String letterType) {
+		String sql = "Select ID From LOAN_LETTERS_STAGE Where FinID = ? and LetterType = ? and RequestType in (?, ?)";
+
 		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, Long.class, finID, letterType, requestType);
+			return this.jdbcOperations.queryForObject(sql, Long.class, finID, letterType, "A", "OTC");
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}

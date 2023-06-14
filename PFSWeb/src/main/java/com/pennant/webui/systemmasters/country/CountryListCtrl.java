@@ -26,6 +26,7 @@ package com.pennant.webui.systemmasters.country;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -42,6 +43,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.service.systemmasters.CountryService;
+import com.pennant.pff.upload.service.UploadService;
 import com.pennant.webui.systemmasters.country.model.CountryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -90,6 +92,9 @@ public class CountryListCtrl extends GFCBaseListCtrl<Country> {
 	protected Button button_CountryList_CountrySearchDialog;
 
 	private transient CountryService countryService;
+
+	@Autowired
+	private UploadService loanLetterUploadService;
 
 	/**
 	 * default constructor.<br>
@@ -153,6 +158,7 @@ public class CountryListCtrl extends GFCBaseListCtrl<Country> {
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
+		loanLetterUploadService.uploadProcess();
 		doReset();
 		search();
 	}

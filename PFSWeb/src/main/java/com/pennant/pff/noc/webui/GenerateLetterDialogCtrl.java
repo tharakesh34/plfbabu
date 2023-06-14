@@ -160,7 +160,14 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
+				String roleCode = getRole();
+
+				if (PennantConstants.RCD_STATUS_APPROVED.equals(generateLetter.getRecordStatus())
+						&& StringUtils.isBlank(generateLetter.getNextRoleCode())) {
+					roleCode = "GENERATE_LETTER_DOWNLOAD";
+					setRole(roleCode);
+				}
+				getUserWorkspace().allocateRoleAuthorities(roleCode, this.pageRightName);
 			}
 
 			doSetFieldProperties();
@@ -168,6 +175,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 		} catch (Exception e) {
 			closeDialog();
+			deAllocateAuthorities("FinFeeDetailListCtrl");
 			MessageUtil.showError(e);
 		}
 
@@ -215,6 +223,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 			if (doProcess(gl, tranType)) {
 				refreshList();
 				closeDialog();
+				deAllocateAuthorities("FinFeeDetailListCtrl");
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -233,11 +242,6 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 			FinFeeDetail fee = fees.get(0);
 			geneLtr.setWaiverAmt(fee.getWaivedAmount());
 			geneLtr.setActualAmt(fee.getActualAmount());
-
-			if (geneLtr.getActualAmt().subtract(fee.getWaivedAmount()).compareTo(BigDecimal.ZERO) > 0
-					&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(fee.getTaxComponent())) {
-				geneLtr.setActualAmt(geneLtr.getActualAmt().subtract(fee.getActualAmountGST()));
-			}
 		}
 
 		geneLtr.setRequestType(LetterMode.OTC.name());
@@ -396,6 +400,8 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		logger.debug(Literal.ENTERING);
 
 		doClose(this.btnSave.isVisible());
+
+		deAllocateAuthorities("FinFeeDetailListCtrl");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -632,6 +638,8 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 			refreshList();
 
 			closeDialog();
+
+			deAllocateAuthorities("FinFeeDetailListCtrl");
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -716,30 +724,13 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		this.feeWaived.setValue(CurrencyUtil.format(waivedAmt, ccyFormatter));
 	}
 
-	private void dofillPaybleDetails(long finID) {
-		List<FinExcessAmount> excessAvailable = generateLetterService.getExcessAvailable(finID);
-
-		if (CollectionUtils.isEmpty(excessAvailable)) {
-			return;
-		}
-
-		BigDecimal amount = BigDecimal.ZERO;
-		BigDecimal inProgressAmt = BigDecimal.ZERO;
-		BigDecimal adjustAmt = BigDecimal.ZERO;
-		BigDecimal balanceAmt = BigDecimal.ZERO;
-
-		for (FinExcessAmount e : excessAvailable) {
-			amount = amount.add(e.getAmount());
-			inProgressAmt = inProgressAmt.add(e.getReservedAmt());
-			adjustAmt = adjustAmt.add(e.getUtilisedAmt());
-			balanceAmt = balanceAmt.add(e.getBalanceAmt());
-		}
-
+	private void doFillPaybles(BigDecimal amount, BigDecimal inProgressAmt, BigDecimal adjustAmt, BigDecimal balanceAmt,
+			String desc) {
 		Listitem item = new Listitem();
 
 		Listcell lc;
 
-		lc = new Listcell("Excess");
+		lc = new Listcell(desc);
 		lc.setSpan(2);
 		lc.setStyle("text-align:left");
 		lc.setParent(item);
@@ -761,8 +752,51 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		lc.setParent(item);
 
 		this.listBoxPaybles.appendChild(item);
+	}
 
-		// set Total
+	private void dofillPaybleDetails(long finID) {
+		List<FinExcessAmount> excessAvailable = generateLetterService.getExcessAvailable(finID);
+
+		List<ManualAdvise> payables = generateLetterService.getpayableAdvises(finID);
+
+		if (CollectionUtils.isEmpty(excessAvailable) && CollectionUtils.isEmpty(payables)) {
+			return;
+		}
+
+		BigDecimal excessAmount = BigDecimal.ZERO;
+		BigDecimal excessProgressAmt = BigDecimal.ZERO;
+		BigDecimal excessAdjustAmt = BigDecimal.ZERO;
+		BigDecimal excessBalanceAmt = BigDecimal.ZERO;
+
+		BigDecimal payableAmount = BigDecimal.ZERO;
+		BigDecimal payableProgressAmt = BigDecimal.ZERO;
+		BigDecimal payableAdjustAmt = BigDecimal.ZERO;
+		BigDecimal payableBalanceAmt = BigDecimal.ZERO;
+
+		for (FinExcessAmount e : excessAvailable) {
+			excessAmount = excessAmount.add(e.getAmount());
+			excessProgressAmt = excessProgressAmt.add(e.getReservedAmt());
+			excessAdjustAmt = excessAdjustAmt.add(e.getUtilisedAmt());
+			excessBalanceAmt = excessBalanceAmt.add(e.getBalanceAmt());
+		}
+
+		for (ManualAdvise fee : payables) {
+			payableAmount = payableAmount.add(fee.getAdviseAmount());
+			payableProgressAmt = payableProgressAmt.add(fee.getReservedAmt());
+			BigDecimal utilizedAmt = fee.getPaidAmount().add(fee.getWaivedAmount());
+			payableAdjustAmt = payableAdjustAmt.add(utilizedAmt);
+			payableBalanceAmt = payableBalanceAmt
+					.add(fee.getAdviseAmount().subtract(utilizedAmt).subtract(fee.getReservedAmt()));
+		}
+
+		if (CollectionUtils.isNotEmpty(excessAvailable)) {
+			doFillPaybles(excessAmount, excessProgressAmt, excessAdjustAmt, excessBalanceAmt, "Excess");
+		}
+
+		if (CollectionUtils.isNotEmpty(payables)) {
+			doFillPaybles(payableAmount, payableProgressAmt, payableAdjustAmt, payableBalanceAmt, "Payable");
+		}
+
 		Listitem totitem = new Listitem();
 		totitem.setStyle("background-color: #C0EBDF;align:bottom;");
 
@@ -773,19 +807,19 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		lcell.setStyle("text-align:left");
 		lcell.setParent(totitem);
 
-		lcell = new Listcell(CurrencyUtil.format(amount, ccyFormatter));
+		lcell = new Listcell(CurrencyUtil.format(excessAmount.add(payableAmount), ccyFormatter));
 		lcell.setStyle("text-align:right");
 		lcell.setParent(totitem);
 
-		lcell = new Listcell(CurrencyUtil.format(inProgressAmt, ccyFormatter));
+		lcell = new Listcell(CurrencyUtil.format(excessProgressAmt.add(payableProgressAmt), ccyFormatter));
 		lcell.setStyle("text-align:right");
 		lcell.setParent(totitem);
 
-		lcell = new Listcell(CurrencyUtil.format(adjustAmt, ccyFormatter));
+		lcell = new Listcell(CurrencyUtil.format(excessAdjustAmt.add(payableAdjustAmt), ccyFormatter));
 		lcell.setStyle("text-align:right");
 		lcell.setParent(totitem);
 
-		lcell = new Listcell(CurrencyUtil.format(balanceAmt, ccyFormatter));
+		lcell = new Listcell(CurrencyUtil.format(excessBalanceAmt.add(payableBalanceAmt), ccyFormatter));
 		lcell.setStyle("text-align:right");
 		lcell.setParent(totitem);
 
@@ -835,28 +869,6 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		arrayList.add(10, false);
 		arrayList.add(11, this.moduleCode);
 		return arrayList;
-	}
-
-	private void doRemoveValidation() {
-		logger.debug(Literal.ENTERING);
-
-		this.finReference.setConstraint("");
-		this.custCIF.setConstraint("");
-		this.custName.setConstraint("");
-		this.finType.setConstraint("");
-		this.finStatus.setConstraint("");
-		this.finStatusReason.setConstraint("");
-		this.coreBankID.setConstraint("");
-		this.finStartDate.setConstraint("");
-		this.branch.setConstraint("");
-		this.finAmount.setConstraint("");
-		this.finClosureDate.setConstraint("");
-		this.sourcingOfcr.setConstraint("");
-		this.letterType.setConstraint("");
-		this.closureType.setConstraint("");
-		this.closureReason.setConstraint("");
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	public void doSetFieldProperties() {

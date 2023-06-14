@@ -251,7 +251,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 
 						rd = feeCalculator.calculateFees(rd);
 						List<FinFeeDetail> ffd = rd.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
-						if (CollectionUtils.isNotEmpty(ffd)) {
+						if (CollectionUtils.isNotEmpty(ffd) && PennantConstants.YES.equals(detail.getWaiverCharges())) {
 							for (FinFeeDetail fee : ffd) {
 								BigDecimal maxWaiverPer = fee.getMaxWaiverPerc();
 								if (maxWaiverPer.compareTo(BigDecimal.ZERO) > 0) {
@@ -261,6 +261,8 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 									fee.setWaivedAmount(waiverAmt);
 								}
 
+								fee.setFinID(finID);
+								fee.setFinReference(fm.getFinReference());
 								fee.setFeeID(finFeeDetailDAO.save(fee, false, ""));
 								gl.setFeeID(fee.getFeeID());
 							}

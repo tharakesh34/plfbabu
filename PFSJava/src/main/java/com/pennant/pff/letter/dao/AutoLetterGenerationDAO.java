@@ -30,6 +30,6 @@ public interface AutoLetterGenerationDAO {
 
 	Long getLetterId(Long finID, String letterType, Date generatedDate);
 
-	Long getAutoLetterId(Long finID, String letterType, String requestType);
+	Long getAutoLetterId(Long finID, String letterType);
 
 }
