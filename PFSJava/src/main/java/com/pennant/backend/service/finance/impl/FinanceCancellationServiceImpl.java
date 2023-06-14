@@ -1019,8 +1019,8 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			}
 			// vallidation for manual dues
 			List<ManualAdvise> manualAdvise = manualAdviseDAO.getReceivableAdvises(finID, "");
-			if (CollectionUtils.isNotEmpty(manualAdvise)
-					&& !UploadTypes.LOAN_CANCEL.name().equals(fm.getFinSourceID())) {
+			if (CollectionUtils.isNotEmpty(manualAdvise) && !UploadTypes.LOAN_CANCEL.name().equals(fm.getFinSourceID())
+					&& !PennantConstants.FINSOURCE_ID_API.equalsIgnoreCase(fm.getFinSourceID())) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60022", errParm, valueParm));
 			}
 		}
