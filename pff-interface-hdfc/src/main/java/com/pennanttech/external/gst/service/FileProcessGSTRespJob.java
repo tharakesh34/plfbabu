@@ -39,7 +39,7 @@ public class FileProcessGSTRespJob extends AbstractJob
 	private static final Logger logger = LogManager.getLogger(FileProcessGSTRespJob.class);
 	private static final String FETCH_GSTCOMPHEADER_QUERY = "Select * from GSTHEADER  Where STATUS = ?  AND EXTRACTION= ?";
 	private static final String FETCH_GSTCOMPDETAILS_QUERY = "Select * from GSTDETAILS  Where STATUS = ? AND HEADER_ID = ?";
-	private DataSource dataSource;
+	private DataSource extDataSource;
 	private ExtGSTDao extGSTDao;
 	private ApplicationContext applicationContext;
 	private Properties gstProp;
@@ -50,11 +50,12 @@ public class FileProcessGSTRespJob extends AbstractJob
 
 		applicationContext = ApplicationContextProvider.getApplicationContext();
 		extGSTDao = applicationContext.getBean(ExtGSTDao.class);
-		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
+		extDataSource = applicationContext.getBean("extDataSource", DataSource.class);
+		loadProperties();
 
 		// Read 10 files at a time using file status = 0
 		JdbcCursorItemReader<GSTCompHeader> cursorItemReader = new JdbcCursorItemReader<GSTCompHeader>();
-		cursorItemReader.setDataSource(dataSource);
+		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(1);
 		cursorItemReader.setSql(FETCH_GSTCOMPHEADER_QUERY);
 		cursorItemReader.setRowMapper(new RowMapper<GSTCompHeader>() {
@@ -119,7 +120,7 @@ public class FileProcessGSTRespJob extends AbstractJob
 
 		// Fetch 100 records at a time
 		JdbcCursorItemReader<GSTCompDetail> dataCursorReader = new JdbcCursorItemReader<GSTCompDetail>();
-		dataCursorReader.setDataSource(dataSource);
+		dataCursorReader.setDataSource(extDataSource);
 		dataCursorReader.setFetchSize(100);
 		dataCursorReader.setSql(FETCH_GSTCOMPDETAILS_QUERY);
 		dataCursorReader.setRowMapper(new RowMapper<GSTCompDetail>() {
@@ -229,25 +230,32 @@ public class FileProcessGSTRespJob extends AbstractJob
 		detail.setPos("");// FIXME Destination State Place of Service
 		detail.setSac(respBean.getSac());
 		detail.setRegBankAddress("");// FIXME Registered address of FI/Bank
-		setHardcodedProperties(detail);
+		detail.setCin(getValue("GSTINTERFACE.CIN"));
+		detail.setPan(getValue("GSTINTERFACE.PAN"));
+		detail.setWebsiteAddress(getValue("GSTINTERFACE.WEBSITE"));
+		detail.setEmailId(getValue("GSTINTERFACE.EMAILID"));
+		detail.setDisclaimer(getValue("GSTINTERFACE.DISCLAIMER"));
 		return detail;
 	}
 
-	private void setHardcodedProperties(GSTInvoiceDetail detail) {
+	private void loadProperties() {
 		try {
 			if (gstProp == null) {
 				gstProp = new Properties();
 				InputStream inputStream = this.getClass().getResourceAsStream("/properties/HDFCInterface.properties");
 				gstProp.load(inputStream);
 			}
-			detail.setCin(gstProp.getProperty("GSTINTERFACE.CIN"));// HardCoded
-			detail.setPan(gstProp.getProperty("GSTINTERFACE.PAN"));// HardCoded
-			detail.setWebsiteAddress(gstProp.getProperty("GSTINTERFACE.WEBSITE"));// HardCoded
-			detail.setEmailId(gstProp.getProperty("GSTINTERFACE.EMAILID"));// HardCoded
-			detail.setDisclaimer(gstProp.getProperty("GSTINTERFACE.DISCLAIMER"));// HardCoded
+
 		} catch (IOException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+	}
+
+	private String getValue(String key) {
+		if (gstProp == null) {
+			return gstProp.getProperty(key);
+		}
+		return null;
 	}
 
 	private GSTRespDetail convertRecordToBean(GSTCompDetail detail) {
