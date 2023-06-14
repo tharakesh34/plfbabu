@@ -2123,4 +2123,12 @@
 	<changeSet id="026.03" author="sreeram.r">
 		<modifyDataType tableName="ALM_REPORT" columnName="PYMT_FREQ" newDataType="VARCHAR(50)" />
 	</changeSet>
+	
+	<changeSet id="050.02" author="sreeram.r">
+		<modifyDataType tableName="RPMSEXTRACT" columnName="AGREEMENTID" newDataType="VARCHAR(20)" />
+	</changeSet>
+	<changeSet id="050.03" author="sreeram.r">
+		<modifyDataType tableName="RPMSEXTRACT" columnName="CUSTOMERID" newDataType="VARCHAR(20)" />
+		<modifyDataType tableName="RPMSEXTRACT" columnName="PARENT_LOAN_NO" newDataType="VARCHAR(20)" />
+	</changeSet>
 </databaseChangeLog>
