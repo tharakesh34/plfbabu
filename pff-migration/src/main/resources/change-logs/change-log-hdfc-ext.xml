@@ -2199,4 +2199,68 @@
 	<changeSet id="24.3" author="sreeram.r">
 		<modifyDataType tableName="FINCON_GL_STG" columnName="JOURNAL_CATEGORY"	newDataType="VARCHAR(200)" />
 	</changeSet>
+	
+	<changeSet id="54.1" author="goutham.ch">
+		<createTable tableName="CUSTOMERS_MODIFICATIONS">
+			<column name="CUSTID"					type="bigint" />
+			<column name="CUSTCIF" 					type="VARCHAR(20)" /> 
+			<column name="FINREFERENCE" 			type="VARCHAR(20)" /> 
+			<column name="CREATION_DATE" 			type="datetime" /> 
+			<column name="CUSTCOREBANK" 			type="VARCHAR(50)" /> 
+			<column name="SOURCE_SYSTEM" 			type="VARCHAR(10)" /> 
+			<column name="CUSTCTGCODE" 				type="VARCHAR(8)" /> 
+			<column name="CUSTOMER_TYPE" 			type="VARCHAR(8)" /> 
+			<column name="SUBCATEGORY" 				type="NVARCHAR(200)" /> 
+			<column name="CUSTSHRTNAME" 			type="VARCHAR(200)" /> 
+			<column name="CUSTDOB" 					type="datetime" />
+			<column name="CUSTISBLOCKED" 			type="VARCHAR(2)" /> 
+			<column name="CLOSEDDATE" 				type="datetime" />
+			<column name="CLOSINGSTATUS" 			type="VARCHAR(100)" /> 
+			<column name="CUSTMOTHERMAIDEN" 		type="VARCHAR(50)" /> 
+			<column name="ACCNUMBER" 				type="VARCHAR(50)" /> 
+			<column name="COMPANYNAME" 				type="VARCHAR(100)" /> 
+			<column name="EMAIL1" 					type="VARCHAR(100)" /> 
+			<column name="EMAIL2" 					type="VARCHAR(100)" /> 
+			<column name="EMAIL3" 					type="VARCHAR(100)" /> 
+			<column name="MOBILE1" 					type="VARCHAR(20)" /> 
+			<column name="MOBILE2" 					type="VARCHAR(20)" /> 
+			<column name="MOBILE3" 					type="VARCHAR(20)" /> 
+			<column name="LANDLINE1" 				type="VARCHAR(50)" /> 
+			<column name="LANDLINE2" 				type="VARCHAR(50)" /> 
+			<column name="LANDLINE3" 				type="VARCHAR(50)" /> 
+			<column name="PAN" 						type="VARCHAR(100)" /> 
+			<column name="AADHAAR" 					type="VARCHAR(100)" /> 
+			<column name="VOTER_ID" 				type="VARCHAR(100)" /> 
+			<column name="DRIVING_LICENCE" 			type="VARCHAR(100)" /> 
+			<column name="PASSPORT" 				type="VARCHAR(100)" /> 
+			<column name="ADDR1TYPE" 				type="VARCHAR(10)" /> 
+			<column name="ADDR1LINE1" 				type="VARCHAR(150)" /> 
+			<column name="ADDR1LINE2" 				type="VARCHAR(150)" /> 
+			<column name="ADDR1LINE3" 				type="VARCHAR(150)" /> 
+			<column name="ADDR1LINE4" 				type="VARCHAR(150)" /> 
+			<column name="ADDR1CITY" 				type="VARCHAR(150)" /> 
+			<column name="ADDR1STATE" 				type="VARCHAR(150)" /> 
+			<column name="ADDR1PIN" 				type="VARCHAR(10)" /> 
+			<column name="ADDR2TYPE" 				type="VARCHAR(10)" /> 
+			<column name="ADDR2LINE1" 				type="VARCHAR(150)" /> 
+			<column name="ADDR2LINE2" 				type="VARCHAR(150)" /> 
+			<column name="ADDR2LINE3" 				type="VARCHAR(150)" /> 
+			<column name="ADDR2LINE4" 				type="VARCHAR(150)" /> 
+			<column name="ADDR2CITY" 				type="VARCHAR(150)" /> 
+			<column name="ADDR2STATE" 				type="VARCHAR(150)" /> 
+			<column name="ADDR2PIN" 				type="VARCHAR(10)" /> 
+			<column name="ADDR3TYPE" 				type="VARCHAR(10)" /> 
+			<column name="ADDR3LINE1" 				type="VARCHAR(150)" /> 
+			<column name="ADDR3LINE2" 				type="VARCHAR(150)" /> 
+			<column name="ADDR3LINE3" 				type="VARCHAR(150)" /> 
+			<column name="ADDR3LINE4" 				type="VARCHAR(150)" /> 
+			<column name="ADDR3CITY" 				type="VARCHAR(150)" /> 
+			<column name="ADDR3STATE" 				type="VARCHAR(150)" /> 
+			<column name="ADDR3PIN"					type="VARCHAR2(10)" /> 
+			<column name="INSERT_UPDATE_FLAG" 		type="VARCHAR(2)" /> 
+			<column name="LASTMNTON" 				type="datetime" />
+			<column name="PROCESS_DATE" 			type="datetime" /> 
+			<column name="FINID" 					type="bigint" /> 
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
