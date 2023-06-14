@@ -182,4 +182,6 @@ public interface PresentmentDetailDAO {
 	String getBackOfficeNameByBranchCode(String branchCode);
 
 	Long getLatestMandateId(long finID);
+
+	List<PresentmentDetail> getBouncedPresenments(long finID);
 }

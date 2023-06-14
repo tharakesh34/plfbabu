@@ -22,6 +22,7 @@ import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -55,6 +56,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.CustomerUtil;
 import com.pennanttech.pff.core.util.SchdUtil;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public class FinanceEnquiryController extends AbstractController {
 
@@ -74,6 +76,7 @@ public class FinanceEnquiryController extends AbstractController {
 	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private BaseRateDAO baseRateDAO;
+	private PresentmentDetailDAO presentmentDetailDAO;
 
 	private static final String ERROR_92021 = "92021";
 
@@ -133,14 +136,6 @@ public class FinanceEnquiryController extends AbstractController {
 				}
 
 				cd.setSchdDate(schd.getSchDate());
-				String chequeSerialNo = Integer.toString(cd.getChequeSerialNo());
-				Long receiptId = finReceiptHeaderDAO.getReceiptIdByChequeSerialNo(chequeSerialNo);
-
-				if (receiptId != null) {
-					String bounceReason = bounceReasonDAO.getReasonByReceiptId(receiptId);
-					cd.setChequeBounceReason(bounceReason);
-				}
-
 				paymentModes.add(preparePaymentMode(cd));
 				continue;
 			}
@@ -171,6 +166,17 @@ public class FinanceEnquiryController extends AbstractController {
 				paymentModes.add(preparePaymentMode(mandate));
 			}
 
+		}
+
+		List<PresentmentDetail> presentmentDetails = presentmentDetailDAO.getBouncedPresenments(finID);
+		for (PaymentMode pm : paymentModes) {
+			for (PresentmentDetail pd : presentmentDetails) {
+				if (pm.getInstallmentNo() == pd.getEmiNo()
+						&& pm.getLoanInstrumentMode().equals(pd.getInstrumentType())) {
+					pm.setBounceReason(pd.getBounceReason());
+					continue;
+				}
+			}
 		}
 
 		Long secMandateID = fm.getSecurityMandateID();
@@ -660,5 +666,10 @@ public class FinanceEnquiryController extends AbstractController {
 	@Autowired
 	public void setBaseRateDAO(BaseRateDAO baseRateDAO) {
 		this.baseRateDAO = baseRateDAO;
+	}
+
+	@Autowired
+	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
+		this.presentmentDetailDAO = presentmentDetailDAO;
 	}
 }
