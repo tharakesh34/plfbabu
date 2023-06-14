@@ -2120,4 +2120,7 @@
 		<modifyDataType tableName="EXT_BASEL_TWO" columnName="OBLIGATIONS_N" newDataType="decimal(18,2)" />
 	</changeSet>
 
+	<changeSet id="026.03" author="sreeram.r">
+		<modifyDataType tableName="ALM_REPORT" columnName="PYMT_FREQ" newDataType="VARCHAR(50)" />
+	</changeSet>
 </databaseChangeLog>
