@@ -65,6 +65,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
+import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
@@ -139,6 +140,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private static int EOD_BATCH_REFRESH_TIME = -1;
 	private static String EOD_BATCH_MONITOR = "NA";
 	private static int EOD_THREAD_COUNT = -1;
+
+	private PresentmentDAO presentmentDAO;
 
 	public BatchAdminCtrl() {
 		super();
@@ -428,6 +431,11 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			msg = Labels.getLabel("labe_start_job", args);
 		} else {
 			msg = Labels.getLabel("labe_reStart_job");
+		}
+
+		if (this.presentmentDAO.isExtractionInProgress()) {
+			MessageUtil.showError("Presentment Extraction is in Progress, Please wait.");
+			return;
 		}
 
 		// Auto-Approval if it is in Progress.
@@ -970,4 +978,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	public void setBpsService(com.pennanttech.pff.batch.backend.service.BatchProcessStatusService bpsService) {
 		this.bpsService = bpsService;
 	}
+
+	@Autowired
+	public void setPresentmentDAO(PresentmentDAO presentmentDAO) {
+		this.presentmentDAO = presentmentDAO;
+	}
+
 }

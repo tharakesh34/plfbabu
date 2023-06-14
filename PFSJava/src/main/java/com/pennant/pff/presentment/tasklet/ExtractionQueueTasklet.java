@@ -38,6 +38,10 @@ public class ExtractionQueueTasklet implements Tasklet {
 
 		int totalRecords = bjqDAO.prepareQueue(jobQueue);
 
+		ExtractionTasklet.processRecords.set(0);
+		ExtractionTasklet.successRecords.set(0);
+		ExtractionTasklet.failedRecords.set(0);
+
 		logger.info(LITERAL_1, totalRecords);
 
 		logger.debug(Literal.LEAVING);

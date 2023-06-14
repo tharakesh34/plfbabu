@@ -104,7 +104,7 @@ public class ExtractionService {
 			throw new ConcurrencyException();
 		} catch (Exception e) {
 			transactionManager.rollback(transactionStatus);
-			throw new AppException("Presentment extraction failed", e);
+			throw new AppException("Presentment data preparation failed", e);
 		}
 
 		if (count > 0) {
@@ -112,7 +112,9 @@ public class ExtractionService {
 				presentmentDAO.updateTotalRecords(count, batchID);
 				start(ph);
 			} catch (Exception e) {
-				throw new AppException("Presentment extraction failed", e);
+				this.presentmentDAO.deleteBatch(batchID);
+				this.presentmentDAO.clearQueue(batchID);
+				throw new AppException("Presentment extraction job failed", e);
 			}
 		} else {
 			presentmentDAO.deleteBatch(batchID);
@@ -156,8 +158,7 @@ public class ExtractionService {
 		try {
 			extractionJob.start(jobParameters);
 		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e.getMessage());
-			throw e;
+			throw new AppException("Presentment Extraction Job", e);
 		}
 
 		logger.debug(Literal.LEAVING);

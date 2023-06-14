@@ -164,4 +164,5 @@ public interface PresentmentDAO {
 
 	int updateRespProcessFlag(long batchID, int processFlag, String responseType);
 
+	boolean isExtractionInProgress();
 }

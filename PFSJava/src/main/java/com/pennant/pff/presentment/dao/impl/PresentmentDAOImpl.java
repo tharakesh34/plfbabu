@@ -1968,4 +1968,9 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	}
 
+	@Override
+	public boolean isExtractionInProgress() {
+		return this.jdbcOperations.queryForObject("Select count(ID) FROM PRMNT_EXTRACTION_STAGE", Integer.class) > 0;
+	}
+
 }
