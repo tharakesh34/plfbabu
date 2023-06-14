@@ -115,9 +115,8 @@ public class ExcessType {
 	public static Set<String> defaultAdjustToList() {
 		Set<String> set = new HashSet<>();
 
-		set.add(ADVEMI);
+		set.add(EXCESS);
 		set.add(EMIINADV);
-		set.add(SETTLEMENT);
 		set.add(CASHCLT);
 		set.add(DSF);
 		set.add(TEXCESS);
