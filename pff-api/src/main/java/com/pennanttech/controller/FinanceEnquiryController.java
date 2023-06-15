@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
-import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -26,7 +25,6 @@ import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
-import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.applicant.ApplicantDetails;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.chargedetails.ChargeDetails;
@@ -68,8 +66,6 @@ public class FinanceEnquiryController extends AbstractController {
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 	private MandateDAO mandateDAO;
-	private FinReceiptHeaderDAO finReceiptHeaderDAO;
-	private BounceReasonDAO bounceReasonDAO;
 	private GuarantorDetailDAO guarantorDetailDAO;
 	private FinODDetailsDAO finODDetailsDAO;
 	private ManualAdviseDAO manualAdviseDAO;
@@ -305,7 +301,8 @@ public class FinanceEnquiryController extends AbstractController {
 		Customer guarantator;
 		for (GuarantorDetail guarantor : guarantors) {
 			if (guarantor.isBankCustomer()) {
-				guarantator = customerDAO.getBasicDetails(custID, TableType.MAIN_TAB);
+				long gurantorID = customerDAO.getCustIDByCIF(guarantor.getGuarantorCIF());
+				guarantator = customerDAO.getBasicDetails(gurantorID, TableType.MAIN_TAB);
 				guarantator.setApplicantType("Guarantor");
 				guarantator.setCustCIF(guarantor.getGuarantorCIF());
 
@@ -616,16 +613,6 @@ public class FinanceEnquiryController extends AbstractController {
 	@Autowired
 	public void setMandateDAO(MandateDAO mandateDAO) {
 		this.mandateDAO = mandateDAO;
-	}
-
-	@Autowired
-	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
-		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
-	}
-
-	@Autowired
-	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
-		this.bounceReasonDAO = bounceReasonDAO;
 	}
 
 	@Autowired
