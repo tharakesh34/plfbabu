@@ -18,6 +18,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -50,6 +51,7 @@ import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.pff.noc.upload.dao.LoanLetterUploadDAO;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -73,6 +75,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	private LoanLetterUploadDAO loanLetterUploadDAO;
 	private AutoLetterGenerationDAO autoLetterGenerationDAO;
 	private LetterService letterService;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	@Override
 	public List<GenerateLetter> getResult(ISearch searchFilters, List<String> roleCodes) {
@@ -270,7 +273,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 			gl.setModeofTransfer(LetterMode.OTC.name());
 
 			Long letterId = autoLetterGenerationDAO.getAutoLetterId(gl.getFinID(), gl.getLetterType());
-			if (letterId == null) {
+			if (letterId == null && "Submit".equals(gl.getRecordType())) {
 				return autoLetterGenerationDAO.save(gl);
 			}
 
@@ -309,7 +312,13 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		LoanLetter letter = new LoanLetter();
 		Customer customer = fd.getCustomerDetails().getCustomer();
 
-		letter.setClosureType(fm.getClosureType());
+		String loanClosureType = finReceiptHeaderDAO.getClosureTypeValue(fm.getFinID());
+
+		if (loanClosureType == null) {
+			loanClosureType = ClosureType.CLOSURE.code();
+		}
+
+		letter.setClosureType(loanClosureType);
 		letter.setCustCtgCode(customer.getCustCtgCode());
 		letter.setCustGenderCode(customer.getCustGenderCode());
 		letter.setCustomerType(customer.getCustTypeCode());
@@ -622,4 +631,10 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	public void setLetterService(LetterService letterService) {
 		this.letterService = letterService;
 	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
 }

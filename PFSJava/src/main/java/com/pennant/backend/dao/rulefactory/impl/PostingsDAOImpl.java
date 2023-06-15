@@ -506,7 +506,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 		for (ReturnDataSet returnDataSet : dataSetList) {
 			if (returnDataSet.getEntityCode() == null) {
-				String entityCode = SysParamUtil.getValueAsString("ENTITYCODE");
+				String entityCode = SysParamUtil.getValueAsString(SMTParameterConstants.ENTITY_CODE);
 
 				if (!entityMap.containsKey(returnDataSet.getFinReference())) {
 					entityCode = getEntityCode(returnDataSet.getFinType());

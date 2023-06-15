@@ -820,7 +820,7 @@
 				INSERT INTO PSLPURPOSE (CATEGORYCODE, SUBCATEGORYCODE, CODE, DESCRIPTION) VALUES ('GNL',  'SI', '502', 'Modernization and renovation of existing  units');
 				INSERT INTO PSLPURPOSE (CATEGORYCODE, SUBCATEGORYCODE, CODE, DESCRIPTION) VALUES ('GNL',  'SI', '503', 'Purchase of land & construction -school');
 				INSERT INTO PSLPURPOSE (CATEGORYCODE, SUBCATEGORYCODE, CODE, DESCRIPTION) VALUES ('GNL',  'SI', '504', 'Erecting equipment’s');
-				INSERT INTO PSLPURPOSE (CATEGORYCODE, SUBCATEGORYCODE, CODE, DESCRIPTION) VALUES ('GNL',  'SI', '505', 'Construction/ refushment of household toilets');
+				INSERT INTO PSLPURPOSE (CATEGORYCODE, SUBCATEGORYCODE, CODE, DESCRIPTION) VALUES ('GNL',  'SI', '505', 'Construction/ refurbishment of household toilets');
 				INSERT INTO PSLPURPOSE (CATEGORYCODE, SUBCATEGORYCODE, CODE, DESCRIPTION) VALUES ('GNL',  'SI', '506', 'Construction/ refurbishment of household level water improvements');
 				INSERT INTO PSLPURPOSE (CATEGORYCODE, SUBCATEGORYCODE, CODE, DESCRIPTION) VALUES ('GNL',  'SI', '507', 'Setting up new  unit - healthcare facilities');
 				INSERT INTO PSLPURPOSE (CATEGORYCODE, SUBCATEGORYCODE, CODE, DESCRIPTION) VALUES ('GNL',  'SI', '508', 'Modernization and renovation of existing  units-health care facilities');
@@ -1372,4 +1372,21 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#229963" author="Gopal.p">
+		<sql>
+		    <![CDATA[
+		    	DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'ENTITYCODE';
+		    	
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('ENTITYCODE', 'Default entity code in system', 'String', 1, 'HDFC', 10, 0, NULL, NULL, 'Default entity code in system', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#229963.1" author="Gopal.p">
+		<sql>
+		    <![CDATA[
+		    	UPDATE POSTINGS SET ENTITYCODE = 'HDFC' WHERE ENTITYCODE IS NULL;
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
