@@ -10,6 +10,7 @@ public class GSTVoucherDetails {
 	private long referenceField2;
 	private BigDecimal referenceAmount;
 	private BigDecimal actualAmount;
+	private long taxHeaderId;
 
 	public long getGstVoucherId() {
 		return gstVoucherId;
@@ -65,6 +66,14 @@ public class GSTVoucherDetails {
 
 	public void setActualAmount(BigDecimal actualAmount) {
 		this.actualAmount = actualAmount;
+	}
+
+	public long getTaxHeaderId() {
+		return taxHeaderId;
+	}
+
+	public void setTaxHeaderId(long taxHeaderId) {
+		this.taxHeaderId = taxHeaderId;
 	}
 
 }

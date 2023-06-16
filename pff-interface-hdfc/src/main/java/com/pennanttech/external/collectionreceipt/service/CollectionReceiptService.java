@@ -291,11 +291,11 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 				return;
 			}
 
-			boolean isAgencyIdFound = extCollectionReceiptDao.validateAgencyId(collectionData.getAgencyId());
-			if (!isAgencyIdFound) {
-				extRcd.setErrorCode(CR2012);
-				return;
-			}
+			// boolean isAgencyIdFound = extCollectionReceiptDao.validateAgencyId(collectionData.getAgencyId());
+			// if (!isAgencyIdFound) {
+			// extRcd.setErrorCode(CR2012);
+			// return;
+			// }
 
 			List<ValueLabel> receiptTypes = PennantStaticListUtil.getReceiptChannels();
 			List<String> receiptValues = new ArrayList<>();

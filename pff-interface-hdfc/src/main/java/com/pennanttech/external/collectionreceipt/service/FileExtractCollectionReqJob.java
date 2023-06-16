@@ -24,6 +24,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
+import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
@@ -112,11 +113,13 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 
 								if (!lineData.trim().startsWith(ROW1)) {
 									extReceiptHeader.setErrorCode(CR1006);
+									extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(CR1006));
 									continue;
 								}
 
 								if (!validateRow1(lineData, "Filename")) {
 									extReceiptHeader.setErrorCode(CR1006);
+									extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(CR1006));
 									continue;
 								}
 
@@ -126,11 +129,13 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 
 								if (!lineData.trim().startsWith(ROW2)) {
 									extReceiptHeader.setErrorCode(CR1007);
+									extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(CR1007));
 									continue;
 								}
 
 								if (!validateRow2(lineData, requestFileName)) {
 									extReceiptHeader.setErrorCode(CR1007);
+									extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(CR1007));
 									continue;
 								}
 
@@ -138,6 +143,7 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 
 							if (rowNumber == 3 && !lineData.trim().startsWith(HEADER)) {
 								extReceiptHeader.setErrorCode(CR1008);
+								extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(CR1008));
 							}
 							if (rowNumber > 3) {
 								CollReceiptDetail crd = new CollReceiptDetail();
@@ -170,6 +176,7 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 
 							if (!qualifiedChk.equals(checksum)) {
 								extReceiptHeader.setErrorCode(CR1009);
+								extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(CR1009));
 							}
 
 							gTotalChk = gTotalChk + Integer.parseInt(qualifiedChk);
@@ -178,6 +185,7 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 
 						if (!sharedTotChecksum.equals((extCollectionLineList.size()) + "" + gTotalChk)) {
 							extReceiptHeader.setErrorCode(CR1013);
+							extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(CR1013));
 						}
 
 						extCollectionReceiptDao.saveFileExtractionList(extCollectionLineList, extReceiptHeader.getId());

@@ -131,6 +131,17 @@ public class ProvisionServiceImpl implements ProvisionService {
 				manProvsnPer = mp.getManProvsnPer();
 			}
 
+			if (!NpaAndProvisionExtension.ALLOW_PROVISION) {
+				p.setRegSecProvsnAmt(BigDecimal.ZERO);
+				p.setRegUnSecProvsnAmt(BigDecimal.ZERO);
+				p.setTotRegProvsnAmt(BigDecimal.ZERO);
+				p.setIntProvsnAmt(BigDecimal.ZERO);
+				p.setIntSecProvsnAmt(BigDecimal.ZERO);
+				p.setIntUnSecProvsnAmt(BigDecimal.ZERO);
+				p.setTotIntProvsnAmt(BigDecimal.ZERO);
+				p.setRegProvsnAmt(BigDecimal.ZERO);
+			}
+
 			if (mp != null) {
 				manualProvision = true;
 				if (mp.getManualAssetClassID() != null) {
@@ -286,12 +297,12 @@ public class ProvisionServiceImpl implements ProvisionService {
 		List<String> assetClassSubCode = new ArrayList<>();
 		List<String> assetCode = new ArrayList<>();
 		boolean isclassCodeExists = false;
-		
+
 		for (AssetClassSetupDetail assetClassSetupDetail : assetClassCodes) {
 			assetCode.add(assetClassSetupDetail.getClassCode());
 			assetClassSubCode.add(assetClassSetupDetail.getSubClassCode());
 		}
-		
+
 		if (!assetCode.contains(assetClassCode) || (!assetClassSubCode.contains(assestSubClassCode))) {
 			isclassCodeExists = true;
 		}

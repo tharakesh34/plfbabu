@@ -106,7 +106,7 @@ public class FileProcessCollectionReqJob extends AbstractJob implements Interfac
 				List<CollReceiptDetail> fileRecordsList = extCollectionReceiptDao
 						.fetchCollectionRecordsById(extReceiptHeader.getId());
 
-				if (fileRecordsList.size() > 0) {
+				if (!fileRecordsList.isEmpty()) {
 
 					TransactionStatus txStatus = null;
 					// Now for each record, generate receipt and update receipt status.

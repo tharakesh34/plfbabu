@@ -2,6 +2,7 @@ package com.pennanttech.external.gst.dao;
 
 import java.util.List;
 
+import com.pennant.backend.model.finance.Taxes;
 import com.pennanttech.external.gst.model.GSTCompDetail;
 import com.pennanttech.external.gst.model.GSTCompHeader;
 import com.pennanttech.external.gst.model.GSTInvoiceDetail;
@@ -41,4 +42,7 @@ public interface ExtGSTDao {
 
 	void updateHeaderIdIntoGSTVoucherDetails(long headerId);
 
+	List<Taxes> getTaxDetailsForHeaderId(long taxHeaderId);
+
+	void updateTaxDetails(Taxes taxes);
 }

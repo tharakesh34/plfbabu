@@ -1720,7 +1720,10 @@ public class ReceiptCalculator {
 
 		BigDecimal excessBal = rch.getBalAmount();
 
-		if (receiptPurposeCtg == 2 && excessBal.compareTo(BigDecimal.ZERO) > 0) {
+		FinServiceInstruction fsi = rd.getFinanceDetail().getFinScheduleData().getFinServiceInstruction();
+
+		if ((fsi != null && fsi.isClosureReceipt()) && receiptPurposeCtg == 2
+				&& excessBal.compareTo(BigDecimal.ZERO) > 0) {
 			for (int i = rcdList.size() - 1; i >= 0; i--) {
 				if (excessBal.compareTo(BigDecimal.ZERO) <= 0) {
 					break;

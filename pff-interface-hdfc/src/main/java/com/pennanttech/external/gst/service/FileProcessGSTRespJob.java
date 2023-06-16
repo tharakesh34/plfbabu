@@ -2,13 +2,16 @@ package com.pennanttech.external.gst.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
@@ -19,6 +22,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
+import com.pennant.backend.model.finance.Taxes;
+import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
@@ -169,12 +174,10 @@ public class FileProcessGSTRespJob extends AbstractJob
 							continue;
 						}
 
-						// Save the Invoice details into the table
-						GSTInvoiceDetail invoiceDetail = getInvoiceDetail(responseBean);
-						extGSTDao.saveGSTInvoiceDetails(invoiceDetail);
-
 						// Process GST amounts into Taxheader and Postings
-						saveTaxDetails(responseBean);
+						processTaxHeader(responseBean, gstVoucherDetails);
+						processPostings();
+						processInvoiceDetails(responseBean);
 
 						// Update GST VOUCHER ID in Response detail record for successful transaction
 						detail.setGstVoucherId(responseBean.getTransactionUID());
@@ -202,9 +205,125 @@ public class FileProcessGSTRespJob extends AbstractJob
 
 	}
 
-	private void saveTaxDetails(GSTRespDetail responseBean) {
+	private void processTaxHeader(GSTRespDetail responseBean, GSTVoucherDetails gstVoucherDetails) {
+		logger.debug(Literal.ENTERING);
+		List<Taxes> taxesList = extGSTDao.getTaxDetailsForHeaderId(gstVoucherDetails.getTaxHeaderId());
+		if (!taxesList.isEmpty()) {
+			for (Taxes tax : taxesList) {
+				if (StringUtils.stripToEmpty(tax.getTaxType()).equals(RuleConstants.CODE_CGST)) {
+					tax.setTaxPerc(responseBean.getCgstRate());
+
+					BigDecimal actualtaxAmt = tax.getActualTax();
+					actualtaxAmt = actualtaxAmt.add(responseBean.getCgstAmount());
+					tax.setActualTax(actualtaxAmt);
+
+					BigDecimal paidTaxAmt = tax.getPaidTax();
+					paidTaxAmt = paidTaxAmt.add(responseBean.getCgstAmount());
+					tax.setPaidTax(paidTaxAmt);
+
+					BigDecimal netTaxAmt = tax.getNetTax();
+					netTaxAmt = netTaxAmt.add(responseBean.getCgstAmount());
+					tax.setNetTax(netTaxAmt);
+
+					extGSTDao.updateTaxDetails(tax);
+				}
+				if (StringUtils.stripToEmpty(tax.getTaxType()).equals(RuleConstants.CODE_SGST)) {
+					tax.setTaxPerc(responseBean.getSgstRate());
+
+					BigDecimal actualtaxAmt = tax.getActualTax();
+					actualtaxAmt = actualtaxAmt.add(responseBean.getSgstAmount());
+					tax.setActualTax(actualtaxAmt);
+
+					BigDecimal paidTaxAmt = tax.getPaidTax();
+					paidTaxAmt = paidTaxAmt.add(responseBean.getSgstAmount());
+					tax.setPaidTax(paidTaxAmt);
+
+					BigDecimal netTaxAmt = tax.getNetTax();
+					netTaxAmt = netTaxAmt.add(responseBean.getSgstAmount());
+					tax.setNetTax(netTaxAmt);
+
+					extGSTDao.updateTaxDetails(tax);
+				}
+				if (StringUtils.stripToEmpty(tax.getTaxType()).equals(RuleConstants.CODE_IGST)) {
+					tax.setTaxPerc(responseBean.getIgstRate());
+
+					BigDecimal actualtaxAmt = tax.getActualTax();
+					actualtaxAmt = actualtaxAmt.add(responseBean.getIgstAmount());
+					tax.setActualTax(actualtaxAmt);
+
+					BigDecimal paidTaxAmt = tax.getPaidTax();
+					paidTaxAmt = paidTaxAmt.add(responseBean.getIgstAmount());
+					tax.setPaidTax(paidTaxAmt);
+
+					BigDecimal netTaxAmt = tax.getNetTax();
+					netTaxAmt = netTaxAmt.add(responseBean.getIgstAmount());
+					tax.setNetTax(netTaxAmt);
+
+					extGSTDao.updateTaxDetails(tax);
+				}
+				if (StringUtils.stripToEmpty(tax.getTaxType()).equals(RuleConstants.CODE_UGST)) {
+					tax.setTaxPerc(responseBean.getUtgstRate());
+
+					BigDecimal actualtaxAmt = tax.getActualTax();
+					actualtaxAmt = actualtaxAmt.add(responseBean.getUtgstAmount());
+					tax.setActualTax(actualtaxAmt);
+
+					BigDecimal paidTaxAmt = tax.getPaidTax();
+					paidTaxAmt = paidTaxAmt.add(responseBean.getUtgstAmount());
+					tax.setPaidTax(paidTaxAmt);
+
+					BigDecimal netTaxAmt = tax.getNetTax();
+					netTaxAmt = netTaxAmt.add(responseBean.getUtgstAmount());
+					tax.setNetTax(netTaxAmt);
+
+					extGSTDao.updateTaxDetails(tax);
+				}
+				// if (StringUtils.stripToEmpty(tax.getTaxType()).equals(RuleConstants.CODE_CESS)) {
+				// tax.setTaxPerc(responseBean.getCessRate());
+				//
+				// BigDecimal actualtaxAmt = tax.getActualTax();
+				// actualtaxAmt = actualtaxAmt.add(responseBean.getIgstAmount());
+				// tax.setActualTax(actualtaxAmt);
+				//
+				// BigDecimal paidTaxAmt = tax.getPaidTax();
+				// paidTaxAmt = paidTaxAmt.add(responseBean.getIgstAmount());
+				// tax.setPaidTax(paidTaxAmt);
+				//
+				// BigDecimal netTaxAmt = tax.getNetTax();
+				// netTaxAmt = netTaxAmt.add(responseBean.getIgstAmount());
+				// tax.setNetTax(netTaxAmt);
+				//
+				// extGSTDao.updateTaxDetails(tax);
+				// }
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void processPostings() {
 		// TODO Auto-generated method stub
 
+	}
+
+	private void processInvoiceDetails(GSTRespDetail responseBean) {
+		// Save the Invoice details into the table
+		GSTInvoiceDetail invoiceDetail = getInvoiceDetail(responseBean);
+		extGSTDao.saveGSTInvoiceDetails(invoiceDetail);
+
+	}
+
+	private void setTaxAmounts(Taxes tax, GSTRespDetail responseBean) {
+		BigDecimal actualtaxAmt = tax.getActualTax();
+		actualtaxAmt = actualtaxAmt.add(responseBean.getCgstAmount());
+		tax.setActualTax(actualtaxAmt);
+
+		BigDecimal paidTaxAmt = tax.getPaidTax();
+		paidTaxAmt = paidTaxAmt.add(responseBean.getCgstAmount());
+		tax.setPaidTax(paidTaxAmt);
+
+		BigDecimal netTaxAmt = tax.getNetTax();
+		netTaxAmt = netTaxAmt.add(responseBean.getCgstAmount());
+		tax.setNetTax(netTaxAmt);
 	}
 
 	private GSTInvoiceDetail getInvoiceDetail(GSTRespDetail respBean) {
