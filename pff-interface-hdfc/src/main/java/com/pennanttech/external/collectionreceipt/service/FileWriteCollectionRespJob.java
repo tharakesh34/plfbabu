@@ -284,7 +284,12 @@ public class FileWriteCollectionRespJob extends AbstractJob
 	private StringBuilder prepareLine(ExtCollectionReceiptData detail, int rejectRowNum) {
 		StringBuilder item = new StringBuilder();
 		append(item, detail.getAgreementNumber());
-		appendSeperator(item, "");
+		if (detail.getReceiptID() > 0) {
+			appendSeperator(item, detail.getReceiptID());
+		} else {
+			appendSeperator(item, "");
+		}
+
 		appendSeperator(item, detail.getReceiptChannel());
 		appendSeperator(item, detail.getAgencyId());
 		appendSeperator(item, detail.getChequeNumber());
