@@ -271,10 +271,9 @@ public class FileWriteCollectionRespJob extends AbstractJob
 				String reqFileTB = localReqFileName.substring(0,
 						localReqFileName.indexOf(reqConfig.getFileExtension()));
 				String finalFile = reqFileTB + ".inproc";
-				String deleteInproc = reqConfig.getFileTransferConfig().getSftpLocation().concat("/") + finalFile;
 
 				// Delete .inproc file
-				fileTransferUtil.deleteFileFromSFTP(deleteInproc);
+				fileTransferUtil.deleteFileFromSFTP(finalFile);
 
 			} catch (Exception e) {
 				logger.debug(Literal.EXCEPTION, e);

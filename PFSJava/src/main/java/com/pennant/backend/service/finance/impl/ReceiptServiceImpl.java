@@ -6459,7 +6459,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return fd;
 		}
 
-		if (!ExcessType.isAllowedForAdjustment(fsi.getExcessAdjustTo())) {
+		if ((receiptPurpose == ReceiptPurpose.SCHDRPY || receiptPurpose == ReceiptPurpose.EARLYSETTLE)
+				&& !ExcessType.isAllowedForAdjustment(fsi.getExcessAdjustTo())) {
 			setError(schdData, "90505",
 					"Excess Amount Adjustment not allowed for Excess Type" + fsi.getExcessAdjustTo());
 			return fd;
