@@ -238,12 +238,15 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 				gl.setModeofTransfer(gl.getRequestType());
 				gl.setApprovedBy(gl.getLastMntBy());
 				gl.setApprovedOn(new Timestamp(System.currentTimeMillis()));
+
+				generateLetter(gl);
 				generateLetterDAO.save(gl, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				gl.setRecordType("");
 				generateLetterDAO.update(gl, TableType.MAIN_TAB);
 			}
+
 		}
 
 		ah.setAuditTranType(PennantConstants.TRAN_WF);
@@ -273,8 +276,10 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 			gl.setModeofTransfer(LetterMode.OTC.name());
 
 			Long letterId = autoLetterGenerationDAO.getAutoLetterId(gl.getFinID(), gl.getLetterType());
-			if (letterId == null && "Submit".equals(gl.getRecordType())) {
+			if (letterId == null) {
 				return autoLetterGenerationDAO.save(gl);
+			} else {
+				autoLetterGenerationDAO.update(letterId, LetterMode.OTC.name());
 			}
 
 			return letterId;
@@ -447,29 +452,32 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 	@Override
 	public LoanLetter generateLetter(GenerateLetter gl) {
-		if ("Submit".equals(gl.getRecordType())) {
-			saveFees(gl);
-		}
+		saveFees(gl);
 
 		long letterID = saveLoanLetterdetails(gl);
 
+		gl.setLetterID(letterID);
+
 		LoanLetter letter = letterService.generate(letterID, SysParamUtil.getAppDate());
+
+		if (LetterMode.OTC.name().equals(gl.getModeofTransfer())) {
+			letter.setModeofTransfer(LetterMode.OTC.name());
+			letter.setApprovedBy(gl.getApprovedBy());
+			letter.setGeneratedBy(gl.getApprovedBy());
+		}
 
 		letter.setFeeID(gl.getFeeID());
 
-		if (letter.isBlocked()) {
+		if ("A".equals(gl.getModeofTransfer()) && letter.isBlocked()) {
 			letter.setGenerated(-1);
 			letter.setStatus("B");
 			letter.setRemarks(BLOCKED_MSG);
 		} else {
 			letter.setGenerated(1);
 			letter.setStatus("S");
-		}
 
-		if ("Submit".equals(gl.getRecordType())) {
 			letterService.createAdvise(letter);
 			letterService.update(letter);
-			generateLetterDAO.delete(gl, TableType.MAIN_TAB);
 		}
 
 		return letter;

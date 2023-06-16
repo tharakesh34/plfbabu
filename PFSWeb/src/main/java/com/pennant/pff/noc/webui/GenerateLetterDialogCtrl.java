@@ -57,6 +57,8 @@ import com.pennant.backend.util.NOCConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.letter.LetterMode;
 import com.pennant.pff.letter.LetterUtil;
+import com.pennant.pff.letter.service.LetterService;
+import com.pennant.pff.noc.dao.GenerateLetterDAO;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.util.ErrorControl;
@@ -68,6 +70,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.Allocation;
 
 public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
@@ -125,6 +128,8 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 	private transient FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private transient GenerateLetterService generateLetterService;
+	private transient LetterService letterService;
+	private transient GenerateLetterDAO generateLetterDAO;
 
 	public GenerateLetterDialogCtrl() {
 		super();
@@ -612,35 +617,27 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 		doWriteComponentsToBean(this.generateLetter);
 
-		boolean downLoadStatus = false;
-
-		String selectedRecordType = userAction.getSelectedItem().getLabel();
-
-		generateLetter.setRecordType(selectedRecordType);
-
 		try {
-			LoanLetter letter = generateLetterService.generateLetter(this.generateLetter);
+			LoanLetter letter = letterService.generate(this.generateLetter.getLetterID(), SysParamUtil.getAppDate());
 
 			if ("S".equals(letter.getStatus())) {
 				Filedownload.save(new AMedia(letter.getLetterName(), "pdf", "application/pdf", letter.getContent()));
-				downLoadStatus = true;
-			} else if ("B".equals(letter.getStatus())) {
-				MessageUtil.showMessage(letter.getRemarks());
+				MessageUtil.showMessage("Letter Downloaded successfully.");
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			return;
 		}
 
-		if (downLoadStatus) {
-			MessageUtil.showMessage("Letter Downloaded successfully.");
-
-			refreshList();
-
-			closeDialog();
-
-			deAllocateAuthorities("FinFeeDetailListCtrl");
+		if ("Submit".equals(userAction.getSelectedItem().getLabel())) {
+			generateLetterDAO.delete(this.generateLetter, TableType.MAIN_TAB);
 		}
+
+		refreshList();
+
+		closeDialog();
+
+		deAllocateAuthorities("FinFeeDetailListCtrl");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -986,4 +983,15 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
+
+	@Autowired
+	public void setLetterService(LetterService letterService) {
+		this.letterService = letterService;
+	}
+
+	@Autowired
+	public void setGenerateLetterDAO(GenerateLetterDAO generateLetterDAO) {
+		this.generateLetterDAO = generateLetterDAO;
+	}
+
 }

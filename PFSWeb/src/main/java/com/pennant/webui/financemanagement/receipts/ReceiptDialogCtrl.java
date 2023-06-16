@@ -3640,7 +3640,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		appendAccountingDetailTab(true);
+		if (isApprover()) {
+			appendAccountingDetailTab(true);
+		}
 
 		fillComboBox(this.sourceofFund, receiptHeader.getSourceofFund(), sourceofFundList, "");
 

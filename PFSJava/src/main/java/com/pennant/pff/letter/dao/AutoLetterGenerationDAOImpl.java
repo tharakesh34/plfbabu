@@ -74,13 +74,14 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	}
 
 	@Override
-	public GenerateLetter getLetter(long id) {
+	public GenerateLetter getLetter(long id, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, FinID, RequestType, LetterType");
 		sql.append(", AgreementTemplate, FeeID");
 		sql.append(", ModeofTransfer, EmailTemplate");
 		sql.append(", CreatedDate");
-		sql.append(" From LOAN_LETTERS_STAGE ");
+		sql.append(" From LOAN_LETTERS");
+		sql.append(type);
 		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -269,7 +270,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 
 	@Override
 	public Long getAutoLetterId(Long finID, String letterType) {
-		String sql = "Select ID From LOAN_LETTERS_STAGE Where FinID = ? and LetterType = ? and RequestType in = ?";
+		String sql = "Select ID From LOAN_LETTERS_STAGE Where FinID = ? and LetterType = ? and RequestType = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -279,5 +280,14 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 			return null;
 		}
 
+	}
+
+	@Override
+	public void update(Long letterId, String name) {
+		String sql = "Update LOAN_LETTERS_STAGE set RequestType = ? Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, name, letterId);
 	}
 }

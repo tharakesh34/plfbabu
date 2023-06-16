@@ -819,4 +819,9 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#15956.100_6" author="Gopal.p">
+		<addColumn tableName="ADTLoan_Letter_Manual">
+			<column name="LetterID" type = "bigint"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

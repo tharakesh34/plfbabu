@@ -47,6 +47,7 @@ import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennant.pff.noc.upload.dao.LoanLetterUploadDAO;
 import com.pennant.pff.noc.upload.error.LoanLetterUploadError;
 import com.pennant.pff.noc.upload.model.LoanLetterUpload;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
@@ -226,6 +227,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 								financeScheduleDetailDAO.getFinScheduleDetails(finID, "_AView", false));
 						fsd.setFinanceMain(fm);
 						fsd.setFinPftDeatil(financeprofitDetailsDAO.getFinProfitDetailsById(finID));
+						fsd.setFeeEvent(NOCConstants.getLetterType(detail.getLetterType()));
 
 						if (custID > 0) {
 							fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(custID, true, "_View"));
@@ -251,12 +253,17 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 
 						rd = feeCalculator.calculateFees(rd);
 						List<FinFeeDetail> ffd = rd.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
-						if (CollectionUtils.isNotEmpty(ffd) && PennantConstants.YES.equals(detail.getWaiverCharges())) {
+						if (CollectionUtils.isNotEmpty(ffd)) {
 							for (FinFeeDetail fee : ffd) {
 								BigDecimal maxWaiverPer = fee.getMaxWaiverPerc();
 								if (maxWaiverPer.compareTo(BigDecimal.ZERO) > 0) {
-									BigDecimal waiverAmt = (fee.getCalculatedAmount().multiply(maxWaiverPer))
-											.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+									BigDecimal waiverAmt = BigDecimal.ZERO;
+
+									if (PennantConstants.YES.equals(detail.getWaiverCharges())) {
+										waiverAmt = (fee.getCalculatedAmount().multiply(maxWaiverPer))
+												.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+									}
+
 									fee.setRemainingFee(fee.getRemainingFee().subtract(waiverAmt));
 									fee.setWaivedAmount(waiverAmt);
 								}
@@ -315,7 +322,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 		LoanLetter letter = new LoanLetter();
 		Customer customer = fd.getCustomerDetails().getCustomer();
 
-		letter.setClosureType(fm.getClosureType());
+		letter.setClosureType(fm.getClosureType() == null ? ClosureType.CLOSURE.code() : fm.getClosureType());
 		letter.setCustCtgCode(customer.getCustCtgCode());
 		letter.setCustGenderCode(customer.getCustGenderCode());
 		letter.setCustomerType(customer.getCustTypeCode());
@@ -323,8 +330,10 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 		letter.setLoanCancellationAge(DateUtil.getDaysBetween(fm.getClosedDate(), appDate));
 
 		if (CollectionUtils.isNotEmpty(letterInfo)) {
-			letter.setSequenceNo(letterInfo.size());
+			letter.setSequenceNo(letterInfo.size()+1);
 			letter.setStatusOfpreviousletters(letterInfo.get(0).getStatus());
+		}else {
+			letter.setSequenceNo(1);
 		}
 
 		fm.setLoanLetter(letter);

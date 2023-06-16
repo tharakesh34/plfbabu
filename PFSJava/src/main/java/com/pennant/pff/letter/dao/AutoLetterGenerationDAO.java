@@ -14,7 +14,7 @@ public interface AutoLetterGenerationDAO {
 
 	void update(LoanLetter gl);
 
-	GenerateLetter getLetter(long id);
+	GenerateLetter getLetter(long id, String type);
 
 	ServiceBranch getServiceBranch(String finType, String finBranch);
 
@@ -32,4 +32,5 @@ public interface AutoLetterGenerationDAO {
 
 	Long getAutoLetterId(Long finID, String letterType);
 
+	void update(Long letterId, String name);
 }

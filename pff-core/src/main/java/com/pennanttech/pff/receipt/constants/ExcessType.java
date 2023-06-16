@@ -200,27 +200,27 @@ public class ExcessType {
 		knockOffFromList = new ArrayList<>(3);
 
 		if (isAllowedKnockOffFrom(EXCESS)) {
-			knockOffFromList.add(new ValueLabel(EXCESS, Labels.getLabel("label_Excess")));
+			knockOffFromList.add(new ValueLabel(ReceiptMode.EXCESS, Labels.getLabel("label_Excess")));
 		}
 
 		if (isAllowedKnockOffFrom(EMIINADV)) {
-			knockOffFromList.add(new ValueLabel(EMIINADV, Labels.getLabel("label_EMI_Advance")));
+			knockOffFromList.add(new ValueLabel(ReceiptMode.EMIINADV, Labels.getLabel("label_EMI_Advance")));
 		}
 
 		if (isAllowedKnockOffFrom(PAYABLE)) {
-			knockOffFromList.add(new ValueLabel(PAYABLE, Labels.getLabel("label_Payable_Advice")));
+			knockOffFromList.add(new ValueLabel(ReceiptMode.PAYABLE, Labels.getLabel("label_Payable_Advice")));
 		}
 
 		if (isAllowedKnockOffFrom(CASHCLT)) {
-			knockOffFromList.add(new ValueLabel(CASHCLT, Labels.getLabel("label_CASHCLT")));
+			knockOffFromList.add(new ValueLabel(ReceiptMode.CASHCLT, Labels.getLabel("label_CASHCLT")));
 		}
 
 		if (isAllowedKnockOffFrom(DSF)) {
-			knockOffFromList.add(new ValueLabel(DSF, Labels.getLabel("label_DSF")));
+			knockOffFromList.add(new ValueLabel(ReceiptMode.DSF, Labels.getLabel("label_DSF")));
 		}
 
 		if (isAllowedKnockOffFrom(PRESENTMENT)) {
-			knockOffFromList.add(new ValueLabel(PRESENTMENT, Labels.getLabel("label_PRESENTMENT")));
+			knockOffFromList.add(new ValueLabel(ReceiptMode.PRESENTMENT, Labels.getLabel("label_PRESENTMENT")));
 		}
 
 		return knockOffFromList;

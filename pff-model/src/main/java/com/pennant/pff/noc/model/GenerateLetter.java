@@ -56,6 +56,7 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private Date dispatchDate;
 	private BigDecimal waiverAmt = BigDecimal.ZERO;
 	private BigDecimal actualAmt = BigDecimal.ZERO;
+	private Long letterID;
 
 	public GenerateLetter() {
 		super();
@@ -445,6 +446,14 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 
 	public void setActualAmt(BigDecimal actualAmt) {
 		this.actualAmt = actualAmt;
+	}
+
+	public Long getLetterID() {
+		return letterID;
+	}
+
+	public void setLetterID(Long letterID) {
+		this.letterID = letterID;
 	}
 
 }

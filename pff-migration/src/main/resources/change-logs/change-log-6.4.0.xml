@@ -20336,4 +20336,33 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#15956.100_12_pre" author="Gopal.P">
+		<sql>
+			<![CDATA[
+				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN, IS_MASKINGDATA) values ('Loan_Letter_Manual', 'LetterID', 'NUMBER', '19,0', 'Letter ID', ' Generated letter id is stored in this column', 'Optional', 0, null, null, 0, null, CURRENT_TIMESTAMP, 'Gopal.P', null, null, 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#15956.100_12" author="Gopal.p">
+		<addColumn tableName="Loan_Letter_Manual">
+			<column name="LetterID" type = "bigint"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#15956.100_13_pre" author="Gopal.P">
+		<sql>
+			<![CDATA[
+				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN, IS_MASKINGDATA) values ('Loan_Letter_Manual_Temp', 'LetterID', 'NUMBER', '19,0', 'Letter ID', ' Generated letter id is stored in this column', 'Optional', 0, null, null, 0, null, CURRENT_TIMESTAMP, 'Gopal.P', null, null, 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#15956.100_13" author="Gopal.p">
+		<addColumn tableName="Loan_Letter_Manual_Temp">
+			<column name="LetterID" type = "bigint"/>
+		</addColumn>
+	</changeSet>
+	
+	
 </databaseChangeLog> 
