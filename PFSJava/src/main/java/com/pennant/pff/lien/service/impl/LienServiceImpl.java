@@ -128,6 +128,7 @@ public class LienServiceImpl implements LienService {
 					lu.setLienStatus(true);
 					lu.setMarking(Labels.getLabel("label_Lien_Type_Auto"));
 					lu.setDemarking("");
+					lu.setMarkingDate(lh.getMarkingDate());
 					if (!FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
 						lu.setMarkingDate(fm.getFinStartDate());
 					} 
