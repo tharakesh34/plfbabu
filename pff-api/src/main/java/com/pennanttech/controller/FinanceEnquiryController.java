@@ -167,8 +167,8 @@ public class FinanceEnquiryController extends AbstractController {
 		List<PresentmentDetail> presentmentDetails = presentmentDetailDAO.getBouncedPresenments(finID);
 		for (PaymentMode pm : paymentModes) {
 			for (PresentmentDetail pd : presentmentDetails) {
-				if (pm.getInstallmentNo() == pd.getEmiNo()
-						&& pm.getLoanInstrumentMode().equals(pd.getInstrumentType())) {
+				if (pm.getLoanDueDate().compareTo(pd.getSchDate()) == 0
+						&& StringUtils.containsIgnoreCase(pd.getInstrumentType(), pm.getLoanInstrumentMode())) {
 					pm.setBounceReason(pd.getBounceReason());
 					continue;
 				}

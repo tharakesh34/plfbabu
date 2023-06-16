@@ -2303,7 +2303,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 	@Override
 	public List<PresentmentDetail> getBouncedPresenments(long finID) {
-		StringBuilder sql = new StringBuilder("Select pd.Emino, pd.Bounceid");
+		StringBuilder sql = new StringBuilder("Select pd.Emino, pd.Bounceid, pd.SchDate");
 		sql.append(", pd.FinReference, ph.MandateType, br.Reason, br.BounceCode from PresentmentDetails pd");
 		sql.append(" Inner Join PresentmentHeader ph on ph.ID = Pd.PresentmentID");
 		sql.append(" Inner Join BounceReasons br on br.BounceID = pd.BounceID");
@@ -2320,6 +2320,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			pd.setInstrumentType(rs.getString("MandateType"));
 			pd.setBounceReason(rs.getString("Reason"));
 			pd.setBounceCode(rs.getString("BounceCode"));
+			pd.setSchDate(rs.getDate("SchDate"));
 
 			return pd;
 		}, finID, RepayConstants.PEXC_BOUNCE);
