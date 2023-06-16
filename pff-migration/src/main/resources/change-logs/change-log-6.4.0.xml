@@ -19577,6 +19577,15 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#3007_105_pre" author="Gopal.P">
+		<sql>
+			<![CDATA[
+				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN, IS_MASKINGDATA, UNIQUEKEYCOLUMN) values ('FinSuspHold', 'FinID', 'NUMBER', '19,0', 'Loan Reference ID', ' Loan Reference ID will maintained in this column, Index is created for the same', 'Optional', 0, null, null, 0, null, CURRENT_TIMESTAMP, 'Gopal.P', null, null, 0, 0, 0);
+				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN, IS_MASKINGDATA, UNIQUEKEYCOLUMN) values ('FinSuspHold_Temp', 'FinID', 'NUMBER', '19,0', 'Loan Reference ID', ' Loan Reference ID will maintained in this column, Index is created for the same', 'Optional', 0, null, null, 0, null, CURRENT_TIMESTAMP, 'Gopal.P', null, null, 0, 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#3007_105" author="Gopal.p">
 		<addColumn tableName="FinSuspHold">
 			<column name="FinID" type="bigint" />
@@ -19595,6 +19604,15 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#3007_108_Pre1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Insert into PLF_FK_RELATIONS  (CATEGORY, BASE_TABLE, BASE_COLUMN, FK_CONSTRAINT_NAME, REFERENCE_TABLE, REFERENCE_COLUMN) values ('Loan', 'FinSuspHold', 'FinID', 'fk_finsusphold_finid', 'FinanceMain', 'FinID');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#3007_108" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_finsusphold_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="FinSuspHold"
@@ -20339,7 +20357,7 @@
 	<changeSet id="ST#15956.100_12_pre" author="Gopal.P">
 		<sql>
 			<![CDATA[
-				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN, IS_MASKINGDATA) values ('Loan_Letter_Manual', 'LetterID', 'NUMBER', '19,0', 'Letter ID', ' Generated letter id is stored in this column', 'Optional', 0, null, null, 0, null, CURRENT_TIMESTAMP, 'Gopal.P', null, null, 0, 0);
+				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN, IS_MASKINGDATA, UNIQUEKEYCOLUMN) values ('Loan_Letter_Manual', 'LetterID', 'NUMBER', '19,0', 'Letter ID', ' Generated letter id is stored in this column', 'Optional', 0, null, null, 0, null, CURRENT_TIMESTAMP, 'Gopal.P', null, null, 0, 0, 0);
 			]]>
 		</sql>
 	</changeSet>
@@ -20353,7 +20371,7 @@
 	<changeSet id="ST#15956.100_13_pre" author="Gopal.P">
 		<sql>
 			<![CDATA[
-				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN, IS_MASKINGDATA) values ('Loan_Letter_Manual_Temp', 'LetterID', 'NUMBER', '19,0', 'Letter ID', ' Generated letter id is stored in this column', 'Optional', 0, null, null, 0, null, CURRENT_TIMESTAMP, 'Gopal.P', null, null, 0, 0);
+				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN, IS_MASKINGDATA, UNIQUEKEYCOLUMN) values ('Loan_Letter_Manual_Temp', 'LetterID', 'NUMBER', '19,0', 'Letter ID', ' Generated letter id is stored in this column', 'Optional', 0, null, null, 0, null, CURRENT_TIMESTAMP, 'Gopal.P', null, null, 0, 0, 0);
 			]]>
 		</sql>
 	</changeSet>
