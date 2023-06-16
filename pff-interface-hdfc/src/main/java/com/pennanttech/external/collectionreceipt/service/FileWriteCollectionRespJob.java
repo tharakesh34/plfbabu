@@ -36,6 +36,7 @@ import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.external.collectionreceipt.model.ExtCollectionReceiptData;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -150,10 +151,10 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		String fileName = respConfig.getFilePrepend() + new SimpleDateFormat(respConfig.getDateFormat()).format(appDate)
 				+ respConfig.getFilePostpend() + fileSeqName + respConfig.getFileExtension();
 
-		fileName = TextFileUtil.fileName(filePath, fileName);
-
 		extReceiptHeader.setRespFileName(fileName);
 		extReceiptHeader.setRespFileLocation(filePath);
+
+		fileName = TextFileUtil.fileName(filePath, fileName);
 
 		List<CollReceiptDetail> successList = new ArrayList<>();
 		List<CollReceiptDetail> failedList = new ArrayList<>();
@@ -246,7 +247,9 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		itemList.add(sucessFooter);
 
 		try {
-			// super.writeDataToFile(fileName, itemList);
+			TextFileUtil fileUtil = new TextFileUtil();
+			fileUtil.writeDataToFile(fileName, itemList);
+
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
@@ -257,9 +260,13 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		if ("Y".equals(StringUtils.stripToEmpty(respConfig.getFileTransfer()))) {
 			try {
 				FileTransferUtil fileTransferUtil = new FileTransferUtil(respConfig);
+				fileTransferUtil.uploadToSFTP(App.getResourcePath(extReceiptHeader.getRespFileLocation()),
+						extReceiptHeader.getRespFileName());
+
 				String localReqFileName = extReceiptHeader.getRequestFileName();
 
-				fileTransferUtil.backupToSFTP(reqConfig.getFileLocation(), localReqFileName);
+				fileTransferUtil = new FileTransferUtil(reqConfig);
+				fileTransferUtil.backupToSFTP(App.getResourcePath(reqConfig.getFileLocation()), localReqFileName);
 
 				String reqFileTB = localReqFileName.substring(0,
 						localReqFileName.indexOf(reqConfig.getFileExtension()));

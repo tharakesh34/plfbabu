@@ -2199,4 +2199,11 @@
 			<column name="FINID" 					type="bigint" /> 
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="37.02" author="goutham.ch">
+		<addColumn tableName="GST_VOUCHER_DETAILS">
+			<column name="TAXHEADERID" type="bigint" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+		
 </databaseChangeLog>
