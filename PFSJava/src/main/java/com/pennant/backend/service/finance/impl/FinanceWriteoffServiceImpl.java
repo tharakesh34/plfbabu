@@ -197,12 +197,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 				procEdtEvent, "_View"));
 
 		if (StringUtils.isNotBlank(fm.getRecordType())) {
-
-			// Finance Writeoff Details
 			writeoffHeader.setFinanceWriteoff(financeWriteoffDAO.getFinanceWriteoffById(finID, "_Temp"));
-
 		} else {
-
 			fm.setNewRecord(true);
 
 			// Finance Writeoff Details

@@ -24,14 +24,12 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
-import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.FinanceConstants;
@@ -44,16 +42,15 @@ import com.pennant.pff.noc.dao.GenerateLetterDAO;
 import com.pennant.pff.noc.dao.LoanTypeLetterMappingDAO;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.model.LoanTypeLetterMapping;
+import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.pff.noc.upload.dao.LoanLetterUploadDAO;
 import com.pennant.pff.noc.upload.error.LoanLetterUploadError;
 import com.pennant.pff.noc.upload.model.LoanLetterUpload;
-import com.pennant.pff.receipt.ClosureType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.util.LoanCancelationUtil;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
@@ -73,6 +70,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 	private AutoLetterGenerationDAO autoLetterGenerationDAO;
 	private GenerateLetterDAO generateLetterDAO;
 	private LoanTypeLetterMappingDAO loanTypeLetterMappingDAO;
+	private GenerateLetterService generateLetterService;
 
 	public LoanLetterUploadServiceImpl() {
 		super();
@@ -241,7 +239,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 						gl.setLetterType(detail.getLetterType());
 						gl.setFinanceDetail(fd);
 
-						setMapDetails(gl, letterInfo);
+						generateLetterService.setMapDetails(gl, letterInfo);
 
 						FinReceiptHeader frh = new FinReceiptHeader();
 						FinReceiptData rd = new FinReceiptData();
@@ -313,30 +311,6 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 				}
 			}
 		}).start();
-	}
-
-	private void setMapDetails(GenerateLetter gl, List<GenerateLetter> letterInfo) {
-		Date appDate = SysParamUtil.getAppDate();
-		FinanceDetail fd = gl.getFinanceDetail();
-		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
-		LoanLetter letter = new LoanLetter();
-		Customer customer = fd.getCustomerDetails().getCustomer();
-
-		letter.setClosureType(fm.getClosureType() == null ? ClosureType.CLOSURE.code() : fm.getClosureType());
-		letter.setCustCtgCode(customer.getCustCtgCode());
-		letter.setCustGenderCode(customer.getCustGenderCode());
-		letter.setCustomerType(customer.getCustTypeCode());
-		letter.setLoanClosureAge(DateUtil.getDaysBetween(fm.getClosedDate(), appDate));
-		letter.setLoanCancellationAge(DateUtil.getDaysBetween(fm.getClosedDate(), appDate));
-
-		if (CollectionUtils.isNotEmpty(letterInfo)) {
-			letter.setSequenceNo(letterInfo.size()+1);
-			letter.setStatusOfpreviousletters(letterInfo.get(0).getStatus());
-		}else {
-			letter.setSequenceNo(1);
-		}
-
-		fm.setLoanLetter(letter);
 	}
 
 	@Override
@@ -479,5 +453,10 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 	@Autowired
 	public void setLoanTypeLetterMappingDAO(LoanTypeLetterMappingDAO loanTypeLetterMappingDAO) {
 		this.loanTypeLetterMappingDAO = loanTypeLetterMappingDAO;
+	}
+
+	@Autowired
+	public void setGenerateLetterService(GenerateLetterService generateLetterService) {
+		this.generateLetterService = generateLetterService;
 	}
 }

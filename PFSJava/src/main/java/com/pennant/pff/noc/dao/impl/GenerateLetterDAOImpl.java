@@ -519,14 +519,14 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 
 	@Override
 	public List<GenerateLetter> getLoanLetterInfo(long finID, String letterType) {
-		String sql = "Select Status From Loan_Letters Where FinID = ? And LetterType = ? and Generated = ?";
+		String sql = "Select DeliveryStatus From Loan_Letters Where FinID = ? And LetterType = ? and Generated = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.query(sql, (rs, rowNum) -> {
 			GenerateLetter letter = new GenerateLetter();
 
-			letter.setStatus(rs.getString("Status"));
+			letter.setDeliveryStatus(rs.getString("DeliveryStatus"));
 
 			return letter;
 		}, finID, letterType, 1);

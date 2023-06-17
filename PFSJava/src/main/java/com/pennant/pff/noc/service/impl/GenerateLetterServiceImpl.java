@@ -42,6 +42,7 @@ import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NOCConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.letter.CourierStatus;
 import com.pennant.pff.letter.LetterMode;
 import com.pennant.pff.letter.dao.AutoLetterGenerationDAO;
 import com.pennant.pff.letter.service.LetterService;
@@ -310,7 +311,8 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		setMapDetails(gl, letterInfo);
 	}
 
-	private void setMapDetails(GenerateLetter gl, List<GenerateLetter> letterInfo) {
+	@Override
+	public void setMapDetails(GenerateLetter gl, List<GenerateLetter> letterInfo) {
 		Date appDate = SysParamUtil.getAppDate();
 		FinanceDetail fd = gl.getFinanceDetail();
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
@@ -332,7 +334,15 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 		if (CollectionUtils.isNotEmpty(letterInfo)) {
 			letter.setSequenceNo(letterInfo.size() + 1);
-			letter.setStatusOfpreviousletters(letterInfo.get(letterInfo.size() - 1).getStatus());
+			String deliveryStatus = letterInfo.get(letterInfo.size() - 1).getDeliveryStatus();
+
+			CourierStatus courier = CourierStatus.getCourier(deliveryStatus);
+
+			if (courier != null) {
+				deliveryStatus = courier.getCode();
+			}
+
+			letter.setPrvLetterCourierDeliveryStatus(deliveryStatus);
 		} else {
 			letter.setSequenceNo(1);
 		}

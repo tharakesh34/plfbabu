@@ -306,6 +306,10 @@ public class AutoWriteOffServiceImpl implements AutoWriteOffService {
 		FinanceWriteoffHeader header = financeWriteoffService.getFinanceWriteoffDetailById(finID, "_View", null,
 				FinServiceEvent.WRITEOFFPAY);
 
+		if (header.getFinanceWriteoff() == null) {
+			return header.getFinReference();
+		}
+
 		setWriteOffTotals(header);
 		header.setFinSource(UploadConstants.FINSOURCE_ID_AUTOPROCESS);
 

@@ -177,12 +177,10 @@ public class ReceiptMode {
 
 	public static boolean isReceiptFromBank(String paymentType) {
 		return StringUtils.isNotEmpty(StringUtils.trimToEmpty(paymentType)) && !"#".equals(paymentType)
-				&& !ReceiptMode.EMIINADV.equals(paymentType) && !ReceiptMode.EXCESS.equals(paymentType)
-				&& !ReceiptMode.TEXCESS.equals(paymentType) && !ReceiptMode.PAYABLE.equals(paymentType)
-				&& !ReceiptMode.ADVINT.equals(paymentType) && !ReceiptMode.ADVEMI.equals(paymentType)
-				&& !ReceiptMode.CASHCLT.equals(paymentType) && !ReceiptMode.DSF.equals(paymentType)
-				&& !ReceiptMode.SETTLEMENT.equals(paymentType);
-
+				&& !EMIINADV.equals(paymentType) && !EXCESS.equals(paymentType) && !TEXCESS.equals(paymentType)
+				&& !PAYABLE.equals(paymentType) && !ADVINT.equals(paymentType) && !ADVEMI.equals(paymentType)
+				&& !CASHCLT.equals(paymentType) && !DSF.equals(paymentType) && !SETTLEMENT.equals(paymentType)
+				&& !PRESENTMENT.equals(paymentType);
 	}
 
 }

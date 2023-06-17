@@ -29,6 +29,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.pff.letter.CourierStatus;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.webui.finance.enquiry.FinanceEnquiryHeaderDialogCtrl;
@@ -245,7 +246,13 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 				lc.setSpan(1);
 				lc.setParent(item);
 
-				lc = new Listcell(data.getDeliveryStatus());
+				CourierStatus courier = CourierStatus.getCourier(data.getDeliveryStatus());
+				String deleveryStatus = "";
+				if (courier != null) {
+					deleveryStatus = courier.getCode();
+				}
+
+				lc = new Listcell(deleveryStatus);
 				lc.setSpan(1);
 				lc.setParent(item);
 

@@ -116,6 +116,7 @@ import com.pennant.backend.service.finance.LinkedFinancesService;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.NOCConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -2840,7 +2841,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					finFeeScheduleDetailsList = getFinFeeScheduleDetailsList(finReference);
 
 					for (FinFeeDetail finFeeDetail : finFeedetailsList) {
-						if (AccountingEvent.RESTRUCTURE.equals(finFeeDetail.getFinEvent())) {
+						String finEvent = finFeeDetail.getFinEvent();
+						if (AccountingEvent.RESTRUCTURE.equals(finEvent) || NOCConstants.TYPE_CAN_LTR.equals(finEvent)
+								|| NOCConstants.TYPE_CLOSE_LTR.equals(finEvent)
+								|| NOCConstants.TYPE_NOC_LTR.equals(finEvent)) {
 							continue;
 						}
 						finFeeDetailOrgination = " Amount";
@@ -2906,7 +2910,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								} else if (StringUtils.isNotBlank(vasProduct)) {
 									finFeeDetailNotInDISBorPOSP = vasProduct;
 								} else {
-									finFeeDetailNotInDISBorPOSP = finFeeDetail.getFinEvent();
+									finFeeDetailNotInDISBorPOSP = finEvent;
 								}
 								soaTranReport.setEvent(finFeeDetailNotInDISBorPOSP + " Amount" + finRef);
 								if (StringUtils.isNotBlank(exclusive)) {
