@@ -222,7 +222,7 @@ public class AccountEngineExecution {
 		}
 
 		for (TransactionEntry txnEntry : txnEntries) {
-			setAccountNumber(aeEvent, txnEntry, dataMap);
+			setAccount(aeEvent, txnEntry, dataMap);
 		}
 
 		return getReturnDataSet(aeEvent, txnEntries);
@@ -442,10 +442,26 @@ public class AccountEngineExecution {
 
 			dataMap.putAll(FeeCalculator.getFeeRuleMap(fd));
 		}
+	}
+
+	private String createAccount(Rule rule, String ccy, Map<String, Object> dataMap) {
+		String sqlRule = rule.getSQLRule();
+
+		if ("DEFAULT".equals(rule.getRuleCode())) {
+			return dataMap.get("ae_finType").toString() + dataMap.get("acType").toString();
+		}
+
+		String account = (String) RuleExecutionUtil.executeRule(sqlRule, dataMap, ccy, RuleReturnType.STRING);
+
+		if ("null".equalsIgnoreCase(account)) {
+			account = "";
+		}
+
+		return account;
 
 	}
 
-	private void setAccountNumber(AEEvent aeEvent, TransactionEntry txnEntry, Map<String, Object> dataMap) {
+	private void setAccount(AEEvent aeEvent, TransactionEntry txnEntry, Map<String, Object> dataMap) {
 		String accountType = StringUtils.trimToEmpty(txnEntry.getAccountType());
 		String subHeadRule = StringUtils.trimToEmpty(txnEntry.getAccountSubHeadRule());
 
@@ -459,6 +475,7 @@ public class AccountEngineExecution {
 		String moduleSubhead = RuleConstants.MODULE_SUBHEAD;
 
 		dataMap.put("acType", txnEntry.getAccountType());
+
 		if (aeEvent.isEOD()) {
 			rule = AccountingConfigCache.getCacheRule(accountSubHeadRule, moduleSubhead, moduleSubhead);
 		} else {
@@ -466,16 +483,7 @@ public class AccountEngineExecution {
 		}
 
 		if (rule != null) {
-			String sqlRule = rule.getSQLRule();
-			String ccy = aeEvent.getCcy();
-
-			String accountNumber = (String) RuleExecutionUtil.executeRule(sqlRule, dataMap, ccy, RuleReturnType.STRING);
-
-			if ("null".equalsIgnoreCase(accountNumber)) {
-				accountNumber = "";
-			}
-
-			txnEntry.setAccount(accountNumber);
+			txnEntry.setAccount(createAccount(rule, aeEvent.getCcy(), dataMap));
 
 			if (aeEvent.isEOD()) {
 				txnEntry.setGlCode(AccountingConfigCache.getCacheAccountMapping(txnEntry.getAccount()));

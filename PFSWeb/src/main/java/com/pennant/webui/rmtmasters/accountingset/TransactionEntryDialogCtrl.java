@@ -115,10 +115,6 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private static final long serialVersionUID = 4345607610334573882L;
 	private static final Logger logger = LogManager.getLogger(TransactionEntryDialogCtrl.class);
 
-	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
 	protected Window window_TransactionEntryDialog;
 	protected Intbox transOrder;
 	protected Textbox transDesc;
@@ -259,10 +255,6 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		// Set the page level components.
 		setPageComponents(window_TransactionEntryDialog);
 
-		// READ OVERHANDED params !
-		// we get the transactionEntryListWindow controller. So we have access
-		// to it and can synchronize the shown data when we do insert, edit or
-		// delete transactionEntry here.
 		if (arguments.containsKey("accountingSetDialogCtrl")) {
 			setAccountingSetDialogCtrl((AccountingSetDialogCtrl) arguments.get("accountingSetDialogCtrl"));
 		} else {
@@ -529,6 +521,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		} else {
 			this.lovDescAccountBranchName.setValue("");
 		}
+
 		if (aTransactionEntry.getLovDescAccountSubHeadRuleName() != null
 				&& StringUtils.isNotEmpty(aTransactionEntry.getLovDescAccountSubHeadRuleName())) {
 			this.lovDescAccountSubHeadRuleName
@@ -538,6 +531,11 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 									+ aTransactionEntry.getLovDescAccountSubHeadRuleName());
 		} else {
 			this.lovDescAccountSubHeadRuleName.setValue("");
+		}
+
+		if (aTransactionEntry.isNewRecord() && aTransactionEntry.getLovDescAccountSubHeadRuleName() == null) {
+			this.accountSubHeadRule.setValue("DEFAULT");
+			this.lovDescAccountSubHeadRuleName.setValue("DEFAULT-Default Sub Head Rule [LoanType+AccountType]");
 		}
 
 		String type = aTransactionEntry.getPostToSys();

@@ -1389,4 +1389,13 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="TK#6521_1" author="Gireesh.g">
+		<sql>
+			<![CDATA[
+		    	Update RMTTRANSACTIONENTRY set ACCOUNTSUBHEADRULE = 'DEFAULT';
+				Update RMTTRANSACTIONENTRY_TEMP set ACCOUNTSUBHEADRULE = 'DEFAULT';
+		 	]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

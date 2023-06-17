@@ -20382,5 +20382,57 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="TK#6521_1" author="Gireesh.g">
+		<sql>
+			<![CDATA[
+		    	Delete from Rules Where RuleModule = 'SUBHEAD' and RuleModule = 'SUBHEAD' and RuleCode = 'DEFAULT';
+				INSERT INTO Rules(RuleID, RuleModule, RuleEvent, RuleCode, RuleCodeDesc, WAIVER, VERSION, ALLOWDEVIATION, CALFEEMODIFY, REVOLVING, ACTIVE, SQLRULE, ACTUALBLOCK, RECORDSTATUS, LASTMNTBY, WORKFLOWID, SEQORDER, groupId) Values ((SELECT MAX(RuleID) + 1 FROM Rules_View), 'SUBHEAD', 'SUBHEAD', 'DEFAULT', 'Default Sub Head Rule [LoanType+AccountType]', 0, 1, 0, 0, 1, 1, 'SQLRULE', 'ACTUALBLOCK', 'Approved', 1000, 0, 0, 0);
+		 	]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#6521_2" author="Gireesh.g" dbms="oracle" runAlways="true">
+		<sql splitStatements="false">
+		<![CDATA[
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(RuleID),0)+1 into v_maxval from Rules;
+			EXECUTE IMMEDIATE 'alter sequence SeqRules restart start with ' || v_maxval;
+			end;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#6521_2" author="Gireesh.g" dbms="postgresql" runAlways="true">
+		<sql splitStatements="false">
+		<![CDATA[
+			do $$
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(RuleID),0)+1 into v_maxval from Rules;
+			EXECUTE 'alter sequence SeqRules restart start with ' || v_maxval;
+			end;
+			$$;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#6521_2" author="Gireesh.g" dbms="mssql" runAlways="true">
+		<sql splitStatements="false">
+		<![CDATA[
+			DECLARE @SQLCmd NVARCHAR(MAX);
+			DECLARE @Seq BIGINT;
+			SELECT @Seq=COALESCE(max(RuleID),0)+1 From Rules;
+			
+			SET @SQLCmd = '
+			ALTER SEQUENCE SeqRules
+			RESTART WITH ' + CAST( @Seq AS VARCHAR(30));
+			
+			EXEC SP_EXECUTESQL  @SQLCmd;
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog> 
