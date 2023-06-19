@@ -2420,6 +2420,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						receiptDate = rh.getReceivedDate();
 						receivedDate = rh.getReceiptDate();
 
+						if (receiptDate == null) {
+							receiptDate = rd.getValueDate();
+						}
+
 						for (PresentmentDetail pd : PresentmentDetailsList) {
 							String mandateType = StringUtils.trimToEmpty(pd.getMandateType());
 
@@ -2429,13 +2433,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 									status = " - Subject to realization";
 								}
 
-								if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
-									if (("P".equals(pd.getPresentmentType()))) {
-										soaTranReport.setTransactionDate(receivedDate);
-									}
-								}
-
-								// instlNo = instNumbers.computeIfAbsent(pd.getReceiptID(), rid -> 0);
+								soaTranReport.setTransactionDate(receivedDate);
 
 								if (InstrumentType.isDD(mandateType)) {
 									paymentType = "Direct Debit";
@@ -2531,7 +2529,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					}
 
 					soaTranReport.setPriority(10);
-					if (!RepayConstants.PAYSTATUS_CANCEL.equals(receiptModeStatus)) {
+					if (!(RepayConstants.PAYSTATUS_CANCEL.equals(receiptModeStatus)
+							|| RepayConstants.PAYSTATUS_BOUNCE.equals(receiptModeStatus))) {
 						soaTransactionReports.add(soaTranReport);
 					}
 

@@ -564,7 +564,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower, AllowRevolving");
 		sql.append(", AppliedLoanAmt, FinIsRateRvwAtGrcEnd");
 		sql.append(", OverdraftTxnChrgReq, OverdraftCalcChrg, OverdraftChrgAmtOrPerc, OverdraftChrCalOn");
-		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn ");
+		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, UnderNPA");
 		if (!wif) {
 			sql.append(", InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated");
 			sql.append(", CustDSR, LimitValid, OverrideLimit, FinPurpose, FinStatus, FinStsReason");
@@ -598,7 +598,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?");
 		if (!wif) {
 			sql.append(", ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
@@ -771,6 +771,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setTimestamp(++index, fm.getCreatedOn());
 				ps.setObject(++index, fm.getApprovedBy());
 				ps.setTimestamp(++index, fm.getApprovedOn());
+				ps.setBoolean(++index, fm.isUnderNpa());
 				if (!wif) {
 					ps.setString(++index, fm.getInvestmentRef());
 					ps.setBoolean(++index, fm.isMigratedFinance());

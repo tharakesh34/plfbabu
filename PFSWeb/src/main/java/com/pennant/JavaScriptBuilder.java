@@ -1892,8 +1892,6 @@ public class JavaScriptBuilder extends Groupbox {
 
 					if (StringUtils.equals(selectedItem, "fm_ClosureType")
 							|| StringUtils.equals(selectedItem, "lt_closureType")) {
-						closureTypeList
-								.add(new ValueLabel(ClosureType.SETTLED.code(), Labels.getLabel("label_Settled")));
 						for (int i = 0; i < this.closureTypeList.size(); i++) {
 							ValueLabel closureDetails = this.closureTypeList.get(i);
 							String closureDetailsValue = closureDetails.getValue();
@@ -1908,6 +1906,16 @@ public class JavaScriptBuilder extends Groupbox {
 								if (StringUtils.trimToEmpty(value).equals(closureDetailsValue)) {
 									operand.setSelectedItem(comboitem);
 								}
+							}
+						}
+
+						if (leftOperand.getSelectedIndex() != 0) {
+							comboitem.setLabel(Labels.getLabel("label_Settled"));
+							comboitem.setValue(ClosureType.SETTLED.code());
+							operand.appendChild(comboitem);
+
+							if (StringUtils.trimToEmpty(value).equals(Labels.getLabel("label_Settled"))) {
+								operand.setSelectedItem(comboitem);
 							}
 						}
 					} else if (StringUtils.equals(selectedItem, "PrvLetterCourierDeliveryStatus")
