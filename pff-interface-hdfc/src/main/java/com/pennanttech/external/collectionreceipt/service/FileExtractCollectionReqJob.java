@@ -10,8 +10,6 @@ import java.util.Scanner;
 
 import javax.sql.DataSource;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.batch.item.ExecutionContext;
@@ -33,8 +31,6 @@ import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FileExtractCollectionReqJob extends AbstractJob implements InterfaceConstants, ErrorCodesConstants {
-
-	private static final Logger logger = LogManager.getLogger(FileExtractCollectionReqJob.class);
 
 	private static final String ROW1 = "'H'";
 	private static final String ROW2 = "H";
@@ -117,7 +113,7 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 									continue;
 								}
 
-								if (!validateRow1(lineData, "Filename")) {
+								if (!validateRow(lineData, "Filename")) {
 									extReceiptHeader.setErrorCode(CR1006);
 									extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(CR1006));
 									continue;
@@ -133,7 +129,7 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 									continue;
 								}
 
-								if (!validateRow2(lineData, requestFileName)) {
+								if (!validateRow(lineData, requestFileName)) {
 									extReceiptHeader.setErrorCode(CR1007);
 									extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(CR1007));
 									continue;
@@ -221,25 +217,12 @@ public class FileExtractCollectionReqJob extends AbstractJob implements Interfac
 		logger.debug(Literal.LEAVING);
 	}
 
-	private boolean validateRow2(String lineData, String fileName) {
+	private boolean validateRow(String lineData, String fileName) {
 		logger.debug(Literal.ENTERING);
 		String[] row1Str = lineData.split("\\|", -1);
-		if (row1Str.length == 32) {
-			if (row1Str[1].equals(fileName)) {
-				return true;
-			}
-		}
-		logger.debug(Literal.LEAVING);
-		return false;
-	}
+		if (row1Str.length == 32 && (row1Str[1].equals(fileName))) {
+			return true;
 
-	private boolean validateRow1(String lineData, String fileName) {
-		logger.debug(Literal.ENTERING);
-		String[] row1Str = lineData.split("\\|", -1);
-		if (row1Str.length == 32) {
-			if (row1Str[1].equals(fileName)) {
-				return true;
-			}
 		}
 		logger.debug(Literal.LEAVING);
 		return false;

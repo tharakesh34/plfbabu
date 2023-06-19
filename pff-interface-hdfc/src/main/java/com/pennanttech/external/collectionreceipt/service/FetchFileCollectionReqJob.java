@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
@@ -32,10 +30,9 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class FetchFileCollectionReqJob extends AbstractJob
 		implements InterfaceConstants, ExtIntfConfigConstants, ErrorCodesConstants {
 
-	private static final Logger logger = LogManager.getLogger(FetchFileCollectionReqJob.class);
+	private static final String INPROC = ".inproc";
 
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
-	private ApplicationContext applicationContext;
 
 	private FileInterfaceConfig collectionReqConfig;
 
@@ -43,7 +40,7 @@ public class FetchFileCollectionReqJob extends AbstractJob
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
 		// Get all the required DAO's
-		applicationContext = ApplicationContextProvider.getApplicationContext();
+		ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
 
 		fetchRemoteFiles();
@@ -86,7 +83,7 @@ public class FetchFileCollectionReqJob extends AbstractJob
 		List<String> filteredFileNames = new ArrayList<>();
 		for (String fileName : fileNames) {
 
-			if (fileName.contains(".inproc")) {
+			if (fileName.contains(INPROC)) {
 				logger.debug(InterfaceErrorCodeUtil.getErrorMessage(CR1003));
 				continue;
 			}
@@ -98,7 +95,7 @@ public class FetchFileCollectionReqJob extends AbstractJob
 				// Changing file to inproc in local folder
 				String procName = fileName.substring(0, fileName.indexOf(collectionReqConfig.getFileExtension()));
 				// Change Extension to .inproc
-				procName = procName.concat(".inproc");
+				procName = procName.concat(INPROC);
 
 				Path srcPath = Paths.get(localFolderPath + File.separator + fileName);
 				Path destPath = Paths.get(localFolderPath + File.separator + procName);
@@ -118,7 +115,7 @@ public class FetchFileCollectionReqJob extends AbstractJob
 
 		}
 
-		if (filteredFileNames.size() > 0) {
+		if (!filteredFileNames.isEmpty()) {
 			saveFetchedFiles();
 		}
 
@@ -136,7 +133,7 @@ public class FetchFileCollectionReqJob extends AbstractJob
 		}
 
 		// Fetch the list of files from configured folder
-		File filesList[] = dirPath.listFiles();
+		File[] filesList = dirPath.listFiles();
 
 		if (filesList == null || filesList.length == 0) {
 			// no files
@@ -151,7 +148,6 @@ public class FetchFileCollectionReqJob extends AbstractJob
 			if (isFileFound) {
 				// Check if the file is already processed in table
 				// boolean isFileProcessed = extCollectionReceiptDao.isFileProcessed(fileName, COMPLETED);
-				//
 				// if (isFileProcessed) {
 				// logger.debug("EXT_FILE: File already processed, so returning.");
 				// continue;
@@ -159,7 +155,7 @@ public class FetchFileCollectionReqJob extends AbstractJob
 				continue;
 			}
 
-			if (file.getName().contains(".inproc")) {
+			if (file.getName().contains(INPROC)) {
 				continue;
 			}
 
