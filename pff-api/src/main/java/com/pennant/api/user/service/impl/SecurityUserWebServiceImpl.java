@@ -1,5 +1,6 @@
 package com.pennant.api.user.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,8 +14,13 @@ import com.pennant.api.user.service.SecurityUserRestService;
 import com.pennant.api.user.service.SecurityUserSoapService;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.model.administration.SecurityUserDivBranch;
+import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.applicationmaster.Cluster;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.administration.SecurityUserService;
@@ -25,6 +31,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.RequestSource;
 
 @Service
 public class SecurityUserWebServiceImpl extends AbstractService
@@ -32,6 +39,7 @@ public class SecurityUserWebServiceImpl extends AbstractService
 
 	private SecurityUserService securityUserService;
 	private SecurityUserController securityUserController;
+	private SecurityUserOperationsDAO securityUserOperationsDAO;
 
 	@Override
 	public SecurityUser createSecurityUser(SecurityUser user) throws ServiceException {
@@ -40,6 +48,7 @@ public class SecurityUserWebServiceImpl extends AbstractService
 		boolean isAllowCluster = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER);
 		LoggedInUser liu = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 
+		user.setRequestSource(RequestSource.API);
 		AuditHeader ah = getAuditHeader(user, PennantConstants.TRAN_WF);
 
 		AuditDetail ad = securityUserService.doUserValidation(ah, isAllowCluster, false, liu);
@@ -51,11 +60,12 @@ public class SecurityUserWebServiceImpl extends AbstractService
 		if (CollectionUtils.isNotEmpty(errors)) {
 			ErrorDetail ed = errors.get(errors.size() - 1);
 
-			SecurityUser seqUser = new SecurityUser();
-			seqUser.setReturnStatus(getFailedStatus(ed.getCode(), ed.getError()));
-			return seqUser;
+			SecurityUser secUser = new SecurityUser();
+			secUser.setReturnStatus(getFailedStatus(ed.getCode(), ed.getError()));
+			return secUser;
 		}
 
+		user.setRequestSource(RequestSource.API);
 		SecurityUser response = securityUserController.createSecurityUser(user, liu);
 
 		logKeyFields(user.getUsrLogin(), user.getUsrFName());
@@ -103,10 +113,100 @@ public class SecurityUserWebServiceImpl extends AbstractService
 			return getFailedStatus(ed.getCode(), ed.getError());
 		}
 
+		user.setRequestSource(RequestSource.API);
+
 		WSReturnStatus returnStatus = securityUserController.updateSecurityUser(user, isAllowCluster, liu);
 
 		logger.debug(Literal.LEAVING);
 		return returnStatus;
+	}
+
+	@Override
+	public SecurityUser getSecurityUser(SecurityUser securityUser) {
+		logger.debug(Literal.ENTERING);
+
+		SecurityUser response;
+
+		String userName = securityUser.getUsrLogin();
+
+		if (StringUtils.isEmpty(userName)) {
+			response = new SecurityUser();
+			response.setReturnStatus(getFailedStatus("90502", "Login Name"));
+			return response;
+		}
+
+		response = securityUserService.getSecurityUserByLogin(userName);
+
+		if (response == null) {
+			response = new SecurityUser();
+			response.setReturnStatus(getFailedStatus("92021", "There is no approved User with requested Login Name"));
+		}
+
+		List<SecurityUserDivBranch> divBranchList = securityUserService.getSecUserDivBrList(response.getUsrID(), "");
+		prepareSecurityBranch(divBranchList);
+		response.setSecurityUserDivBranchList(divBranchList);
+		response.setSecurityUserOperationsList(
+				securityUserOperationsDAO.getSecUserOperationsByUsrID(response, "_View"));
+		response.setReturnStatus(getSuccessStatus());
+		response.setUsrPwd(null);
+
+		return response;
+	}
+
+	private void prepareSecurityBranch(List<SecurityUserDivBranch> divBranchList) {
+		List<Entity> entities = new ArrayList<>();
+		List<Branch> branches = new ArrayList<>();
+		List<Cluster> clusters = new ArrayList<>();
+
+		for (SecurityUserDivBranch divBranch : divBranchList) {
+			switch (divBranch.getAccessType()) {
+			case PennantConstants.ACCESSTYPE_ENTITY:
+				Entity entity = new Entity();
+				entity.setEntityCode(divBranch.getEntity());
+				entities.add(entity);
+				divBranch.setEntity(null);
+				divBranch.setClusterList(null);
+				divBranch.setBranchList(null);
+				break;
+			case PennantConstants.ACCESSTYPE_CLUSTER:
+				Cluster cluster = new Cluster();
+				cluster.setCode(divBranch.getClusterCode());
+				clusters.add(cluster);
+				divBranch.setClusterCode(null);
+				divBranch.setEntitiyList(null);
+				divBranch.setBranchList(null);
+				break;
+			case PennantConstants.ACCESSTYPE_BRANCH:
+				Branch branch = new Branch();
+				branch.setBranchCode(divBranch.getUserBranch());
+				branches.add(branch);
+				divBranch.setUserBranch(null);
+				divBranch.setEntitiyList(null);
+				divBranch.setClusterList(null);
+				break;
+			default:
+				break;
+			}
+		}
+
+		for (SecurityUserDivBranch divBranch : divBranchList) {
+			switch (divBranch.getAccessType()) {
+			case PennantConstants.ACCESSTYPE_ENTITY:
+				divBranch.setEntitiyList(entities.stream().distinct().toList());
+				break;
+			case PennantConstants.ACCESSTYPE_CLUSTER:
+				divBranch.setClusterList(clusters.stream().distinct().toList());
+				// list.stream().filter( distinctByKey(p -> p.getFname() + " " + p.getLname()) ).collect(
+				// Collectors.toList() )
+				break;
+			case PennantConstants.ACCESSTYPE_BRANCH:
+				divBranch.setBranchList(branches.stream().distinct().toList());
+				break;
+			default:
+				break;
+			}
+		}
+
 	}
 
 	private AuditHeader getAuditHeader(SecurityUser user, String tranType) {
@@ -184,4 +284,8 @@ public class SecurityUserWebServiceImpl extends AbstractService
 		this.securityUserController = securityUserController;
 	}
 
+	@Autowired
+	public void setSecurityUserOperationsDAO(SecurityUserOperationsDAO securityUserOperationsDAO) {
+		this.securityUserOperationsDAO = securityUserOperationsDAO;
+	}
 }

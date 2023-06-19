@@ -62,7 +62,6 @@ public class AbstractResponse extends AbstractController {
 		LoanDetail ld = new LoanDetail();
 
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
-		FinanceSummary fs = fd.getFinScheduleData().getFinanceSummary();
 		List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
 		Branch branch = branchDAO.getBranchById(fm.getFinBranch(), "_AView");
 
@@ -103,6 +102,10 @@ public class AbstractResponse extends AbstractController {
 		cd.setNatureOfBusiness(c.getNatureOfBusiness());
 		cd.setCustCategory(c.getLovDescCustCtgCodeName());
 		cd.setCustGroupID(c.getCustGroupID());
+		cd.setPhone1(details.getPhone1());
+		cd.setPhone2(details.getPhone2());
+		cd.setMobile1(details.getMobile1());
+		cd.setMobile2(details.getMobile2());
 
 		cd.setFullAddress(CustomerUtil.getCustomerFullAddress(details.getAddressList()));
 		cd.setCustAddresses(details.getAddressList());
@@ -111,6 +114,7 @@ public class AbstractResponse extends AbstractController {
 		cd.setCustEmployments(details.getEmploymentDetailsList());
 		cd.setCustomerDocuments(details.getCustomerDocumentsList());
 		cd.setCustomerIncomes(setIncomeDetails(details.getCustomerIncomeList()));
+
 	}
 
 	private List<CustomerIncome> setIncomeDetails(List<CustomerIncome> customerIncomes) {

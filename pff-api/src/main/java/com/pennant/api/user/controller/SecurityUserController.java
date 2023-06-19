@@ -50,6 +50,7 @@ public class SecurityUserController extends AbstractController {
 		user.setApprovedOn(new Timestamp(System.currentTimeMillis()));
 		user.setApprovedBy(ud.getUserId());
 		user.setPwdExpDt(DateUtil.addDays(new Date(System.currentTimeMillis()), -1));
+		user.setUsrRawPwd(user.getUsrPwd());
 		user.setUsrPwd(((PasswordEncoder) SpringBeanUtil.getBean("passwordEncoder")).encode(user.getUsrPwd()));
 
 		AuditHeader ah = getAuditHeader(user, PennantConstants.TRAN_WF);

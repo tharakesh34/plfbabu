@@ -269,4 +269,13 @@ public class DivisionDetailDAOImpl extends BasicDao<DivisionDetail> implements D
 
 		return jdbcOperations.queryForObject(sql, Integer.class, division, 1) > 0;
 	}
+
+	@Override
+	public boolean isValidEntityCode(String division, String entity) {
+		String sql = "Select coalesce(count(EntityCode), 0) From SMTDivisionDetail Where DivisionCode = ? and EntityCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, division, entity) > 0;
+	}
 }
