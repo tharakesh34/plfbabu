@@ -10,8 +10,6 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.batch.item.ExecutionContext;
@@ -43,19 +41,15 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class FileWriteCollectionRespJob extends AbstractJob
 		implements InterfaceConstants, ErrorCodesConstants, ExtIntfConfigConstants {
 
-	private static final Logger logger = LogManager.getLogger(FileWriteCollectionRespJob.class);
-
 	private static final String FETCH_QUERY = "Select * from COLL_RECEIPT_HEADER  Where WRITE_RESPONSE = ? AND RESP_FILE_STATUS =?";
 
-	private DataSource extDataSource;
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
 	private ExtPresentmentDAO extPresentmentDAO;
-	private ApplicationContext applicationContext;
 
 	private CollectionReceiptService collectionReceiptService;
 
 	private static final String REJECTED_RECORDS_HEADER = "REJECTED RECORDS:||||||||||||||||||||||||||||||||||";
-	private static final String Reject_RECORDS_FOOTER = "||||||||||||||||||||||||||||||||||";
+	private static final String REJECT_RECORDS_FOOTER = "||||||||||||||||||||||||||||||||||";
 	private static final String SUCESS_RECORDS_FOOTER = "|||||||||||||||||||||||||||||||||";
 	private static final String UNDERLINE_HEADER = "-----------------||||||||||||||||||||||||||||||||||";
 	private static final String MAIN_HEADER = "AGREEMENTNO|RECEIPTNO|RECEIPT_CHANNEL|AGENCYID|CHEQUE NO.|DEALINGBANKID|DRAWNON|TOWARDS|RECEIPT AMT|CHEQUEDATE|CITY|RECEIPT DATE|RECEIPT";
@@ -64,8 +58,8 @@ public class FileWriteCollectionRespJob extends AbstractJob
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
-		applicationContext = ApplicationContextProvider.getApplicationContext();
-		extDataSource = applicationContext.getBean("extDataSource", DataSource.class);
+		ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+		DataSource extDataSource = applicationContext.getBean("extDataSource", DataSource.class);
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
 		extPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
 		collectionReceiptService = applicationContext.getBean(CollectionReceiptService.class);
@@ -205,8 +199,8 @@ public class FileWriteCollectionRespJob extends AbstractJob
 			itemList.add(itemStr);
 		}
 
-		itemList.add(new StringBuilder(Reject_RECORDS_FOOTER));
-		itemList.add(new StringBuilder(Reject_RECORDS_FOOTER));
+		itemList.add(new StringBuilder(REJECT_RECORDS_FOOTER));
+		itemList.add(new StringBuilder(REJECT_RECORDS_FOOTER));
 
 		// Success records preparation
 		StringBuilder validRow = new StringBuilder();
@@ -334,12 +328,12 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		appendSeperator(item, detail.getOtherCharge4());
 		appendSeperator(item, detail.getOtherAmt4());
 		appendSeperator(item, detail.getRemarks());
-		appendSeperator(item, "1000");// System Admin Id
+		appendSeperator(item, "1000");// PLF System Admin Id
 		appendSeperator(item, new SimpleDateFormat("dd-MMM-yy").format(detail.getUploadDate()));
-		appendSeperator(item, StringUtils.stripToEmpty(detail.getErrorCode()));// Reason
-		appendSeperator(item, "");// Redepositing flag
+		appendSeperator(item, StringUtils.stripToEmpty(detail.getErrorCode()));
+		appendSeperator(item, "");
 		appendSeperator(item, rejectRowNum);
-		item.append(detail.getChecksum());// Checksum
+		item.append(detail.getChecksum());
 		return item;
 	}
 
