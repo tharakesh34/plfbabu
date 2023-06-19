@@ -364,7 +364,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			if (enquiry.isFinIsActive()) {
 				this.finStatus_header.setValue("Active");
-			} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
+			} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus) || !enquiry.isFinIsActive()) {
 				this.finStatus_header.setValue(Labels.getLabel("label_Closed"));
 			} else {
 				this.finStatus_header.setValue("Matured");

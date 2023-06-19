@@ -101,6 +101,7 @@ import com.pennant.pff.extension.PresentmentExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.holdmarking.service.HoldMarkingService;
 import com.pennant.pff.letter.service.LetterService;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -356,6 +357,12 @@ public class RepaymentProcessUtil {
 				}
 				profitDetail.setFinIsActive(false);
 				profitDetail.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
+
+				if (FinanceUtil.isClosedNow(fm)) {
+					rch.setClosureType(
+							rch.getClosureType() == null ? ClosureType.CLOSURE.code() : rch.getClosureType());
+					fm.setClosureType(rch.getClosureType());
+				}
 			} else {
 				fm.setFinIsActive(true);
 			}
