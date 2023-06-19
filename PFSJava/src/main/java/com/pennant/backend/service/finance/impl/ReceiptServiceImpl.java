@@ -6868,6 +6868,15 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				rch.getReceiptDetails().add(rcd);
 
 			}
+		} else {
+			if (rd.getTotalPastDues().compareTo(rch.getReceiptAmount()) >= 0) {
+				rcd.setDueAmount(rch.getReceiptAmount());
+				rd.setTotalPastDues(rd.getTotalPastDues().subtract(rch.getReceiptAmount()));
+			} else {
+				rcd.setDueAmount(rd.getTotalPastDues());
+				rd.setTotalPastDues(BigDecimal.ZERO);
+			}
+
 		}
 
 		if (CollectionUtils.isEmpty(rch.getXcessPayables())) {

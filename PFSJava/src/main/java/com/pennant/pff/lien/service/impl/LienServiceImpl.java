@@ -36,7 +36,6 @@ public class LienServiceImpl implements LienService {
 		super();
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public void save(FinanceDetail fd, boolean isMandate) {
 		logger.debug(Literal.ENTERING);
@@ -65,9 +64,6 @@ public class LienServiceImpl implements LienService {
 			lh = lienHeaderDAO.getLienByAccAndStatus(accNumber, true);
 		}
 
-		if (lh != null && Labels.getLabel("label_Lien_Type_Awaiting_Confirmation").equals(lh.getInterfaceStatus())) {
-			return;
-		}
 		long headerID = 0;
 
 		if (lh == null) {
@@ -99,7 +95,7 @@ public class LienServiceImpl implements LienService {
 					lh.setDemarkingDate(fm.getClosedDate());
 					if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
 						lh.setDemarkingDate(appDate);
-					} 
+					}
 					lienHeaderDAO.update(lh);
 
 					LienDetails lu = getLienDetails(lh, fm);
@@ -109,18 +105,22 @@ public class LienServiceImpl implements LienService {
 					lu.setDemarkingDate(fm.getClosedDate());
 					if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
 						lu.setDemarkingDate(appDate);
-					} 
+					}
 					setLienDeMarkStatus(lu, fm.getModuleDefiner());
 					setLienDeMarkReason(lu, fm.getModuleDefiner());
 
 					lienDetailsDAO.update(lu);
 				} else {
+					if (Labels.getLabel("label_Lien_Type_Awaiting_Confirmation").equals(lh.getInterfaceStatus())) {
+						return;
+					}
+
 					lh.setLienStatus(true);
 					lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
 					lh.setMarking(Labels.getLabel("label_Lien_Type_Auto"));
 					if (!FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
 						lh.setMarkingDate(fm.getFinStartDate());
-					} 
+					}
 					lienHeaderDAO.update(lh);
 
 					LienDetails lu = getLienDetails(lh, fm);
@@ -131,7 +131,7 @@ public class LienServiceImpl implements LienService {
 					lu.setMarkingDate(lh.getMarkingDate());
 					if (!FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
 						lu.setMarkingDate(fm.getFinStartDate());
-					} 
+					}
 					setLienMarkStatus(lu, fm.getModuleDefiner());
 					lienDetailsDAO.update(lu);
 
