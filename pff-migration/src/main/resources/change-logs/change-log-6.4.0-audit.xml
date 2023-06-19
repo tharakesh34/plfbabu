@@ -824,4 +824,11 @@
 			<column name="LetterID" type = "bigint"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="SecUsers3" author="HariTeja.B">
+		<addColumn tableName="ADTSecUsers">
+			<column name="BaseLocation" type = "varchar(100)"/>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

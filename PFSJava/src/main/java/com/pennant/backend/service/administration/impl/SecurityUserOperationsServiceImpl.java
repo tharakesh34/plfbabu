@@ -53,6 +53,7 @@ import com.pennant.backend.service.administration.SecurityUserOperationsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.core.RequestSource;
 
 public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUserOperations>
 		implements SecurityUserOperationsService {
@@ -207,6 +208,9 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 				}
 			}
 		} else {
+			if (RequestSource.API.equals(secUser.getRequestSource())) {
+				return auditDetail;
+			}
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!secUser.isWorkflow()) { // With out Work flow for update and

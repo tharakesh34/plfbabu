@@ -62,4 +62,9 @@ public interface BranchDAO extends BasicCrudDao<Branch> {
 
 	List<String> getBranchCodeByClusterId(long clusterId);
 
+	List<String> getBranchCodes(String entityCode, String clusterCode);
+
+	List<String> getBranchCodesByEntity(String entityCode);
+
+	List<String> getBranchCodesByClusterID(String entityCode, long clusterID);
 }

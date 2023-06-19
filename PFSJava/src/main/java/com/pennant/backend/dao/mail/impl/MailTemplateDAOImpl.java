@@ -304,7 +304,7 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 
 	@Override
 	public MailTemplate getTemplateByCode(String templateCode) {
-		String sql = "Select EmailTemplate, SmsTemplate, SmsContent, EmailContent, Active From Templates where TemplateCode = ?";
+		String sql = "Select EmailTemplate, SmsTemplate, SmsContent, EmailContent, Active, EmailSubject, EmailFormat, TemplateCode From Templates where TemplateCode = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -316,6 +316,9 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 			mt.setSmsContent(rs.getString("SmsContent"));
 			mt.setEmailContent(rs.getBytes("EmailContent"));
 			mt.setActive(rs.getBoolean("Active"));
+			mt.setEmailSubject(rs.getString("EmailSubject"));
+			mt.setEmailFormat(rs.getString("EmailFormat"));
+			mt.setTemplateCode("TemplateCode");
 
 			return mt;
 		}, templateCode);

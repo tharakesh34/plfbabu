@@ -55,6 +55,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.security.UserType;
+import com.pennanttech.pff.core.RequestSource;
 
 @XmlType(propOrder = { "usrID", "usrLogin" })
 @XmlAccessorType(XmlAccessType.NONE)
@@ -69,6 +70,7 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private String usrLogin;
 	@XmlElement
 	private String usrPwd;
+	private String usrRawPwd;
 	@XmlElement
 	private String usrLName;
 	@XmlElement
@@ -130,6 +132,7 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private Long businessVertical;
 	private String businessVerticalCode;
 	private String businessVerticalDesc;
+	@XmlElement 
 	private String ldapDomainName;
 	private String userType = UserType.USER.name();
 	@XmlElement
@@ -161,6 +164,15 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private String status;
 	@XmlElement
 	private String reason;
+	@XmlElement(name = "usrConfrmPwd")
+	private String confirmPassword;
+	private RequestSource requestSource;
+	@XmlElement
+	private String baseLocation;
+	@XmlElement
+	private boolean notifyUser;
+	@XmlElement
+	private String mode;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -178,6 +190,12 @@ public class SecurityUser extends AbstractWorkflowEntity {
 		excludeFields.add("sourceId");
 		excludeFields.add("status");
 		excludeFields.add("reason");
+		excludeFields.add("confirmPassword");
+		excludeFields.add("requestSource");
+		excludeFields.add("notifyUser");
+		excludeFields.add("mode");
+		excludeFields.add("usrRawPwd");
+
 		return excludeFields;
 	}
 
@@ -224,6 +242,14 @@ public class SecurityUser extends AbstractWorkflowEntity {
 
 	public void setUsrPwd(String usrPwd) {
 		this.usrPwd = usrPwd;
+	}
+
+	public String getUsrRawPwd() {
+		return usrRawPwd;
+	}
+
+	public void setUsrRawPwd(String usrRawPwd) {
+		this.usrRawPwd = usrRawPwd;
 	}
 
 	public String getUsrLName() {
@@ -737,4 +763,53 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
+
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
+
+	public RequestSource getRequestSource() {
+		return requestSource;
+	}
+
+	public void setRequestSource(RequestSource requestSource) {
+		this.requestSource = requestSource;
+	}
+
+	public String getLdapDomainName() {
+		return ldapDomainName;
+	}
+
+	public void setLdapDomainName(String ldapDomainName) {
+		this.ldapDomainName = ldapDomainName;
+	}
+
+	public String getBaseLocation() {
+		return baseLocation;
+	}
+
+	public void setBaseLocation(String baseLocation) {
+		this.baseLocation = baseLocation;
+	}
+
+	public boolean isNotifyUser() {
+		return notifyUser;
+	}
+
+	public void setNotifyUser(boolean notifyUser) {
+		this.notifyUser = notifyUser;
+	}
+
+	public String getMode() {
+		return mode;
+	}
+
+	public void setMode(String mode) {
+		this.mode = mode;
+	}
+
 }

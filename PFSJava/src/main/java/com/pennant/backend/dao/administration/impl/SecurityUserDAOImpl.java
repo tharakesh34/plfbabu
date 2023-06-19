@@ -136,14 +136,14 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append(", UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, UsrAcExp, UsrAcLocked");
 		sql.append(", UsrLanguage, UsrDftAppId, UsrDftAppCode, UsrBranchCode, UsrDeptCode, UsrToken");
 		sql.append(", UsrIsMultiBranch, UsrInvldLoginTries, UsrAcExpDt, UsrDesg, AuthType");
-		sql.append(", PwdExpDt, AccountUnLockedOn");
+		sql.append(", PwdExpDt, AccountUnLockedOn, BaseLocation");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
 		sql.append(", NextTaskId, RecordType, WorkflowId, businessvertical, LDAPDomainName, Deleted");
 		sql.append(", DisableReason, EmployeeType");
 		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(") Values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -183,6 +183,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 			ps.setString(index++, su.getAuthType());
 			ps.setDate(index++, JdbcUtil.getDate(su.getPwdExpDt()));
 			ps.setDate(index++, JdbcUtil.getDate(su.getAccountUnLockedOn()));
+			ps.setString(index++, su.getBaseLocation());
 			ps.setInt(index++, su.getVersion());
 			ps.setLong(index++, su.getLastMntBy());
 			ps.setTimestamp(index++, su.getLastMntOn());
@@ -218,7 +219,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append(", UsrAcLocked = ?, UsrLanguage = ?, UsrDftAppId = ?, UsrAcExpDt = ?, UsrDftAppCode = ?");
 		sql.append(", UsrBranchCode = ?, UsrDeptCode = ?, UsrIsMultiBranch = ?, UsrInvldLoginTries = ?");
 		sql.append(", UsrDesg = ?, AuthType = ?, PwdExpDt = ?, BusinessVertical = ?");
-		sql.append(", AccountLockedOn = ?, AccountUnLockedOn = ?");
+		sql.append(", AccountLockedOn = ?, AccountUnLockedOn = ?, BaseLocation = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(", LDAPDomainName = ?, DisableReason = ?, EmployeeType = ?");
@@ -262,6 +263,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 			ps.setObject(index++, su.getBusinessVertical());
 			ps.setDate(index++, JdbcUtil.getDate(su.getAccountLockedOn()));
 			ps.setDate(index++, JdbcUtil.getDate(su.getAccountUnLockedOn()));
+			ps.setString(index++, su.getBaseLocation());
 			ps.setInt(index++, su.getVersion());
 			ps.setLong(index++, su.getLastMntBy());
 			ps.setTimestamp(index++, su.getLastMntOn());
@@ -892,6 +894,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 			su.setDeleted(rs.getBoolean("Deleted"));
 			su.setDisableReason(rs.getString("DisableReason"));
 			su.setEmployeeType(rs.getString("EmployeeType"));
+			su.setBaseLocation(rs.getString("BaseLocation"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				su.setLovDescUsrDftAppCodeName(rs.getString("LovDescUsrDftAppCodeName"));
@@ -987,7 +990,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append(" UsrID, UsrLogin, UsrPwd, UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile");
 		sql.append(", UsrEmail, UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits");
 		sql.append(", UsrAcExp, UsrAcExpDt, UsrAcLocked, UsrLanguage, UsrDftAppId, UsrBranchCode, UsrDeptCode");
-		sql.append(", UsrToken, UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType, UsrDftAppCode");
+		sql.append(", UsrToken, UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType, UsrDftAppCode, BaseLocation");
 		sql.append(", PwdExpDt, UserType, BusinessVertical, LdapDomainName, Deleted, DisableReason, EmployeeType");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {

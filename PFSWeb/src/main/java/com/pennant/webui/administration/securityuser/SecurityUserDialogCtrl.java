@@ -188,6 +188,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	protected Textbox txtbox_randomKey;
 	protected Label ldapDomain;
 	protected Combobox ldapDomainName;
+	protected Textbox baseLocation;
 	/* not auto wired variables */
 	private SecurityUser securityUser;
 	private transient SecurityUserListCtrl securityUserListCtrl;
@@ -336,6 +337,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrLName.setMaxlength(50);
 		this.usrMobile.setMaxlength(13);
 		this.usrEmail.setMaxlength(50);
+		this.baseLocation.setMaxlength(50);
 
 		this.usrLanguage.setMaxlength(4);
 		this.usrLanguage.setMandatoryStyle(true);
@@ -590,6 +592,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrAcExp.setChecked(aSecurityUser.isUsrAcExp());
 		this.usrAcLocked.setChecked(aSecurityUser.isUsrAcLocked());
 		this.usrAcExpDt.setValue(aSecurityUser.getUsrAcExpDt());
+		this.baseLocation.setValue(aSecurityUser.getBaseLocation());
 
 		if (securityUser.isNewRecord()) {
 			this.usrDftAppId.setSelectedIndex(0);
@@ -785,6 +788,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				if (this.rowSecurityUserDialogUsrPwd.isVisible()) {
 					if (StringUtils.isNotEmpty(this.txtbox_Password1.getValue())) {
 						PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");
+						aSecurityUser.setUsrRawPwd(this.txtbox_Password1.getValue());
 						aSecurityUser.setUsrPwd(pwdEncoder
 								.encode(AESCipherUtil.decrypt(aSecurityUser.getUsrPwd(), txtbox_randomKey.getValue())));
 					}
@@ -994,6 +998,12 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				aSecurityUser.setBusinessVertical(null);
 			}
 
+		} catch (WrongValueException we) {
+			tab1.add(we);
+		}
+
+		try {
+			aSecurityUser.setBaseLocation(this.baseLocation.getValue());
 		} catch (WrongValueException we) {
 			tab1.add(we);
 		}
@@ -1251,7 +1261,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrDftAppId.setConstraint("");
 		this.disableReason.setConstraint("");
 		this.employeeType.setConstraint("");
-
+		this.baseLocation.setConstraint("");
 		doRemoveClusterValidation();
 		logger.debug(Literal.LEAVING);
 	}
@@ -1290,6 +1300,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.ENTERING);
+
 		this.usrLogin.setErrorMessage("");
 		this.authType.setErrorMessage("");
 		this.ldapDomainName.setErrorMessage("");
@@ -1309,6 +1320,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrDesg.setErrorMessage("");
 		this.disableReason.setErrorMessage("");
 		this.employeeType.setErrorMessage("");
+		this.baseLocation.setErrorMessage("");
+
 		logger.debug(Literal.LEAVING);
 
 	}
@@ -1402,6 +1415,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.btnNewReportingManagerList.setDisabled(isReadOnly("button_SecurityUserDialog_RM_btnNew"));
 		this.businessvertical.setReadonly(isReadOnly("SecurityUserDialog_RM_Businessvertical"));
 		this.employeeType.setDisabled(isReadOnly("SecurityUserDialog_usrEmployeeType"));
+		this.baseLocation.setReadonly(isReadOnly("SecurityUserDialog_BaseLocation"));
 
 		readOnlyComponent(isReadOnly("button_SecurityUserDialog_RM_btnNew"), this.btnNewReportingManagerList);
 		readOnlyComponent(isReadOnly("button_SecurityUserDialog_RM_btnNew"), this.btnNewReportingManagerList);
@@ -1463,6 +1477,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrDesg.setReadonly(true);
 		this.usrAcExpDt.setDisabled(true);
 		this.employeeType.setReadonly(true);
+		this.baseLocation.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1510,6 +1525,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrDesg.setValue("");
 		this.usrDesg.setDescription("");
 		this.employeeType.setValue("");
+		this.baseLocation.setValue("");
 
 		doClearClusters();
 		logger.debug(Literal.LEAVING);

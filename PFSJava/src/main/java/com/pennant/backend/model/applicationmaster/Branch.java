@@ -28,6 +28,8 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -38,6 +40,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class Branch extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 5702329578156631687L;
 
+	@XmlElement
 	private String branchCode;
 	private String branchDesc;
 	private String branchAddrLine1;

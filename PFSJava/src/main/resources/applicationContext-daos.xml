@@ -172,24 +172,7 @@
 	</bean>
 
 	<bean name="securityUserServiceTarget"
-		class="com.pennant.backend.service.administration.impl.SecurityUserServiceImpl">
-		<property name="securityUserDAO" ref="securityUserDAO" />
-		<property name="securityUserPasswordsDAO" ref="securityUserPasswordsDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="queueAssignmentDAO" ref="queueAssignmentDAO" />
-		<property name="securityUserOperationsDAO" ref="securityUserOperationsDAO" />
-		<property name="reportingManagerDAO" ref="reportingManagerDAO"></property>
-		<property name="securityUserAccessService" ref="securityUserAccessService"></property>
-		<property name="securityUserHierarchyService" ref="securityUserHierarchyService"></property>
-		<property name="clusterDAO" ref="clusterDAO" />
-		<property name="divisionDetailDAO" ref="divisionDetailDAO" />
-		<property name="entityDAO" ref="entityDAO" />
-		<property name="languageDAO" ref="languageDAO" />
-		<property name="designationDAO" ref="designationDAO" />
-		<property name="departmentDAO" ref="departmentDAO" />
-		<property name="branchDAO" ref="branchDAO" />
-		<property name="notesDAO" ref="notesDAO" />
-	</bean>
+		class="com.pennant.backend.service.administration.impl.SecurityUserServiceImpl"/>
 
 	<!--================= Security Password Details ================ -->
 	<bean id="securityUserPasswordsDAO"

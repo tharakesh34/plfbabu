@@ -47,4 +47,6 @@ public interface DivisionDetailDAO extends BasicCrudDao<DivisionDetail> {
 	String getEntityCodeByDivision(String finDivision, String type);
 
 	boolean isActiveDivision(String division);
+
+	boolean isValidEntityCode(String division, String entity);
 }

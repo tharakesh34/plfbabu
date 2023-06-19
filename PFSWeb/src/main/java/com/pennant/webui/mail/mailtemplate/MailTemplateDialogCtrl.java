@@ -1183,36 +1183,28 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		this.row_TemplateEvent.setVisible(false);
 
 		String eventValue = templateModule.getSelectedItem().getValue().toString();
+
 		if (eventValue.equals(NotificationConstants.MAIL_MODULE_FIN)) {
 			this.row_TemplateEvent.setVisible(true);
 		} else {
 			this.templateEvent.setSelectedIndex(0);
 		}
-		if (StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
-				NotificationConstants.MAIL_MODULE_FIN)) {
-			fillComboBox(this.templateFor, this.templateModule.getSelectedItem().getValue().toString(), listTemplateFor,
-					",PN,");
+		if (StringUtils.equals(eventValue, NotificationConstants.MAIL_MODULE_FIN)) {
+			fillComboBox(this.templateFor, eventValue, listTemplateFor, ",PN,");
 
-		} else if (StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
-				NotificationConstants.MAIL_MODULE_PROVIDER)) {
-			fillComboBox(this.templateFor, this.templateModule.getSelectedItem().getValue().toString(), listTemplateFor,
-					",SP,DN,AE,CN,");
+		} else if (StringUtils.equals(eventValue, NotificationConstants.MAIL_MODULE_PROVIDER)) {
+			fillComboBox(this.templateFor, eventValue, listTemplateFor, ",SP,DN,AE,CN,");
 		}
 
-		if (this.templateModule.getSelectedItem().getValue() != null
-				&& (StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
-						NotificationConstants.MAIL_MODULE_CAF)
-						|| StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
-								NotificationConstants.MAIL_MODULE_FIN)
-						|| StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
-								NotificationConstants.MAIL_MODULE_CREDIT)
-						|| StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
-								NotificationConstants.MAIL_MODULE_PROVIDER)
-						|| NotificationConstants.TEMPLATE_FOR_OTP
-								.equals(this.templateModule.getSelectedItem().getValue().toString()))) {
-			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData,
-					this.templateEvent.getSelectedItem().getValue());
-			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData1,
+		if (NotificationConstants.MAIL_MODULE_CAF.equals(eventValue)
+				|| NotificationConstants.MAIL_MODULE_FIN.equals(eventValue)
+				|| NotificationConstants.MAIL_MODULE_CREDIT.equals(eventValue)
+				|| NotificationConstants.MAIL_MODULE_PROVIDER.equals(eventValue)
+				|| NotificationConstants.TEMPLATE_FOR_OTP.equals(eventValue)
+				|| NotificationConstants.TEMPLATE_FOR_UPD.equals(eventValue)) {
+
+			doFillTemplateFields(eventValue, this.templateData, this.templateEvent.getSelectedItem().getValue());
+			doFillTemplateFields(eventValue, this.templateData1,
 					this.templateEvent.getSelectedItem().getValue().toString());
 		}
 

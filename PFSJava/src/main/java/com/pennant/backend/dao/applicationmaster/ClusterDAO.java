@@ -64,4 +64,8 @@ public interface ClusterDAO extends BasicCrudDao<Cluster> {
 	boolean isExsistClusterType(String entity, String clusterType);
 
 	Long getClustersFilter(String branchCode);
+
+	List<String> getClusterCodes(String ClusterType, String entity);
+
+	boolean isValidClusterCode(String clusterCode, String entity);
 }
