@@ -3,8 +3,6 @@ package com.pennanttech.external.gst.service;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
@@ -23,10 +21,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FileWriteGSTReqJob extends AbstractJob
 		implements InterfaceConstants, ExtIntfConfigConstants, ErrorCodesConstants {
-	private static final Logger logger = LogManager.getLogger(FileWriteGSTReqJob.class);
-
-	private FileInterfaceConfig gstCompReqConfig;
-	private FileInterfaceConfig gstCompReqDoneConfig;
 
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
@@ -40,8 +34,8 @@ public class FileWriteGSTReqJob extends AbstractJob
 		Date appDate = SysParamUtil.getAppDate();
 
 		// Fetch Configurations for request
-		gstCompReqConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_GST_REQ);
-		gstCompReqDoneConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_GST_REQ_DONE);
+		FileInterfaceConfig gstCompReqConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_GST_REQ);
+		FileInterfaceConfig gstCompReqDoneConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_GST_REQ_DONE);
 
 		// validate request configurations
 		if (gstCompReqConfig == null || gstCompReqDoneConfig == null) {
