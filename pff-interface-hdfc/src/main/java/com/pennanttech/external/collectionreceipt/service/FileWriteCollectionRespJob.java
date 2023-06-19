@@ -84,6 +84,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 				CollReceiptHeader collectionFile = new CollReceiptHeader();
 				collectionFile.setId(rs.getLong("ID"));
 				collectionFile.setRequestFileName(rs.getString("REQ_FILE_NAME"));
+				collectionFile.setErrorMessage(rs.getString("ERROR_MESSAGE"));
 				return collectionFile;
 			}
 		});
@@ -168,7 +169,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		}
 
 		// failed records preparation
-		List<StringBuilder> itemList = new ArrayList<StringBuilder>();
+		List<StringBuilder> itemList = new ArrayList<>();
 
 		StringBuilder firstRow = new StringBuilder();
 		firstRow.append(REJECTED_RECORDS_HEADER);
@@ -185,7 +186,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		int rejectRowNum = 0;
 		for (CollReceiptDetail rejectDetail : failedList) {
 
-			String[] dataArray = rejectDetail.getRecordData().toString().split("\\|");
+			String[] dataArray = rejectDetail.getRecordData().split("\\|");
 			rejectRowNum = rejectRowNum + 1;
 			String qualifiedChk = collectionReceiptService.calculateCheckSum(dataArray, rejectRowNum);
 
@@ -224,7 +225,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		int totalSChecksum = 0;
 		for (CollReceiptDetail successDetail : successList) {
 
-			String[] dataArray = successDetail.getRecordData().toString().split("\\|");
+			String[] dataArray = successDetail.getRecordData().split("\\|");
 			successRowNum = successRowNum + 1;
 			String qualifiedChk = collectionReceiptService.calculateCheckSum(dataArray, successRowNum);
 
@@ -241,8 +242,18 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		}
 
 		StringBuilder sucessFooter = new StringBuilder();
-		sucessFooter.append(successRowNum);
-		appendSeperator(sucessFooter, totalSChecksum);
+		if (successRowNum == 0) {
+			sucessFooter.append("");
+		} else {
+			sucessFooter.append(successRowNum);
+		}
+
+		if (totalSChecksum == 0) {
+			appendSeperator(sucessFooter, "");
+		} else {
+			appendSeperator(sucessFooter, totalSChecksum);
+		}
+
 		sucessFooter.append(SUCESS_RECORDS_FOOTER);
 		itemList.add(sucessFooter);
 
