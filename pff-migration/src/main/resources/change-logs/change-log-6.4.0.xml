@@ -20443,6 +20443,16 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#1518.0" author="HariTeja.B">
+		<sql>
+			<![CDATA[	
+				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN) VALUES ('SecUsers', 	    'BaseLocation', 'String', '50', 'Base Location','Maintains Base Location of User','Optional',0,null,null,null,null,current_timestamp,'HariTeja.B',null,null,0);
+				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN) VALUES ('SecUsers_Temp',  'BaseLocation', 'String', '50', 'Base Location','Maintains Base Location of User','Optional',0,null,null,null,null,current_timestamp,'HariTeja.B',null,null,0);
+				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN) VALUES ('SecUsers_RTemp', 'BaseLocation', 'String', '50', 'Base Location','Maintains Base Location of User','Optional',0,null,null,null,null,current_timestamp,'HariTeja.B',null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+	
 	 <changeSet id="ST#1518.1" author="HariTeja.B">
 		<addColumn tableName="SecUsers">
 			<column name="BaseLocation" type = "varchar(100)"/>
