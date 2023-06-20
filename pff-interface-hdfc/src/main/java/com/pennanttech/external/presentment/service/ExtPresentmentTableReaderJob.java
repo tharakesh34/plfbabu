@@ -42,19 +42,17 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 	private static final Logger logger = LogManager.getLogger(ExtPresentmentTableReaderJob.class);
 	private static final String FETCH_QUERY = "Select * from PDC_BATCH_D_STG  Where PICK_FINNONE = ?";
 	private ExtPresentmentDAO externalPresentmentDAO;
-	private DataSource stagingDataSource;
+	private DataSource extDataSource;
 	private PlatformTransactionManager transactionManager;
-
-	private ApplicationContext applicationContext;
 
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
 		try {
 
-			applicationContext = ApplicationContextProvider.getApplicationContext();
+			ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 			externalPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
-			stagingDataSource = applicationContext.getBean("stagingDataSource", DataSource.class);
+			extDataSource = applicationContext.getBean("extDataSource", DataSource.class);
 			transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
 
 			readAndProcessTable();
@@ -82,7 +80,7 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<ExtPresentmentFile> cursorItemReader = new JdbcCursorItemReader<ExtPresentmentFile>();
-		cursorItemReader.setDataSource(stagingDataSource);
+		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(10);
 		cursorItemReader.setSql(FETCH_QUERY);
 		cursorItemReader.setRowMapper(new RowMapper<ExtPresentmentFile>() {
