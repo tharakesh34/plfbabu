@@ -76,7 +76,13 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 		String receiptDate = TextFileUtil.getItem(dataArray, 10);
 		String receiptType = TextFileUtil.getItem(dataArray, 12);
 
-		int agreementCHK = generateChecksum(String.valueOf(agreementNumber));
+		int agreementCHK = 0;
+		if (agreementNumber == 0) {
+			agreementCHK = generateChecksum("");
+		} else {
+			agreementCHK = generateChecksum(String.valueOf(agreementNumber));
+		}
+
 		int grTotalCHK = generateChecksum(String.valueOf(grandTotal));
 		int chqDateCHK = generateChecksum(String.valueOf(chequeDate));
 		int receiptDateCHK = generateChecksum(String.valueOf(receiptDate));

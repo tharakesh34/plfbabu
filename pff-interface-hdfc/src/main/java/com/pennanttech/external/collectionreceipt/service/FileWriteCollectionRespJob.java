@@ -193,9 +193,12 @@ public class FileWriteCollectionRespJob extends AbstractJob
 			collectionReceiptData.setErrorCode(rejectDetail.getErrorMessage());
 			if (collectionReceiptData.getErrorCode() == null) {
 				collectionReceiptData.setErrorCode(extReceiptHeader.getErrorMessage());
+				if (collectionReceiptData.getErrorCode() == null) {
+					collectionReceiptData.setErrorCode("An Internal error occured while processing receipt.");
+				}
 			}
 
-			StringBuilder itemStr = prepareLine(collectionReceiptData, rejectRowNum);
+			StringBuilder itemStr = prepareLine(collectionReceiptData);
 			itemList.add(itemStr);
 		}
 
@@ -230,7 +233,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 			collectionReceiptData.setChecksum(qualifiedChk);
 			totalSChecksum = totalSChecksum + Integer.parseInt(qualifiedChk);
 
-			StringBuilder itemStr = prepareLine(collectionReceiptData, successRowNum);
+			StringBuilder itemStr = prepareLine(collectionReceiptData);
 			itemList.add(itemStr);
 
 		}
@@ -245,7 +248,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		if (totalSChecksum == 0) {
 			appendSeperator(sucessFooter, "");
 		} else {
-			appendSeperator(sucessFooter, totalSChecksum);
+			appendSeperator(sucessFooter, successRowNum + "" + totalSChecksum);
 		}
 
 		sucessFooter.append(SUCESS_RECORDS_FOOTER);
@@ -286,7 +289,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		}
 	}
 
-	private StringBuilder prepareLine(ExtCollectionReceiptData detail, int rejectRowNum) {
+	private StringBuilder prepareLine(ExtCollectionReceiptData detail) {
 		StringBuilder item = new StringBuilder();
 
 		if (detail.getAgreementNumber() > 0) {
@@ -332,8 +335,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		appendSeperator(item, new SimpleDateFormat("dd-MMM-yy").format(detail.getUploadDate()));
 		appendSeperator(item, StringUtils.stripToEmpty(detail.getErrorCode()));
 		appendSeperator(item, "");
-		appendSeperator(item, rejectRowNum);
-		item.append(detail.getChecksum());
+		appendSeperator(item, detail.getChecksum());
 		return item;
 	}
 

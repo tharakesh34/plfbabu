@@ -68,7 +68,7 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 		// Fetch records to write request file
 		List<GSTRequestDetail> gstRequestDetailList = extGSTDao.fetchRecords();
 
-		List<StringBuilder> itemList = new ArrayList<StringBuilder>();
+		List<StringBuilder> itemList = new ArrayList<>();
 
 		// Prepare file line items list
 		prepareFileItems(itemList, gstRequestDetailList);
@@ -91,7 +91,7 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 			// Write Done file
 			String doneFile = App.getResourcePath(reqConfig.getFileLocation()) + File.separator + fileName
 					+ doneConfig.getFilePostpend();
-			List<StringBuilder> emptyList = new ArrayList<StringBuilder>();
+			List<StringBuilder> emptyList = new ArrayList<>();
 			emptyList.add(new StringBuilder(""));
 			super.writeDataToFile(doneFile, emptyList);
 

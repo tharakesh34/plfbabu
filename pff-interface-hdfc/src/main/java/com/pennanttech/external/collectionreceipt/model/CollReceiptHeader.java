@@ -116,9 +116,8 @@ public class CollReceiptHeader {
 	public boolean isValid() {
 		if (this.errorCode == null) {
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 }

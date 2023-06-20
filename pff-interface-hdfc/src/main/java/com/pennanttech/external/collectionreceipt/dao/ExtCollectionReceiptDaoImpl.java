@@ -4,13 +4,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -23,9 +20,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 
-public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtCollectionReceiptDao {
-
-	private static final Logger logger = LogManager.getLogger(ExtCollectionReceiptDaoImpl.class);
+public class ExtCollectionReceiptDaoImpl extends SequenceDao<Object> implements ExtCollectionReceiptDao {
 
 	private NamedParameterJdbcTemplate mainNamedJdbcTemplate;
 	private NamedParameterJdbcTemplate extNamedJdbcTemplate;
@@ -37,14 +32,12 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 	@Override
 	public void saveFile(CollReceiptHeader colletionFile) {
 		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
-		StringBuilder sql = new StringBuilder("INSERT INTO COLL_RECEIPT_HEADER");
-		sql.append(" (REQ_FILE_NAME,REQ_FILE_LOCATION,EXTRACTION," + "STATUS,WRITE_RESPONSE,RESP_FILE_STATUS,"
-				+ "CREATED_DATE,ERROR_CODE,ERROR_MESSAGE)");
-		sql.append(" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		String sql = "INSERT INTO COLL_RECEIPT_HEADER (REQ_FILE_NAME,REQ_FILE_LOCATION,EXTRACTION,"
+				+ "STATUS,WRITE_RESPONSE,RESP_FILE_STATUS,CREATED_DATE,ERROR_CODE,ERROR_MESSAGE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL, sql);
 
-		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 			ps.setString(index++, colletionFile.getRequestFileName());
 			ps.setString(index++, colletionFile.getRequestFileLocation());
@@ -63,7 +56,7 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 	@Override
 	public boolean isFileProcessed(String fileName, int status) {
 		String sql = "Select count(1) from COLLECTIONRECEIPTFILES Where REQUEST_FILE_NAME= ? AND REQUEST_FILE_STATUS=?";
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL, sql);
 		try {
 			return extNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, Integer.class, fileName, status) > 0;
 		} catch (EmptyResultDataAccessException e) {
@@ -74,7 +67,7 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 	@Override
 	public boolean isFileFound(String fileName) {
 		String sql = "Select count(1) from COLL_RECEIPT_HEADER Where REQ_FILE_NAME= ?";
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL, sql);
 		try {
 			return extNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, Integer.class, fileName) > 0;
 		} catch (EmptyResultDataAccessException e) {
@@ -84,12 +77,11 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 
 	@Override
 	public void updateFileExtraction(CollReceiptHeader header) {
-		StringBuilder sql = new StringBuilder("UPDATE COLL_RECEIPT_HEADER");
-		sql.append(" SET EXTRACTION = ?, STATUS = ?, WRITE_RESPONSE=?, ERROR_CODE=?,ERROR_MESSAGE=? WHERE ID= ? ");
+		String sql = "UPDATE COLL_RECEIPT_HEADER SET EXTRACTION = ?, STATUS = ?, WRITE_RESPONSE=?, ERROR_CODE=?,ERROR_MESSAGE=? WHERE ID= ? ";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL, sql);
 
-		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 			ps.setInt(index++, header.getExtraction());
 			ps.setInt(index++, header.getStatus());
@@ -115,14 +107,11 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 
 		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO COLL_RECEIPT_DETAIL ");
-		sql.append(" (HEADER_ID,RECORD_DATA,RECEIPT_ID,CREATED_DATE)");
-		sql.append(" VALUES(?,?,?,?) ");
+		String sql = "INSERT INTO COLL_RECEIPT_DETAIL  (HEADER_ID,RECORD_DATA,RECEIPT_ID,CREATED_DATE) VALUES(?,?,?,?) ";
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL, sql);
 
-		return extNamedJdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+		return extNamedJdbcTemplate.getJdbcOperations().batchUpdate(sql, new BatchPreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps, int index) throws SQLException {
@@ -144,25 +133,23 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 	}
 
 	@Override
-	public List<CollReceiptDetail> fetchCollectionRecordsById(long header_id) {
+	public List<CollReceiptDetail> fetchCollectionRecordsById(long headerId) {
 		logger.debug(Literal.ENTERING);
 
-		List<CollReceiptDetail> receiptDetails = new ArrayList<CollReceiptDetail>();
+		List<CollReceiptDetail> receiptDetails = new ArrayList<>();
 
-		StringBuilder query = new StringBuilder();
-		query.append(
-				" SELECT ID,HEADER_ID,RECORD_DATA,RECEIPT_ID,RECEIPT_CREATED_DATE,CREATED_DATE,ERROR_CODE,ERROR_MESSAGE FROM COLL_RECEIPT_DETAIL ");
-		query.append(" WHERE  HEADER_ID= ?");
+		String query = "SELECT ID,HEADER_ID,RECORD_DATA,RECEIPT_ID,RECEIPT_CREATED_DATE,CREATED_DATE,ERROR_CODE,"
+				+ "ERROR_MESSAGE FROM COLL_RECEIPT_DETAIL  WHERE  HEADER_ID= ?";
 
-		logger.debug(Literal.SQL + query.toString());
+		logger.debug(Literal.SQL, query);
 
-		extNamedJdbcTemplate.getJdbcOperations().query(query.toString(), ps -> ps.setLong(1, header_id), rs -> {
+		extNamedJdbcTemplate.getJdbcOperations().query(query, ps -> ps.setLong(1, headerId), rs -> {
 			CollReceiptDetail details = new CollReceiptDetail();
 			details.setId(rs.getLong("ID"));
 			details.setHeaderId(rs.getLong("HEADER_ID"));
 			details.setRecordData(rs.getString("RECORD_DATA"));
 			details.setReceiptId(rs.getLong("RECEIPT_ID"));
-			details.setReceiptCreatedDate((Date) rs.getDate("RECEIPT_CREATED_DATE"));
+			details.setReceiptCreatedDate(rs.getDate("RECEIPT_CREATED_DATE"));
 			details.setCreatedDate(rs.getDate("CREATED_DATE"));
 			details.setErrorCode(rs.getString("ERROR_CODE"));
 			details.setErrorMessage(rs.getString("ERROR_MESSAGE"));
@@ -176,12 +163,11 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 
 	@Override
 	public void updateExtCollectionReceiptProcessStatus(CollReceiptHeader collectionReceiptFile) {
-		StringBuilder sql = new StringBuilder("UPDATE COLL_RECEIPT_HEADER");
-		sql.append(" SET STATUS = ?, WRITE_RESPONSE=?, ERROR_CODE = ?, ERROR_MESSAGE = ? WHERE ID= ? ");
+		String sql = "UPDATE COLL_RECEIPT_HEADER SET STATUS = ?, WRITE_RESPONSE=?, ERROR_CODE = ?, ERROR_MESSAGE = ? WHERE ID= ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL, sql);
 
-		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 			ps.setLong(index++, collectionReceiptFile.getStatus());
 			ps.setLong(index++, collectionReceiptFile.getWriteResponse());
@@ -194,12 +180,11 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 
 	@Override
 	public void updateExtCollectionRespFileWritingStatus(CollReceiptHeader collectionReceiptFile) {
-		StringBuilder sql = new StringBuilder("UPDATE COLL_RECEIPT_HEADER");
-		sql.append(" SET RESP_FILE_NAME=?, RESP_FILE_LOCATION=?,RESP_FILE_STATUS=? WHERE ID= ? ");
+		String sql = "UPDATE COLL_RECEIPT_HEADER SET RESP_FILE_NAME=?, RESP_FILE_LOCATION=?,RESP_FILE_STATUS=? WHERE ID= ? ";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL, sql);
 
-		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 			ps.setString(index++, collectionReceiptFile.getRespFileName());
 			ps.setString(index++, collectionReceiptFile.getRespFileLocation());
@@ -211,12 +196,11 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 
 	@Override
 	public void updateExtCollectionReceiptDetailStatus(CollReceiptDetail collectionReceiptDetail) {
-		StringBuilder sql = new StringBuilder("UPDATE COLL_RECEIPT_DETAIL");
-		sql.append(" SET RECEIPT_ID=?,RECEIPT_CREATED_DATE=? ,ERROR_CODE = ?, ERROR_MESSAGE = ? WHERE ID= ? ");
+		String sql = "UPDATE COLL_RECEIPT_DETAIL SET RECEIPT_ID=?,RECEIPT_CREATED_DATE=? ,ERROR_CODE = ?, ERROR_MESSAGE = ? WHERE ID= ? ";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL, sql);
 
-		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 			ps.setLong(index++, collectionReceiptDetail.getReceiptId());
 			ps.setDate(index++, JdbcUtil.getDate(SysParamUtil.getAppDate()));
@@ -227,13 +211,13 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 	}
 
 	@Override
-	public CollReceiptHeader getErrorFromHeader(long p_id) {
+	public CollReceiptHeader getErrorFromHeader(long pId) {
 		logger.debug(Literal.ENTERING);
 
 		String sql = "SELECT  ERROR_CODE, ERROR_MESSAGE FROM COLL_RECEIPT_HEADER  WHERE ID = ?";
 
-		logger.debug(Literal.SQL + sql);
-		Object[] parameters = new Object[] { p_id };
+		logger.debug(Literal.SQL, sql);
+		Object[] parameters = new Object[] { pId };
 		try {
 			return extNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, (rs, rowNum) -> {
 				CollReceiptHeader collReceiptHeader = new CollReceiptHeader();
@@ -250,7 +234,7 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 	@Override
 	public boolean validateAgreementNumber(String agreementNumber) {
 		String sql = "SELECT COUNT(*) FROM FINANCEMAIN WHERE FINREFERENCE = ?";
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL, sql);
 		try {
 			return mainNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, Integer.class, agreementNumber) > 0;
 		} catch (EmptyResultDataAccessException e) {
@@ -261,7 +245,7 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 	@Override
 	public boolean validateAgencyId(long agencyId) {
 		String sql = "SELECT COUNT(*) FROM FINRECEIPTHEADER WHERE COLLECTIONAGENTID = ?";
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL, sql);
 		try {
 			return mainNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, Integer.class, agencyId) > 0;
 		} catch (EmptyResultDataAccessException e) {
