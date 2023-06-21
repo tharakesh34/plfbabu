@@ -310,6 +310,7 @@ public class ImplementationConstants {
 		ALW_AUTO_CROSS_LOAN_KNOCKOFF = getValueAsBoolean("ALW_AUTO_CROSS_LOAN_KNOCKOFF", false);
 		FEE_ODC_DISABLE = getValueAsBoolean("FEE_ODC_DISABLE", false);
 		AGR_ACTVITY_INCL_ROLES = getValueAsString("AGR_ACTVITY_INCL_ROLES", "");
+		ALW_MULTI_CANCEL_REASONS = getValueAsBoolean("ALW_MULTI_CANCEL_REASONS", false);
 
 		setVerificationConstants();
 	}
@@ -718,6 +719,8 @@ public class ImplementationConstants {
 	public static boolean ALLOW_LIEN;
 	public static boolean ALW_AUTO_CROSS_LOAN_KNOCKOFF;
 	public static String AGR_ACTVITY_INCL_ROLES;
+
+	public static boolean ALW_MULTI_CANCEL_REASONS;
 
 	private static void setVerificationConstants() {
 		VER_INIT_FROM_OUTSIDE = getValueAsBoolean("VER_INIT_FROM_OUTSIDE", false);

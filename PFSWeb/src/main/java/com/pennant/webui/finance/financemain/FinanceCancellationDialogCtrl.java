@@ -38,6 +38,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -68,6 +69,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -1588,7 +1590,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	public void onClick$btnReasons(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		Map<String, Object> resonTypesMap = new HashMap<String, Object>();
+		Map<String, Object> resonTypesMap = new HashMap<>();
 		Object dataObject = null;
 
 		String[] resonTypes = this.reasons.getValue().split(",");
@@ -1596,43 +1598,55 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			resonTypesMap.put(resonTypes[i], null);
 		}
 
-		dataObject = ExtendedMultipleSearchListBox.show(this.window_FinanceCancellationDialog, "LoanCancelReasons",
-				resonTypesMap);
+		if (ImplementationConstants.ALW_MULTI_CANCEL_REASONS) {
+			dataObject = ExtendedMultipleSearchListBox.show(this.window_FinanceCancellationDialog, "LoanCancelReasons",
+					resonTypesMap);
+		} else {
+			dataObject = ExtendedSearchListBox.show(this.window_FinanceCancellationDialog, "LoanCancelReasons");
+		}
 
 		if (dataObject instanceof String) {
 			this.reasons.setValue(dataObject.toString());
 			this.reasons.setTooltiptext("");
 		} else {
-			Map<String, Object> details = (Map<String, Object>) dataObject;
-			if (details != null) {
-				String tempReasons = details.keySet().toString();
-				tempReasons = tempReasons.replace("[", " ").replace("]", "").replace(" ", "");
-				if (tempReasons.startsWith(",")) {
-					tempReasons = tempReasons.substring(1);
+			if (ImplementationConstants.ALW_MULTI_CANCEL_REASONS) {
+				Map<String, Object> details = (Map<String, Object>) dataObject;
+				if (details != null) {
+					String tempReasons = details.keySet().toString();
+					tempReasons = tempReasons.replace("[", " ").replace("]", "").replace(" ", "");
+					if (tempReasons.startsWith(",")) {
+						tempReasons = tempReasons.substring(1);
+					}
+					if (tempReasons.endsWith(",")) {
+						tempReasons = tempReasons.substring(0, tempReasons.length() - 1);
+					}
+					this.reasons.setValue(tempReasons);
 				}
-				if (tempReasons.endsWith(",")) {
-					tempReasons = tempReasons.substring(0, tempReasons.length() - 1);
-				}
-				this.reasons.setValue(tempReasons);
-			}
 
-			// Setting tooltip with Descriptions
-			String toolTipDesc = "";
-			for (String key : details.keySet()) {
-				Object obj = (Object) details.get(key);
-				if (obj instanceof String) {
-					// Do Nothing
-				} else {
-					ReasonCode type = (ReasonCode) obj;
-					if (type != null) {
-						toolTipDesc = toolTipDesc.concat(type.getCode().concat(" , "));
+				// Setting tooltip with Descriptions
+				String toolTipDesc = "";
+				for (String key : details.keySet()) {
+					Object obj = (Object) details.get(key);
+					if (obj instanceof String) {
+						// Do Nothing
+					} else {
+						ReasonCode type = (ReasonCode) obj;
+						if (type != null) {
+							toolTipDesc = toolTipDesc.concat(type.getCode().concat(" , "));
+						}
 					}
 				}
+				if (StringUtils.isNotBlank(toolTipDesc) && toolTipDesc.endsWith(", ")) {
+					toolTipDesc = toolTipDesc.substring(0, toolTipDesc.length() - 2);
+				}
+				this.reasons.setTooltiptext(toolTipDesc);
+			} else {
+				ReasonCode type = (ReasonCode) dataObject;
+				if (type != null) {
+					this.reasons.setValue(String.valueOf(type.getId()));
+					this.reasons.setTooltiptext(type.getCode());
+				}
 			}
-			if (StringUtils.isNotBlank(toolTipDesc) && toolTipDesc.endsWith(", ")) {
-				toolTipDesc = toolTipDesc.substring(0, toolTipDesc.length() - 2);
-			}
-			this.reasons.setTooltiptext(toolTipDesc);
 		}
 
 		logger.debug(Literal.LEAVING);
