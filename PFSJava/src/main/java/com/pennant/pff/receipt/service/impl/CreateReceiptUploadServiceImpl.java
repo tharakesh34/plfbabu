@@ -209,7 +209,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setListAllocationDetails(list);
 
 		if (AllocationType.MANUAL.equals(detail.getAllocationType()) && list != null
-				&& !(detail.getReceiptAmount().compareTo(getSumOfAllocations(list)) >= 0)) {
+				&& (detail.getReceiptAmount().compareTo(getSumOfAllocations(list)) < 0)) {
 			setFailureStatus(detail, "", "RECEIPT Amount and Allocations amount should be same");
 			return;
 		}
@@ -338,7 +338,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setListAllocationDetails(list);
 
 		if (AllocationType.MANUAL.equals(detail.getAllocationType()) && list != null
-				&& !(detail.getReceiptAmount().compareTo(getSumOfAllocations(list)) >= 0)) {
+				&& (detail.getReceiptAmount().compareTo(getSumOfAllocations(list)) < 0)) {
 			detail.setProgress(EodConstants.PROGRESS_FAILED);
 			detail.setErrorDesc("RECEIPT Amount and Allocations amount should be same");
 			return;

@@ -6879,7 +6879,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		}
 
-		if (CollectionUtils.isEmpty(rch.getXcessPayables())) {
+		if (CollectionUtils.isEmpty(rch.getXcessPayables()) && fsi.isClosureReceipt()) {
 			if (rd.getTotalPastDues().compareTo(rch.getReceiptAmount()) >= 0) {
 				rcd.setDueAmount(rch.getReceiptAmount());
 				rd.setTotalPastDues(rd.getTotalPastDues().subtract(rch.getReceiptAmount()));
