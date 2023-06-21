@@ -249,7 +249,7 @@ public class FeatureExtension implements IFeatureExtension {
 	private void accountingExtensions() {
 		accountingExtensions.put("LOAN_TYPE_GL_MAPPING", false);
 		accountingExtensions.put("NORMAL_GL_MAPPING", true);
-		accountingExtensions.put("VERIFY_ACCOUNTING", false);
+		// accountingExtensions.put("VERIFY_ACCOUNTING", false);
 	}
 
 	private void feeExtensions() {
@@ -298,14 +298,14 @@ public class FeatureExtension implements IFeatureExtension {
 
 	private void excessExtensions() {
 		Set<String> defaultAdjustments = ExcessType.defaultAdjustToList();
-		defaultAdjustments.remove(ExcessType.CASHCLT);
-		defaultAdjustments.remove(ExcessType.DSF);
+		// defaultAdjustments.remove(ExcessType.CASHCLT);
+		// defaultAdjustments.remove(ExcessType.DSF);
 
 		excessExtensions.put("ALLOWED_ADJUSTMENTS", defaultAdjustments);
 
 		Set<String> defaultKnockOffFromList = ExcessType.defaultKnockOffFromList();
-		defaultKnockOffFromList.remove(ExcessType.CASHCLT);
-		defaultKnockOffFromList.remove(ExcessType.DSF);
+		// defaultKnockOffFromList.remove(ExcessType.CASHCLT);
+		// defaultKnockOffFromList.remove(ExcessType.DSF);
 
 		excessExtensions.put("ALLOWED_KNOCKOFF_FROM", defaultKnockOffFromList);
 	}
