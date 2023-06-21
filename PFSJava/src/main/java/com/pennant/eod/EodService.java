@@ -196,7 +196,7 @@ public class EodService {
 		}
 	}
 
-	private void processAutoKnockOff(CustEODEvent custEODEvent, EventProperties eventProperties, Date appDate) {
+	public void processAutoKnockOff(CustEODEvent custEODEvent, EventProperties eventProperties, Date appDate) {
 		long custId = custEODEvent.getCustomer().getCustID();
 
 		logger.info("Auto-Knock-Off process started for the Customer ID >> {} ", custId);

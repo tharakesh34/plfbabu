@@ -213,6 +213,8 @@ public class MicroEOD implements Tasklet {
 					if (customerQueuing.isLimitRebuild()) {
 						eodService.processCustomerRebuild(custId, true);
 					}
+
+					eodService.processAutoKnockOff(custEODEvent, eventProperties, appDate);
 				}
 
 				finMandateService.autoSwaping(custId);
