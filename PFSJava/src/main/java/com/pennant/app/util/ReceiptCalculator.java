@@ -563,7 +563,9 @@ public class ReceiptCalculator {
 			rd.setEarlySettle(true);
 		}
 		FinanceMain fm = rd.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		fm.setClosureType(rd.getReceiptHeader().getClosureType());
+		if (fm.getClosureType() == null) {
+			fm.setClosureType(rd.getReceiptHeader().getClosureType());
+		}
 		List<FinFeeDetail> oldFinFeeDtls = rd.getFinFeeDetails();
 		List<FinFeeDetail> finFeedetails = null;
 
@@ -1348,9 +1350,8 @@ public class ReceiptCalculator {
 		BigDecimal amount = BigDecimal.ZERO;
 
 		FinReceiptHeader rch = rd.getReceiptHeader();
-		if (ExcessType.ADVINT.equals(amountType)
-				&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose()) && AdvanceType.hasAdvInterest(fm)
-				&& fm.isTDSApplicable()) {
+		if (ExcessType.ADVINT.equals(amountType) && FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())
+				&& AdvanceType.hasAdvInterest(fm) && fm.isTDSApplicable()) {
 			amount = rd.getIntTdsUnpaid();
 		}
 
