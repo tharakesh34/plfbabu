@@ -218,11 +218,6 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 			String accNumber = lienup.getAccNumber();
 			LienHeader lienheader = lienHeaderDAO.getLienByAccAndStatus(accNumber, true);
 
-			if (lienheader != null && Labels.getLabel("label_Lien_Type_Awaiting_Confirmation")
-					.equals(lienheader.getInterfaceStatus())) {
-				lienup.setProgress(EodConstants.PROGRESS_FAILED);
-				return;
-			}
 			boolean isNew = false;
 
 			TransactionStatus txStatus = getTransactionStatus();

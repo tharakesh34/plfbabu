@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,10 +112,6 @@ public class LienServiceImpl implements LienService {
 
 					lienDetailsDAO.update(lu);
 				} else {
-					if (Labels.getLabel("label_Lien_Type_Awaiting_Confirmation").equals(lh.getInterfaceStatus())) {
-						return;
-					}
-
 					lh.setLienStatus(true);
 					lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
 					lh.setMarking(Labels.getLabel("label_Lien_Type_Auto"));
@@ -195,10 +192,6 @@ public class LienServiceImpl implements LienService {
 		}
 
 		for (LienHeader lh : lienheader) {
-
-			if (Labels.getLabel("label_Lien_Type_Awaiting_Confirmation").equals(lh.getInterfaceStatus())) {
-				return;
-			}
 
 			if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())
 					&& !lh.getAccountNumber().equals(accNum)) {
@@ -334,44 +327,48 @@ public class LienServiceImpl implements LienService {
 	}
 
 	private void setLienDeMarkStatus(LienDetails lu, String moduleDefiner) {
-		switch (moduleDefiner) {
-		case FinServiceEvent.RPYBASICMAINTAIN:
-			lu.setDemarkingReason("Repay method changed");
-			break;
-		case FinServiceEvent.RECEIPT:
-			lu.setDemarkingReason("Early settlement");
-			break;
-		case FinServiceEvent.CANCELFIN:
-			lu.setDemarkingReason("Loan cancelled");
-			break;
-		case "Closure":
-			lu.setDemarkingReason("Loan Closed");
-			break;
-		default:
-			lu.setDemarkingReason("");
-			break;
+		if (StringUtils.isEmpty(lu.getDemarkingReason())) {
+			switch (moduleDefiner) {
+			case FinServiceEvent.RPYBASICMAINTAIN:
+				lu.setDemarkingReason("Repay method changed");
+				break;
+			case FinServiceEvent.RECEIPT:
+				lu.setDemarkingReason("Early settlement");
+				break;
+			case FinServiceEvent.CANCELFIN:
+				lu.setDemarkingReason("Loan cancelled");
+				break;
+			case "Closure":
+				lu.setDemarkingReason("Loan Closed");
+				break;
+			default:
+				lu.setDemarkingReason("");
+				break;
+			}
 		}
 
 	}
 
 	private void setLienDeMarkReason(LienDetails lu, String moduleDefiner) {
-		switch (moduleDefiner) {
-		case FinServiceEvent.RPYBASICMAINTAIN:
-			lu.setDemarkingReason("Repay method changed");
-			break;
-		case FinServiceEvent.RECEIPT:
-			lu.setDemarkingReason("Early settlement");
-			break;
-		case FinServiceEvent.CANCELFIN:
-			lu.setDemarkingReason("Loan cancelled");
-			break;
+		if (StringUtils.isEmpty(lu.getDemarkingReason())) {
+			switch (moduleDefiner) {
+			case FinServiceEvent.RPYBASICMAINTAIN:
+				lu.setDemarkingReason("Repay method changed");
+				break;
+			case FinServiceEvent.RECEIPT:
+				lu.setDemarkingReason("Early settlement");
+				break;
+			case FinServiceEvent.CANCELFIN:
+				lu.setDemarkingReason("Loan cancelled");
+				break;
 
-		case "Closure":
-			lu.setDemarkingReason("Loan Closed");
-			break;
-		default:
-			lu.setDemarkingReason("");
-			break;
+			case "Closure":
+				lu.setDemarkingReason("Loan Closed");
+				break;
+			default:
+				lu.setDemarkingReason("");
+				break;
+			}
 		}
 	}
 
