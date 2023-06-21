@@ -56,6 +56,7 @@ import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -107,6 +108,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private AssetClassificationService assetClassificationService;
 	private FeeDetailService feeDetailService;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	public FinanceWriteoffServiceImpl() {
 		super();
@@ -592,7 +594,9 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		// Save Finance WriteOff Details
 		FinanceWriteoff financeWriteoff = header.getFinanceWriteoff();
-		// financeWriteoff.setLinkedTranId(aeEvent.getLinkedTranId());
+		long receiptID = finReceiptHeaderDAO.getMaxReceiptIdFinRef(fm.getFinReference());
+		financeWriteoff.setReceiptID(receiptID);
+
 		financeWriteoffDAO.save(financeWriteoff, "");
 
 		listDeletion(finID, "");
@@ -1018,4 +1022,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		this.assetClassificationService = assetClassificationService;
 	}
 
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
 }

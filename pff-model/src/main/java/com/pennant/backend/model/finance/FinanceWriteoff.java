@@ -33,9 +33,10 @@ public class FinanceWriteoff implements Serializable {
 	private BigDecimal adjAmount = BigDecimal.ZERO;
 	private String remarks;
 	private long linkedTranId = 0;
+	private Long receiptID;
 
 	public FinanceWriteoff() {
-	    super();
+		super();
 	}
 
 	public long getFinID() {
@@ -196,6 +197,14 @@ public class FinanceWriteoff implements Serializable {
 
 	public void setUnpaidSchFee(BigDecimal unpaidSchFee) {
 		this.unpaidSchFee = unpaidSchFee;
+	}
+
+	public Long getReceiptID() {
+		return receiptID;
+	}
+
+	public void setReceiptID(Long receiptID) {
+		this.receiptID = receiptID;
 	}
 
 	public Map<String, Object> getDeclaredFieldValues() {
