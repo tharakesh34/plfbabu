@@ -6,7 +6,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.service.customermasters.CustomerEnquiryService;
 import com.pennant.backend.service.finance.impl.FinanceEnquiryServiceImpl;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.data.loader.AddressDataLoader;
 import com.pennant.pff.data.loader.CustomerDataLoader;
 import com.pennant.pff.data.loader.EmailDataLoader;
@@ -98,9 +96,8 @@ public class CustomerEnquiryServiceImpl implements CustomerEnquiryService {
 	private void setPhoneNumbers(CustomerDetails cd) {
 		List<CustomerPhoneNumber> custPhoneNumbers = cd.getCustomerPhoneNumList();
 
-		List<CustomerPhoneNumber> mobileList = custPhoneNumbers.stream().filter(
-				phone -> StringUtils.containsIgnoreCase(phone.getPhoneTypeCode(), PennantConstants.PHONETYPE_MOBILE))
-				.toList();
+		List<CustomerPhoneNumber> mobileList = custPhoneNumbers.stream()
+				.filter(phone -> !"[0-9]{10,13}".equals(phone.getPhoneRegex())).toList();
 
 		if (CollectionUtils.isNotEmpty(mobileList)) {
 			mobileList = mobileList.stream()
@@ -112,9 +109,8 @@ public class CustomerEnquiryServiceImpl implements CustomerEnquiryService {
 			}
 		}
 
-		List<CustomerPhoneNumber> phoneList = custPhoneNumbers.stream().filter(
-				phone -> !StringUtils.containsIgnoreCase(phone.getPhoneTypeCode(), PennantConstants.PHONETYPE_MOBILE))
-				.toList();
+		List<CustomerPhoneNumber> phoneList = custPhoneNumbers.stream()
+				.filter(phone -> "[0-9]{10,13}".equals(phone.getPhoneRegex())).toList();
 
 		if (CollectionUtils.isNotEmpty(phoneList)) {
 			phoneList = phoneList.stream()
