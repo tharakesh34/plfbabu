@@ -263,6 +263,11 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		} else {
 			detail.setReceiptID(fd.getReceiptId());
 			setSuccesStatus(detail);
+
+			Map<String, String> map = new HashMap<>();
+			map.put("Receipt Id", fd.getReceiptId().toString());
+			detail.setExtendedFields(map);
+			header.setExtendedFieldRequired(true);
 		}
 	}
 
