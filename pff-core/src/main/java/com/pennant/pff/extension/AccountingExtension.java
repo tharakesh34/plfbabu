@@ -15,7 +15,6 @@ public class AccountingExtension {
 	public static final boolean LOAN_DOWNSIZING_ACCOUNTING_REQ = getValueAsBoolean("LOAN_DOWNSIZING_ACCOUNTING_REQ",
 			false);
 
-	public static final boolean ACCOUNTING_VALIDATION = getValueAsBoolean("ACCOUNTING_VALIDATION", false);
 	public static final boolean IND_AS_ACCOUNTING_REQ = getValueAsBoolean("IND_AS_ACCOUNTING_REQ", false);
 
 	private static boolean getValueAsBoolean(String key, boolean defaultValue) {
