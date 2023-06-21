@@ -831,4 +831,31 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="PSD#230952.1_pre" author="Gopal.p">
+		<sql>
+			<![CDATA[
+		    	UPDATE ADTBuilderCompany SET ACTIVE = 0 WHERE ACTIVE IS NULL;
+		 	]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#230952.1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'adtbuildercompany');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#230952.1" author="Gopal.p">
+		<modifyDataType tableName="ADTBuilderCompany" columnName="Active" newDataType="boolean"/>
+	</changeSet>
+	
+	<changeSet id="PSD#230952.1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+		    	select deps_restore_dependencies ('plf', 'adtbuildercompany');
+		 	]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
