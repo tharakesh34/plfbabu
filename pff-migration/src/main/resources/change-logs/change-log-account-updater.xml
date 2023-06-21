@@ -603,6 +603,21 @@
 			referencedTableName="RMTAccountTypes" baseColumnNames="AcType" baseTableName="Accounts"
 			referencedColumnNames="AcType" />
 	</changeSet>
+	
+	<changeSet id="29" author="murthy.y">
+		<dropUniqueConstraint tableName="Accounts_History_Details" constraintName="uk_ahd_achid_pd_ec_pb_bp"/>
+	</changeSet>
+	
+	<changeSet id="29.1" author="murthy.y">
+		<createIndex tableName="Accounts_History_Details" indexName="idx_accounts_history_details" unique="true">
+			<column name="AccountId" type="bigint"/>
+			<column name="FinReference" type="varchar(20)"/>
+			<column name="EntityCode" type="varchar(8)"/>
+			<column name="PostBranch" type="varchar(12)"/>
+			<column name="BranchProvince" type="varchar(10)"/>
+			<column name="PostDate" type="datetime"/>
+		</createIndex>
+	</changeSet>
 
 
 </databaseChangeLog>

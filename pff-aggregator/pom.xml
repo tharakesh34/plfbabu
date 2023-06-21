@@ -84,7 +84,7 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps.pff</groupId>
 				<artifactId>account-updater</artifactId>
-				<version>4.1.6</version>
+				<version>4.1.7</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>

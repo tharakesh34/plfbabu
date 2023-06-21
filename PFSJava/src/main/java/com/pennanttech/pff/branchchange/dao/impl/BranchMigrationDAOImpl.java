@@ -1,7 +1,6 @@
 package com.pennanttech.pff.branchchange.dao.impl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.branchchange.upload.BranchChangeUpload;
@@ -172,8 +171,7 @@ public class BranchMigrationDAOImpl extends SequenceDao<BranchChangeUpload> impl
 			return acc;
 		});
 
-		return list.stream().sorted((ahd1, ahd2) -> DateUtil.compare(ahd1.getPostDate(), ahd2.getPostDate()))
-				.collect(Collectors.toList());
+		return list.stream().sorted((ahd1, ahd2) -> DateUtil.compare(ahd2.getPostDate(), ahd1.getPostDate())).toList();
 	}
 
 }

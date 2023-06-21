@@ -3,9 +3,10 @@ package com.pennant.pff.branchchange.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +18,6 @@ import org.springframework.transaction.TransactionStatus;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
-import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.branchchange.upload.BranchChangeUpload;
@@ -41,9 +41,7 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 	private BranchDAO branchDAO;
 	private BranchMigrationDAO branchMigrationDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
-	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 
-	@Override
 	protected BranchChangeUpload getDetail(Object object) {
 		if (object instanceof BranchChangeUpload detail) {
 			return detail;
@@ -226,11 +224,23 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 		return branchChangeUploadDAO.getSqlQuery();
 	}
 
-	private void doBranchChange(Long finID, String oldBranch, String newBranch, Date appDate) {
+	private List<ReturnDataSet> prepareReturnDataSet(Long finID, String oldBranch, Date appDate) {
 		FinanceMain fm = financeMainDAO.getFinMainsForEODByFinRef(finID, true);
 
 		String finReference = fm.getFinReference();
 		List<Accounts> accountsList = branchMigrationDAO.getAccounts(finReference, oldBranch);
+
+		List<Accounts> accBalList = new ArrayList<>();
+
+		Set<String> accset = new HashSet<>();
+
+		for (Accounts account : accountsList) {
+			String acNumber = account.getAcNumber();
+			if (!accset.contains(acNumber)) {
+				accset.add(acNumber);
+				accBalList.add(account);
+			}
+		}
 
 		long linkedTranId = postingsPreparationUtil.getLinkedTranID();
 
@@ -239,7 +249,7 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 		String tranCode = "";
 		String revTranCode = "";
 		String drOrCr = "";
-		for (Accounts account : accountsList) {
+		for (Accounts account : accBalList) {
 			BigDecimal acBalance = account.getAcBalance();
 
 			if (acBalance.compareTo(BigDecimal.ZERO) == 0) {
@@ -293,15 +303,27 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 			list.add(rds);
 		}
 
+		return list;
+	}
+
+	private void doBranchChange(Long finID, String oldBranch, String newBranch, Date appDate) {
+		List<ReturnDataSet> list = prepareReturnDataSet(finID, oldBranch, appDate);
+
 		List<ReturnDataSet> sortedList = list.stream()
-				.sorted((rds1, rds2) -> StringUtils.compare(rds2.getDrOrCr(), rds1.getDrOrCr()))
-				.collect(Collectors.toList());
+				.sorted((rds1, rds2) -> StringUtils.compare(rds2.getDrOrCr(), rds1.getDrOrCr())).toList();
 
 		list.clear();
 
 		int transOrder = 1;
 		int transOrderID = 0;
+
+		String tranCode = "";
+		String revTranCode = "";
+		String drOrCr = "";
+
 		for (ReturnDataSet rds : sortedList) {
+			String finReference = rds.getFinReference();
+
 			transOrderID = transOrderID + 10;
 
 			rds.setTranOrderId(String.valueOf(transOrderID));
@@ -414,11 +436,6 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 	@Autowired
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	@Autowired
-	public void setFinServiceInstrutionDAO(FinServiceInstrutionDAO finServiceInstrutionDAO) {
-		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
 	}
 
 }
