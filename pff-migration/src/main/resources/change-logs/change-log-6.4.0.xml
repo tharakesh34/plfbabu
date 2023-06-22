@@ -20915,7 +20915,7 @@
 	<changeSet id="PSD#231088.1_PRE1" author="Gopal.p">
 		<sql>
 			<![CDATA[	
-				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN) VALUES ('FinWriteoffDetail', 'ReceiptID', 'NUMBER', '19,0', 'Receipt ID','Maximum receipt ID for the write off event', 'Optional', 0, null, null, 0, null, current_timestamp, 'Gopal.p', null, null, 0);
+				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN) VALUES ('FINWRITEOFFDETAIL', 'RECEIPTID', 'NUMBER', '19,0', 'Receipt ID','Maximum receipt ID for the write off event', 'Optional', 0, null, null, 0, null, current_timestamp, 'Gopal.p', null, null, 0);
 			]]>
 		</sql>
 	</changeSet>
@@ -20929,7 +20929,7 @@
 	<changeSet id="PSD#231088.2_PRE1" author="Gopal.p">
 		<sql>
 			<![CDATA[	
-				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN) VALUES ('FinWriteoffDetail_Temp', 'ReceiptID', 'NUMBER', '19,0', 'Receipt ID','Maximum receipt ID for the write off event', 'Optional', 0, null, null, 0, null, current_timestamp, 'Gopal.p', null, null, 0);
+				INSERT INTO PLF_TAB_COLUMNS (TABLE_NAME, FIELD_NAME, DATATYPE, COLUMNLENGTH, FIELD_DESCRIPTION, FIELD_REMARKS, MANDATORY, PRIMARYKEYCOLUMN, FOREIGNKEYTABLE, FOREIGNKEYCOLUMN, DEFAULTVALUE, SEQUENCENAME, CREATEDDATE, CREATEDBY, REMARKS, COMANDATORY, IS_CONDITION_COLUMN) VALUES ('FINWRITEOFFDETAIL_TEMP', 'RECEIPTID', 'NUMBER', '19,0', 'Receipt ID','Maximum receipt ID for the write off event', 'Optional', 0, null, null, 0, null, current_timestamp, 'Gopal.p', null, null, 0);
 			]]>
 		</sql>
 	</changeSet>
@@ -21251,6 +21251,15 @@
 		    	UPDATE PLF_TAB_COLUMNS SET COLUMNLENGTH = '1,0' WHERE TABLE_NAME = 'BUILDERCOMPANY' AND FIELD_NAME = 'ACTIVE';
 				UPDATE PLF_TAB_COLUMNS SET COLUMNLENGTH = '1,0' WHERE TABLE_NAME = 'BUILDERCOMPANY_TEMP' AND FIELD_NAME = 'ACTIVE';
 		 	]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#230952.3.1" author="Gopal.p">
+		<sql>
+			<![CDATA[
+		    	update buildercompany set Active=null;
+				update buildercompany_temp set Active=null;
+				]]>
 		</sql>
 	</changeSet>
 	

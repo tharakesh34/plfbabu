@@ -831,10 +831,10 @@
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="PSD#230952.1_pre" author="Gopal.p">
+	<changeSet id="PSD#230952.2_pre" author="Gopal.p">
 		<sql>
 			<![CDATA[
-		    	UPDATE ADTBuilderCompany SET ACTIVE = 0 WHERE ACTIVE IS NULL;
+		    	UPDATE ADTBuilderCompany SET ACTIVE = NULL;
 		 	]]>
 		</sql>
 	</changeSet>
