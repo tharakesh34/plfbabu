@@ -110,16 +110,15 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 
 					try {
 						createReceiptUploadDAO.update(details);
-
-						List<FileUploadHeader> headerList = new ArrayList<>();
-						headerList.add(header);
-
-						updateHeader(headerList, true);
-
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
 					}
 				}
+
+				List<FileUploadHeader> headerList = new ArrayList<>();
+				headerList.add(header);
+
+				updateHeader(headerList, true);
 
 				logger.info("Processed the File {}", header.getFileName());
 			}
@@ -261,11 +260,10 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		if (!schd.getErrorDetails().isEmpty()) {
 			setFailureStatus(detail, schd.getErrorDetails().get(0));
 		} else {
-			detail.setReceiptID(fd.getReceiptId());
 			setSuccesStatus(detail);
 
 			Map<String, String> map = new HashMap<>();
-			map.put("Receipt Id", fd.getReceiptId().toString());
+			map.put("Receipt Id", String.valueOf(fd.getReceiptId()));
 			detail.setExtendedFields(map);
 			header.setExtendedFieldRequired(true);
 		}
