@@ -21303,4 +21303,58 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#231364_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financemainmaintenance_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#231364" author="Gopal.p">
+		<createView replaceIfExists="true" viewName="FINANCEMAINMAINTENANCE_VIEW">
+			<![CDATA[
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
+					T1.FINTYPE,
+					T1.FINCCY,
+					T1.CALROUNDINGMODE,
+					T1.ROUNDINGTARGET,
+					T1.FINBRANCH,
+					T1.CUSTID,
+					T1.FINSTARTDATE,
+					T1.MATURITYDATE,
+					T1.CLOSINGSTATUS,
+					T1.WRITEOFFLOAN,
+					T1.UNDERNPA,
+					T1.UNDERSETTLEMENT
+				FROM FINANCEMAIN_TEMP T1
+				UNION ALL
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
+					T1.FINTYPE,
+					T1.FINCCY,
+					T1.CALROUNDINGMODE,
+					T1.ROUNDINGTARGET,
+					T1.FINBRANCH,
+					T1.CUSTID,
+					T1.FINSTARTDATE,
+					T1.MATURITYDATE,
+					T1.CLOSINGSTATUS,
+					T1.WRITEOFFLOAN,
+					T1.UNDERNPA,
+					T1.UNDERSETTLEMENT
+				FROM FINANCEMAIN T1
+				WHERE NOT EXISTS (SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID= T1.FINID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PSD#231364_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financemainmaintenance_view');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog> 

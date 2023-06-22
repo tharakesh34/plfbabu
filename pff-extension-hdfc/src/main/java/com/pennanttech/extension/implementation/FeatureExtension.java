@@ -249,7 +249,7 @@ public class FeatureExtension implements IFeatureExtension {
 	private void accountingExtensions() {
 		accountingExtensions.put("LOAN_TYPE_GL_MAPPING", false);
 		accountingExtensions.put("NORMAL_GL_MAPPING", true);
-		// accountingExtensions.put("VERIFY_ACCOUNTING", false);
+		accountingExtensions.put("VERIFY_ACCOUNTING", false);
 	}
 
 	private void feeExtensions() {

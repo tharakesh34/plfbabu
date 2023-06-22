@@ -1306,6 +1306,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 			// Added Value date as Finance Start Date in case of origination Disbursement
 			valueDate = fm.getFinStartDate();
+
+			for (FinanceScheduleDetail schedule : schdData.getFinanceScheduleDetails()) {
+				if (schedule.isRepayOnSchDate() && schedule.getSchDate().compareTo(curBDay) < 0) {
+					valueDate = schedule.getSchDate();
+				}
+			}
+
 		} else {
 			pftDetail = profitDetailsDAO.getFinProfitDetailsById(finID);
 		}

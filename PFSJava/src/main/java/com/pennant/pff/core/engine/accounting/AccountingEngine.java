@@ -195,20 +195,18 @@ public class AccountingEngine {
 	}
 
 	public static Long getAccountSetID(FinanceMain fm, String eventCode, int moduleID) {
-		String derivedEventCode = null;
-
-		if (fm.isWriteoffLoan()) {
-			derivedEventCode = eventCode + "_W";
-		} else if (fm.isUnderNpa()) {
-			derivedEventCode = eventCode + "_N";
-		} else if (fm.isUnderSettlement()) {
-			derivedEventCode = eventCode + "_S";
-		}
-
 		Long accountSetID = null;
 
-		if (derivedEventCode != null) {
-			accountSetID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), derivedEventCode, moduleID);
+		if (fm.isWriteoffLoan()) {
+			accountSetID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), eventCode + "_W", moduleID);
+		}
+
+		if ((accountSetID == null || accountSetID <= 0) && fm.isUnderNpa()) {
+			accountSetID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), eventCode + "_N", moduleID);
+		}
+
+		if ((accountSetID == null || accountSetID <= 0) && fm.isUnderSettlement()) {
+			accountSetID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), eventCode + "_S", moduleID);
 		}
 
 		if (accountSetID == null || accountSetID <= 0) {

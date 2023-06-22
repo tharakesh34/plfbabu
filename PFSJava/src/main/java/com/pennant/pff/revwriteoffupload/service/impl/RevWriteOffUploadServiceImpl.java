@@ -193,10 +193,10 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl<RevWriteOff
 		long receiptId = revWriteOffUploadDAO.getReceiptIdByRef(reference);
 
 		Map<String, Object> dataMap = aeEvent.getDataMap();
+		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		dataMap.putAll(preparePaidAmount(reference, receiptId));
 		dataMap.putAll(prepareAdviseMovements(reference, receiptId));
 
-		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);
 
 		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
