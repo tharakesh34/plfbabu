@@ -1729,6 +1729,10 @@ public class PresentmentEngine {
 				throw new PresentmentException(PresentmentError.PRMNT503);
 			}
 
+			if (InstrumentType.IPDC.code().equals(pd.getMandateType())) {
+				pd.setMandateType(InstrumentType.PDC.code());
+			}
+
 			if (br.getInstrumentType() == null || !StringUtils.equals(br.getInstrumentType(), pd.getMandateType())) {
 				throw new PresentmentException(PresentmentError.PRMNT503);
 			}

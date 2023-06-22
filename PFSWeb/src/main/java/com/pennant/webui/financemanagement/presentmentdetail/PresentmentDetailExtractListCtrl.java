@@ -373,6 +373,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 			this.row_lppAndBounceRequited.setVisible(false);
 			this.lppRequired.setChecked(false);
 			this.bounceRequired.setChecked(false);
+
+			fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypesForBE(), "");
 		}
 
 		logger.debug(Literal.LEAVING);
