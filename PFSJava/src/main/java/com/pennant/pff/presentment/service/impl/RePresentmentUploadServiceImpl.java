@@ -202,13 +202,12 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresent
 		}
 
 		String presentmentType = representmentUploadDAO.getPresentmenttype(reference, dueDate);
+		String bounceCode = representmentUploadDAO.getBounceCode(reference, dueDate);
 
-		if (PennantConstants.PROCESS_REPRESENTMENT.equals(presentmentType)) {
+		if (PennantConstants.PROCESS_REPRESENTMENT.equals(presentmentType) && bounceCode == null) {
 			setError(detail, PresentmentError.REPRMNT525);
 			return;
 		}
-
-		String bounceCode = representmentUploadDAO.getBounceCode(reference, dueDate);
 
 		if (bounceCode == null) {
 			setError(detail, PresentmentError.REPRMNT518);
