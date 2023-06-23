@@ -905,7 +905,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			ManualAdvise bounceReason = rch.getManualAdvise();
 			if (bounceReason != null) {
-				this.bounceCode.setValue(String.valueOf(bounceReason.getBounceID()), bounceReason.getBounceCodeDesc());
+				this.bounceCode.setValue(String.valueOf(bounceReason.getBounceCode()),
+						bounceReason.getBounceCodeDesc());
 				this.bounceCharge
 						.setValue(PennantApplicationUtil.formateAmount(bounceReason.getAdviseAmount(), formatter));
 				this.bounceRemarks.setValue(bounceReason.getRemarks());

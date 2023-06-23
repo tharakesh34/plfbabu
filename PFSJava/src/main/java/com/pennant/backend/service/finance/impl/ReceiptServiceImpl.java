@@ -6058,6 +6058,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				ma.setPostDate(SysParamUtil.getPostDate());
 				ma.setReceiptID(rch.getReceiptID());
 				ma.setBounceID(bounce.getBounceID());
+				ma.setBounceCode(bounce.getBounceCode());
+				ma.setBounceCodeDesc(bounce.getReason());
 
 				rch.setManualAdvise(ma);
 
