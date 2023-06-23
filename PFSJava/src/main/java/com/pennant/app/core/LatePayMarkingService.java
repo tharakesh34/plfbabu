@@ -467,7 +467,14 @@ public class LatePayMarkingService extends ServiceHelper {
 		BigDecimal maxOdAmount = BigDecimal.ZERO;
 		List<ManualAdviseMovements> movements = new ArrayList<>();
 
-		// Date maxValuDate = penaltyCalDate;
+		fod.setFinODTillDate(penaltyCalDate);
+		fod.setFinCurODPri(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
+
+		fod.setFinCurODPft(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
+		fod.setFinCurODAmt(fod.getFinCurODPft().add(fod.getFinCurODPri()));
+
+		fod.setFinMaxODPri(curSchd.getPrincipalSchd());
+		fod.setFinMaxODPft(curSchd.getProfitSchd());
 		fod.setFinODTillDate(penaltyCalDate);
 
 		String productCategory = fm.getProductCategory();
