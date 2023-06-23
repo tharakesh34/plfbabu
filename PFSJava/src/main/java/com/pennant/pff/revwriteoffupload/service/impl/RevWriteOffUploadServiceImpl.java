@@ -33,8 +33,8 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.impl.ManualAdviceUtil;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.revwriteoffupload.dao.RevWriteOffUploadDAO;
 import com.pennant.pff.revwriteoffupload.model.RevWriteOffUploadDetail;
 import com.pennant.pff.upload.model.FileUploadHeader;
@@ -185,8 +185,8 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl<RevWriteOff
 		aeEvent = AEAmounts.procAEAmounts(fm, schedules, fpd, AccountingEvent.REV_WRITEOFF, aeEvent.getAppDate(),
 				aeEvent.getAppDate());
 
-		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(),
-				AccountingEvent.REV_WRITEOFF, FinanceConstants.MODULEID_FINTYPE));
+		aeEvent.getAcSetIDList().add(
+				AccountingEngine.getAccountSetID(fm, AccountingEvent.REV_WRITEOFF, FinanceConstants.MODULEID_FINTYPE));
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
