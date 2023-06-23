@@ -1184,7 +1184,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 			whereClause.append("')) AND");
 		}
 
-		whereClause.append(" DepositorId in( ");
+		whereClause.append(" ((DepositorId in( ");
 		whereClause.append(getInnerQuery()).append(")) ");
 		whereClause
 				.append(" OR (CollateralRef IN (Select CollateralRef from CollateralThirdParty WHERE CustomerId in(");
@@ -1217,10 +1217,10 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 			sql.append(") T");
 		} else {
 
-			sql.append("Select distinct CustID From (");
-			sql.append("Select CustID from Customers Where CustID = " + customerId + ")");
-			sql.append("Union All");
-			sql.append("Select CustID from Customers_Temp Where CustID = " + customerId + ")");
+			sql.append(" Select distinct CustID From (");
+			sql.append(" Select CustID from Customers Where CustID = " + customerId);
+			sql.append(" Union All ");
+			sql.append(" Select CustID from Customers_Temp Where CustID = " + customerId);
 			sql.append(") T");
 
 		}

@@ -2007,10 +2007,11 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="getNewProspectCustomerCIF*">PROPAGATION_NOT_SUPPORTED</prop>
+				<prop key="prospectAsCIF*">PROPAGATION_REQUIRED</prop>
 				<prop key="updateCustCRCPR*">PROPAGATION_REQUIRED</prop>
 				<prop key="processPerfios*">PROPAGATION_REQUIRED</prop>
 				<prop key="doCustomerValidations*">PROPAGATION_REQUIRED</prop>
+				<prop key="getNewProspectCustomerCIF*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>

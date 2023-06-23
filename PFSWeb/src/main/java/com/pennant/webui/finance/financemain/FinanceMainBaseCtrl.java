@@ -1826,6 +1826,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 		boolean isEnquiryVisible = false;
 		List<ValueLabel> enquiryList = new ArrayList<>();
+		enquiryList.add(new ValueLabel("1", "Verifications"));
 		List<Integer> verificationTypes = verificationService
 				.getVerificationTypes(StringUtils.trimToEmpty((finBasicDetail.get(3).toString())));
 
@@ -3305,9 +3306,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 									.unFormateAmount((this.finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
 											? this.finAssetValue.getActualValue()
 											: this.finAmount.getActualValue())
-													.subtract(this.downPayBank.getActualValue())
-													.subtract(this.downPaySupl.getActualValue()),
-											formatter)
+											.subtract(this.downPayBank.getActualValue())
+											.subtract(this.downPaySupl.getActualValue()), formatter)
 									.add(financeMain.getFeeChargeAmt());
 						} else {
 							utilizedAmt = PennantApplicationUtil
@@ -17992,8 +17992,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						.unFormateAmount((this.finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
 								? this.finAssetValue.getActualValue()
 								: this.finAmount.getActualValue()).subtract(this.downPayBank.getActualValue())
-										.subtract(this.downPaySupl.getActualValue()),
-								formatter)
+								.subtract(this.downPaySupl.getActualValue()), formatter)
 						.add(financeMain.getFeeChargeAmt());
 			} else {
 				UtilizedAmt = PennantApplicationUtil

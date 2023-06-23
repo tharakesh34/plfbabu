@@ -343,7 +343,9 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 
 			bc.setfieldString01(pincode.getPinCode());
 			bc.setfieldString02(pincode.getAreaName());
-			bc.setFieldBoolean04(pincode.isActive() ? 1 : 0);
+			bc.setFieldBoolean03(pincode.isActive() ? 1 : 0);
+			bc.setfieldString04(pincode.getRecordStatus());
+			bc.setfieldString05(pincode.getRecordType());
 
 			list.add(bc);
 		}
