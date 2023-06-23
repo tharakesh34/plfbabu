@@ -84,7 +84,7 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps.pff</groupId>
 				<artifactId>account-updater</artifactId>
-				<version>4.1.8</version>
+				<version>4.1.9</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
@@ -99,7 +99,7 @@
 			<dependency>
 				<groupId>com.pennanttech.framework.components</groupId>
 				<artifactId>data-engine</artifactId>
-				<version>5.0.0.21</version>
+				<version>5.0.0.23</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>

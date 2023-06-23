@@ -3644,8 +3644,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String roleCode = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		FinanceDetail fd = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
-		fd.setValidateUpfrontFees(true);
+		FinanceDetail financeDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
+		financeDetail.setValidateUpfrontFees(true);
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove", isWIF, false);
 
 		if (!isWIF) {
@@ -3656,6 +3656,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
+
+		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 
 		// process to send FIN-one request and create or update the cust data.
 		String moduleDefiner = fd.getModuleDefiner();
