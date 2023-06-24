@@ -282,7 +282,7 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 
 				if (DateUtil.compare(getFormattedDate(collectionData.getChequeDate()),
 						getFormattedDate(collectionData.getReceiptDate())) > 0) {
-					extRcd.setErrorCode(CR2008);
+					extRcd.setErrorCode(CR2014);
 					return;
 				}
 			}

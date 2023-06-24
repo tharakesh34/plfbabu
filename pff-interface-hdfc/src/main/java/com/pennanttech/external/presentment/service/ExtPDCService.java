@@ -37,6 +37,7 @@ public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
 	private static final String END_OF_REPORT = "(*** End Of Report ***)";
 	private static final String NEW_LINE = "\n";
 	private static final int EXT_PDC_CCY = 2;
+	private static final String DATE_FMT = "dd/MM/yyyy";
 
 	public void processExtPDCPresentments(FileInterfaceConfig config, List<ExtPresentmentFile> presentmentList,
 			Date appDate) {
@@ -54,7 +55,7 @@ public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
 			String clusterId, Date appDate) {
 		logger.debug(Literal.ENTERING);
 		try {
-			List<StringBuilder> itemList = new ArrayList<StringBuilder>();
+			List<StringBuilder> itemList = new ArrayList<>();
 			StringBuilder firstRow = new StringBuilder();
 			firstRow.append(TOP_ROW);
 			itemList.add(firstRow);
@@ -118,9 +119,9 @@ public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
 				item.append(CAP_SEPARATOR);
 				item.append("External PDCs");
 				item.append(CAP_SEPARATOR);
-				item.append(new SimpleDateFormat("dd/MM/yyyy").format(data.getChequeDate()));
+				item.append(new SimpleDateFormat(DATE_FMT).format(data.getChequeDate()));
 				item.append(CAP_SEPARATOR);
-				item.append(new SimpleDateFormat("dd/MM/yyyy").format(data.getSchDate()));
+				item.append(new SimpleDateFormat(DATE_FMT).format(data.getSchDate()));
 				item.append(CAP_SEPARATOR);
 				item.append(AmountUtil.convertAmount(data.getSchAmtDue(), EXT_PDC_CCY));//
 				item.append(CAP_SEPARATOR);
@@ -135,8 +136,6 @@ public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
 						.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 				StringBuilder footer = new StringBuilder();
-
-				footer = new StringBuilder();
 				footer.append(NEW_LINE);
 				itemList.add(footer);
 
@@ -191,14 +190,14 @@ public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
 	}
 
 	private HashMap<String, List<ExtPresentmentFile>> getClusterBasedList(List<ExtPresentmentFile> prmntList) {
-		HashMap<String, List<ExtPresentmentFile>> clusterSeparatedMap = new HashMap<String, List<ExtPresentmentFile>>();
+		HashMap<String, List<ExtPresentmentFile>> clusterSeparatedMap = new HashMap<>();
 		if (!prmntList.isEmpty()) {
 			for (ExtPresentmentFile eachPrmnt : prmntList) {
 				String clusterId = eachPrmnt.getClusterId();
 				if (clusterSeparatedMap.containsKey(clusterId)) {
 					clusterSeparatedMap.get(clusterId).add(eachPrmnt);
 				} else {
-					List<ExtPresentmentFile> newPrmntList = new ArrayList<ExtPresentmentFile>();
+					List<ExtPresentmentFile> newPrmntList = new ArrayList<>();
 					newPrmntList.add(eachPrmnt);
 					clusterSeparatedMap.put(clusterId, newPrmntList);
 				}
@@ -215,7 +214,7 @@ public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
 			}
 
 			StringBuilder sb = new StringBuilder();
-			SimpleDateFormat pmntateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			SimpleDateFormat pmntateFormat = new SimpleDateFormat(DATE_FMT);
 			SimpleDateFormat sysDateFormat = new SimpleDateFormat("dd/MMM/yyyy");
 			sb.append("As on date :").append(CAP_SEPARATOR).append(pmntateFormat.format(prmntDate))
 					.append(CAP_SEPARATOR).append(SPACE_SEPARATOR).append("Creation Date :").append(CAP_SEPARATOR)
@@ -229,7 +228,6 @@ public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
 
 	private StringBuilder generateHeader() {
 		StringBuilder item = new StringBuilder();
-		item = new StringBuilder();
 		item.append("Sr No");
 		item.append(CAP_SEPARATOR);
 		item.append("Branch Id");

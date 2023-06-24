@@ -12,8 +12,6 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.batch.item.ExecutionContext;
@@ -41,7 +39,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FileProcessGSTRespJob extends AbstractJob
 		implements ExtIntfConfigConstants, InterfaceConstants, ErrorCodesConstants {
-	private static final Logger logger = LogManager.getLogger(FileProcessGSTRespJob.class);
 	private static final String FETCH_GSTCOMPHEADER_QUERY = "Select * from GSTHEADER  Where STATUS = ?  AND EXTRACTION= ?";
 	private static final String FETCH_GSTCOMPDETAILS_QUERY = "Select * from GSTDETAILS  Where STATUS = ? AND HEADER_ID = ?";
 	private DataSource extDataSource;
@@ -59,7 +56,7 @@ public class FileProcessGSTRespJob extends AbstractJob
 		loadProperties();
 
 		// Read 10 files at a time using file status = 0
-		JdbcCursorItemReader<GSTCompHeader> cursorItemReader = new JdbcCursorItemReader<GSTCompHeader>();
+		JdbcCursorItemReader<GSTCompHeader> cursorItemReader = new JdbcCursorItemReader<>();
 		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(1);
 		cursorItemReader.setSql(FETCH_GSTCOMPHEADER_QUERY);
@@ -124,7 +121,7 @@ public class FileProcessGSTRespJob extends AbstractJob
 		logger.debug(Literal.ENTERING);
 
 		// Fetch 100 records at a time
-		JdbcCursorItemReader<GSTCompDetail> dataCursorReader = new JdbcCursorItemReader<GSTCompDetail>();
+		JdbcCursorItemReader<GSTCompDetail> dataCursorReader = new JdbcCursorItemReader<>();
 		dataCursorReader.setDataSource(extDataSource);
 		dataCursorReader.setFetchSize(100);
 		dataCursorReader.setSql(FETCH_GSTCOMPDETAILS_QUERY);
@@ -278,30 +275,12 @@ public class FileProcessGSTRespJob extends AbstractJob
 
 					extGSTDao.updateTaxDetails(tax);
 				}
-				// if (StringUtils.stripToEmpty(tax.getTaxType()).equals(RuleConstants.CODE_CESS)) {
-				// tax.setTaxPerc(responseBean.getCessRate());
-				//
-				// BigDecimal actualtaxAmt = tax.getActualTax();
-				// actualtaxAmt = actualtaxAmt.add(responseBean.getIgstAmount());
-				// tax.setActualTax(actualtaxAmt);
-				//
-				// BigDecimal paidTaxAmt = tax.getPaidTax();
-				// paidTaxAmt = paidTaxAmt.add(responseBean.getIgstAmount());
-				// tax.setPaidTax(paidTaxAmt);
-				//
-				// BigDecimal netTaxAmt = tax.getNetTax();
-				// netTaxAmt = netTaxAmt.add(responseBean.getIgstAmount());
-				// tax.setNetTax(netTaxAmt);
-				//
-				// extGSTDao.updateTaxDetails(tax);
-				// }
 			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void processPostings() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -310,20 +289,6 @@ public class FileProcessGSTRespJob extends AbstractJob
 		GSTInvoiceDetail invoiceDetail = getInvoiceDetail(responseBean);
 		extGSTDao.saveGSTInvoiceDetails(invoiceDetail);
 
-	}
-
-	private void setTaxAmounts(Taxes tax, GSTRespDetail responseBean) {
-		BigDecimal actualtaxAmt = tax.getActualTax();
-		actualtaxAmt = actualtaxAmt.add(responseBean.getCgstAmount());
-		tax.setActualTax(actualtaxAmt);
-
-		BigDecimal paidTaxAmt = tax.getPaidTax();
-		paidTaxAmt = paidTaxAmt.add(responseBean.getCgstAmount());
-		tax.setPaidTax(paidTaxAmt);
-
-		BigDecimal netTaxAmt = tax.getNetTax();
-		netTaxAmt = netTaxAmt.add(responseBean.getCgstAmount());
-		tax.setNetTax(netTaxAmt);
 	}
 
 	private GSTInvoiceDetail getInvoiceDetail(GSTRespDetail respBean) {
@@ -371,10 +336,12 @@ public class FileProcessGSTRespJob extends AbstractJob
 	}
 
 	private String getValue(String key) {
+		String returnValue = "";
 		if (gstProp == null) {
-			return gstProp.getProperty(key);
+			returnValue = gstProp.getProperty(key);
+			return returnValue;
 		}
-		return null;
+		return returnValue;
 	}
 
 	private GSTRespDetail convertRecordToBean(GSTCompDetail detail) {

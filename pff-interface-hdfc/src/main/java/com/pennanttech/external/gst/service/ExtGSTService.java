@@ -101,7 +101,7 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 
 			// Uploading to HDFC SFTP
 			if ("Y".equals(reqConfig.getFileTransfer())) {
-				String baseFilePath = reqConfig.getFileLocation();
+				String baseFilePath = App.getResourcePath(reqConfig.getFileLocation());
 				uploadToClientLocation(reqConfig, fileName, baseFilePath, doneFile);
 			}
 		} catch (Exception e) {
@@ -110,9 +110,10 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 	}
 
 	private void prepareFileItems(List<StringBuilder> itemList, List<GSTRequestDetail> gstRequestDetailList) {
-		StringBuilder item = new StringBuilder();
+
 		// DETAIL ITEM FOR REQUEST FILE
 		for (GSTRequestDetail data : gstRequestDetailList) {
+			StringBuilder item = new StringBuilder();
 			append(item, data.getRequestType());
 			appendSeperator(item, data.getCustomerId());
 			appendSeperator(item, data.getAccountId());

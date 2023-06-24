@@ -57,6 +57,7 @@ public interface ErrorCodesConstants {
 	String CR2011 = "CR2011";
 	String CR2012 = "CR2012";
 	String CR2013 = "CR2013";
+	String CR2014 = "CR2014";
 
 	// SILIEN Interface Error Codes
 	String SL1000 = "SL1000";

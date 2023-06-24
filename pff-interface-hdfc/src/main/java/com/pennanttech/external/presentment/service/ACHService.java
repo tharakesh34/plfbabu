@@ -116,7 +116,7 @@ public class ACHService extends TextFileUtil implements InterfaceConstants, Erro
 				itemList.add(0, item); // Add at index 0, because this is header item
 			}
 
-			if (itemList.size() > 0) {
+			if (!itemList.isEmpty()) {
 
 				StringBuilder emptyLine = new StringBuilder();
 				itemList.add(emptyLine);

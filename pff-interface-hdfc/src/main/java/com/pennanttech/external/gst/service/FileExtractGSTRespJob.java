@@ -10,8 +10,6 @@ import java.util.Scanner;
 
 import javax.sql.DataSource;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.batch.item.ExecutionContext;
@@ -32,7 +30,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FileExtractGSTRespJob extends AbstractJob implements InterfaceConstants, ErrorCodesConstants {
 
-	private static final Logger logger = LogManager.getLogger(FileExtractGSTRespJob.class);
 	private static final String GST_COMP_RESPONSE_START = "G";
 	private static final String FETCH_QUERY = "Select * from GSTHEADER  Where STATUS=? AND EXTRACTION=?";
 
@@ -45,7 +42,7 @@ public class FileExtractGSTRespJob extends AbstractJob implements InterfaceConst
 		ExtGSTDao extGSTDao = applicationContext.getBean(ExtGSTDao.class);
 
 		// Fetch 10 files using extraction status = 0
-		JdbcCursorItemReader<GSTCompHeader> cursorItemReader = new JdbcCursorItemReader<GSTCompHeader>();
+		JdbcCursorItemReader<GSTCompHeader> cursorItemReader = new JdbcCursorItemReader<>();
 		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(1);
 		cursorItemReader.setSql(FETCH_QUERY);

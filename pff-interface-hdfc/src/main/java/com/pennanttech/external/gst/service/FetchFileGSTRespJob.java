@@ -5,12 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
@@ -31,19 +28,14 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FetchFileGSTRespJob extends AbstractJob
 		implements InterfaceConstants, ErrorCodesConstants, ExtIntfConfigConstants {
-	private static final Logger logger = LogManager.getLogger(FetchFileGSTRespJob.class);
-	private static final String GST_COMP_RESPONSE_END = "EOF";
-
-	private ExtGSTDao extGSTDao;
-	private ApplicationContext applicationContext;
 
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
 
-		applicationContext = ApplicationContextProvider.getApplicationContext();
+		ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 
-		extGSTDao = applicationContext.getBean(ExtGSTDao.class);
+		ExtGSTDao extGSTDao = applicationContext.getBean(ExtGSTDao.class);
 
 		// Get Response file and complete file configuration
 		FileInterfaceConfig respConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_GST_RESP);
@@ -79,7 +71,7 @@ public class FetchFileGSTRespJob extends AbstractJob
 		}
 
 		// Fetch the list of files from configured folder
-		File filesList[] = dirPath.listFiles();
+		File[] filesList = dirPath.listFiles();
 
 		if (filesList == null || filesList.length == 0) {
 			// no files
@@ -89,7 +81,7 @@ public class FetchFileGSTRespJob extends AbstractJob
 
 		// load response folder file names as list of names
 		List<String> respFileNames = fetchRespFiles(respConfig);
-		List<String> doneFilesList = new ArrayList<String>();
+		List<String> doneFilesList = new ArrayList<>();
 		// Process each file individually
 		for (File file : filesList) {
 			String fileName = file.getName();
@@ -115,11 +107,8 @@ public class FetchFileGSTRespJob extends AbstractJob
 
 					File responseFile = new File(respFolderPath + File.separator + doneFileName);
 
-					// get all the records from file in a list of objects
-					List<String> fileRecordsList = prepareDataFromFile(responseFile);
-
 					// Validating file Header and Footer. If not valid, mark file as 'File format mismatch'
-					boolean isValidFile = validateFile(responseFile, fileRecordsList.size());
+					boolean isValidFile = validateFile(responseFile);
 
 					GSTCompHeader header = new GSTCompHeader();
 
@@ -145,30 +134,7 @@ public class FetchFileGSTRespJob extends AbstractJob
 		logger.debug(Literal.LEAVING);
 	}
 
-	private List<String> prepareDataFromFile(File file) {
-		logger.debug(Literal.ENTERING);
-		List<String> dataList = new ArrayList<String>();
-		try (Scanner sc = new Scanner(file)) {
-
-			while (sc.hasNextLine()) {
-				String lineData = sc.nextLine();
-				if (lineData.contains(GST_COMP_RESPONSE_END)) { // End of the line for response data.
-					return dataList;
-				} else {
-					dataList.add(lineData);
-				}
-
-			}
-
-			return dataList;
-		} catch (Exception e) {
-			logger.debug("Exception caught {}" + e);
-		}
-		logger.debug(Literal.LEAVING);
-		return dataList;
-	}
-
-	private boolean validateFile(File file, int recordsCount) {
+	private boolean validateFile(File file) {
 		logger.debug(Literal.ENTERING);
 		try {
 			FileData cntData = new FileData();
@@ -176,14 +142,12 @@ public class FetchFileGSTRespJob extends AbstractJob
 			long fileLines = cntData.getLinesCount();
 			String data = cntData.getLastLine();
 			long recSize = fileLines - 1;
-			if (data != null && !"".equals(data)) {
-				if (data.startsWith("EOF") && data.length() > 1) {
-					String[] params = Pattern.compile("\\|").split(data);
-					int fileRecSize = 0;
-					fileRecSize = Integer.parseInt(params[1]);
-					if (fileRecSize == recSize) {
-						return true;
-					}
+			if (data != null && !"".equals(data) && (data.startsWith("EOF") && data.length() > 1)) {
+				String[] params = Pattern.compile("\\|").split(data);
+				int fileRecSize = 0;
+				fileRecSize = Integer.parseInt(params[1]);
+				if (fileRecSize == recSize) {
+					return true;
 				}
 			}
 		} catch (Exception e) {
@@ -195,7 +159,8 @@ public class FetchFileGSTRespJob extends AbstractJob
 
 	public void readLastLine(File file, FileData cntData) throws Exception {
 		logger.debug(Literal.ENTERING);
-		String last = null, line;
+		String last = null;
+		String line = null;
 		long cnt = 0;
 		try (BufferedReader in = new BufferedReader(new FileReader(file))) {
 			while ((line = in.readLine()) != null) {
@@ -213,13 +178,13 @@ public class FetchFileGSTRespJob extends AbstractJob
 	}
 
 	private List<String> fetchRespFiles(FileInterfaceConfig reqConfig) {
-		List<String> respFileNames = new ArrayList<String>();
+		List<String> respFileNames = new ArrayList<>();
 		String reqFolderPath = App.getResourcePath(reqConfig.getFileLocation());
 		if (reqFolderPath != null && !"".equals(reqFolderPath)) {
 			File reqDirPath = new File(reqFolderPath);
 			if (reqDirPath.isDirectory()) {
 				// Fetch the list of request files from configured folder
-				File filesList[] = reqDirPath.listFiles();
+				File[] filesList = reqDirPath.listFiles();
 				if (filesList != null && filesList.length > 0) {
 					for (File file : filesList) {
 						respFileNames.add(file.getName());

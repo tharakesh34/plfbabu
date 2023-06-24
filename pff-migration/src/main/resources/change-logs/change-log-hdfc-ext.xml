@@ -2222,4 +2222,16 @@
 	    	]]>
 		</sql>
 	</changeSet>
+	
+		<changeSet id="011.07" author="goutham.ch">
+		<sql>
+			<![CDATA[
+				INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT','CR2014', 	'Cheque date is greater than Receipt date.');
+				  ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="049.02" author="sreeram.r">
+		<modifyDataType tableName="EXT_BASEL_TWO" columnName="AGREEMENTID" newDataType="VARCHAR(50)" />
+	</changeSet>
 </databaseChangeLog>
