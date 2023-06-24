@@ -475,16 +475,6 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 
 		}
 
-		if (!fromFm.isFinIsActive()) {
-			setError(clk, CrossLoanKnockOffUploadError.CLKU_025);
-			return;
-		}
-
-		if (!toFm.isFinIsActive()) {
-			setError(clk, CrossLoanKnockOffUploadError.CLKU_026);
-			return;
-		}
-
 		clk.setFromFm(fromFm);
 		clk.setFromFinID(fromFm.getFinID());
 		clk.setToFm(toFm);
@@ -559,14 +549,13 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 			return;
 		}
 
-		if (!(toFin.isFinIsActive() || toFin.isWriteoffLoan())) {
+		if (toFin.isWriteoffLoan()) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_015);
 			return;
 		}
 
 		if (frmFin.isWriteoffLoan()) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_016);
-			return;
 		}
 	}
 

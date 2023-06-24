@@ -102,11 +102,6 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			return;
 		}
 
-		if (!fm.isFinIsActive()) {
-			setError(detail, ManualKnockOffUploadError.MKOU_103);
-			return;
-		}
-
 		detail.setReferenceID(fm.getFinID());
 		detail.setFinanceMain(fm);
 		if (detail.getAllocationType() == null) {
