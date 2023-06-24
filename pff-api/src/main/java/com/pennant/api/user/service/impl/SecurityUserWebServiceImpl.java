@@ -1,9 +1,7 @@
 package com.pennant.api.user.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -19,9 +17,6 @@ import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
-import com.pennant.backend.model.applicationmaster.Branch;
-import com.pennant.backend.model.applicationmaster.Cluster;
-import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.administration.SecurityUserService;
@@ -144,88 +139,13 @@ public class SecurityUserWebServiceImpl extends AbstractService
 		}
 
 		List<SecurityUserDivBranch> divBranchList = securityUserService.getSecUserDivBrList(response.getUsrID(), "");
-		response.setSecurityUserDivBranchList(prepareSecurityBranch(divBranchList));
+		response.setSecurityUserDivBranchList(securityUserService.prepareSecurityBranch(divBranchList));
 		response.setSecurityUserOperationsList(
 				securityUserOperationsDAO.getSecUserOperationsByUsrID(response, "_View"));
 		response.setReturnStatus(getSuccessStatus());
 		response.setUsrPwd(null);
 
 		return response;
-	}
-
-	private List<SecurityUserDivBranch> prepareSecurityBranch(List<SecurityUserDivBranch> divBranchList) {
-		List<Entity> entities = new ArrayList<>();
-		List<Branch> branches = new ArrayList<>();
-		List<Cluster> clusters = new ArrayList<>();
-		Map<String, SecurityUserDivBranch> divBranches = new HashMap<>();
-		List<SecurityUserDivBranch> responseList = new ArrayList<>();
-
-		for (SecurityUserDivBranch divBranch : divBranchList) {
-			String key = "";
-			switch (divBranch.getAccessType()) {
-			case PennantConstants.ACCESSTYPE_ENTITY:
-				key = divBranch.getAccessType() + divBranch.getUserDivision();
-				Entity entity = new Entity();
-				entity.setEntityCode(divBranch.getEntity());
-				entities.add(entity);
-				divBranch.setEntity(null);
-				divBranch.setClusterList(null);
-				divBranch.setBranchList(null);
-				if (!divBranches.containsKey(key)) {
-					divBranches.put(key, divBranch);
-				}
-				break;
-			case PennantConstants.ACCESSTYPE_CLUSTER:
-				key = divBranch.getAccessType() + divBranch.getUserDivision() + divBranch.getEntity()
-						+ divBranch.getClusterType();
-				Cluster cluster = new Cluster();
-				cluster.setCode(divBranch.getClusterCode());
-				clusters.add(cluster);
-				divBranch.setClusterCode(null);
-				divBranch.setEntitiyList(null);
-				divBranch.setBranchList(null);
-				if (!divBranches.containsKey(key)) {
-					divBranches.put(key, divBranch);
-				}
-				break;
-			case PennantConstants.ACCESSTYPE_BRANCH:
-				key = divBranch.getAccessType() + divBranch.getUserDivision() + divBranch.getEntity()
-						+ divBranch.getParentClusterCode();
-				Branch branch = new Branch();
-				branch.setBranchCode(divBranch.getUserBranch());
-				branches.add(branch);
-				divBranch.setUserBranch(null);
-				divBranch.setEntitiyList(null);
-				divBranch.setClusterList(null);
-				if (!divBranches.containsKey(key)) {
-					divBranches.put(key, divBranch);
-				}
-				break;
-			default:
-				break;
-			}
-		}
-
-		divBranches.forEach((k, v) -> responseList.add(v));
-
-		for (SecurityUserDivBranch divBranch : responseList) {
-			switch (divBranch.getAccessType()) {
-			case PennantConstants.ACCESSTYPE_ENTITY:
-				divBranch.setEntitiyList(entities);
-				break;
-			case PennantConstants.ACCESSTYPE_CLUSTER:
-				divBranch.setClusterList(clusters);
-				break;
-			case PennantConstants.ACCESSTYPE_BRANCH:
-				divBranch.setBranchList(branches);
-				break;
-			default:
-				break;
-			}
-		}
-
-		return responseList;
-
 	}
 
 	private AuditHeader getAuditHeader(SecurityUser user, String tranType) {

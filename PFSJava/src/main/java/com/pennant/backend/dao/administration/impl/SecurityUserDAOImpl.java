@@ -537,43 +537,37 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 	}
 
 	private List<SecurityUserDivBranch> getDivisionBasedCluster(long usrID) {
-		StringBuilder sql = new StringBuilder("Select ua.UsrID, ua.Division, dd.DivisionCodeDesc");
-		sql.append(", ua.Branch, b.BranchDesc, ua.AccessType, ua.ClusterId, ua.ClusterType");
-		sql.append(", cl.Code, cl.Name, ua.Entity, e.EntityDesc, ua.ParentCluster");
-		sql.append(", ua.ParentClusterType, clp.Code ParentClusterCode, clp.Name ParentClusterName");
-		sql.append(" From SecUserAccess ua");
-		sql.append(" Inner Join SMTDivisionDetail dd ON dd.DivisionCode = ua.Division");
-		sql.append(" Left Join RMTBranches b ON b.BranchCode = ua.Branch");
-		sql.append(" Left Join Entity e ON e.EntityCode = ua.Entity");
-		sql.append(" Left Join Clusters cl ON cl.Id = ua.ClusterID");
-		sql.append(" Left Join Clusters clp ON clp.Id = ua.ParentCluster");
-		sql.append(" Left Join Cluster_Hierarchy ch ON ch.Entity = ua.Entity and ch.ClusterType = ua.ClusterType");
+		StringBuilder sql = getDivisionBasedClusterQuery();
 		sql.append(" Where UsrID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-			SecurityUserDivBranch sudb = new SecurityUserDivBranch();
-
-			sudb.setUsrID(rs.getLong("UsrID"));
-			sudb.setUserDivision(rs.getString("Division"));
-			sudb.setDivisionDesc(rs.getString("DivisionCodeDesc"));
-			sudb.setUserBranch(rs.getString("Branch"));
-			sudb.setBranchDesc(rs.getString("BranchDesc"));
-			sudb.setAccessType(rs.getString("AccessType"));
-			sudb.setClusterId(JdbcUtil.getLong(rs.getObject("ClusterId")));
-			sudb.setClusterType(rs.getString("ClusterType"));
-			sudb.setClusterCode(rs.getString("Code"));
-			sudb.setClusterName(rs.getString("Name"));
-			sudb.setEntity(rs.getString("Entity"));
-			sudb.setEntityDesc(rs.getString("EntityDesc"));
-			sudb.setParentCluster(JdbcUtil.getLong(rs.getObject("ParentCluster")));
-			sudb.setParentClusterType(rs.getString("ParentClusterType"));
-			sudb.setParentClusterCode(rs.getString("ParentClusterCode"));
-			sudb.setParentClusterName(rs.getString("ParentClusterName"));
-
-			return sudb;
+			return getSecurityDivisonRowMapper(rs);
 		}, usrID);
+	}
+
+	private SecurityUserDivBranch getSecurityDivisonRowMapper(ResultSet rs) throws SQLException {
+		SecurityUserDivBranch sudb = new SecurityUserDivBranch();
+
+		sudb.setUsrID(rs.getLong("UsrID"));
+		sudb.setUserDivision(rs.getString("Division"));
+		sudb.setDivisionDesc(rs.getString("DivisionCodeDesc"));
+		sudb.setUserBranch(rs.getString("Branch"));
+		sudb.setBranchDesc(rs.getString("BranchDesc"));
+		sudb.setAccessType(rs.getString("AccessType"));
+		sudb.setClusterId(JdbcUtil.getLong(rs.getObject("ClusterId")));
+		sudb.setClusterType(rs.getString("ClusterType"));
+		sudb.setClusterCode(rs.getString("Code"));
+		sudb.setClusterName(rs.getString("Name"));
+		sudb.setEntity(rs.getString("Entity"));
+		sudb.setEntityDesc(rs.getString("EntityDesc"));
+		sudb.setParentCluster(JdbcUtil.getLong(rs.getObject("ParentCluster")));
+		sudb.setParentClusterType(rs.getString("ParentClusterType"));
+		sudb.setParentClusterCode(rs.getString("ParentClusterCode"));
+		sudb.setParentClusterName(rs.getString("ParentClusterName"));
+
+		return sudb;
 	}
 
 	@Override
@@ -1042,4 +1036,62 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, usrDesg) > 0;
 	}
+
+	private StringBuilder getDivisionBasedClusterQuery() {
+		StringBuilder sql = new StringBuilder("Select ua.UsrID, ua.Division, dd.DivisionCodeDesc");
+		sql.append(", ua.Branch, b.BranchDesc, ua.AccessType, ua.ClusterId, ua.ClusterType");
+		sql.append(", cl.Code, cl.Name, ua.Entity, e.EntityDesc, ua.ParentCluster");
+		sql.append(", ua.ParentClusterType, clp.Code ParentClusterCode, clp.Name ParentClusterName");
+		sql.append(" From SecUserAccess ua");
+		sql.append(" Inner Join SMTDivisionDetail dd ON dd.DivisionCode = ua.Division");
+		sql.append(" Left Join RMTBranches b ON b.BranchCode = ua.Branch");
+		sql.append(" Left Join Entity e ON e.EntityCode = ua.Entity");
+		sql.append(" Left Join Clusters cl ON cl.Id = ua.ClusterID");
+		sql.append(" Left Join Clusters clp ON clp.Id = ua.ParentCluster");
+		sql.append(" Left Join Cluster_Hierarchy ch ON ch.Entity = ua.Entity and ch.ClusterType = ua.ClusterType");
+
+		return sql;
+	}
+
+	@Override
+	public List<SecurityUserDivBranch> getDivisionsByAccessType(SecurityUserDivBranch branch) {
+		Object[] object = null;
+
+		StringBuilder sql = getDivisionBasedClusterQuery();
+
+		object = getWhereCondition(branch, sql);
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			return getSecurityDivisonRowMapper(rs);
+		}, object);
+
+	}
+
+	private Object[] getWhereCondition(SecurityUserDivBranch branch, StringBuilder sql) {
+		Object[] object = null;
+		switch (branch.getAccessType()) {
+		case PennantConstants.ACCESSTYPE_ENTITY:
+			object = new Object[] { branch.getUsrID(), branch.getUserDivision(), branch.getAccessType() };
+			sql.append(" Where ua.UsrID = ? and ua.Division = ? and ua.AccessType = ?");
+			return object;
+		case PennantConstants.ACCESSTYPE_CLUSTER:
+			object = new Object[] { branch.getUsrID(), branch.getUserDivision(), branch.getAccessType(),
+					branch.getEntity(), branch.getClusterType() };
+			sql.append(
+					" Where ua.UsrID = ? and ua.Division = ? and ua.AccessType = ? and ua.Entity = ? and ua.ClusterType = ?");
+			return object;
+		case PennantConstants.ACCESSTYPE_BRANCH:
+			object = new Object[] { branch.getUsrID(), branch.getUserDivision(), branch.getAccessType(),
+					branch.getEntity(), branch.getParentClusterCode() };
+			sql.append(
+					" Where ua.UsrID = ? and ua.Division = ? and ua.AccessType = ? and ua.Entity = ? and clp.Code = ?");
+			return object;
+		default:
+			break;
+		}
+		return null;
+	}
+
 }

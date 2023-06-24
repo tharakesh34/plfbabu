@@ -443,7 +443,12 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			}
 
 			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
-				saveUserDivisions(securityUser, "", "doApprove");
+
+				if (RequestSource.API.equals(securityUser.getRequestSource()) && !securityUser.isNewRecord()) {
+					saveUserDivisionsByMode(securityUser);
+				} else {
+					saveUserDivisions(securityUser, "", "doApprove");
+				}
 			} else {
 				List<AuditDetail> userDivBranchs = securityUser.getAuditDetailMap().get("UserDivBranchs");
 				if (CollectionUtils.isNotEmpty(userDivBranchs)) {
@@ -504,11 +509,9 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			return auditHeader;
 		}
 
-		// boolean sendCounterSign = App.getBooleanProperty("user.create.notify.pwd");
-
-		// if (!sendCounterSign) {
-		// return auditHeader;
-		// }
+		if (AuthenticationType.LDAP.name().equals(securityUser.getAuthType())) {
+			return auditHeader;
+		}
 
 		MailTemplate mailTemplate = mailTemplateDAO.getTemplateByCode("SECURITY_USER_NOTIFY_PWD");
 
@@ -558,6 +561,47 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 		logger.debug("Leaving ");
 		return auditHeader;
+	}
+
+	private void saveUserDivisionsByMode(SecurityUser securityUser) {
+		List<SecurityUserDivBranch> userBranches = securityUser.getSecurityUserDivBranchList();
+
+		for (SecurityUserDivBranch division : userBranches) {
+
+			division.setRoleCode(securityUser.getRoleCode());
+			division.setNextRoleCode(securityUser.getNextRoleCode());
+			division.setTaskId(securityUser.getTaskId());
+			division.setNextTaskId(securityUser.getNextTaskId());
+
+			division.setUsrID(securityUser.getUsrID());
+			division.setRecordType(securityUser.getRecordType());
+
+			division.setRoleCode(securityUser.getRoleCode());
+			division.setNextRoleCode(securityUser.getNextRoleCode());
+			division.setTaskId(securityUser.getTaskId());
+			division.setNextTaskId(securityUser.getNextTaskId());
+			division.setRecordStatus(securityUser.getRecordStatus());
+
+			switch (division.getMode()) {
+			case PennantConstants.RCD_ADD:
+				division.setRecordType(PennantConstants.RCD_ADD);
+				break;
+			case PennantConstants.RCD_EDT:
+				division.setRecordType(PennantConstants.RCD_ADD);
+				break;
+			case PennantConstants.RCD_DEL:
+				division.setRecordType(PennantConstants.RCD_DEL);
+				break;
+			default:
+				division.setRecordType(PennantConstants.RCD_ADD);
+				break;
+			}
+		}
+
+		securityUserAccessService.saveDIvisionBranchesByMode(securityUser);
+
+		logger.debug(Literal.LEAVING);
+
 	}
 
 	private void saveUserOperations(long usrID, AuditHeader auditHeader) {
@@ -995,14 +1039,6 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		return auditDetails;
 	}
 
-	/**
-	 * @param securityUser
-	 * @param auditTranType
-	 * @param method
-	 * @param language
-	 * @param online
-	 * @return
-	 */
 	public List<AuditDetail> getAuditUserDivBranchs(SecurityUser securityUser, String auditTranType, String method,
 			String language, boolean online) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -1556,12 +1592,20 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			return ad;
 		}
 
+		validateDivisionMode(isUpdate, ad, user);
+
+		if (CollectionUtils.isNotEmpty(ad.getErrorDetails())) {
+			logger.debug(Literal.LEAVING);
+			return ad;
+		}
+
 		AuditDetail returnStatus = validateDivisions(ad, user, isAllowCluster, logUsrDtls);
 
 		if (CollectionUtils.isNotEmpty(returnStatus.getErrorDetails())) {
 			logger.debug(Literal.LEAVING);
 			return returnStatus;
 		}
+
 		if (StringUtils.isEmpty(user.getUsrBranchCode())
 				&& CollectionUtils.isNotEmpty(user.getSecurityUserDivBranchList())) {
 			setUserBranch(user);
@@ -1599,10 +1643,149 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		return ad;
 	}
 
+	private void validateDivisionMode(boolean isUpdate, AuditDetail ad, SecurityUser user) {
+
+		List<SecurityUserDivBranch> userBranches = user.getSecurityUserDivBranchList();
+
+		for (SecurityUserDivBranch userBranch : userBranches) {
+			if (isUpdate) {
+				break;
+			}
+
+			if (StringUtils.isBlank(userBranch.getMode())) {
+				userBranch.setMode(PennantConstants.RCD_ADD);
+			} else if (!("ADD".equals(userBranch.getMode()))) {
+				setError(ad, "92021", "Allowed Values for Mode during user creation is ADD");
+				return;
+			}
+		}
+
+		if (CollectionUtils.isEmpty(userBranches) || !isUpdate) {
+			return;
+		}
+
+		List<SecurityUserDivBranch> userDivBranch;
+		int size = 0;
+
+		for (SecurityUserDivBranch userBranch : userBranches) {
+			userBranch.setUsrID(user.getUsrID());
+			if (StringUtils.isBlank(userBranch.getMode())) {
+				setError(ad, "90502", "Mode");
+				return;
+			}
+
+			if (!("ADD".equals(userBranch.getMode()) || "EDIT".equals(userBranch.getMode())
+					|| "DELETE".equals(userBranch.getMode()))) {
+				setError(ad, "92021", "Allowed Values for Mode are ADD, EDIT and DELETE");
+				return;
+			}
+
+			if ("ADD".equals(userBranch.getMode())) {
+				userDivBranch = securityUsersDAO.getDivisionsByAccessType(userBranch);
+				if (CollectionUtils.isEmpty(userDivBranch)) {
+					continue;
+				}
+				size = validateModeForDivision(userBranch, userDivBranch);
+				if (size > 0) {
+					setError(ad, "92021", "User Branch already exists to Add");
+				}
+			}
+
+			if ("DELETE".equals(userBranch.getMode())) {
+				userDivBranch = securityUsersDAO.getDivisionsByAccessType(userBranch);
+				size = validateModeForDivision(userBranch, userDivBranch);
+				if (size < 1) {
+					setError(ad, "92021", "User Branch does not exist to Delete");
+				}
+			}
+
+		}
+
+		List<SecurityUserDivBranch> editOperations = userBranches.stream().filter(op -> "EDIT".equals(op.getMode()))
+				.toList();
+
+		if (CollectionUtils.isEmpty(editOperations)) {
+			return;
+		}
+
+		for (SecurityUserDivBranch userBranch : editOperations) {
+			userBranch.setUsrID(user.getUsrID());
+			userDivBranch = new ArrayList<>();
+			switch (userBranch.getAccessType()) {
+			case PennantConstants.ACCESSTYPE_ENTITY:
+				userDivBranch = securityUsersDAO.getDivisionsByAccessType(userBranch);
+				if (CollectionUtils.isEmpty(userDivBranch)) {
+					setError(ad, "92021", "No Entities are mapped with the Divison to edit");
+					return;
+				}
+				break;
+			case PennantConstants.ACCESSTYPE_CLUSTER:
+				userDivBranch = securityUsersDAO.getDivisionsByAccessType(userBranch);
+				if (CollectionUtils.isEmpty(userDivBranch)) {
+					setError(ad, "92021", "No Clusters are mapped with the Divison to edit");
+					return;
+				}
+				break;
+			case PennantConstants.ACCESSTYPE_BRANCH:
+				userDivBranch = securityUsersDAO.getDivisionsByAccessType(userBranch);
+				if (CollectionUtils.isEmpty(userDivBranch)) {
+					setError(ad, "92021", "No Branches are mapped with the Divison to edit");
+					return;
+				}
+				break;
+			default:
+				break;
+			}
+
+			for (SecurityUserDivBranch editBranch : prepareSecurityBranch(userDivBranch)) {
+				editBranch.setMode("DELETE");
+				userBranches.add(editBranch);
+			}
+		}
+	}
+
+	private int validateModeForDivision(SecurityUserDivBranch userBranch, List<SecurityUserDivBranch> userDivBranch) {
+		List<String> accesslist;
+		List<String> list;
+		switch (userBranch.getAccessType()) {
+		case PennantConstants.ACCESSTYPE_ENTITY:
+			if (CollectionUtils.isNotEmpty(userBranch.getEntitiyList())) {
+				accesslist = userBranch.getEntitiyList().stream().map(Entity::getEntityCode).toList();
+				list = userDivBranch.stream().map(SecurityUserDivBranch::getEntity).toList();
+				int size = accesslist.stream().filter(list::contains).collect(Collectors.toList()).size();
+				return size;
+			}
+			break;
+		case PennantConstants.ACCESSTYPE_CLUSTER:
+			if (CollectionUtils.isNotEmpty(userBranch.getClusterList())) {
+				accesslist = userBranch.getClusterList().stream().map(Cluster::getCode).toList();
+				list = userDivBranch.stream().map(SecurityUserDivBranch::getClusterCode).toList();
+				int size = accesslist.stream().filter(list::contains).collect(Collectors.toList()).size();
+				return size;
+			}
+			break;
+		case PennantConstants.ACCESSTYPE_BRANCH:
+			if (CollectionUtils.isNotEmpty(userBranch.getBranchList())) {
+				accesslist = userBranch.getBranchList().stream().map(Branch::getBranchCode).toList();
+				list = userDivBranch.stream().map(SecurityUserDivBranch::getUserBranch).toList();
+				int size = accesslist.stream().filter(list::contains).collect(Collectors.toList()).size();
+				return size;
+			}
+			break;
+		default:
+			break;
+		}
+
+		return 0;
+	}
+
 	private void setUserBranch(SecurityUser user) {
 		String entity = null;
 		List<String> branches;
 		for (SecurityUserDivBranch divBranch : user.getSecurityUserDivBranchList()) {
+			if (PennantConstants.RCD_DEL.equals(divBranch.getMode())) {
+				continue;
+			}
 			switch (divBranch.getAccessType()) {
 			case PennantConstants.ACCESSTYPE_ENTITY:
 				entity = divBranch.getEntity();
@@ -1810,6 +1993,8 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			return ad;
 		}
 
+		divBranch.setAccessType(divBranch.getAccessType().toUpperCase());
+
 		if (!divisionDetailDAO.isActiveDivision(divBranch.getUserDivision())) {
 			setError(ad, ERR_93304, "Division");
 			return ad;
@@ -1844,6 +2029,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		if (entities) {
 			for (Entity entity : divBranch.getEntitiyList()) {
 				SecurityUserDivBranch division = new SecurityUserDivBranch();
+
 				division.setAccessType(accessType);
 				division.setUsrID(currUsr);
 				division.setUserDivision(userBranch);
@@ -1852,7 +2038,12 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 				division.setLastMntBy(lastUsr);
 				division.setLastMntOn(lastMntOn);
 				division.setUserDetails(userDetails);
-
+				division.setMode(divBranch.getMode());
+				division.setRecordType(PennantConstants.RCD_DEL);
+				if (!PennantConstants.RCD_DEL.equals(division.getMode())) {
+					division.setNewRecord(true);
+					division.setRecordType(PennantConstants.RCD_ADD);
+				}
 				divList.add(division);
 			}
 
@@ -1860,6 +2051,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		if (clusters) {
 			for (Cluster cluster : divBranch.getClusterList()) {
 				SecurityUserDivBranch division = new SecurityUserDivBranch();
+
 				division.setAccessType(accessType);
 				division.setUsrID(currUsr);
 				division.setUserDivision(userBranch);
@@ -1872,7 +2064,12 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 				division.setLastMntBy(lastUsr);
 				division.setLastMntOn(lastMntOn);
 				division.setUserDetails(userDetails);
-
+				division.setMode(divBranch.getMode());
+				division.setRecordType(PennantConstants.RCD_DEL);
+				if (!PennantConstants.RCD_DEL.equals(division.getMode())) {
+					division.setNewRecord(true);
+					division.setRecordType(PennantConstants.RCD_ADD);
+				}
 				divList.add(division);
 			}
 		}
@@ -1891,7 +2088,12 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 				division.setLastMntBy(lastUsr);
 				division.setLastMntOn(lastMntOn);
 				division.setUserDetails(userDetails);
-
+				division.setMode(divBranch.getMode());
+				division.setRecordType(PennantConstants.RCD_DEL);
+				if (!PennantConstants.RCD_DEL.equals(division.getMode())) {
+					division.setNewRecord(true);
+					division.setRecordType(PennantConstants.RCD_ADD);
+				}
 				divList.add(division);
 			}
 		}
@@ -2053,12 +2255,27 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		String authType = user.getAuthType();
 		String inType = Labels.getLabel("label_Auth_Type_Internal");
 		String extType = Labels.getLabel("label_Auth_Type_External");
+		boolean isExternalUser = StringUtils.equals(authType, extType);
 		boolean isPwd = false;
 		String UsrPwd = user.getUsrPwd();
 
-		if (StringUtils.equals(authType, extType) && StringUtils.isNotBlank(UsrPwd)) {
+		if (isExternalUser && StringUtils.isNotBlank(UsrPwd)) {
 			setError(ad, ERR_RU0039, "For userType:External UsrPwd");
 			return ad;
+		}
+
+		if (isExternalUser) {
+			List<ValueLabel> ldapDomainList = PennantStaticListUtil.getLDAPDomains();
+			if (CollectionUtils.isEmpty(ldapDomainList)) {
+				setError(ad, "92021", "No LDAP Domains are configured for external users");
+				return ad;
+			} else if (ldapDomainList.size() > 1) {
+				setError(ad, "ERR_90502", "LDAP Domain Name");
+				return ad;
+			} else if (ldapDomainList.size() == 1) {
+				user.setLdapDomainName(ldapDomainList.get(0).getLabel());
+			}
+
 		}
 
 		if (isUpdate && StringUtils.equals(authType, inType) && StringUtils.isNotBlank(UsrPwd)) {
@@ -2072,7 +2289,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			user.setAuthType(AuthenticationType.DAO.name());
 			if (!StringUtils.isBlank(UsrPwd)) {
 				if (StringUtils.isBlank(user.getConfirmPassword())) {
-					setError(ad, ERR_90502, "User Branch");
+					setError(ad, ERR_90502, "Confirm Password");
 					return ad;
 				}
 				if (!UsrPwd.equals(user.getConfirmPassword())) {
@@ -2326,6 +2543,78 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		notes.setRoleCode(user.getRoleCode());
 
 		notesDAO.save(notes);
+	}
+
+	@Override
+	public List<SecurityUserDivBranch> prepareSecurityBranch(List<SecurityUserDivBranch> divBranchList) {
+		List<Entity> entities;
+		List<Branch> branches;
+		List<Cluster> clusters;
+		Map<String, SecurityUserDivBranch> divBranches = new HashMap<>();
+		List<SecurityUserDivBranch> responseList = new ArrayList<>();
+
+		for (SecurityUserDivBranch divBranch : divBranchList) {
+			String key = "";
+			switch (divBranch.getAccessType()) {
+			case PennantConstants.ACCESSTYPE_ENTITY:
+				entities = new ArrayList<>();
+				key = divBranch.getAccessType() + divBranch.getUserDivision();
+				Entity entity = new Entity();
+				entity.setEntityCode(divBranch.getEntity());
+				entities.add(entity);
+				divBranch.setEntity(null);
+				divBranch.setClusterList(null);
+				divBranch.setBranchList(null);
+				if (!divBranches.containsKey(key)) {
+					divBranch.setEntitiyList(entities);
+					divBranches.put(key, divBranch);
+				} else {
+					divBranches.get(key).getEntitiyList().add(entity);
+				}
+				break;
+			case PennantConstants.ACCESSTYPE_CLUSTER:
+				clusters = new ArrayList<>();
+				key = divBranch.getAccessType() + divBranch.getUserDivision() + divBranch.getEntity()
+						+ divBranch.getClusterType();
+				Cluster cluster = new Cluster();
+				cluster.setCode(divBranch.getClusterCode());
+				clusters.add(cluster);
+				divBranch.setClusterCode(null);
+				divBranch.setEntitiyList(null);
+				divBranch.setBranchList(null);
+				if (!divBranches.containsKey(key)) {
+					divBranch.setClusterList(clusters);
+					divBranches.put(key, divBranch);
+				} else {
+					divBranches.get(key).getClusterList().add(cluster);
+				}
+				break;
+			case PennantConstants.ACCESSTYPE_BRANCH:
+				branches = new ArrayList<>();
+				key = divBranch.getAccessType() + divBranch.getUserDivision() + divBranch.getEntity()
+						+ divBranch.getParentClusterCode();
+				Branch branch = new Branch();
+				branch.setBranchCode(divBranch.getUserBranch());
+				branches.add(branch);
+				divBranch.setUserBranch(null);
+				divBranch.setEntitiyList(null);
+				divBranch.setClusterList(null);
+				if (!divBranches.containsKey(key)) {
+					divBranch.setBranchList(branches);
+					divBranches.put(key, divBranch);
+				} else {
+					divBranches.get(key).getBranchList().add(branch);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		divBranches.forEach((k, v) -> responseList.add(v));
+
+		return responseList;
+
 	}
 
 	private AuditHeader getAuditHeader(SecurityUser SecurityUser, String tranType) {

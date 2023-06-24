@@ -31,4 +31,6 @@ public interface SecurityUserAccessService {
 	void saveDivisionBranches(SecurityUser user, String method);
 
 	void deleteDivBranchDetails(SecurityUserDivBranch securityUserDivBranchList);
+
+	void saveDIvisionBranchesByMode(SecurityUser user);
 }

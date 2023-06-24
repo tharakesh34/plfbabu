@@ -95,6 +95,8 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	private List<Cluster> clusterList = new ArrayList<>();
 	@XmlElement(name = "branches")
 	private List<Branch> branchList = new ArrayList<>();
+	@XmlElement
+	private String mode;
 
 	public SecurityUserDivBranch() {
 		super();
@@ -131,6 +133,8 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 		excludeFields.add("entitiyList");
 		excludeFields.add("clusterList");
 		excludeFields.add("branchList");
+		excludeFields.add("mode");
+
 		return excludeFields;
 	}
 
@@ -372,6 +376,14 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 
 	public void setBranchList(List<Branch> branchList) {
 		this.branchList = branchList;
+	}
+
+	public String getMode() {
+		return mode;
+	}
+
+	public void setMode(String mode) {
+		this.mode = mode;
 	}
 
 }
