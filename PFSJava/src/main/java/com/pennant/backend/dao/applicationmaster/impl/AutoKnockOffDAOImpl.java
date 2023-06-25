@@ -376,7 +376,7 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 		sql.append(" ake.ID, ake.FinID, ake.FinReference, ake.AmountType, ake.ValueDate");
 		sql.append(", ake.BalanceAmount, ake.ExecutionDay, ake.ThresholdValue, ake.PayableId");
 		sql.append(" From AUTO_KNOCKOFF_EXCESS_STAGE ake");
-		sql.append(" Inner Join FinanceMain fm on fm.FinReference = ake.FinReference and fm.FinIsActive = ?");
+		sql.append(" Inner Join FinanceMain fm on fm.FinReference = ake.FinReference");
 		sql.append(" Where fm.CustId = ? and ValueDate = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -384,7 +384,6 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 		return jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setInt(index++, 1);
 			ps.setLong(index++, custID);
 			ps.setDate(index, JdbcUtil.getDate(valueDate));
 		}, (rs, rowNum) -> {
