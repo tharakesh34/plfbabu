@@ -34,7 +34,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class FileProcessCollectionReqJob extends AbstractJob implements InterfaceConstants, ErrorCodesConstants {
 
-	private static final String FETCH_QUERY = "Select * from COLL_RECEIPT_HEADER  Where STATUS=? AND EXTRACTION = ?";
+	private static final String FETCH_QUERY = "Select * from COLL_RECEIPT_HEADER  Where STATUS=? AND EXTRACTION = ? AND WRITE_RESPONSE = ?";
 
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
@@ -76,6 +76,7 @@ public class FileProcessCollectionReqJob extends AbstractJob implements Interfac
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setLong(1, COMPLETED);
 				ps.setLong(2, COMPLETED);
+				ps.setLong(3, FILE_NOT_WRITTEN);
 			}
 		});
 
