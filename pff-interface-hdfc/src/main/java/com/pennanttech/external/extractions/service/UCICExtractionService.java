@@ -42,8 +42,6 @@ public class UCICExtractionService extends TextFileUtil implements InterfaceCons
 
 			Date appDate = SysParamUtil.getAppDate();
 
-			logger.debug(Literal.ENTERING);
-
 			// Fetch UCIC configs from main configuration
 			FileInterfaceConfig ucicReqConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_REQ);
 			FileInterfaceConfig ucicReqCompleteConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_REQ_COMPLETE);
@@ -109,9 +107,6 @@ public class UCICExtractionService extends TextFileUtil implements InterfaceCons
 			emptyList.add(new StringBuilder(""));
 			super.writeDataToFile(completeFileName, emptyList);
 			fileTransferUtil.uploadToSFTP(baseFilePath, completeFileName);
-
-			logger.debug(Literal.LEAVING);
-
 		} catch (Exception e) {
 			logger.debug("Unable to download file from DB Server to local path.", e);
 			return;
