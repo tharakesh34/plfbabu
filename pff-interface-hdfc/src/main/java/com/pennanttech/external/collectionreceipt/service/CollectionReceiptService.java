@@ -134,7 +134,7 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 		cru.setBankCode(String.valueOf(collectionData.getDealingBankId()));
 		cru.setEffectSchdMethod("");
 
-		List<CreateReceiptUpload> alloc = new ArrayList<CreateReceiptUpload>();
+		List<CreateReceiptUpload> alloc = new ArrayList<>();
 
 		if (collectionData.getBccAmount().compareTo(BigDecimal.ZERO) > 0) {
 			CreateReceiptUpload alloc1 = new CreateReceiptUpload();

@@ -2234,4 +2234,8 @@
 	<changeSet id="049.02" author="sreeram.r">
 		<modifyDataType tableName="EXT_BASEL_TWO" columnName="AGREEMENTID" newDataType="VARCHAR(50)" />
 	</changeSet>
+	
+	<changeSet id="24.4" author="sreeram.r">
+		<modifyDataType tableName="FINCON_GL_STG" columnName="ACC_DATE"	newDataType="VARCHAR(50)" />
+	</changeSet>
 </databaseChangeLog>

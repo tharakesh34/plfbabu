@@ -63,6 +63,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 			gvd.setReferenceAmount(rs.getBigDecimal("REFERENCE_AMOUNT"));
 			gvd.setReferenceField1(rs.getLong("REFERENCE_FIELD1"));
 			gvd.setReferenceField2(rs.getLong("REFERENCE_FIELD2"));
+			gvd.setTaxHeaderId(rs.getLong("TAXHEADERID"));
 			vouchersList.add(gvd);
 		});
 
@@ -71,7 +72,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 
 	private List<GSTVoucherDetails> getVoucherDetailsFromManualAdvice() {
 		String sql = "select mad.FINREFERENCE FINREFERENCE,'ADVISE' AMOUNT_TYPE, MOVEMENTID REFERENCE_FIELD1, "
-				+ "   madm.RECEIPTID REFERENCE_FIELD2,madm.PAIDAMOUNT REFERENCE_AMOUNT,frh.receiptamount ACTUAL_AMOUNT "
+				+ "   madm.RECEIPTID REFERENCE_FIELD2,madm.PAIDAMOUNT REFERENCE_AMOUNT,frh.receiptamount ACTUAL_AMOUNT , madm.TAXHEADERID "
 				+ "   from manualadvisemovements madm "
 				+ "   inner join manualadvise mad on madm.ADVISEID=mad.ADVISEID  "
 				+ "   inner join finreceiptheader frh on madm.RECEIPTID=frh.receiptid";
@@ -88,6 +89,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 			gvd.setReferenceAmount(rs.getBigDecimal("REFERENCE_AMOUNT"));
 			gvd.setReferenceField1(rs.getLong("REFERENCE_FIELD1"));
 			gvd.setReferenceField2(rs.getLong("REFERENCE_FIELD2"));
+			gvd.setTaxHeaderId(rs.getLong("TAXHEADERID"));
 			vouchersList.add(gvd);
 		});
 
