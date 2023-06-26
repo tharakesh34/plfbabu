@@ -531,13 +531,14 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 
 		// FIXME: 24FEB23. WHY THE BELOW CODE IS REQUIRED.
-		/*
-		 * fod.setFinMaxODAmt(fod.getFinMaxODPft().add(fod.getFinMaxODPri()).add(fod.getMaxOverdraftTxnChrg())); Date
-		 * odtCaldate = penaltyCalDate; if (ImplementationConstants.LP_MARK_FIRSTDAY && isEODprocess) { odtCaldate =
-		 * DateUtil.addDays(penaltyCalDate, 1); }
-		 */
 
-		fod.setFinCurODDays(DateUtil.getDaysBetween(fod.getFinODSchdDate(), valueDate));
+		fod.setFinMaxODAmt(fod.getFinMaxODPft().add(fod.getFinMaxODPri()).add(fod.getMaxOverdraftTxnChrg()));
+		Date odtCaldate = penaltyCalDate;
+		if (ImplementationConstants.LP_MARK_FIRSTDAY && isEODprocess) {
+			odtCaldate = DateUtil.addDays(penaltyCalDate, 1);
+		}
+
+		fod.setFinCurODDays(DateUtil.getDaysBetween(fod.getFinODSchdDate(), odtCaldate));
 
 		EventProperties eventProperties = fm.getEventProperties();
 
