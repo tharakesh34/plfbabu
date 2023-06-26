@@ -134,4 +134,6 @@ public interface MandateDAO {
 	int getMandateType(long mandateId, String mandatetype, String reference);
 
 	String getMandateNumber(Long mandateId);
+
+	List<Mandate> getMandatesForSwap(long finID);
 }

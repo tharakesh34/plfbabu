@@ -133,7 +133,7 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		if (generateLetterService.letterIsInQueu(fm.getFinID(), this.generateLetter.getLetterType())) {
-			String msg = Labels.getLabel("label_listheader_LetterType").concat(this.letterType.getValue())
+			String msg = Labels.getLabel("label_listheader_LetterType").concat(" ").concat(this.letterType.getValue())
 					+ " is Already Initiated For ".concat(this.finReference.getValue())
 					+ " and is in queue for letter generation, Do You Want proceed with Manual?";
 

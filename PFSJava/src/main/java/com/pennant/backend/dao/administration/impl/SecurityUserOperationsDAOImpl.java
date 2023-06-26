@@ -377,4 +377,13 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 
 		return this.jdbcOperations.queryForList(sql, Long.class, usrID);
 	}
+
+	@Override
+	public boolean isOpertionExists(String code, long usrID) {
+		String sql = "Select Count(OprID) From SecUserOperations Where OprID = (Select OprID from Secoperations Where OprCode = ?) and UsrID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, code, usrID) > 0;
+	}
 }

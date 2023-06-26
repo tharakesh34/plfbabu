@@ -2,15 +2,16 @@ package com.pennanttech.external.gst.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.batch.item.ExecutionContext;
@@ -19,6 +20,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
+import com.pennant.backend.model.finance.Taxes;
+import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.ExtIntfConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
@@ -36,10 +39,9 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FileProcessGSTRespJob extends AbstractJob
 		implements ExtIntfConfigConstants, InterfaceConstants, ErrorCodesConstants {
-	private static final Logger logger = LogManager.getLogger(FileProcessGSTRespJob.class);
-	private static final String FETCH_GSTCOMPHEADER_QUERY = "Select * from GSTCOMPHEADER  Where STATUS = ?  AND EXTRACTION= ?";
-	private static final String FETCH_GSTCOMPDETAILS_QUERY = "Select * from GSTCOMPDETAILS  Where STATUS = ? AND HEADER_ID = ?";
-	private DataSource dataSource;
+	private static final String FETCH_GSTCOMPHEADER_QUERY = "Select * from GSTHEADER  Where STATUS = ?  AND EXTRACTION= ?";
+	private static final String FETCH_GSTCOMPDETAILS_QUERY = "Select * from GSTDETAILS  Where STATUS = ? AND HEADER_ID = ?";
+	private DataSource extDataSource;
 	private ExtGSTDao extGSTDao;
 	private ApplicationContext applicationContext;
 	private Properties gstProp;
@@ -50,11 +52,12 @@ public class FileProcessGSTRespJob extends AbstractJob
 
 		applicationContext = ApplicationContextProvider.getApplicationContext();
 		extGSTDao = applicationContext.getBean(ExtGSTDao.class);
-		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
+		extDataSource = applicationContext.getBean("extDataSource", DataSource.class);
+		loadProperties();
 
 		// Read 10 files at a time using file status = 0
-		JdbcCursorItemReader<GSTCompHeader> cursorItemReader = new JdbcCursorItemReader<GSTCompHeader>();
-		cursorItemReader.setDataSource(dataSource);
+		JdbcCursorItemReader<GSTCompHeader> cursorItemReader = new JdbcCursorItemReader<>();
+		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(1);
 		cursorItemReader.setSql(FETCH_GSTCOMPHEADER_QUERY);
 		cursorItemReader.setRowMapper(new RowMapper<GSTCompHeader>() {
@@ -87,16 +90,23 @@ public class FileProcessGSTRespJob extends AbstractJob
 			while ((header = cursorItemReader.read()) != null) {
 				try {
 					// update the file status as processing
-					extGSTDao.updateFileStatus(header.getId(), INPROCESS);
+					header.setStatus(INPROCESS);
+					extGSTDao.updateFileStatus(header);
 
 					// Process records in the file
 					processFileRecords(header);
 
 					// Update file status as processed
-					extGSTDao.updateFileStatus(header.getId(), COMPLETED);
+					header.setStatus(COMPLETED);
+					header.setExtraction(COMPLETED);
+					extGSTDao.updateFileStatus(header);
 				} catch (Exception e) {
 					logger.debug(Literal.EXCEPTION, e);
-					extGSTDao.updateFileStatus(header.getId(), EXCEPTION);
+					header.setErrorCode(GS1002);
+					header.setErrorMessage(e.getMessage());
+					header.setStatus(EXCEPTION);
+					header.setExtraction(FAILED);
+					extGSTDao.updateFileStatus(header);
 				}
 			}
 
@@ -111,8 +121,8 @@ public class FileProcessGSTRespJob extends AbstractJob
 		logger.debug(Literal.ENTERING);
 
 		// Fetch 100 records at a time
-		JdbcCursorItemReader<GSTCompDetail> dataCursorReader = new JdbcCursorItemReader<GSTCompDetail>();
-		dataCursorReader.setDataSource(dataSource);
+		JdbcCursorItemReader<GSTCompDetail> dataCursorReader = new JdbcCursorItemReader<>();
+		dataCursorReader.setDataSource(extDataSource);
 		dataCursorReader.setFetchSize(100);
 		dataCursorReader.setSql(FETCH_GSTCOMPDETAILS_QUERY);
 		dataCursorReader.setRowMapper(new RowMapper<GSTCompDetail>() {
@@ -161,12 +171,10 @@ public class FileProcessGSTRespJob extends AbstractJob
 							continue;
 						}
 
-						// Save the Invoice details into the table
-						GSTInvoiceDetail invoiceDetail = getInvoiceDetail(responseBean);
-						extGSTDao.saveGSTInvoiceDetails(invoiceDetail);
-
-						// FIXME Process GST amounts into Taxheader and Postings
-						saveTaxDetails(responseBean);
+						// Process GST amounts into Taxheader and Postings
+						processTaxHeader(responseBean, gstVoucherDetails);
+						processPostings();
+						processInvoiceDetails(responseBean);
 
 						// Update GST VOUCHER ID in Response detail record for successful transaction
 						detail.setGstVoucherId(responseBean.getTransactionUID());
@@ -194,8 +202,92 @@ public class FileProcessGSTRespJob extends AbstractJob
 
 	}
 
-	private void saveTaxDetails(GSTRespDetail responseBean) {
-		// TODO Auto-generated method stub
+	private void processTaxHeader(GSTRespDetail responseBean, GSTVoucherDetails gstVoucherDetails) {
+		logger.debug(Literal.ENTERING);
+		List<Taxes> taxesList = extGSTDao.getTaxDetailsForHeaderId(gstVoucherDetails.getTaxHeaderId());
+		if (!taxesList.isEmpty()) {
+			for (Taxes tax : taxesList) {
+				if (StringUtils.stripToEmpty(tax.getTaxType()).equals(RuleConstants.CODE_CGST)) {
+					tax.setTaxPerc(responseBean.getCgstRate());
+
+					BigDecimal actualtaxAmt = tax.getActualTax();
+					actualtaxAmt = actualtaxAmt.add(responseBean.getCgstAmount());
+					tax.setActualTax(actualtaxAmt);
+
+					BigDecimal paidTaxAmt = tax.getPaidTax();
+					paidTaxAmt = paidTaxAmt.add(responseBean.getCgstAmount());
+					tax.setPaidTax(paidTaxAmt);
+
+					BigDecimal netTaxAmt = tax.getNetTax();
+					netTaxAmt = netTaxAmt.add(responseBean.getCgstAmount());
+					tax.setNetTax(netTaxAmt);
+
+					extGSTDao.updateTaxDetails(tax);
+				}
+				if (StringUtils.stripToEmpty(tax.getTaxType()).equals(RuleConstants.CODE_SGST)) {
+					tax.setTaxPerc(responseBean.getSgstRate());
+
+					BigDecimal actualtaxAmt = tax.getActualTax();
+					actualtaxAmt = actualtaxAmt.add(responseBean.getSgstAmount());
+					tax.setActualTax(actualtaxAmt);
+
+					BigDecimal paidTaxAmt = tax.getPaidTax();
+					paidTaxAmt = paidTaxAmt.add(responseBean.getSgstAmount());
+					tax.setPaidTax(paidTaxAmt);
+
+					BigDecimal netTaxAmt = tax.getNetTax();
+					netTaxAmt = netTaxAmt.add(responseBean.getSgstAmount());
+					tax.setNetTax(netTaxAmt);
+
+					extGSTDao.updateTaxDetails(tax);
+				}
+				if (StringUtils.stripToEmpty(tax.getTaxType()).equals(RuleConstants.CODE_IGST)) {
+					tax.setTaxPerc(responseBean.getIgstRate());
+
+					BigDecimal actualtaxAmt = tax.getActualTax();
+					actualtaxAmt = actualtaxAmt.add(responseBean.getIgstAmount());
+					tax.setActualTax(actualtaxAmt);
+
+					BigDecimal paidTaxAmt = tax.getPaidTax();
+					paidTaxAmt = paidTaxAmt.add(responseBean.getIgstAmount());
+					tax.setPaidTax(paidTaxAmt);
+
+					BigDecimal netTaxAmt = tax.getNetTax();
+					netTaxAmt = netTaxAmt.add(responseBean.getIgstAmount());
+					tax.setNetTax(netTaxAmt);
+
+					extGSTDao.updateTaxDetails(tax);
+				}
+				if (StringUtils.stripToEmpty(tax.getTaxType()).equals(RuleConstants.CODE_UGST)) {
+					tax.setTaxPerc(responseBean.getUtgstRate());
+
+					BigDecimal actualtaxAmt = tax.getActualTax();
+					actualtaxAmt = actualtaxAmt.add(responseBean.getUtgstAmount());
+					tax.setActualTax(actualtaxAmt);
+
+					BigDecimal paidTaxAmt = tax.getPaidTax();
+					paidTaxAmt = paidTaxAmt.add(responseBean.getUtgstAmount());
+					tax.setPaidTax(paidTaxAmt);
+
+					BigDecimal netTaxAmt = tax.getNetTax();
+					netTaxAmt = netTaxAmt.add(responseBean.getUtgstAmount());
+					tax.setNetTax(netTaxAmt);
+
+					extGSTDao.updateTaxDetails(tax);
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void processPostings() {
+
+	}
+
+	private void processInvoiceDetails(GSTRespDetail responseBean) {
+		// Save the Invoice details into the table
+		GSTInvoiceDetail invoiceDetail = getInvoiceDetail(responseBean);
+		extGSTDao.saveGSTInvoiceDetails(invoiceDetail);
 
 	}
 
@@ -222,25 +314,34 @@ public class FileProcessGSTRespJob extends AbstractJob
 		detail.setPos("");// FIXME Destination State Place of Service
 		detail.setSac(respBean.getSac());
 		detail.setRegBankAddress("");// FIXME Registered address of FI/Bank
-		setHardcodedProperties(detail);
+		detail.setCin(getValue("GSTINTERFACE.CIN"));
+		detail.setPan(getValue("GSTINTERFACE.PAN"));
+		detail.setWebsiteAddress(getValue("GSTINTERFACE.WEBSITE"));
+		detail.setEmailId(getValue("GSTINTERFACE.EMAILID"));
+		detail.setDisclaimer(getValue("GSTINTERFACE.DISCLAIMER"));
 		return detail;
 	}
 
-	private void setHardcodedProperties(GSTInvoiceDetail detail) {
+	private void loadProperties() {
 		try {
 			if (gstProp == null) {
 				gstProp = new Properties();
 				InputStream inputStream = this.getClass().getResourceAsStream("/properties/HDFCInterface.properties");
 				gstProp.load(inputStream);
 			}
-			detail.setCin(gstProp.getProperty("GSTINTERFACE.CIN"));// HardCoded
-			detail.setPan(gstProp.getProperty("GSTINTERFACE.PAN"));// HardCoded
-			detail.setWebsiteAddress(gstProp.getProperty("GSTINTERFACE.WEBSITE"));// HardCoded
-			detail.setEmailId(gstProp.getProperty("GSTINTERFACE.EMAILID"));// HardCoded
-			detail.setDisclaimer(gstProp.getProperty("GSTINTERFACE.DISCLAIMER"));// HardCoded
+
 		} catch (IOException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+	}
+
+	private String getValue(String key) {
+		String returnValue = "";
+		if (gstProp == null) {
+			returnValue = gstProp.getProperty(key);
+			return returnValue;
+		}
+		return returnValue;
 	}
 
 	private GSTRespDetail convertRecordToBean(GSTCompDetail detail) {

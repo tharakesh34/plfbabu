@@ -14,8 +14,14 @@ import org.springframework.transaction.TransactionStatus;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.mandate.MandateDAO;
+import com.pennant.backend.model.finance.ChequeDetail;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.service.finance.FinChequeHeaderService;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.presentment.dao.RePresentmentUploadDAO;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.presentment.model.RePresentmentUploadDetail;
@@ -36,6 +42,8 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresent
 	private RePresentmentUploadDAO representmentUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
+	private MandateDAO mandateDAO;
+	private FinChequeHeaderService finChequeHeaderService;
 
 	public RePresentmentUploadServiceImpl() {
 		super();
@@ -150,6 +158,33 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresent
 		detail.setFm(fm);
 		detail.setReferenceID(fm.getFinID());
 
+		String finrepaymethod = financeMainDAO.getApprovedRepayMethod(detail.getReferenceID(), "");
+
+		if (InstrumentType.PDC.code().equals(finrepaymethod)) {
+			String dftBankCode = SysParamUtil.getValueAsString(SMTParameterConstants.BANK_CODE);
+			ChequeHeader chequeHeader = finChequeHeaderService.getChequeHeaderByRef(detail.getReferenceID());
+			List<ChequeDetail> chequeDetailList = chequeHeader.getChequeDetailList();
+
+			if (!chequeDetailList.isEmpty()) {
+
+				for (ChequeDetail cd : chequeDetailList) {
+					if (DateUtil.compare(cd.getChequeDate(), detail.getDueDate()) == 0) {
+						String bc = cd.getBankCode();
+						if (bc.equals(dftBankCode)) {
+							setError(detail, PresentmentError.REPRMNT524);
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		if (InstrumentType.SI.code().equals(finrepaymethod) || InstrumentType.SII.code().equals(finrepaymethod)
+				|| InstrumentType.IPDC.code().equals(finrepaymethod)) {
+			setError(detail, PresentmentError.REPRMNT524);
+			return;
+		}
+
 		if (!fm.isFinIsActive()) {
 			setError(detail, PresentmentError.REPRMNT515);
 			return;
@@ -166,7 +201,13 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresent
 			return;
 		}
 
+		String presentmentType = representmentUploadDAO.getPresentmenttype(reference, dueDate);
 		String bounceCode = representmentUploadDAO.getBounceCode(reference, dueDate);
+
+		if (PennantConstants.PROCESS_REPRESENTMENT.equals(presentmentType) && bounceCode == null) {
+			setError(detail, PresentmentError.REPRMNT525);
+			return;
+		}
 
 		if (bounceCode == null) {
 			setError(detail, PresentmentError.REPRMNT518);
@@ -269,5 +310,15 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresent
 	@Autowired
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
+	}
+
+	@Autowired
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
+	}
+
+	@Autowired
+	public void setFinChequeHeaderService(FinChequeHeaderService finChequeHeaderService) {
+		this.finChequeHeaderService = finChequeHeaderService;
 	}
 }

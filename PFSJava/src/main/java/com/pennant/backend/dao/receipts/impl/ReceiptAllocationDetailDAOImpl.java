@@ -298,8 +298,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		sql.append(" When AllocationType = 'PFT' then sum(PaidAmount) end PaidAmount From (");
 		sql.append(" Select sum(rad.PaidAmount) PaidAmount, rad.AllocationType from ReceiptAllocationDetail rad");
 		sql.append(" Inner Join FinReceiptHeader frh on frh.ReceiptID = rad.ReceiptID");
-		sql.append(" where frh.ReceiptID > ? and frh.ReceiptID < (select max(ReceiptID)");
-		sql.append(" from FinReceiptHeader where Reference = ?)");
+		sql.append(" where frh.ReceiptID > ?");
 		sql.append(" and frh.Reference = ?  and rad.AllocationType not in (?, ?)");
 		sql.append(" and frh.ReceiptModeStatus not in (?, ?)");
 		sql.append(" group by rad.PaidAmount, rad.AllocationType)");
@@ -311,7 +310,6 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 			int index = 0;
 
 			ps.setLong(++index, receiptId);
-			ps.setString(++index, finReference);
 			ps.setString(++index, finReference);
 			ps.setString(++index, "MANADV");
 			ps.setString(++index, "BOUNCE");

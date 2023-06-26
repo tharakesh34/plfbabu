@@ -107,11 +107,8 @@ public class AutoWriteOffClacTaskLet implements Tasklet {
 				// Receipt Creation
 				AutoWriteOffLoan awl = autoWriteOffService.processReceipts(finID, appDate, feeType, schdMthd);
 				if (awl == null) {
-
-					// Write off Setting of Loans
 					String finRef = autoWriteOffService.prepareWriteOff(finID, appDate);
 
-					// Update Status of Write off Queue record
 					autoWriteOffService.updateProgress(finID, EodConstants.PROGRESS_SUCCESS);
 
 					awl = new AutoWriteOffLoan();
@@ -136,7 +133,6 @@ public class AutoWriteOffClacTaskLet implements Tasklet {
 				StepUtil.AUTO_WRITE_OFF.setProcessedRecords(processedCount.incrementAndGet());
 
 			} catch (Exception e) {
-
 				StepUtil.AUTO_WRITE_OFF.setFailedRecords(failedCount.incrementAndGet());
 
 				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);

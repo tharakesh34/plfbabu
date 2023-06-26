@@ -16,9 +16,13 @@ public class BeforeEodExternalProcessService implements BeforeEodExternalProcess
 		Date appDate = SysParamUtil.getAppDate();
 
 		if (appDate.compareTo(DateUtil.getMonthEnd(appDate)) == 0) {
+			Date apDate = SysParamUtil.getAppDate();
+			if (apDate != null) {
+				return;
+			}
 			extExtractionDao.truncateStageTable("EXT_BASEL_ONE");
 			extExtractionDao.truncateStageTable("ALM_REPORT");
-			extExtractionDao.truncateStageTable("BASELTWO");
+			extExtractionDao.truncateStageTable("EXT_BASEL_TWO");
 			extExtractionDao.truncateStageTable("RPMSEXTRACT");
 		}
 	}

@@ -40,7 +40,7 @@ public class FileExtractPresentmentRespJob extends AbstractJob implements Interf
 	private static final Logger logger = LogManager.getLogger(FileExtractPresentmentRespJob.class);
 	private static final String FETCH_QUERY = "Select * from PRMNT_HEADER  Where EXTRACTION = ? AND STATUS = ?";
 
-	private DataSource dataSource;
+	private DataSource extDataSource;
 	private ExtPresentmentDAO externalPresentmentDAO;
 	private PlatformTransactionManager transactionManager;
 	private ApplicationContext applicationContext;
@@ -52,7 +52,7 @@ public class FileExtractPresentmentRespJob extends AbstractJob implements Interf
 			// Fetch all required DAO's
 			applicationContext = ApplicationContextProvider.getApplicationContext();
 			externalPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
-			dataSource = applicationContext.getBean("extDataSource", DataSource.class);
+			extDataSource = applicationContext.getBean("extDataSource", DataSource.class);
 			transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
 
 			readAndExtractFiles();
@@ -68,7 +68,7 @@ public class FileExtractPresentmentRespJob extends AbstractJob implements Interf
 
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<ExtPresentment> cursorItemReader = new JdbcCursorItemReader<ExtPresentment>();
-		cursorItemReader.setDataSource(dataSource);
+		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(1);
 		cursorItemReader.setSql(FETCH_QUERY);
 		cursorItemReader.setRowMapper(new RowMapper<ExtPresentment>() {

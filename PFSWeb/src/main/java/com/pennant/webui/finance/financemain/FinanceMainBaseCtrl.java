@@ -302,6 +302,7 @@ import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.pff.extension.FeeExtension;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.InstrumentType;
@@ -1825,6 +1826,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 		boolean isEnquiryVisible = false;
 		List<ValueLabel> enquiryList = new ArrayList<>();
+		enquiryList.add(new ValueLabel("1", "Verifications"));
 		List<Integer> verificationTypes = verificationService
 				.getVerificationTypes(StringUtils.trimToEmpty((finBasicDetail.get(3).toString())));
 
@@ -8057,7 +8059,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 					}
 
-					if (!proceed) {
+					if (AccountingExtension.VERIFY_ACCOUNTING && !proceed) {
 						MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 						ComponentsCtrl.applyForward(getTab(AssetConstants.UNIQUE_ID_ACCOUNTING), "onSelectTab");
 						return;
@@ -14392,7 +14394,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			int advTerms = this.advTerms.intValue();
 			boolean validationRequired = true;
 
-			if (minTerms == 0 && maxTerms == 0) {
+			if (minTerms == 0 && maxTerms == 0 && advTerms == 0) {
 				validationRequired = false;
 			}
 
@@ -14401,11 +14403,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					throw new WrongValueException(this.advTerms, Labels.getLabel("NUMBER_RANGE_EQ",
 							new String[] { advTermsLabel, String.valueOf(minTerms), String.valueOf(maxTerms) }));
 				}
-			}
-
-			validationRequired = true;
-			if (minTerms == 0 && maxTerms == 0 && advTerms == 0) {
-				validationRequired = false;
 			}
 
 			if (!this.advTerms.isDisabled() && validationRequired) {

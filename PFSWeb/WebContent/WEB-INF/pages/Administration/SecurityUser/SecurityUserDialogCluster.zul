@@ -284,9 +284,17 @@
 													</hbox>
 													<label id="label_SecurityUserDialog_EmployeeType" value="${c:l('label_SecurityUserDialog_EmployeeType.value')}" />
 													<hbox>
+														<space spacing="2px" sclass="mandatory"/>
 														<combobox id="employeeType" width="140px" />
 													</hbox>
 
+												</row>
+												<row>
+													<label id="label_SecurityUserDialog_BaseLocation" value="${c:l('label_SecurityUserDialog_BaseLocation.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="baseLocation" width="200px"/>
+													</hbox>
 												</row>
 											</rows>
 										</grid>

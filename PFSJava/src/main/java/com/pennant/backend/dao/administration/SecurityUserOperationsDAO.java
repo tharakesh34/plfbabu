@@ -78,4 +78,6 @@ public interface SecurityUserOperationsDAO {
 	long getNextValue();
 
 	List<Long> getSecUserOperationIdsByUsrID(long usrID, String type);
+
+	boolean isOpertionExists(String oprCode, long usrID);
 }

@@ -464,6 +464,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setDate(++index, JdbcUtil.getDate(p.getProvisionDate()));
 			ps.setBigDecimal(++index, p.getRegProvsnPer());
 			ps.setBigDecimal(++index, p.getRegProvsnAmt());
+
 			ps.setBigDecimal(++index, p.getRegSecProvsnPer());
 			ps.setBigDecimal(++index, p.getRegSecProvsnAmt());
 			ps.setBigDecimal(++index, p.getRegUnSecProvsnPer());

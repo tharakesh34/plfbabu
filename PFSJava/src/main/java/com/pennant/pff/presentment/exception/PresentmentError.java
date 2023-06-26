@@ -36,7 +36,7 @@ public enum PresentmentError {
 
 	REPRMNT517("Due Date should not be Future Date."),
 
-	REPRMNT518("Not a valid representment."),
+	REPRMNT518("Representment not Applicable because Presentment Response should be bounce."),
 
 	REPRMNT519("Unable to do the re-presenment, since Account is closed."),
 
@@ -47,6 +47,10 @@ public enum PresentmentError {
 	REPRMNT522("Due date reached the next installment date."),
 
 	REPRMNT523(""),
+
+	REPRMNT524("SI Mandate not allowed for Representment."),
+
+	REPRMNT525("Representment batch is already extracted for the reference and due date."),
 
 	FC_601("Fate correction already proceessed for this schedule."),
 

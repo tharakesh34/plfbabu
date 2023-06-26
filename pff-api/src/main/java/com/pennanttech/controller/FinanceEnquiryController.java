@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
-import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -22,10 +21,10 @@ import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
-import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.applicant.ApplicantDetails;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.chargedetails.ChargeDetails;
@@ -55,6 +54,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.CustomerUtil;
 import com.pennanttech.pff.core.util.SchdUtil;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public class FinanceEnquiryController extends AbstractController {
 
@@ -66,14 +66,13 @@ public class FinanceEnquiryController extends AbstractController {
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 	private MandateDAO mandateDAO;
-	private FinReceiptHeaderDAO finReceiptHeaderDAO;
-	private BounceReasonDAO bounceReasonDAO;
 	private GuarantorDetailDAO guarantorDetailDAO;
 	private FinODDetailsDAO finODDetailsDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private BaseRateDAO baseRateDAO;
+	private PresentmentDetailDAO presentmentDetailDAO;
 
 	private static final String ERROR_92021 = "92021";
 
@@ -95,7 +94,6 @@ public class FinanceEnquiryController extends AbstractController {
 		List<PaymentMode> paymentModes = new ArrayList<>();
 
 		PaymentMode response = new PaymentMode();
-		Date appDate = SysParamUtil.getAppDate();
 
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
@@ -106,12 +104,14 @@ public class FinanceEnquiryController extends AbstractController {
 
 		Mandate mandate = null;
 		Long mandateID = fm.getMandateID();
+		long oldMandateID = 0;
 
 		if (mandateID != null && mandateID > 0) {
 			mandate = mandateDAO.getMandateById(mandateID, "_AView");
 		}
+		List<Mandate> mandatesForAutoSwap = mandateDAO.getMandatesForSwap(fm.getFinID());
 
-		if (CollectionUtils.isEmpty(chequeDetails) && mandate == null) {
+		if (CollectionUtils.isEmpty(chequeDetails) && mandate == null && CollectionUtils.isEmpty(mandatesForAutoSwap)) {
 			response.setReturnStatus(
 					getFailedStatus(ERROR_92021, "Mandate or PDC details does not exists for the requested details."));
 
@@ -132,34 +132,47 @@ public class FinanceEnquiryController extends AbstractController {
 				}
 
 				cd.setSchdDate(schd.getSchDate());
-				String chequeSerialNo = Integer.toString(cd.getChequeSerialNo());
-				Long receiptId = finReceiptHeaderDAO.getReceiptIdByChequeSerialNo(chequeSerialNo);
-
-				if (receiptId != null) {
-					String bounceReason = bounceReasonDAO.getReasonByReceiptId(receiptId);
-					cd.setChequeBounceReason(bounceReason);
-				}
-
 				paymentModes.add(preparePaymentMode(cd));
 				continue;
 			}
 
-			if (mandate == null) {
+			if (mandate == null && CollectionUtils.isEmpty(mandatesForAutoSwap)) {
 				continue;
 			}
 
-			if (mandate.isSwapIsActive() && schd.getSchDate().compareTo(mandate.getSwapEffectiveDate()) >= 0
-					&& mandate.getMandateID() == mandateID) {
-				List<Mandate> mandatesForAutoSwap = mandateDAO.getMandatesForAutoSwap(fm.getCustID(), appDate);
-				if (!CollectionUtils.isEmpty(mandatesForAutoSwap)) {
-					mandate = mandatesForAutoSwap.get(0);
+			if (CollectionUtils.isNotEmpty(mandatesForAutoSwap)) {
+				List<Mandate> mandatesForAutoSwap2 = mandatesForAutoSwap.stream()
+						.filter(m -> m.getSwapEffectiveDate().compareTo(schd.getSchDate()) <= 0).toList().stream()
+						.sorted((m1, m2) -> m1.getSwapEffectiveDate().compareTo(m2.getSwapEffectiveDate())).toList();
+
+				if (CollectionUtils.isNotEmpty(mandatesForAutoSwap2)) {
+					long id = mandatesForAutoSwap.get(mandatesForAutoSwap2.size() - 1).getMandateID();
+					if (oldMandateID != id) {
+						mandate = mandateDAO.getMandateById(id, "_AView");
+					}
+					oldMandateID = id;
 				}
+
 			}
 
-			mandate.setSchdDate(schd.getSchDate());
-			mandate.setInstalmentNo(schd.getInstNumber());
+			if (mandate != null) {
+				mandate.setSchdDate(schd.getSchDate());
+				mandate.setInstalmentNo(schd.getInstNumber());
 
-			paymentModes.add(preparePaymentMode(mandate));
+				paymentModes.add(preparePaymentMode(mandate));
+			}
+
+		}
+
+		List<PresentmentDetail> presentmentDetails = presentmentDetailDAO.getBouncedPresenments(finID);
+		for (PaymentMode pm : paymentModes) {
+			for (PresentmentDetail pd : presentmentDetails) {
+				if (pm.getLoanDueDate().compareTo(pd.getSchDate()) == 0
+						&& StringUtils.containsIgnoreCase(pd.getInstrumentType(), pm.getLoanInstrumentMode())) {
+					pm.setBounceReason(pd.getBounceReason());
+					continue;
+				}
+			}
 		}
 
 		Long secMandateID = fm.getSecurityMandateID();
@@ -167,6 +180,17 @@ public class FinanceEnquiryController extends AbstractController {
 		if (secMandateID != null && secMandateID > 0) {
 			Mandate secMandate = mandateDAO.getMandateById(secMandateID, "_AView");
 			paymentModes.add(preparePaymentMode(secMandate));
+		}
+
+		for (ChequeDetail cd : chequeDetails) {
+			if (InstrumentType.PDC.name().equals(cd.getChequeType())) {
+				continue;
+			}
+			cd.seteMIRefNo(0);
+			cd.setSchdDate(null);
+
+			paymentModes.add(preparePaymentMode(cd));
+
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -190,46 +214,55 @@ public class FinanceEnquiryController extends AbstractController {
 
 		Mandate mandate = null;
 		Long mandateID = fm.getMandateID();
+		long oldMandateID = 0;
 		if (mandateID != null) {
 			mandate = mandateDAO.getMandateById(mandateID, "_AView");
 		}
+		List<Mandate> mandatesForAutoSwap = mandateDAO.getMandatesForSwap(fm.getFinID());
 
 		for (FinanceScheduleDetail fsd : fsdList) {
-			if (isEmpty && mandate == null) {
+			if (isEmpty && mandate == null && CollectionUtils.isEmpty(mandatesForAutoSwap)) {
 				response.setReturnStatus(
 						getFailedStatus(ERROR_92021, "Mandate and PDC does not exist for the given LAN"));
 				paymentModes.add(response);
 				break;
 			}
 			if (appDate.compareTo(fsd.getSchDate()) <= 0 && fsd.isRepayOnSchDate()) {
-				if (isEmpty) {
-					for (ChequeDetail cd : chequeDetailList) {
-						if (cd.geteMIRefNo() != fsd.getInstNumber()) {
-							continue;
-						}
-						cd.setSchdDate(fsd.getSchDate());
-						response = preparePaymentMode(cd);
-						paymentModes.add(response);
+
+				for (ChequeDetail cd : chequeDetailList) {
+					if (cd.geteMIRefNo() != fsd.getInstNumber()) {
 						continue;
 					}
-				}
-
-				if (mandate == null) {
+					cd.setSchdDate(fsd.getSchDate());
+					response = preparePaymentMode(cd);
+					paymentModes.add(response);
 					continue;
 				}
 
-				if (mandate.isSwapIsActive() && fsd.getSchDate().compareTo(mandate.getSwapEffectiveDate()) >= 0
-						&& mandate.getMandateID() == mandateID) {
-					List<Mandate> mandatesForAutoSwap = mandateDAO.getMandatesForAutoSwap(fm.getCustID(), appDate);
-					if (!CollectionUtils.isEmpty(mandatesForAutoSwap)) {
-						mandate = mandatesForAutoSwap.get(0);
+				if (mandate == null && CollectionUtils.isEmpty(mandatesForAutoSwap)) {
+					continue;
+				}
+
+				if (CollectionUtils.isNotEmpty(mandatesForAutoSwap)) {
+					List<Mandate> mandatesForAutoSwap2 = mandatesForAutoSwap.stream()
+							.filter(m -> m.getSwapEffectiveDate().compareTo(fsd.getSchDate()) <= 0).toList().stream()
+							.sorted((m1, m2) -> m1.getSwapEffectiveDate().compareTo(m2.getSwapEffectiveDate()))
+							.toList();
+
+					if (CollectionUtils.isNotEmpty(mandatesForAutoSwap2)) {
+						long id = mandatesForAutoSwap.get(mandatesForAutoSwap2.size() - 1).getMandateID();
+						if (oldMandateID != id) {
+							mandate = mandateDAO.getMandateById(id, "_AView");
+						}
+						oldMandateID = id;
 					}
 
 				}
-				mandate.setSchdDate(fsd.getSchDate());
-				mandate.setInstalmentNo(fsd.getInstNumber());
-				response = preparePaymentMode(mandate);
-				paymentModes.add(response);
+				if (mandate != null) {
+					mandate.setSchdDate(fsd.getSchDate());
+					mandate.setInstalmentNo(fsd.getInstNumber());
+					paymentModes.add(preparePaymentMode(mandate));
+				}
 			}
 		}
 
@@ -268,7 +301,8 @@ public class FinanceEnquiryController extends AbstractController {
 		Customer guarantator;
 		for (GuarantorDetail guarantor : guarantors) {
 			if (guarantor.isBankCustomer()) {
-				guarantator = customerDAO.getBasicDetails(custID, TableType.MAIN_TAB);
+				long gurantorID = customerDAO.getCustIDByCIF(guarantor.getGuarantorCIF());
+				guarantator = customerDAO.getBasicDetails(gurantorID, TableType.MAIN_TAB);
 				guarantator.setApplicantType("Guarantor");
 				guarantator.setCustCIF(guarantor.getGuarantorCIF());
 
@@ -582,16 +616,6 @@ public class FinanceEnquiryController extends AbstractController {
 	}
 
 	@Autowired
-	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
-		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
-	}
-
-	@Autowired
-	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
-		this.bounceReasonDAO = bounceReasonDAO;
-	}
-
-	@Autowired
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
@@ -629,5 +653,10 @@ public class FinanceEnquiryController extends AbstractController {
 	@Autowired
 	public void setBaseRateDAO(BaseRateDAO baseRateDAO) {
 		this.baseRateDAO = baseRateDAO;
+	}
+
+	@Autowired
+	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
+		this.presentmentDetailDAO = presentmentDetailDAO;
 	}
 }

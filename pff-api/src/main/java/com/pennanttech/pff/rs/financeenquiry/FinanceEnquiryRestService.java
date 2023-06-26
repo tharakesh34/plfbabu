@@ -12,7 +12,6 @@ import com.pennant.backend.model.loanbalance.LoanBalance;
 import com.pennant.backend.model.loanenquiryresponse.LoanEnquiryResponse;
 import com.pennant.backend.model.sourcingdetails.SourcingDetails;
 import com.pennant.ws.exception.ServiceException;
-import com.pennanttech.ws.model.statement.FinStatementRequest;
 
 import jakarta.jws.WebParam;
 
@@ -94,10 +93,6 @@ public interface FinanceEnquiryRestService {
 	@GET
 	@Path("/financeEnquiry/getRateChangeDetails/{finReference}")
 	LoanEnquiryResponse getRateChangeDetails(@PathParam("finReference") String finReference);
-
-	
-
-	
 
 	@GET
 	@Path("/financeEnquiry/getChargeDetails/{finReference}")

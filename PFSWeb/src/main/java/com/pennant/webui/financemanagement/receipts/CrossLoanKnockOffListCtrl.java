@@ -226,12 +226,14 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		StringBuilder whereClause = new StringBuilder();
 
 		if (FinanceConstants.CROSS_LOAN_KNOCKOFF_MAKER.equals(this.module)) {
-			Filter[] filters = new Filter[1];
+			Filter[] filters = new Filter[2];
 			filters[0] = new Filter("NextRoleCode", "%MAKER%", Filter.OP_LIKE);
+			filters[1] = new Filter("ReceiptModeStatus", "C", Filter.OP_NOT_EQUAL);
 			this.searchObject.addFilters(filters);
 		} else if (FinanceConstants.CROSS_LOAN_KNOCKOFF_APPROVER.equals(this.module)) {
-			Filter[] filters = new Filter[1];
+			Filter[] filters = new Filter[2];
 			filters[0] = new Filter("NextRoleCode", "%APPROVER%", Filter.OP_LIKE);
+			filters[1] = new Filter("ReceiptModeStatus", "C", Filter.OP_NOT_EQUAL);
 			this.searchObject.addFilters(filters);
 		} else if (FinanceConstants.CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER.equals(this.module)) {
 

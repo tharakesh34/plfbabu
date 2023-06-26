@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.zkoss.util.resource.Labels;
 
 import com.cronutils.utils.StringUtils;
 import com.pennant.backend.dao.liendetails.LienDetailsDAO;
@@ -29,11 +30,6 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 
 	@Override
 	public void save(LienDetails lu) {
-		if (lu.getLienID() <= 0) {
-			lu.setLienReference(String.valueOf((getNextValue("SEQ_LIEN_HEADER_LIEN_REF"))));
-			lu.setLienID((getNextValue("SEQ_LIEN_HEADER_LIEN_ID")));
-		}
-
 		StringBuilder sql = new StringBuilder("Insert Into Lien_Details");
 		sql.append(" (LienID, HeaderID, Reference, Marking, MarkingDate, MarkingReason");
 		sql.append(", DeMarking, DemarkingReason, DemarkingDate, LienReference, LienStatus, Source");
@@ -77,7 +73,10 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 	public void update(LienDetails lu) {
 		StringBuilder sql = new StringBuilder("Update Lien_Details");
 		sql.append(" Set ");
-		sql.append(" Marking = ?, MarkingDate = ?, MarkingReason = ?, DeMarking = ?");
+		sql.append(" Marking = ?, MarkingDate = ?, DeMarking = ?");
+		if (!Labels.getLabel("label_Lien_Type_Auto").equals(lu.getMarking())) {
+			sql.append(", MarkingReason = ?");
+		}
 		sql.append(", DemarkingReason = ?, DemarkingDate = ?, LienReference = ?, LienStatus = ?");
 		sql.append(", Source = ?, Version = ?, ApprovedBy = ?, ApprovedOn = ?, LastMntBy = ?, LastMntOn = ?");
 		sql.append(" Where LienID = ? and Reference = ?");
@@ -89,8 +88,10 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 
 			ps.setString(++index, lu.getMarking());
 			ps.setDate(++index, JdbcUtil.getDate(lu.getMarkingDate()));
-			ps.setString(++index, lu.getMarkingReason());
 			ps.setString(++index, lu.getDemarking());
+			if (!Labels.getLabel("label_Lien_Type_Auto").equals(lu.getMarking())) {
+				ps.setString(++index, lu.getMarkingReason());
+			}
 			ps.setString(++index, lu.getDemarkingReason());
 			ps.setDate(++index, JdbcUtil.getDate(lu.getDemarkingDate()));
 			ps.setString(++index, lu.getLienReference());

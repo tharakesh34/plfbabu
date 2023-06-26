@@ -141,6 +141,7 @@ public class JavaScriptBuilder extends Groupbox {
 	private List<JSRuleReturnType> jsRuleReturnTypeList = null;
 
 	private List<ValueLabel> closureTypeList = ClosureType.getTypes();
+
 	private List<ValueLabel> courierStatusList = CourierStatus.getTypes();
 
 	protected Groupbox groupbox;
@@ -1905,6 +1906,16 @@ public class JavaScriptBuilder extends Groupbox {
 								if (StringUtils.trimToEmpty(value).equals(closureDetailsValue)) {
 									operand.setSelectedItem(comboitem);
 								}
+							}
+						}
+
+						if (leftOperand.getSelectedIndex() != 0) {
+							comboitem.setLabel(Labels.getLabel("label_Settled"));
+							comboitem.setValue(ClosureType.SETTLED.code());
+							operand.appendChild(comboitem);
+
+							if (StringUtils.trimToEmpty(value).equals(Labels.getLabel("label_Settled"))) {
+								operand.setSelectedItem(comboitem);
 							}
 						}
 					} else if (StringUtils.equals(selectedItem, "PrvLetterCourierDeliveryStatus")

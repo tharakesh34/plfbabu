@@ -45,7 +45,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		sql.append(", CustCoreBank, CustCIF, FinBranch, Product");
 		sql.append(", WaiverAmt, ActualAmt, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, LetterID");
 		sql.append(" From (");
 		sql.append(getSqlQuery(TableType.TEMP_TAB));
 		sql.append(" Union All ");
@@ -138,7 +138,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		sql.append(", CustCoreBank, CustCIF, FinBranch, Product, LetterType");
 		sql.append(", WaiverAmt, ActualAmt, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, LetterID");
 		sql.append(" From (");
 		sql.append(getSqlQuery(TableType.TEMP_TAB));
 		sql.append(" Union All ");
@@ -206,6 +206,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			sb.setNextTaskId(rs.getString("NextTaskId"));
 			sb.setRecordType(rs.getString("RecordType"));
 			sb.setWorkflowId(rs.getLong("WorkflowId"));
+			sb.setLetterID(JdbcUtil.getLong(rs.getObject("LetterID")));
 
 			return sb;
 		}
@@ -218,6 +219,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		sql.append(", gl.WaiverAmt, gl.ActualAmt, gl.Version, gl.CreatedBy, gl.CreatedOn, gl.ApprovedBy");
 		sql.append(", gl.ApprovedOn, gl.LastMntBy, gl.LastMntOn, gl.RecordStatus, gl.RoleCode");
 		sql.append(", gl.NextRoleCode, gl.TaskId, gl.NextTaskId, gl.RecordType, gl.WorkflowId");
+		sql.append(", gl.LetterID");
 		sql.append(" From Loan_Letter_Manual").append(tableType.getSuffix()).append(" gl");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = gl.FinID");
 		sql.append(" Inner Join RMTFinancetypes ft on ft.fintype = fm.finType");
@@ -309,16 +311,16 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	@Override
 	public long save(GenerateLetter gl, TableType type) {
 		if (gl.getId() == 0 || gl.getId() == Long.MIN_VALUE) {
-			gl.setId(getNextValue("SEQ_Letter_Generate_Manual"));
+			gl.setId(getNextValue("SEQ_LOAN_LETTER_MANUAL"));
 		}
 
 		StringBuilder sql = new StringBuilder("Insert Into Loan_Letter_Manual");
 		sql.append(type.getSuffix());
-		sql.append("(LetterType, FinReference, FinID, CustCIF, CoreBankId, FinBranch, WaiverAmt");
+		sql.append("(ID, LetterType, FinReference, FinID, CustCIF, CoreBankId, FinBranch, WaiverAmt");
 		sql.append(", ActualAmt, Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", RecordType, WorkflowId, LetterID)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -326,6 +328,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 0;
 
+				ps.setLong(++index, gl.getId());
 				ps.setString(++index, gl.getLetterType());
 				ps.setString(++index, gl.getFinReference());
 				ps.setLong(++index, gl.getFinID());
@@ -348,6 +351,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 				ps.setString(++index, gl.getNextTaskId());
 				ps.setString(++index, gl.getRecordType());
 				ps.setLong(++index, gl.getWorkflowId());
+				ps.setObject(++index, gl.getLetterID());
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -364,6 +368,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		sql.append(" Set LetterType = ?, ActualAmt = ?, WaiverAmt = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(", LetterID = ?");
 		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -385,6 +390,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 				ps.setString(++index, gl.getNextTaskId());
 				ps.setString(++index, gl.getRecordType());
 				ps.setLong(++index, gl.getWorkflowId());
+				ps.setObject(++index, gl.getLetterID());
 
 				ps.setLong(++index, gl.getId());
 			});
@@ -513,14 +519,14 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 
 	@Override
 	public List<GenerateLetter> getLoanLetterInfo(long finID, String letterType) {
-		String sql = "Select Status From Loan_Letters Where FinID = ? And LetterType = ? and Generated = ?";
+		String sql = "Select DeliveryStatus From Loan_Letters Where FinID = ? And LetterType = ? and Generated = ? Order by ID";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.query(sql, (rs, rowNum) -> {
 			GenerateLetter letter = new GenerateLetter();
 
-			letter.setStatus(rs.getString("Status"));
+			letter.setDeliveryStatus(rs.getString("DeliveryStatus"));
 
 			return letter;
 		}, finID, letterType, 1);

@@ -1105,7 +1105,10 @@ public class RepaymentPostingsUtil {
 			holdMarkingService.removeHold(fm);
 		}
 
-		fm.setClosureType(rch == null ? null : rch.getClosureType());
+		if (FinanceUtil.isClosedNow(fm)) {
+			fm.setClosureType(rch == null ? ClosureType.CLOSURE.code() : rch.getClosureType());
+		}
+
 		letterService.logForAutoLetter(fm, appDate);
 
 		pftDetail.setFinStatus(fm.getFinStatus());

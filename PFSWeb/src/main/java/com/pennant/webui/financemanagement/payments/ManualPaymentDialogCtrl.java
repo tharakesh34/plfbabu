@@ -144,6 +144,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
@@ -1638,7 +1639,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (!recSave && getAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
-			if (!getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
+			if (AccountingExtension.VERIFY_ACCOUNTING && !getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 				return;
 			}

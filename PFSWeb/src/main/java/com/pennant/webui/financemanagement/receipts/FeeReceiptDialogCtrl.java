@@ -124,11 +124,11 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -147,6 +147,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.web.util.ComponentUtil;
 import com.pennapps.core.util.ObjectUtil;
@@ -1263,15 +1264,13 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				doWriteComponentsToBean();
 				// Accounting Details Validations
 
-				if (SysParamUtil.isAllowed(SMTParameterConstants.RECEIPTS_SHOW_ACCOUNTING_TAB)) {
-					if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) != null
-							&& getTab(AssetConstants.UNIQUE_ID_ACCOUNTING).isVisible()) {
-						boolean validate = false;
-						validate = validateAccounting(validate);
-						if (validate && !isAccountingExecuted) {
-							MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
-							return;
-						}
+				if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) != null
+						&& getTab(AssetConstants.UNIQUE_ID_ACCOUNTING).isVisible()) {
+					boolean validate = false;
+					validate = validateAccounting(validate);
+					if (AccountingExtension.VERIFY_ACCOUNTING && validate && !isAccountingExecuted) {
+						MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
+						return;
 					}
 				}
 				FinReceiptHeader rch = getReceiptHeader();
@@ -1472,8 +1471,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		FinReceiptHeader header = getReceiptHeader();
 		int finFormatter = CurrencyUtil.getFormat(header.getFinCcy());
 		fillComboBox(this.receiptPurpose, FinServiceEvent.FEEPAYMENT, PennantStaticListUtil.getReceiptPurpose(), "");
-		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
-				"");
+		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), ExcessType.getAdjustmentList(), "");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModesByFeePayment(),
 				",EXCESS,MOBILE,");
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
@@ -1931,7 +1929,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					Labels.getLabel("label_FeeReceiptDialog_ReceiptMode.value")));
 		}
 		if (!this.excessAdjustTo.isDisabled()) {
-			this.excessAdjustTo.setConstraint(new StaticListValidator(PennantStaticListUtil.getExcessAdjustmentTypes(),
+			this.excessAdjustTo.setConstraint(new StaticListValidator(ExcessType.getAdjustmentList(),
 					Labels.getLabel("label_FeeReceiptDialog_ExcessAdjustTo.value")));
 		}
 		if (!this.allocationMethod.isDisabled()) {
@@ -2206,7 +2204,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		try {
 			if ("#".equals(getComboboxValue(excessAdjustTo))) {
-				header.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+				header.setExcessAdjustTo(ExcessType.EXCESS);
 			} else {
 				header.setExcessAdjustTo(getComboboxValue(excessAdjustTo));
 			}

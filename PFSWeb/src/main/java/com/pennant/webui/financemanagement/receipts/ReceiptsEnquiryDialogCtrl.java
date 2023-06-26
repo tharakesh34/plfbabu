@@ -161,6 +161,7 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 
@@ -904,7 +905,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			ManualAdvise bounceReason = rch.getManualAdvise();
 			if (bounceReason != null) {
-				this.bounceCode.setValue(String.valueOf(bounceReason.getBounceID()), bounceReason.getBounceCode());
+				this.bounceCode.setValue(String.valueOf(bounceReason.getBounceCode()),
+						bounceReason.getBounceCodeDesc());
 				this.bounceCharge
 						.setValue(PennantApplicationUtil.formateAmount(bounceReason.getAdviseAmount(), formatter));
 				this.bounceRemarks.setValue(bounceReason.getRemarks());
@@ -1197,7 +1199,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.receivedFrom.setValue(rch.getReceivedFrom());
 		this.panNumber.setValue(rch.getPanNumber());
 		fillComboBox(allocationMethod, rch.getAllocationType(), PennantStaticListUtil.getAllocationMethods(), "");
-		fillComboBox(excessAdjustTo, rch.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
+		fillComboBox(excessAdjustTo, rch.getExcessAdjustTo(), ExcessType.getAdjustmentList(), "");
 		this.collectionAgentId.setValue(rch.getCollectionAgentCode(), rch.getCollectionAgentDesc());
 
 		this.remarks.setValue(rch.getRemarks());
@@ -1293,9 +1295,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			scheduleLabel.setValue(Labels.getLabel("label_ReceiptPayment_ExcessAmountAdjustment.value"));
 			this.excessAdjustTo.setVisible(true);
 			this.excessAdjustTo.setDisabled(true);
-			fillComboBox(excessAdjustTo, rch.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
+			fillComboBox(excessAdjustTo, rch.getExcessAdjustTo(), ExcessType.getAdjustmentList(), "");
 			if (receiptPurposeCtg == 2) {
-				fillComboBox(excessAdjustTo, "E", PennantStaticListUtil.getExcessAdjustmentTypes(), ",A,");
+				fillComboBox(excessAdjustTo, "E", ExcessType.getAdjustmentList(), ",A,");
 				this.excessAdjustTo.setDisabled(true);
 			}
 
@@ -1476,9 +1478,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private String payType(String mode) {
 		switch (mode) {
-		case RepayConstants.EXAMOUNTTYPE_EMIINADV:
+		case ExcessType.EMIINADV:
 			return ReceiptMode.EMIINADV;
-		case RepayConstants.EXAMOUNTTYPE_EXCESS:
+		case ExcessType.EXCESS:
 			return ReceiptMode.EXCESS;
 		case ReceiptMode.ADVEMI:
 		case ReceiptMode.ADVINT:

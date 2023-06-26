@@ -52,5 +52,9 @@ public interface GenerateLetterService {
 
 	List<ManualAdvise> getManualAdvises(long finID);
 
+	List<ManualAdvise> getpayableAdvises(long finID);
+
 	void deleteAutoLetterGeneration(long finID, String letterType);
+
+	void setMapDetails(GenerateLetter gl, List<GenerateLetter> letterInfo);
 }

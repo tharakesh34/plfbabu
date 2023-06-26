@@ -18,6 +18,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -41,6 +42,7 @@ import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NOCConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.letter.CourierStatus;
 import com.pennant.pff.letter.LetterMode;
 import com.pennant.pff.letter.dao.AutoLetterGenerationDAO;
 import com.pennant.pff.letter.service.LetterService;
@@ -50,6 +52,7 @@ import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.pff.noc.upload.dao.LoanLetterUploadDAO;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -73,6 +76,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	private LoanLetterUploadDAO loanLetterUploadDAO;
 	private AutoLetterGenerationDAO autoLetterGenerationDAO;
 	private LetterService letterService;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	@Override
 	public List<GenerateLetter> getResult(ISearch searchFilters, List<String> roleCodes) {
@@ -235,12 +239,15 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 				gl.setModeofTransfer(gl.getRequestType());
 				gl.setApprovedBy(gl.getLastMntBy());
 				gl.setApprovedOn(new Timestamp(System.currentTimeMillis()));
+
+				generateLetter(gl);
 				generateLetterDAO.save(gl, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				gl.setRecordType("");
 				generateLetterDAO.update(gl, TableType.MAIN_TAB);
 			}
+
 		}
 
 		ah.setAuditTranType(PennantConstants.TRAN_WF);
@@ -269,9 +276,11 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 			gl.setEmailTemplate(ltlp.getEmailTemplateId());
 			gl.setModeofTransfer(LetterMode.OTC.name());
 
-			Long letterId = autoLetterGenerationDAO.getAutoLetterId(gl.getFinID(), gl.getLetterType(), "A");
+			Long letterId = autoLetterGenerationDAO.getAutoLetterId(gl.getFinID(), gl.getLetterType());
 			if (letterId == null) {
 				return autoLetterGenerationDAO.save(gl);
+			} else {
+				autoLetterGenerationDAO.update(letterId, LetterMode.OTC.name());
 			}
 
 			return letterId;
@@ -302,14 +311,21 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		setMapDetails(gl, letterInfo);
 	}
 
-	private void setMapDetails(GenerateLetter gl, List<GenerateLetter> letterInfo) {
+	@Override
+	public void setMapDetails(GenerateLetter gl, List<GenerateLetter> letterInfo) {
 		Date appDate = SysParamUtil.getAppDate();
 		FinanceDetail fd = gl.getFinanceDetail();
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 		LoanLetter letter = new LoanLetter();
 		Customer customer = fd.getCustomerDetails().getCustomer();
 
-		letter.setClosureType(fm.getClosureType());
+		String loanClosureType = finReceiptHeaderDAO.getClosureTypeValue(fm.getFinID());
+
+		if (loanClosureType == null) {
+			loanClosureType = ClosureType.CLOSURE.code();
+		}
+
+		letter.setClosureType(loanClosureType);
 		letter.setCustCtgCode(customer.getCustCtgCode());
 		letter.setCustGenderCode(customer.getCustGenderCode());
 		letter.setCustomerType(customer.getCustTypeCode());
@@ -317,8 +333,18 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		letter.setLoanCancellationAge(DateUtil.getDaysBetween(fm.getClosedDate(), appDate));
 
 		if (CollectionUtils.isNotEmpty(letterInfo)) {
-			letter.setSequenceNo(letterInfo.size());
-			letter.setStatusOfpreviousletters(letterInfo.get(letterInfo.size() - 1).getStatus());
+			letter.setSequenceNo(letterInfo.size() + 1);
+			String deliveryStatus = letterInfo.get(letterInfo.size() - 1).getDeliveryStatus();
+
+			CourierStatus courier = CourierStatus.getCourier(deliveryStatus);
+
+			if (courier != null) {
+				deliveryStatus = courier.getCode();
+			}
+
+			letter.setPrvLetterCourierDeliveryStatus(deliveryStatus);
+		} else {
+			letter.setSequenceNo(1);
 		}
 
 		fm.setLoanLetter(letter);
@@ -436,37 +462,32 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 	@Override
 	public LoanLetter generateLetter(GenerateLetter gl) {
-
 		saveFees(gl);
 
 		long letterID = saveLoanLetterdetails(gl);
 
+		gl.setLetterID(letterID);
+
 		LoanLetter letter = letterService.generate(letterID, SysParamUtil.getAppDate());
+
+		if (LetterMode.OTC.name().equals(gl.getModeofTransfer())) {
+			letter.setModeofTransfer(LetterMode.OTC.name());
+			letter.setApprovedBy(gl.getApprovedBy());
+			letter.setGeneratedBy(gl.getApprovedBy());
+		}
 
 		letter.setFeeID(gl.getFeeID());
 
-		if (letter.isBlocked()) {
+		if ("A".equals(gl.getModeofTransfer()) && letter.isBlocked()) {
 			letter.setGenerated(-1);
 			letter.setStatus("B");
 			letter.setRemarks(BLOCKED_MSG);
 		} else {
-			letterService.createAdvise(letter);
-
 			letter.setGenerated(1);
 			letter.setStatus("S");
-		}
 
-		if ("Submit".equals(gl.getRecordType())) {
+			letterService.createAdvise(letter);
 			letterService.update(letter);
-
-			generateLetterDAO.delete(gl, TableType.MAIN_TAB);
-		} else {
-			autoLetterGenerationDAO.deleteFromStage(letterID);
-
-			if (gl.getFeeID() != null) {
-				finFeeDetailDAO.getFinFeeDetail(gl.getFeeID());
-			}
-
 		}
 
 		return letter;
@@ -474,6 +495,11 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 	@Override
 	public List<ManualAdvise> getManualAdvises(long finID) {
+		return manualAdviseDAO.getManualAdvise(finID, true);
+	}
+
+	@Override
+	public List<ManualAdvise> getpayableAdvises(long finID) {
 		return manualAdviseDAO.getPaybleAdvises(finID, "");
 	}
 
@@ -623,4 +649,10 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	public void setLetterService(LetterService letterService) {
 		this.letterService = letterService;
 	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
 }

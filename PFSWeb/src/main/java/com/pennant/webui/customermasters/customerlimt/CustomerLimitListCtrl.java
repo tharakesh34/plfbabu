@@ -104,7 +104,8 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 		this.borderLayout_CustomerLimitList.setHeight(getBorderLayoutHeight());
 
 		// set the paging parameters
-		this.pagingCustomerLimitList.setPageSize(getListRows());
+		setPageComponents(window_CustomerLimitList, borderLayout_CustomerLimitList, listBoxCustomerLimit,
+				pagingCustomerLimitList);
 		this.pagingCustomerLimitList.setDetailed(true);
 
 		this.listheader_CustCIF.setSortAscending(new FieldComparator("custCIF", true));
@@ -119,15 +120,16 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 		this.listheader_Currency.setSortDescending(new FieldComparator("currency", false));
 
 		Map<String, Object> custLimitMap = getCustLimitIntefaceService().fetchCustLimitEnqList(1, getListRows());
+		if (custLimitMap != null) {
+			List<CustomerLimit> list = new ArrayList<CustomerLimit>();
+			if (custLimitMap.containsKey("CustLimitList")) {
+				list = (List<CustomerLimit>) custLimitMap.get("CustLimitList");
+			}
 
-		List<CustomerLimit> list = new ArrayList<CustomerLimit>();
-		if (custLimitMap.containsKey("CustLimitList")) {
-			list = (List<CustomerLimit>) custLimitMap.get("CustLimitList");
+			getPagedListWrapper().initList(list, this.listBoxCustomerLimit, this.pagingCustomerLimitList);
+			this.pagingCustomerLimitList.setTotalSize((Integer) custLimitMap.get("TotalSize"));
+			this.pagingCustomerLimitList.setActivePage(((Integer) custLimitMap.get("PageNumber")) - 1);
 		}
-
-		getPagedListWrapper().initList(list, this.listBoxCustomerLimit, this.pagingCustomerLimitList);
-		this.pagingCustomerLimitList.setTotalSize((Integer) custLimitMap.get("TotalSize"));
-		this.pagingCustomerLimitList.setActivePage(((Integer) custLimitMap.get("PageNumber")) - 1);
 		this.listBoxCustomerLimit.setItemRenderer(new CustomerLimitListModelItemRenderer());
 		logger.debug("Leaving" + event.toString());
 	}

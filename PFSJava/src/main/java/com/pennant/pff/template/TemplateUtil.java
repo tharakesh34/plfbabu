@@ -58,6 +58,8 @@ public class TemplateUtil {
 				Labels.getLabel("label_MailTemplateDialog_Provider")));
 		modules.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_OTP,
 				Labels.getLabel("label_MailTemplateDialog_OTP")));
+		modules.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_UPD,
+				Labels.getLabel("label_MailTemplateDialog_PWD")));
 
 		return modules;
 	}

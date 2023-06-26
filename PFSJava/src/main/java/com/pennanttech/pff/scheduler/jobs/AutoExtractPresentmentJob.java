@@ -28,7 +28,9 @@ public class AutoExtractPresentmentJob extends AbstractJob {
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
 		String jobName = context.getJobDetail().getKey().getName();
+
 		logger.debug("JOB: {}", jobName);
+
 		List<String> mandateTypes = getMandateTypeList();
 		Date appDate = SysParamUtil.getAppDate();
 		Date toDate = null;

@@ -53,6 +53,7 @@ import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.upload.ReceiptDataValidator;
 
@@ -98,11 +99,6 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 
 		if (fm == null) {
 			setError(detail, ManualKnockOffUploadError.MKOU_102);
-			return;
-		}
-
-		if (!fm.isFinIsActive()) {
-			setError(detail, ManualKnockOffUploadError.MKOU_103);
 			return;
 		}
 
@@ -290,11 +286,11 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		prepareUserDetails(header, fc);
 
 		List<FinServiceInstruction> fsiList = new ArrayList<>();
-		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(fc.getExcessType())) {
+		if (ExcessType.EXCESS.equals(fc.getExcessType())) {
 			fsiList.addAll(prepareRCDForExcess(header, fc));
 		}
 
-		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(fc.getExcessType())) {
+		if (ExcessType.PAYABLE.equals(fc.getExcessType())) {
 			fsiList.addAll(prepareRCDForPayable(header, fc));
 		}
 
@@ -490,7 +486,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		rud.setValueDate(valueDate);
 		rud.setRealizationDate(valueDate);
 		rud.setReceivedDate(valueDate);
-		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		rud.setExcessAdjustTo(ExcessType.EXCESS);
 		rud.setReceiptMode(receiptMode);
 		rud.setReceiptPurpose("SP");
 		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);

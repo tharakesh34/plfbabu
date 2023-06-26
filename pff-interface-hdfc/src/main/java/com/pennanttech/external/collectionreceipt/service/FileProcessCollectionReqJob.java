@@ -7,8 +7,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.batch.item.ExecutionContext;
@@ -36,27 +34,20 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class FileProcessCollectionReqJob extends AbstractJob implements InterfaceConstants, ErrorCodesConstants {
 
-	private static final Logger logger = LogManager.getLogger(FileProcessCollectionReqJob.class);
-
-	private static final String FETCH_QUERY = "Select * from COLL_RECEIPT_HEADER  Where STATUS=? AND EXTRACTION = ?";
-
-	private DataSource dataSource;
-	private ExtCollectionReceiptDao extCollectionReceiptDao;
-	private ApplicationContext applicationContext;
-	private PlatformTransactionManager transactionManager;
-	private ExtReceiptServiceHook extReceiptServiceHook;
-	private CollectionReceiptService collectionReceiptService;
+	private static final String FETCH_QUERY = "Select * from COLL_RECEIPT_HEADER  Where STATUS=? AND EXTRACTION = ? AND WRITE_RESPONSE = ?";
 
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
 
-		applicationContext = ApplicationContextProvider.getApplicationContext();
-		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
-		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
-		transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
-		extReceiptServiceHook = applicationContext.getBean(ExtReceiptServiceHook.class);
-		collectionReceiptService = applicationContext.getBean(CollectionReceiptService.class);
+		ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+		DataSource extDataSource = applicationContext.getBean("extDataSource", DataSource.class);
+		ExtCollectionReceiptDao extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao",
+				ExtCollectionReceiptDao.class);
+		PlatformTransactionManager transactionManager = applicationContext.getBean("transactionManager",
+				PlatformTransactionManager.class);
+		ExtReceiptServiceHook extReceiptServiceHook = applicationContext.getBean(ExtReceiptServiceHook.class);
+		CollectionReceiptService collectionReceiptService = applicationContext.getBean(CollectionReceiptService.class);
 
 		if (extReceiptServiceHook == null) {
 			return;
@@ -64,7 +55,7 @@ public class FileProcessCollectionReqJob extends AbstractJob implements Interfac
 
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<CollReceiptHeader> cursorItemReader = new JdbcCursorItemReader<CollReceiptHeader>();
-		cursorItemReader.setDataSource(dataSource);
+		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(1);
 		cursorItemReader.setSql(FETCH_QUERY);
 		cursorItemReader.setRowMapper(new RowMapper<CollReceiptHeader>() {
@@ -85,6 +76,7 @@ public class FileProcessCollectionReqJob extends AbstractJob implements Interfac
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setLong(1, COMPLETED);
 				ps.setLong(2, COMPLETED);
+				ps.setLong(3, FILE_NOT_WRITTEN);
 			}
 		});
 
@@ -106,7 +98,7 @@ public class FileProcessCollectionReqJob extends AbstractJob implements Interfac
 				List<CollReceiptDetail> fileRecordsList = extCollectionReceiptDao
 						.fetchCollectionRecordsById(extReceiptHeader.getId());
 
-				if (fileRecordsList.size() > 0) {
+				if (!fileRecordsList.isEmpty()) {
 
 					TransactionStatus txStatus = null;
 					// Now for each record, generate receipt and update receipt status.
@@ -163,7 +155,6 @@ public class FileProcessCollectionReqJob extends AbstractJob implements Interfac
 				cursorItemReader.close();
 			}
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 

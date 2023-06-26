@@ -19,4 +19,6 @@ public interface RePresentmentUploadDAO {
 	void update(List<Long> headerIds, String errorCode, String errorDesc);
 
 	String getSqlQuery();
+
+	String getPresentmenttype(String reference, Date dueDate);
 }

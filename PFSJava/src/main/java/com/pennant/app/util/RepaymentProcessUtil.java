@@ -97,9 +97,11 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.MandateExtension;
+import com.pennant.pff.extension.PresentmentExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.holdmarking.service.HoldMarkingService;
 import com.pennant.pff.letter.service.LetterService;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -117,6 +119,7 @@ import com.pennanttech.pff.payment.service.LoanPaymentService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
@@ -153,11 +156,11 @@ public class RepaymentProcessUtil {
 	private LoanPaymentService loanPaymentService;
 	private AdvancePaymentService advancePaymentService;
 	private HoldMarkingService holdMarkingService;
+	private LetterService letterService;
 
 	private RepaymentPostingsUtil repaymentPostingsUtil;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private ReceiptCalculator receiptCalculator;
-	private LetterService letterService;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -354,6 +357,12 @@ public class RepaymentProcessUtil {
 				}
 				profitDetail.setFinIsActive(false);
 				profitDetail.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
+
+				if (FinanceUtil.isClosedNow(fm)) {
+					rch.setClosureType(
+							rch.getClosureType() == null ? ClosureType.CLOSURE.code() : rch.getClosureType());
+					fm.setClosureType(rch.getClosureType());
+				}
 			} else {
 				fm.setFinIsActive(true);
 			}
@@ -613,32 +622,32 @@ public class RepaymentProcessUtil {
 			addZeroifNotContains(extMap, feeCode + "_TDS_P");
 
 			switch (payableType) {
-			case RepayConstants.EXAMOUNTTYPE_EXCESS:
+			case ExcessType.EXCESS:
 				extMap.put("EX_ReceiptAmount", extMap.get("EX_ReceiptAmount").add(xcess.getTotPaidNow()));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_EMIINADV:
+			case ExcessType.EMIINADV:
 				extMap.put("EA_ReceiptAmount", extMap.get("EA_ReceiptAmount").add(totPaidNow));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_ADVINT:
+			case ExcessType.ADVINT:
 				extMap.put("EAI_ReceiptAmount", extMap.get("EAI_ReceiptAmount").add(totPaidNow));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_ADVEMI:
+			case ExcessType.ADVEMI:
 				extMap.put("EAM_ReceiptAmount", extMap.get("EAM_ReceiptAmount").add(totPaidNow));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_CASHCLT:
+			case ExcessType.CASHCLT:
 				extMap.put("CACLT_ReceiptAmount", extMap.get("CACLT_ReceiptAmount").add(totPaidNow));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_DSF:
+			case ExcessType.DSF:
 				extMap.put("DSF_ReceiptAmount", extMap.get("DSF_ReceiptAmount").add(totPaidNow));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_TEXCESS:
+			case ExcessType.TEXCESS:
 				extMap.put("ET_ReceiptAmount", extMap.get("ET_ReceiptAmount").add(totPaidNow));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_SETTLEMENT:
+			case ExcessType.SETTLEMENT:
 				extMap.put("SETTLE_ReceiptAmount", extMap.get("SETTLE_ReceiptAmount").add(totPaidNow));
 				break;
-			case RepayConstants.EXAMOUNTTYPE_PAYABLE:
-				if (amountCodes.isIntAdv() && RepayConstants.EXAMOUNTTYPE_ADVINT.equals(feeCode)) {
+			case ExcessType.PAYABLE:
+				if (amountCodes.isIntAdv() && ExcessType.ADVINT.equals(feeCode)) {
 					extMap.put("EX_AdvIntPayable", totPaidNow);
 				}
 				break;
@@ -776,30 +785,30 @@ public class RepaymentProcessUtil {
 
 		if (toExcess.compareTo(BigDecimal.ZERO) > 0) {
 			switch (rch.getExcessAdjustTo()) {
-			case RepayConstants.EXCESSADJUSTTO_EMIINADV:
+			case ExcessType.EMIINADV:
 				extMap.put("ae_toEmiAdvance", toExcess);
 				break;
-			case RepayConstants.EXCESSADJUSTTO_BOUNCE:
+			case ExcessType.BOUNCE:
 				extMap.put("ae_toBounce", toExcess);
 				break;
-			case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
+			case ExcessType.SETTLEMENT:
 				extMap.put("ae_toSettlement", toExcess);
 				break;
-			case RepayConstants.EXCESSADJUSTTO_EXCESS:
+			case ExcessType.EXCESS:
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
 				extMap.put("ae_toExcessAmt", toExcess);
 				break;
-			case ReceiptMode.DSF:
+			case ExcessType.DSF:
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
 				extMap.put("ae_toDSFAmt", toExcess);
 				dataMap.put("ae_toDSFAmt", toExcess);
 				break;
-			case ReceiptMode.CASHCLT:
+			case ExcessType.CASHCLT:
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
 				extMap.put("ae_toCashCollAmt", toExcess);
 				dataMap.put("ae_toCashCollAmt", toExcess);
 				break;
-			case RepayConstants.EXCESSADJUSTTO_TEXCESS:
+			case ExcessType.TEXCESS:
 				toExcess = adjustExcessForAdvInt(rch, amountCodes, toExcess);
 				extMap.put("ae_toTExcessAmt", toExcess);
 				break;
@@ -2319,16 +2328,10 @@ public class RepaymentProcessUtil {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for Fetching Accounting Event Code based on Finance Event Action
-	 * 
-	 * @param finEvent
-	 * @return
-	 */
 	private String getEventCode(String finEvent, String receiptMode) {
 		switch (finEvent) {
 		case FinServiceEvent.SCHDRPY:
-			if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
+			if (PresentmentExtension.STAGE_ACCOUNTING_REQ) {
 				if (ReceiptMode.PRESENTMENT.equals(receiptMode)) {
 					return AccountingEvent.PRSNT;
 				}
@@ -2356,12 +2359,6 @@ public class RepaymentProcessUtil {
 		return cal.getTime();
 	}
 
-	/**
-	 * Method for Sorting Schedule Details
-	 * 
-	 * @param financeScheduleDetail
-	 * @return
-	 */
 	public List<FinanceScheduleDetail> sortSchdDetails(List<FinanceScheduleDetail> financeScheduleDetail) {
 
 		if (financeScheduleDetail != null && financeScheduleDetail.size() > 0) {
@@ -2870,8 +2867,18 @@ public class RepaymentProcessUtil {
 	}
 
 	@Autowired
+	public void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
+		this.advancePaymentService = advancePaymentService;
+	}
+
+	@Autowired
 	public void setHoldMarkingService(HoldMarkingService holdMarkingService) {
 		this.holdMarkingService = holdMarkingService;
+	}
+
+	@Autowired
+	public void setLetterService(LetterService letterService) {
+		this.letterService = letterService;
 	}
 
 	@Autowired
@@ -2887,10 +2894,5 @@ public class RepaymentProcessUtil {
 	@Autowired
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
-	}
-
-	@Autowired
-	public void setLetterService(LetterService letterService) {
-		this.letterService = letterService;
 	}
 }

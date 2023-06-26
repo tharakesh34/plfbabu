@@ -102,10 +102,7 @@ public class ProjectedAmortizationService {
 			}
 
 			// Ignore ACCRUAL calculation when loan is WriteOff
-			if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
-				continue;
-			}
-
+		
 			/*
 			 * For ODFacility Finances initially doesn't have any Schedules
 			 */

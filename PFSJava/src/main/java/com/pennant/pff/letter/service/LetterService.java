@@ -99,7 +99,7 @@ public class LetterService {
 				continue;
 			}
 
-			if ((letterType == LetterType.CANCELLATION && !ClosureType.isCancel(closureType)
+			if ((letterType == LetterType.CANCELLATION
 					&& FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())
 					&& !LoanCancelationUtil.LOAN_CANCEL_REBOOK.equals(fm.getCancelType()))
 					|| ((letterType == LetterType.NOC || letterType == LetterType.CLOSURE)
@@ -124,7 +124,11 @@ public class LetterService {
 	public LoanLetter generate(long letterID, Date appDate) {
 		LoanLetter loanLetter = new LoanLetter();
 
-		GenerateLetter gl = autoLetterGenerationDAO.getLetter(letterID);
+		GenerateLetter gl = autoLetterGenerationDAO.getLetter(letterID, "_STAGE");
+
+		if (gl == null) {
+			gl = autoLetterGenerationDAO.getLetter(letterID, "");
+		}
 
 		String requestType = gl.getRequestType();
 
@@ -139,8 +143,7 @@ public class LetterService {
 		loanLetter.setRequestType(requestType);
 		loanLetter.setFeeID(gl.getFeeID());
 
-		if (autoLetterGenerationDAO.getCountBlockedItems(gl.getFinID()) > 0
-				&& !(LetterMode.OTC.name().equals(requestType) || "M".equals(requestType))) {
+		if (autoLetterGenerationDAO.getCountBlockedItems(gl.getFinID()) > 0 && "A".equals(requestType)) {
 			loanLetter.setBlocked(true);
 			return loanLetter;
 		}
@@ -200,6 +203,8 @@ public class LetterService {
 
 			engine.getDocument().save(os, loanLetter.getSaveFormat());
 			loanLetter.setContent(os.toByteArray());
+			loanLetter.setGenerated(1);
+			loanLetter.setStatus("S");
 
 			return loanLetter;
 		} catch (Exception e) {
@@ -504,6 +509,10 @@ public class LetterService {
 		FinFeeDetail finFeeDetail = finFeeDetailDAO.getFinFeeDetail(feetID);
 
 		BigDecimal remainingFee = finFeeDetail.getRemainingFee();
+
+		if (remainingFee.compareTo(BigDecimal.ZERO) <= 0) {
+			return;
+		}
 
 		ManualAdvise manualAdvise = new ManualAdvise();
 		manualAdvise.setAdviseID(Long.MIN_VALUE);

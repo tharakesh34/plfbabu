@@ -172,24 +172,7 @@
 	</bean>
 
 	<bean name="securityUserServiceTarget"
-		class="com.pennant.backend.service.administration.impl.SecurityUserServiceImpl">
-		<property name="securityUserDAO" ref="securityUserDAO" />
-		<property name="securityUserPasswordsDAO" ref="securityUserPasswordsDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="queueAssignmentDAO" ref="queueAssignmentDAO" />
-		<property name="securityUserOperationsDAO" ref="securityUserOperationsDAO" />
-		<property name="reportingManagerDAO" ref="reportingManagerDAO"></property>
-		<property name="securityUserAccessService" ref="securityUserAccessService"></property>
-		<property name="securityUserHierarchyService" ref="securityUserHierarchyService"></property>
-		<property name="clusterDAO" ref="clusterDAO" />
-		<property name="divisionDetailDAO" ref="divisionDetailDAO" />
-		<property name="entityDAO" ref="entityDAO" />
-		<property name="languageDAO" ref="languageDAO" />
-		<property name="designationDAO" ref="designationDAO" />
-		<property name="departmentDAO" ref="departmentDAO" />
-		<property name="branchDAO" ref="branchDAO" />
-		<property name="notesDAO" ref="notesDAO" />
-	</bean>
+		class="com.pennant.backend.service.administration.impl.SecurityUserServiceImpl"/>
 
 	<!--================= Security Password Details ================ -->
 	<bean id="securityUserPasswordsDAO"
@@ -2024,10 +2007,11 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="getNewProspectCustomerCIF*">PROPAGATION_NOT_SUPPORTED</prop>
+				<prop key="prospectAsCIF*">PROPAGATION_REQUIRED</prop>
 				<prop key="updateCustCRCPR*">PROPAGATION_REQUIRED</prop>
 				<prop key="processPerfios*">PROPAGATION_REQUIRED</prop>
 				<prop key="doCustomerValidations*">PROPAGATION_REQUIRED</prop>
+				<prop key="getNewProspectCustomerCIF*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -13492,4 +13476,18 @@
 		parent="sequenceDao" />
 
 	<bean id="letterService" class="com.pennant.pff.letter.service.LetterService" />
+	
+	<bean id="lenderDataUploadDAO" class="com.pennant.backend.dao.lenderupload.impl.LenderDataUploadDAOImpl"
+		parent="basicDao" />
+		
+	<bean id="lenderDataDAO" class="com.pennant.backend.dao.lenderupload.impl.LenderDataDAOImpl"
+		parent="basicDao" />
+		
+	<bean id="lenderDataUploadService" class="com.pennant.backend.service.lenderupload.impl.LenderDataUploadServiceImpl">
+		<property name="lenderDataUploadDAO" ref="lenderDataUploadDAO" />	
+	</bean>
+	
+	<bean id="lenderDataService" class="com.pennant.backend.service.lenderupload.impl.LenderDataServiceImpl">
+		<property name="lenderDataDAO" ref="lenderDataDAO" />
+	</bean>
 </beans>

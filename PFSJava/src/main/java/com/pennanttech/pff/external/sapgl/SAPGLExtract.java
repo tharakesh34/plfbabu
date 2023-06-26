@@ -26,6 +26,7 @@ import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
@@ -56,6 +57,7 @@ public class SAPGLExtract extends DataEngineExport {
 		} catch (Exception e) {
 			SAP_GL_STATUS.setStatus("F");
 			logger.error(Literal.EXCEPTION, e);
+			throw new AppException(e.getMessage());
 		}
 	}
 
@@ -280,7 +282,7 @@ public class SAPGLExtract extends DataEngineExport {
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT_TEMP");
 
 		// jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT modify ID generated as identity (start with 1)");
-		jdbcTemplate.execute("ALTER SEQUENCE seq_transaction_detail_report RESTART WITH 1");
+		// jdbcTemplate.execute("ALTER SEQUENCE seq_transaction_detail_report RESTART START WITH 1");
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("START_DATE", startDate);
@@ -365,7 +367,7 @@ public class SAPGLExtract extends DataEngineExport {
 
 					export.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
 				} catch (Exception e) {
-					throw new SQLException();
+					throw new AppException(e.getMessage());
 				}
 			}
 		});

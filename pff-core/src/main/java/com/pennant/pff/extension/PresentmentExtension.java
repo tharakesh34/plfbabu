@@ -11,23 +11,19 @@ public class PresentmentExtension {
 	/**
 	 * Feature extension to create the receipts on due date or response upload, default value is true.
 	 */
-	public static boolean DUE_DATE_RECEIPT_CREATION;
+	public static final boolean DUE_DATE_RECEIPT_CREATION = getValueAsBoolean("DUE_DATE_RECEIPT_CREATION", false);
 
 	/**
 	 * Feature extension to enable or disable auto extraction.
 	 */
-	public static boolean AUTO_EXTRACTION;
+	public static final boolean AUTO_EXTRACTION = getValueAsBoolean("AUTO_EXTRACTION", true);
 
 	/**
 	 * Feature extension to enable or disable auto approval.
 	 */
-	public static boolean AUTO_APPROVAL;
+	public static final boolean AUTO_APPROVAL = getValueAsBoolean("AUTO_APPROVAL", true);
 
-	static {
-		DUE_DATE_RECEIPT_CREATION = getValueAsBoolean("DUE_DATE_RECEIPT_CREATION", false);
-		AUTO_EXTRACTION = getValueAsBoolean("AUTO_EXTRACTION", true);
-		AUTO_APPROVAL = getValueAsBoolean("AUTO_APPROVAL", true);
-	}
+	public static final boolean STAGE_ACCOUNTING_REQ = getValueAsBoolean("STAGE_ACCOUNTING_REQ", false);
 
 	private static boolean getValueAsBoolean(String key, boolean defaultValue) {
 		return FeatureExtension.getValueAsBoolean(Module.PRESENTMENT, key, defaultValue);

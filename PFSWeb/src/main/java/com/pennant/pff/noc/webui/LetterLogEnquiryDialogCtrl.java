@@ -29,6 +29,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.pff.letter.CourierStatus;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.webui.finance.enquiry.FinanceEnquiryHeaderDialogCtrl;
@@ -145,7 +146,8 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 			return;
 		}
 
-		letterInfo = letterInfo.stream().sorted((l1, l2) -> DateUtil.compare(l1.getCreatedDate(), l2.getCreatedDate()))
+		letterInfo = letterInfo.stream()
+				.sorted((l1, l2) -> DateUtil.compare(l1.getGeneratedDate(), l2.getGeneratedDate()))
 				.collect(Collectors.toList());
 
 		this.listBoxLetterLog.setModel(new GroupsModelArray(letterInfo.toArray(), new LogLetterEnquiryComparator()));
@@ -244,7 +246,13 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 				lc.setSpan(1);
 				lc.setParent(item);
 
-				lc = new Listcell(data.getDeliveryStatus());
+				CourierStatus courier = CourierStatus.getCourier(data.getDeliveryStatus());
+				String deleveryStatus = "";
+				if (courier != null) {
+					deleveryStatus = courier.getCode();
+				}
+
+				lc = new Listcell(deleveryStatus);
 				lc.setSpan(1);
 				lc.setParent(item);
 

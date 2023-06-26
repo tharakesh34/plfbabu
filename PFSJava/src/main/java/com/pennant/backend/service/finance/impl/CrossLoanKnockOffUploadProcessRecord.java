@@ -21,7 +21,6 @@ import com.pennant.backend.model.crossloanknockoff.CrossLoanKnockoffUpload;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.upload.model.FileUploadHeader;
@@ -33,6 +32,7 @@ import com.pennanttech.dataengine.model.Table;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 
 public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 	private static final Logger logger = LogManager.getLogger(CrossLoanKnockOffUploadProcessRecord.class);
@@ -193,11 +193,11 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 			clku.setToFm(toFm);
 			clku.setToFinID(toFm.getFinID());
 
-			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(clku.getExcessType())) {
+			if (ExcessType.EXCESS.equals(clku.getExcessType())) {
 				clku.setExcessList(
 						finExcessAmountDAO.getExcessAmountsByRefAndType(fromFm.getFinID(), clku.getExcessType()));
 			} else {
-				if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(clku.getExcessType())) {
+				if (ExcessType.PAYABLE.equals(clku.getExcessType())) {
 					List<ManualAdvise> mbList = manualAdviseDAO.getManualAdviseByRefAndFeeCode(fromFm.getFinID(),
 							AdviseType.PAYABLE.id(), clku.getFeeTypeCode());
 

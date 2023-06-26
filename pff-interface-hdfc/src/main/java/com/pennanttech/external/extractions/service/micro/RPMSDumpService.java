@@ -17,7 +17,9 @@ public class RPMSDumpService {
 	}
 
 	public void processRPMSDump(CustEODEvent custEODEvent) {
-
+		if (custEODEvent != null) {
+			return;
+		}
 		List<FinEODEvent> finEods = custEODEvent.getFinEODEvents();
 		for (FinEODEvent finEOD : finEods) {
 			FinanceProfitDetail fpd = finEOD.getFinProfitDetail();

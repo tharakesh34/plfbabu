@@ -24,4 +24,6 @@ public interface IFeatureExtension {
 	Map<String, Object> getLPPExtensions();
 
 	Map<String, Object> getNpaAndProvisionExtensions();
+
+	Map<String, Object> getExcessExtensions();
 }

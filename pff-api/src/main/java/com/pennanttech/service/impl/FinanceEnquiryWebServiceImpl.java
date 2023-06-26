@@ -36,7 +36,6 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.SchdUtil;
 import com.pennanttech.pff.rs.financeenquiry.FinanceEnquiryRestService;
-import com.pennanttech.ws.model.statement.FinStatementRequest;
 
 public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements FinanceEnquiryRestService {
 
@@ -867,7 +866,8 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 
 		if (custID == 0) {
 			logger.debug(Literal.LEAVING);
-			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(
+					getFailedStatus(ERROR_92021, "There is no approved Customer with the requested CIF"));
 			return enquiryResponse;
 		}
 
@@ -880,22 +880,19 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		return enquiryResponse;
 	}
 
-	
-
-	
 	@Override
 	public LoanEnquiryResponse getChargeDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
 
 		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
-		
+
 		WSReturnStatus wsrs = validateFinReference(finReference);
 
 		if (wsrs != null) {
 			enquiryResponse.setReturnStatus(wsrs);
-			
+
 			logger.debug(Literal.LEAVING);
-			
+
 			return enquiryResponse;
 		}
 
@@ -907,9 +904,9 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 
 		if (finID == null) {
 			logger.debug(Literal.LEAVING);
-			
+
 			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
-			
+
 			return enquiryResponse;
 		}
 
@@ -917,15 +914,15 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 
 		if (CollectionUtils.isEmpty(cd)) {
 			logger.debug(Literal.LEAVING);
-			
+
 			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, "No Charges for the given FinReference"));
-			
+
 			return enquiryResponse;
 		}
 
 		enquiryResponse.setChargeDetails(cd);
 		enquiryResponse.setReturnStatus(getSuccessStatus());
-		
+
 		logger.debug(Literal.LEAVING);
 		return enquiryResponse;
 	}
@@ -1025,7 +1022,6 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		}
 		return null;
 	}
-
 
 	private WSReturnStatus validateFinReference(String finReference) {
 		return StringUtils.isEmpty(finReference) ? getFailedStatus("90502", "FinReference") : null;

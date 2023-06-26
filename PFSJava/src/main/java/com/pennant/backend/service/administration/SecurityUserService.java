@@ -83,4 +83,6 @@ public interface SecurityUserService {
 	AuditHeader updateUserStatus(AuditHeader auditHeader);
 
 	SecurityUser getSecurityUserByLoginId(String userLogin);
+
+	List<SecurityUserDivBranch> prepareSecurityBranch(List<SecurityUserDivBranch> divBranchList);
 }

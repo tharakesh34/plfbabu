@@ -101,7 +101,7 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 					ca.setId(rs.getLong("Id"));
 					ca.setName(rs.getString("Name"));
 					ca.setSegmentation(rs.getString("Segmentation"));
-					ca.setCustId(rs.getLong("CustId"));
+					ca.setCustId(JdbcUtil.getLong(rs.getObject("CustId")));
 					ca.setGroupId(rs.getLong("GroupId"));
 					ca.setApfType(rs.getString("ApfType"));
 					ca.setPeDevId(rs.getString("PeDevId"));
@@ -114,28 +114,28 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 					ca.setCity(rs.getString("City"));
 					ca.setState(rs.getString("State"));
 					ca.setCode(rs.getString("Code"));
-					ca.setDevavailablity(rs.getInt("Devavailablity"));
+					ca.setDevavailablity(rs.getBigDecimal("Devavailablity"));
 					ca.setMagnitude(rs.getBigDecimal("Magnitude"));
 					ca.setAbsavailablity(rs.getBigDecimal("Absavailablity"));
-					ca.setTotalProj(rs.getInt("TotalProj"));
+					ca.setTotalProj(rs.getBigDecimal("TotalProj"));
 					ca.setApproved(rs.getString("Approved"));
 					ca.setRemarks(rs.getString("Remarks"));
 					ca.setPanDetails(rs.getString("PanDetails"));
 					ca.setBenfName(rs.getString("BenfName"));
 					ca.setAccountNo(rs.getString("AccountNo"));
-					ca.setBankBranchId(rs.getLong("BankBranchId"));
+					ca.setBankBranchId(JdbcUtil.getLong(rs.getObject("BankBranchId")));
 					ca.setLimitOnAmt(rs.getBigDecimal("LimitOnAmt"));
 					ca.setLimitOnUnits(rs.getBigDecimal("LimitOnUnits"));
-					ca.setCurrentExpUni(rs.getInt("CurrentExpUni"));
+					ca.setCurrentExpUni(rs.getBigDecimal("CurrentExpUni"));
 					ca.setCurrentExpAmt(rs.getBigDecimal("CurrentExpAmt"));
 					ca.setDateOfInCop(rs.getTimestamp("DateOfInCop"));
-					ca.setNoOfProj(rs.getInt("NoOfProj"));
-					ca.setAssHLPlayers(rs.getInt("AssHLPlayers"));
-					ca.setOnGoingProj(rs.getInt("OnGoingProj"));
-					ca.setExpInBusiness(rs.getInt("ExpInBusiness"));
+					ca.setNoOfProj(rs.getBigDecimal("NoOfProj"));
+					ca.setAssHLPlayers(rs.getBigDecimal("AssHLPlayers"));
+					ca.setOnGoingProj(rs.getBigDecimal("OnGoingProj"));
+					ca.setExpInBusiness(rs.getBigDecimal("ExpInBusiness"));
 					ca.setRecommendation(rs.getString("Recommendation"));
-					ca.setMagintudeInLacs(rs.getInt("MagintudeInLacs"));
-					ca.setNoOfProjCons(rs.getInt("NoOfProjCons"));
+					ca.setMagintudeInLacs(rs.getBigDecimal("MagintudeInLacs"));
+					ca.setNoOfProjCons(rs.getBigDecimal("NoOfProjCons"));
 					ca.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
 
 					if (type.contains("View")) {

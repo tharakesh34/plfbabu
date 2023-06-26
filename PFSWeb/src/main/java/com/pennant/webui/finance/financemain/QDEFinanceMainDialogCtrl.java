@@ -79,6 +79,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -1382,7 +1383,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// Finance Accounting Details Tab
 			if (getAccountingDetailDialogCtrl() != null) {
 				// check if accounting rules executed or not
-				if (!recSave && !getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
+				if (AccountingExtension.VERIFY_ACCOUNTING && !recSave
+						&& !getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 					return;
 				}

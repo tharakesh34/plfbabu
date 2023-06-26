@@ -74,13 +74,14 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	}
 
 	@Override
-	public GenerateLetter getLetter(long id) {
+	public GenerateLetter getLetter(long id, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, FinID, RequestType, LetterType");
 		sql.append(", AgreementTemplate, FeeID");
 		sql.append(", ModeofTransfer, EmailTemplate");
 		sql.append(", CreatedDate");
-		sql.append(" From LOAN_LETTERS_STAGE ");
+		sql.append(" From LOAN_LETTERS");
+		sql.append(type);
 		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -110,7 +111,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	@Override
 	public void update(LoanLetter letter) {
 		StringBuilder sql = new StringBuilder("Update LOAN_LETTERS_STAGE");
-		sql.append(" Set Generated = ?, GeneratedDate = ?, GeneratedOn = ?");
+		sql.append(" Set FeeID = ?, Generated = ?, GeneratedDate = ?, GeneratedOn = ?");
 		sql.append(", LetterName = ?, FileName = ?, LetterLocation = ?");
 		sql.append(", AdviseID = ?, EmailID = ?, EmailNotificationID = ?");
 		sql.append(", Status = ?, Remarks = ?, ApprovedBy = ?, GeneratedBy = ?, ApprovedOn = ?, ModeofTransfer = ?");
@@ -122,6 +123,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 0;
 
+				ps.setObject(++index, letter.getFeeID());
 				ps.setInt(++index, letter.getGenerated());
 				ps.setDate(++index, JdbcUtil.getDate(letter.getGeneratedDate()));
 				ps.setDate(++index, JdbcUtil.getDate(letter.getGeneratedOn()));
@@ -267,15 +269,25 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	}
 
 	@Override
-	public Long getAutoLetterId(Long finID, String letterType, String requestType) {
-		String sql = "Select ID From LOAN_LETTERS_STAGE Where FinID = ? and LetterType = ? and RequestType = ? ";
+	public Long getAutoLetterId(Long finID, String letterType) {
+		String sql = "Select ID From LOAN_LETTERS_STAGE Where FinID = ? and LetterType = ? and RequestType = ?";
+
 		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, Long.class, finID, letterType, requestType);
+			return this.jdbcOperations.queryForObject(sql, Long.class, finID, letterType, "A");
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
 
+	}
+
+	@Override
+	public void update(Long letterId, String name) {
+		String sql = "Update LOAN_LETTERS_STAGE set RequestType = ? Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, name, letterId);
 	}
 }

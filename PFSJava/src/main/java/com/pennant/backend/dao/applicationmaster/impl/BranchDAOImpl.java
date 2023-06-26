@@ -458,4 +458,31 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		}, (rs, rowNum) -> rs.getString("BranchCode"));
 	}
 
+	@Override
+	public List<String> getBranchCodes(String entityCode, String clusterCode) {
+		String sql = "Select b.BranchCode From RMTBranches b Inner Join Clusters c on c.ID = b.ClusterID Where c.Entity = ? and c.Code = ? order by b.LastMntOn";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForList(sql, String.class, entityCode, clusterCode);
+	}
+
+	@Override
+	public List<String> getBranchCodesByEntity(String entityCode) {
+		String sql = "Select BranchCode From RMTBranches Where Entity = ? order by LastMntOn";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForList(sql, String.class, entityCode);
+	}
+
+	@Override
+	public List<String> getBranchCodesByClusterID(String entityCode, long clusterID) {
+		String sql = "Select b.BranchCode From RMTBranches b Inner Join Clusters c on c.ID = b.ClusterID Where b.Entity = ? and c.ID = ? order by b.LastMntOn";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForList(sql, String.class, entityCode, clusterID);
+	}
+
 }

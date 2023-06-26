@@ -569,20 +569,6 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="023" author="sreeram.r">
-		<createTable tableName="EXTAPILOG">
-			<column name="ID" type="bigint" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="API_NAME" type="VARCHAR(200)" />
-			<column name="API_REQUEST" type="blob" />
-			<column name="API_REQ_TIME" type="datetime" />
-			<column name="API_RESPONSE" type="blob" />
-			<column name="API_RESP_TIME" type="datetime" />
-			<column name="ERROR" type="VARCHAR(4000)" />
-		</createTable>
-	</changeSet>
-
 	<changeSet id="024" author="goutham.ch">
 		<createTable tableName="FINCON_GL_STG">
 			<column name="ACCOUNT" type="VARCHAR(50)" />
@@ -826,20 +812,6 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
-	<changeSet id="31" author="goutham.ch">
-		<createTable tableName="UCIC_RESP_FILES">
-			<column name="ID" type="bigint" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="FILE_NAME" type="VARCHAR(2000)" />
-			<column name="STATUS" type="int" />
-			<column name="FILE_LOCATION" type="VARCHAR(2000)" />
-			<column name="CREATED_DATE" type="datetime" />
-			<column name="EXTRACTION" type="int" />
-		</createTable>
-	</changeSet>
 
 	<changeSet id="32" author="goutham.ch">
 		<createTable tableName="UCIC_RESP_FILE_DATA">
@@ -883,23 +855,6 @@
 					UPDATE FILE_INTERFACE_CONFIG SET FILE_POSTPEND='_' WHERE INTERFACE_TYPE='COLLECTION_RECEIPT_RESP';
 			]]>
 		</sql>
-	</changeSet>
-
-	<changeSet id="002.13" author="goutham.ch">
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="ACCESS_KEY" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SECRET_KEY" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="HOST_NAME" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="PORT" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="PRIVATE_KEY" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SSE_ALGORITHM" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="PREFIX" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SFTP_LOCATION" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="LOCAL_BACKUP_LOCATION" />
-		<dropColumn tableName="FILE_INTERFACE_CONFIG" columnName="SFTP_BUCKET" />
-		<renameColumn newColumnName="FILE_TRANSFER" oldColumnName="IS_SFTP"	tableName="FILE_INTERFACE_CONFIG" />
-		<addColumn tableName="FILE_INTERFACE_CONFIG">
-			<column name="FIC_NAMES" type="VARCHAR(200)" />
-		</addColumn>
 	</changeSet>
 	
 	<changeSet id="35" author="goutham.ch">
@@ -1024,7 +979,1263 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="011.06" author="goutham.ch">
+		<sql>
+			<![CDATA[
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',			'GS1009', 	'GST request file configuraton not found.');
+				  INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT',			'GS1010', 	'GST request file base path configuraton not found.');
+				  ]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="35.1" author="goutham.ch">
 		<renameColumn newColumnName="FIC_NAME" oldColumnName="FIC_NAMES"	tableName="FILE_TRANSFER_CONFIG" />
+	</changeSet>
+	
+	
+	<changeSet id="36" author="goutham.ch">
+		<createTable tableName="GST_REQUEST_DETAIL">
+			<column name="REQUESTTYPE" type="VARCHAR(1)" />
+			<column name="CUSTOMERID" type="VARCHAR(35)" />
+			<column name="ACCOUNTID" type="VARCHAR(20)" />
+			<column name="GSTIN" type="VARCHAR(20)" />
+			<column name="SERVICECODE" type="VARCHAR(8) " />
+			<column name="HSN" type="VARCHAR(15)" />
+			<column name="TRANSACTIONCODE" type="VARCHAR(8) " />
+			<column name="TRANSACTIONVOLUME" type="decimal(18,2)" />
+			<column name="TRANSACTIONVALUE" type="decimal(18,2)" />
+			<column name="TRANSACTIONPRICEDCHARGE" type="decimal(18,2)" />
+			<column name="CHARGEINCLUSIVEOFTAX" type="VARCHAR(1)" />
+			<column name="TAXAMOUNT" type="decimal(18,2)" />
+			<column name="TRANSACTIONDATE" type="datetime" />
+			<column name="TRANSACTIONUID" type="VARCHAR(30)" />
+			<column name="SOURCEBRANCH" type="VARCHAR(20)" />
+			<column name="SOURCESTATE" type="VARCHAR(30)" />
+			<column name="DESTINATIONBRANCH" type="VARCHAR(20)" />
+			<column name="DESTINATIONSTATE" type="VARCHAR(30)" />
+			<column name="CURRENCYCODE" type="VARCHAR(3) " />
+			<column name="CHANNEL" type="VARCHAR(20)" />
+			<column name="SOURCESYSTEM" type="VARCHAR(20)" />
+			<column name="CUSTOMEREXEMPT" type="VARCHAR(1) " />
+			<column name="ACCOUNTEXEMPT" type="VARCHAR(1) " />
+			<column name="BRANCHEXEMPT" type="VARCHAR(1) " />
+			<column name="SERVICECHARGEEXEMPT" type="VARCHAR(1) " />
+			<column name="TRANSACTIONEXEMPT" type="VARCHAR(1) " />
+			<column name="RELATEDENTITY" type="VARCHAR(1) " />
+			<column name="STANDARDFEE" type="decimal(16,4)" />
+			<column name="REVERSALTRANSACTIONFLAG" type="VARCHAR(1) " />
+			<column name="ORIGINALTRANSACTIONID" type="VARCHAR(30)" />
+			<column name="TAXSPLITINSOURCESYSTEM" type="VARCHAR(1) " />
+			<column name="CGSTVALUE" type="decimal(18,2)" />
+			<column name="SGSTVALUE" type="decimal(18,2)" />
+			<column name="IGSTVALUE" type="decimal(18,2)" />
+			<column name="UTGSTVALUE" type="decimal(18,2)" />
+			<column name="CGSTSGSTUTGSTSTATE" type="VARCHAR(30) " />
+			<column name="GLACCOUNTID" type="VARCHAR(30) " />
+			<column name="GSTINVOICENUMBER" type="VARCHAR(30) " />
+			<column name="USERCFIELD1" type="VARCHAR(100)" />
+			<column name="USERCFIELD2" type="VARCHAR(100)" />
+			<column name="USERCFIELD3" type="VARCHAR(100)" />
+			<column name="USERCFIELD4" type="VARCHAR(500)" />
+			<column name="USERCFIELD5" type="VARCHAR(500)" />
+			<column name="USERNFIELD1" type="decimal(18,2)" />
+			<column name="USERNFIELD2" type="decimal(18,2)" />
+			<column name="USERDFIELD1" type="datetime     " />
+			<column name="USERDFIELD2" type="datetime     " />
+			<column name="ACTUALUSERID" type="VARCHAR(20)  " />
+			<column name="USERDEPARTMENT" type="VARCHAR(20)  " />
+			<column name="REQUESTdatetime" type="datetime " />
+			<column name="REVENUEACCOUNTNUMBER" type="VARCHAR(20)  " />
+			<column name="IGSTACCOUNTNUMBER" type="VARCHAR(20)  " />
+			<column name="CGSTACCOUNTNUMBER" type="VARCHAR(20)  " />
+			<column name="SGSTACCOUNTNUMBER" type="VARCHAR(20)  " />
+			<column name="UTGSTACCOUNTNUMBER" type="VARCHAR(20)  " />
+			<column name="CGSTCESS1" type="decimal(18,2)" />
+			<column name="CGSTCESS2" type="decimal(18,2)" />
+			<column name="CGSTCESS3" type="decimal(18,2)" />
+			<column name="SGSTCESS1" type="decimal(18,2)" />
+			<column name="SGSTCESS2" type="decimal(18,2)" />
+			<column name="SGSTCESS3" type="decimal(18,2)" />
+			<column name="IGSTCESS1" type="decimal(18,2)" />
+			<column name="IGSTCESS2" type="decimal(18,2)" />
+			<column name="IGSTCESS3" type="decimal(18,2)" />
+			<column name="UTGSTCESS1" type="decimal(18,2)" />
+			<column name="UTGSTCESS2" type="decimal(18,2)" />
+			<column name="UTGSTCESS3" type="decimal(18,2)" />
+			<column name="GSTRATE" type="decimal(18,2)" />
+			<column name="CGSTRATE" type="decimal(18,2)" />
+			<column name="SGSTRATE" type="decimal(18,2)" />
+			<column name="IGSTRATE" type="decimal(18,2)" />
+			<column name="UTGSTRATE" type="decimal(18,2)" />
+			<column name="CUSTOMERNAME" type="VARCHAR(100)" />
+			<column name="CESSAPPLICABLE" type="VARCHAR(1)  " />
+			<column name="BUSINESSUNIT" type="VARCHAR(20) " />
+			<column name="GSTRFIELD1" type="VARCHAR(50) " />
+			<column name="GSTRFIELD2" type="VARCHAR(50) " />
+			<column name="GSTRFIELD3" type="VARCHAR(50) " />
+			<column name="GSTRFIELD4" type="VARCHAR(50) " />
+			<column name="GSTRFIELD5" type="VARCHAR(50) " />
+			<column name="GSTRFIELD6" type="VARCHAR(50) " />
+			<column name="GSTRFIELD7" type="VARCHAR(50) " />
+			<column name="GSTRFIELD8" type="VARCHAR(50) " />
+			<column name="GSTRFIELD9" type="VARCHAR(50) " />
+			<column name="GSTRFIELD10" type="VARCHAR(50) " />
+			<column name="GSTRFIELD11" type="VARCHAR(50) " />
+			<column name="GSTRFIELD12" type="VARCHAR(50) " />
+			<column name="GSTRFIELD13" type="datetime" />
+			<column name="GSTRFIELD14" type="VARCHAR(50) " />
+			<column name="GSTRFIELD15" type="VARCHAR(50) " />
+			<column name="USERCFIELD6" type="VARCHAR(100)" />
+			<column name="USERCFIELD7" type="VARCHAR(100)" />
+			<column name="USERCFIELD8" type="VARCHAR(100)" />
+			<column name="USERCFIELD9" type="VARCHAR(100)" />
+			<column name="USERCFIELD10" type="VARCHAR(100)" />
+			<column name="USERCFIELD11" type="VARCHAR(100)" />
+			<column name="USERCFIELD12" type="VARCHAR(100)" />
+			<column name="USERCFIELD13" type="VARCHAR(100)" />
+			<column name="USERCFIELD14" type="VARCHAR(100)" />
+			<column name="USERCFIELD15" type="VARCHAR(100)" />
+			<column name="USERNFIELD3" type="decimal(18,2)" />
+			<column name="USERNFIELD4" type="decimal(18,2)" />
+			<column name="USERDFIELD3" type="datetime" />
+			<column name="USERDFIELD4" type="datetime" />
+			<column name="STATUS" type="int" defaultValue="0" />
+		</createTable>
+	</changeSet>
+	
+		<changeSet id="37" author="goutham.ch">
+			<createTable tableName="GST_VOUCHER_DETAILS ">
+				<column name="GST_VOUCHER_ID" type="bigint" autoIncrement="true">
+					<constraints primaryKey="true" nullable="false" />
+				</column>
+				<column name="FINREFERENCE" type="VARCHAR(20)" />
+				<column name="AMOUNT_TYPE" type="VARCHAR(10)" />
+				<column name="REFERENCE_FIELD1" type="bigint" />
+				<column name="REFERENCE_FIELD2" type="bigint" />
+				<column name="REFERENCE_AMOUNT" type="decimal(18,2)" />
+				<column name="ACTUAL_AMOUNT" type="decimal(18,2)" />
+				<column name="PROCESSED" type="int" defaultValue="0" />
+				<column name="REQ_FILE_ID" type="bigint" defaultValue="0" />
+				<column name="CREATED_DATE" type="datetime" />
+			</createTable>
+	</changeSet>
+	
+	<changeSet id="38" author="goutham.ch">
+		<createTable tableName="GSTHEADER ">
+		<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FILE_NAME" type="VARCHAR(200)" />
+			<column name="STATUS" type="int" />
+			<column name="FILE_LOCATION" type="VARCHAR(2000)" />
+			<column name="EXTRACTION" type="int" />
+			<column name="ERROR_CODE" type="VARCHAR(20)" />
+			<column name="ERROR_MESSAGE" type="VARCHAR(2000)" />
+			<column name="CREATED_DATE" type="datetime" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="39" author="goutham.ch">
+		<createTable tableName="GSTDETAILS ">
+		<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="HEADER_ID" type="bigint" />
+			<column name="RECORD_DATA" type="VARCHAR(2000)" />
+			<column name="STATUS" type="int" />
+			<column name="GST_VOUCHER_ID" type="int" />
+			<column name="ERROR_CODE" type="VARCHAR(20)" />
+			<column name="ERROR_MESSAGE" type="VARCHAR(2000)" />
+			<column name="CREATED_DATE" type="datetime" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="40" author="goutham.ch">
+			<createTable tableName="GST_INVOICE_DETAILS ">
+				<column name="CUSTOMER_NAME"            type="VARCHAR(100)"/> 
+				<column name="CUSTOMER_ADDRESS"         type="VARCHAR(250)"/> 
+				<column name="CURRENT_GSTIN "           type="VARCHAR(50)" />
+				<column name="LOAN_BRANCH_ADDRESS"      type="VARCHAR(250)"/> 
+				<column name="GSTIN"                    type="VARCHAR(50)" />
+				<column name="TRANSACTION_DATE"         type="datetime" />      
+				<column name="INVOICE_NUMBER"           type="VARCHAR(50)" />
+				<column name="CHARGE_DESCRIPTION"       type="VARCHAR(250)"/>
+				<column name="CHARGE_AMOUNT"            type="decimal(18,2)" />
+				<column name="CGST_RATE"                type="decimal(10,2)" />
+				<column name="CGST_AMOUNT"              type="decimal(18,2)" />
+				<column name="SGST_RATE"                type="decimal(10,2)" />
+				<column name="SGST_AMOUNT"              type="decimal(18,2)" />
+				<column name="IGST_RATE"                type="decimal(10,2)" />
+				<column name="IGST_AMOUNT"              type="decimal(18,2)" />
+				<column name="UGST_RATE"                type="decimal(10,2)" />
+				<column name="UGST_AMOUNT"              type="decimal(18,2)" />
+				<column name="CESS_AMOUNT"              type="decimal(18,2)" />
+				<column name="POP"                      type="VARCHAR(50)" />
+				<column name="POS"                      type="VARCHAR(50)" />
+				<column name="CIN"                      type="VARCHAR(50)" />
+				<column name="PAN"                      type="VARCHAR(50)" />
+				<column name="SAC"                      type="VARCHAR(50)" />
+				<column name="WEBSITE_ADDRESS"          type="VARCHAR(150)"/>
+				<column name="EMAILID"                  type="VARCHAR(100)"/>
+				<column name="REG_BANK_ADDRESS"         type="VARCHAR(250)"/>
+				<column name="DISCLAIMER"               type="VARCHAR(500)"/>
+			</createTable>
+	 </changeSet>
+	 
+	 <changeSet id="41" author="goutham.ch">
+		<createTable tableName="GST_REQUEST_FILE">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FILE_NAME"       type="VARCHAR(200)"/> 
+			<column name="FILE_LOCATION"   type="VARCHAR(250)"/> 
+			<column name="CREATED_DATE "   type="datetime" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="42" author="goutham.ch">
+		<createTable tableName="UCIC_CUSTOMERS_STATUS">
+
+			<column name="CUSTID" type="bigint" />
+			<column name="UCICID" type="VARCHAR(200)" />
+			<column name="STATUS" type="VARCHAR(20)" />
+			<column name="ERROR_DESC" type="VARCHAR(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="43" author="goutham.ch">
+		<createTable tableName="UCIC_RESP_FILES">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FILE_NAME" type="VARCHAR(2000)" />
+			<column name="STATUS" type="int" />
+			<column name="FILE_LOCATION" type="VARCHAR(2000)" />
+			<column name="CREATED_DATE" type="datetime" />
+			<column name="EXTRACTION" type="int" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="44" author="sreeram.r">
+	   <createSequence sequenceName="SEQ_RBIADF" incrementBy="1" startValue="1" minValue="1"
+		maxValue="9223372036854775807" />
+    </changeSet>
+    
+    
+    <changeSet id="45" author="goutham.ch">
+		<dropTable tableName="FILE_INTERFACE_CONFIG" />
+	</changeSet>
+
+	<changeSet id="46" author="goutham.ch">
+		<createTable tableName="FILE_INTERFACE_CONFIG ">
+			<column name="INTERFACE_NAME" type="VARCHAR(100)" >
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="NO_OF_RECORDS" type="int" />
+			<column name="FILE_LOCATION" type="VARCHAR(2000)" />
+			<column name="HOLD_TYPE" type="int" />
+			<column name="FILE_PREPEND" type="VARCHAR(100)" />
+			<column name="FILE_POSTPEND" type="VARCHAR(100)" />
+			<column name="FILE_EXTENSION" type="VARCHAR(100)" />
+			<column name="DATE_FORMAT" type="VARCHAR(100)" />
+			<column name="SUCCESS_INDICATOR" type="VARCHAR(100)" />
+			<column name="FAIL_INDICATOR" type="VARCHAR(100)" />
+			<column name="BACKUP_LOCATION" type="VARCHAR(150)" />
+			<column name="FILE_TRANSFER" type="VARCHAR(10)" />
+			<column name="FIC_NAMES" type="VARCHAR(100)" />
+		</createTable>
+	</changeSet>	
+
+	<changeSet id="46.01" author="goutham.ch">
+	<sql>
+		<![CDATA[	 
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('SI',1,'PRESENTMENT/SI/REQUEST',202,'PNS','_ALL.',null,'yyMMdd',null,null,null,null,null);
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('IPDC',1,'PRESENTMENT/SI_INTERNAL/REQUEST',202,'PNI','.',null,'yyMMdd',null,null,null,null,null);
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('NACH',1,'PRESENTMENT/ACH/REQUEST',202,'ACH-DR-HDFC-HDFCH2H1-','-','-INP.txt','ddMMyyyy',null,null,null,'Y','NACH');
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('SI_RESP',0,'PRESENTMENT/SI/RESPONSE',202,'GEFUCH',null,'.txt',null,'500','501',null,null,null);
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('IPDC_RESP',0,'PRESENTMENT/SI_INTERNAL/RESPONSE',202,'GEFUCH',null,'.txt',null,'500','501',null,null,null);
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('NACH_RESP',0,'PRESENTMENT/ACH/RESPONSE',202,'ACH-DR-HDFC-HDFCH2H1-',null,'-RES.txt',null,'67','44',null,'Y','NACH_RESP');
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('PDC',1,'PRESENTMENT/PDC/REQUEST',202,'PLF_Exernal_PDC_','_','.csv','ddMMyyyy',null,null,null,'Y','PDC');
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('SILIEN_REQ',1,'SILIEN/REQUEST',202,'PNSILIEN_',null,'.EBF','ddMMyy',null,null,null,null,null);
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('SILIEN_RESP',0,'SILIEN/RESPONSE',202,'GEFUCH',null,'.EBF',null,'175','177',null,null,null);
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('FINCONGL',1,'EXTRACTIONS/FINCON',0,'FO',null,'.DAT','yyyyMMdd',null,null,null,'Y','FINCONGL');
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('UCIC_REQ_COMPLETE',1,'UCIC/REQUEST',202,'PLF_COMPLETE_',null,'.txt','MM-dd-yyyy',null,null,null,null,null);
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('UCIC_RESP_COMPLETE',1,'UCIC/RESPONSE',202,'COMPLETE_',null,'.txt','ddMMMyyyy',null,null,null,null,null);
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('UCIC_ACK_CONF',1,'UCIC/REQUEST/ACK',202,'CONF_Complete_',null,'.txt','ddMMyyyy',null,null,null,null,null);
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('PLF_DB_SERVER',1,'UCIC/REQUEST',202,null,null,null,'MM-dd-yyyy',null,null,null,'Y','PLF_DB_SERVER');
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('UCIC_REQ',1,'UCIC/REQUEST',202,'PLF_UCIC_REQ_',null,'.txt','MM-dd-yyyy',null,null,null,'Y','UCIC_REQ');
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('UCIC_RESP',1,'UCIC/RESPONSE',202,'PLF_UCIC_RES_',null,'.txt','ddMMMyyyy',null,null,null,'Y','UCIC_RESP');
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('UCIC_ACK',1,'UCIC/RESPONSE/ACK',202,'PLF_CONF_','_1','.txt','ddMMyyyy',null,null,null,'Y','UCIC_ACK');
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('UCIC_WEEKLY',1,'UCIC/REQUEST/WEEKLY',202,'PLF_EXT_',null,'.txt','ddMMMyyyy',null,null,null,'Y','UCIC_WEEKLY');
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('COLLECTION_RECEIPT_REQ',1,'COLLECTIONS/REQUEST',0,'FO',null,'.csv','YYYYMMDD',null,null,null,'Y','COLLECTION_RECEIPT_REQ');
+			Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FILE_TRANSFER,FIC_NAMES) values ('COLLECTION_RECEIPT_RESP',1,'COLLECTIONS/RESPONSE',0,'FinnoneReverse_','_','.DAT','ddMMMyy',null,null,null,'Y','COLLECTION_RECEIPT_RESP');
+    	]]>
+	</sql>
+</changeSet>
+    
+    <changeSet id="47" author="goutham.ch">
+	   <createSequence sequenceName="SEQ_GST_INTF" incrementBy="1" startValue="1" minValue="1"
+		maxValue="9223372036854775807" />
+    </changeSet>
+    
+    	<changeSet id="019.01" author="sreeram.r">
+			<addColumn tableName="UCIC_CUSTOMERS">
+			<column name="PROCESS_DATE" type="datetime" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="48" author="goutham.ch">
+		<createTable tableName="PDC_BATCH_D_STG">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FINNONE_BATCHID" type="bigint" />
+			<column name="PDC_BATCHID" type="VARCHAR(29)" />
+			<column name="AGREEMENTID" type="bigint" />
+			<column name="CHEQUESNO" type="VARCHAR(30)" />
+			<column name="CHEQUEDATE" type="datetime" />
+			<column name="CHEQUEAMOUNT" type="bigint" />
+			<column name="CHEQUESTATUS" type="VARCHAR(1)" />
+			<column name="BOUNCE_REASON" type="VARCHAR(100)" />
+			<column name="CITYID" type="VARCHAR(6)" />
+			<column name="BANKID" type="VARCHAR(6)" />
+			<column name="BANKBRANCHID" type="VARCHAR(3)" />
+			<column name="MICR_CODE" type="VARCHAR(9)" />
+			<column name="CASHIN_FLOW_DATE" type="datetime" />
+			<column name="FINNONE_PICK_DATE" type="datetime" />
+			<column name="PICK_FINNONE" type="VARCHAR(1)" />
+			<column name="EXCEPTION_FLAG" type="VARCHAR(1)" />
+			<column name="EXCEPTION_DESC" type="VARCHAR(200)" />
+			<column name="STATUS" type="VARCHAR(1)" />
+			<column name="LIQUIDATION_DATE" type="datetime" />
+			<column name="DEPOSIT_NUMBER" type="VARCHAR(12)" />
+			<column name="CLIENT_CODE" type="VARCHAR(10)" />
+			<column name="PRODUCT_CODE" type="VARCHAR(10)" />
+			<column name="DEPOSIT_DATE" type="datetime" />
+			<column name="TYPE_OF_LIQUIDATION" type="VARCHAR(1)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="49" author="r.sreeram">
+		<createTable tableName="EXT_BASEL_TWO">
+			<column name="AGREEMENTID" type="bigint" />
+			<column name="CUSTOMERID" type="bigint" />
+			<column name="ICN_STATUS" type="VARCHAR(1)" />
+			<column name="ICN_ACQUIRED" type="datetime" />
+			<column name="LOAN_APPL_DT" type="datetime" />
+			<column name="TOTAL_EMIS" type="bigint" />
+			<column name="DND" type="VARCHAR(1)" />
+			<column name="APPLIED_BEFORE" type="VARCHAR(1)" />
+			<column name="OLD_AGMTNO" type="VARCHAR(50)" />
+			<column name="MICR_LOCATION" type="VARCHAR(50)" />
+			<column name="FEES" type="bigint" />
+			<column name="FIXED_FLOAT" type="varchar(1)" />
+			<column name="DEALER_COMM" type="bigint" />
+			<column name="MANF_DISC" type="bigint" />
+			<column name="PROMOTION_CODE" type="varchar(20)" />
+			<column name="RC_AVAIL_STATUS" type="varchar(1)" />
+			<column name="RC_ACQUIRED" type="datetime" />
+			<column name="EMI_TYPE" type="varchar(5)" />
+			<column name="REST" type="varchar(5)" />
+			<column name="CUST_ACCOUNT" type="varchar(50)" />
+			<column name="NO_BOUNCES" type="bigint" />
+			<column name="CHARGES_PAID" type="bigint" />
+			<column name="PREV_NPA" type="datetime" />
+			<column name="SECURT_FLAG" type="varchar(1)" />
+			<column name="SECURT_DT" type="datetime" />
+			<column name="DPD_STRING" type="VARCHAR(250)" />
+			<column name="TOT_AMT_PAID_MNTH_CHQ" type="bigint" />
+			<column name="TOT_AMT_PAID_MNTH_CASH" type="bigint" />
+			<column name="RESCHEDULED" type="varchar(1)" />
+			<column name="RESCHEDULE_EFF_DT" type="datetime" />
+			<column name="CLOSURE_TYPE" type="varchar(10)" />
+			<column name="PRIN_LOSS_CLOSURE" type="bigint" />
+			<column name="IBPC_START" type="datetime" />
+			<column name="IBPC_END" type="datetime" />
+			<column name="MONTHS_IN_PREV_JOB" type="int" />
+			<column name="MONTHS_IN_CURR_JOB" type="int" />
+			<column name="MONTHS_IN_CURR_RESIDENCE" type="int" />
+			<column name="RENT_PM" type="bigint" />
+			<column name="DEVIATION" type="VARCHAR(1)" />
+			<column name="VEHICLE_AGE" type="int" />
+			<column name="APP_SCORE" type="int" />
+			<column name="RIC_SCORE" type="int" />
+			<column name="INCOME_PROOF_RECEIVED" type="VARCHAR(1)" />
+			<column name="TOTAL_EXPERIENCE" type="bigint" />
+			<column name="EMPLOYER_CATEGORY" type="VARCHAR(1)" />
+			<column name="MONTHS_IN_CITY" type="int" />
+			<column name="ELIGIBILITY" type="VARCHAR(1)" />
+			<column name="OBLIGATIONS" type="bigint" />
+			<column name="OBLIGATIONS_N" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="50" author="r.sreeram">
+		<createTable tableName="RPMSEXTRACT">
+			<column name="AGREEMENTID" type="bigint" />
+			<column name="CUSTOMERID" type="bigint" />
+			<column name="STATUS" type="VARCHAR(1)" />
+			<column name="MULTI_LINK_LOAN_FLAG" type="VARCHAR(1)" />
+			<column name="PARENT_LOAN_NO" type="bigint" />
+			<column name="CUSTOMER_SEGMENT" type="bigint" />
+			<column name="GROUPID" type="bigint" />
+			<column name="GROUPDESC" type="VARCHAR(105)" />
+			<column name="GROUPCODE" type="VARCHAR(10)" />
+			<column name="REPO_SETTLED_FLAG" type="VARCHAR(2)" />
+			<column name="CLOSURE_REASON" type="VARCHAR(200)" />
+			<column name="CLOSURE_DATE" type="datetime" />
+			<column name="POS_ON_CLOSURE" type="bigint" />
+			<column name="PDC_FLAG" type="VARCHAR(1)" />
+			<column name="TOT_PRIN_WAIVE_OFF" type="bigint" />
+			<column name="TOT_INT_WAIVE_OFF" type="bigint" />
+			<column name="WOFF_CHQBOUNCE_CHARGES" type="bigint" />
+			<column name="WOFF_OVERDUE_CHARGE" type="bigint" />
+			<column name="WOFF_OTHERS" type="bigint" />
+			<column name="RAM_ID" type="varchar(18)" />
+			<column name="TURNOVER_IN_YEAR_ONE" type="VARCHAR(8)" />
+			<column name="TURNOVER_AMT_YEAR_ONE" type="bigint" />
+			<column name="TURNOVER_IN_YEAR_TWO" type="VARCHAR(8)" />
+			<column name="TURNOVER_AMT_YEAR_TWO" type="bigint" />
+			<column name="TURNOVER_IN_YEAR_THREE" type="VARCHAR(8)" />
+			<column name="TURNOVER_AMT_YEAR_THREE" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="goutham.ch" id="026.01">
+		<renameColumn newColumnName="ACCRUED_INTEREST" oldColumnName="ACCRUED_INTERESTNUMBER"
+			tableName="ALM_REPORT" />
+	</changeSet>
+	
+	<changeSet id="026.02" author="sreeram.r">
+		<modifyDataType tableName="ALM_REPORT" columnName="ACCRUED_INTEREST" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="INTT_RATE" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="LIFE_CEILING" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="LIFE_FLOOR" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="TOTAL_INTEREST" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="BILLED_INTEREST" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="BILLED_NOT_RECEIVED_INTEREST" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="BILLED_NOT_RECEIVED_PRINCIPAL" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="PRETAXIRR" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="INTT_PAYMT_FREQ" newDataType="bigint" />
+		<modifyDataType tableName="ALM_REPORT" columnName="INSTALMENT" newDataType="decimal(18,2)" />
+	</changeSet>
+	
+	<changeSet id="003.1" author="sreeram.r">
+		<modifyDataType tableName="EXT_BASEL_ONE" columnName="REG_EMI" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_ONE" columnName="EXCESS_MONEY" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_ONE" columnName="ACCRUED_INT" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_ONE" columnName="UN_EARNED_INT" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_ONE" columnName="GROSS_RCVBL" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_ONE" columnName="SUS_INT" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_ONE" columnName="ANNUAL_TURNOVER" newDataType="decimal(18,2)" />
+	</changeSet>
+			
+	<changeSet id="003.2" author="sreeram.r">
+		<modifyDataType tableName="EXT_BASEL_ONE" columnName="TENURE" newDataType="int" />
+	</changeSet>
+
+	<changeSet id="51" author="goutham.ch">
+		<createTable tableName="RBIADFEXTRACT">
+			<column name="RNUM" type="bigint" />
+			<column name="AGREEMENT_ID" type="VARCHAR(18)" />
+			<column name="CUSTOMER_ID" type="VARCHAR(18)" />
+			<column name="PRODUCT_CODE" type="VARCHAR(8)" />
+			<column name="SCHEME_ID" type="bigint" />
+			<column name="CREDIT_PROMO_SCHEME_ID" type="VARCHAR(50)" />
+			<column name="CREDIT_PROMO_SCHEME_DESC" type="VARCHAR(50)" />
+			<column name="APPLICATION_DATE" type="DATETIME" />
+			<column name="APPROVAL_DATE" type="DATETIME" />
+			<column name="INSTLMODE" type="VARCHAR(50)" />
+			<column name="LOAN_AMT" type="decimal(13,2)" />
+			<column name="NO_OF_INSTALLMENTS" type="bigint" />
+			<column name="DISBURSAL_DATE" type="DATETIME" />
+			<column name="LOAN_START_DATE" type="DATETIME" />
+			<column name="CLOSURE_DATE" type="DATETIME" />
+			<column name="LOAN_BOARDING_DATE" type="DATETIME" />
+			<column name="APP_SERIAL_NO" type="bigint" />
+			<column name="TENURE" type="bigint" />
+			<column name="TOTAL_DISBURSED_AMT" type="decimal(18,2)" />
+			<column name="LOAN_AMT_REQ" type="decimal(18,2)" />
+			<column name="LOAN_PURPOSE" type="VARCHAR(50)" />
+			<column name="INSTALLMENT_TYPE" type="VARCHAR(50)" />
+			<column name="INSTALLMENT_TYPE_DESC" type="VARCHAR(50)" />
+			<column name="FREQUENCY" type="VARCHAR(50)" />
+			<column name="STS_CD" type="VARCHAR(50)" />
+			<column name="LOAN_STATUS" type="VARCHAR(50)" />
+			<column name="SECOND_SOURCE" type="VARCHAR(50)" />
+			<column name="DPD" type="bigint" />
+			<column name="NPA_STAGE_ID" type="VARCHAR(50)" />
+			<column name="ASSET_CLASS_ID" type="VARCHAR(50)" />
+			<column name="PSL_CATEGORY_ID" type="bigint" />
+			<column name="PSL_CATEGORY_DESC" type="VARCHAR(50)" />
+			<column name="INTEREST_RATE" type="decimal(10,7)" />
+			<column name="MARKUP" type="decimal(10,7)" />
+			<column name="RATE_TYPE" type="VARCHAR(50)" />
+			<column name="PLR_RATE" type="decimal(10,7)" />
+			<column name="PLR_TYPE" type="VARCHAR(50)" />
+			<column name="WEAKER_SECTION" type="VARCHAR(50)" />
+			<column name="WEAKER_SECTION_DESC" type="VARCHAR(50)" />
+			<column name="BANK_RATE" type="decimal(10,7)" />
+			<column name="BROKERID" type="bigint" />
+			<column name="BRANCH_ID" type="bigint" />
+			<column name="PSL_SUB_CATEGORY" type="bigint" />
+			<column name="PSL_SUB_CAT_DESC" type="VARCHAR(50)" />
+			<column name="SCHEME_DESC" type="int" />
+			<column name="LPP_RATE" type="VARCHAR(50)" />
+			<column name="PRODUCT_DESC" type="VARCHAR(50)" />
+			<column name="PRODUCT_TYPE" type="VARCHAR(50)" />
+			<column name="SECURITISED_FLAG" type="VARCHAR(1)" />
+			<column name="RUNDATE" type="DATETIME" />
+			<column name="UI_LMS_GL" type="bigint" />
+			<column name="UI_OFS_GL" type="bigint" />
+			<column name="GR_LMS_GL" type="bigint" />
+			<column name="GR_OFS_GL" type="bigint" />
+			<column name="RE_LMS_GL" type="bigint" />
+			<column name="RE_OFS_GL" type="bigint" />
+			<column name="EX_LMS_GL" type="bigint" />
+			<column name="EX_OFS_GL" type="bigint" />
+			<column name="AI_LMS_GL" type="bigint" />
+			<column name="AI_OFS_GL" type="bigint" />
+			<column name="IS_LMS_GL" type="bigint" />
+			<column name="IS_OFS_GL" type="bigint" />
+			<column name="AIA_LMS_GL" type="bigint" />
+			<column name="AIA_OFS_GL" type="bigint" />
+			<column name="LAND_VALUE" type="decimal(18,2)" />
+			<column name="DSA_CODE" type="bigint" />
+			<column name="DSA_DESC" type="VARCHAR(50)" />
+			<column name="HUB_BRANCH_ID" type="bigint" />
+			<column name="HUB_BRANCH_DESC" type="VARCHAR(50)" />
+			<column name="ADDITIONAL_DISBURSAL_AMT_L" type="decimal(18,2)" />
+			<column name="ADDITIONAL_PARTPAID_AMT_L" type="decimal(18,2)" />
+			<column name="INTEREST_ACCRUED" type="decimal(13,5)" />
+			<column name="SUB_INDUSTRY" type="bigint" />
+			<column name="SUB_INDUSTRY_DESC" type="VARCHAR(50)" />
+			<column name="LAND_AREA" type="bigint" />
+			<column name="LAND_UNIT_CD" type="VARCHAR(50)" />
+			<column name="CME" type="VARCHAR(50)" />
+			<column name="REAL_ESTATE" type="VARCHAR(50)" />
+			<column name="PDC_AC_NO" type="bigint" />
+			<column name="TOT_CLOSURE_AMT" type="decimal(18,2)" />
+			<column name="TOT_CLOSURE_AMT_COL" type="decimal(18,2)" />
+			<column name="TOT_WAIVE_OFF" type="decimal(18,2)" />
+			<column name="CLOSURE_AMT" type="decimal(18,2)" />
+			<column name="CLOSURE_AMT_COL" type="decimal(18,2)" />
+			<column name="WAIVE_OFF" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID_T" type="decimal(18,2)" />
+			<column name="INTEREST_PAID_T" type="decimal(18,2)" />
+			<column name="TERMIN_DATE" type="DATETIME" />
+			<column name="RESTRUCTURE_FLAG" type="VARCHAR(1)" />
+			<column name="RESCHEDULE_FLAG" type="VARCHAR(1)" />
+			<column name="RESTRUCTURE_DATE" type="DATETIME" />
+			<column name="RESTRUCTURE_TENURE" type="bigint" />
+			<column name="RESTRUCTURE_AMOUNT" type="decimal(18,2)" />
+			<column name="RESTRUCTURE_TYPE" type="VARCHAR(50)" />
+			<column name="BRANCH_DESC" type="VARCHAR(50)" />
+			<column name="B_CITY" type="VARCHAR(50)" />
+			<column name="B_STATE" type="VARCHAR(50)" />
+			<column name="B_PINCODE" type="bigint" />
+			<column name="SALUTATION" type="VARCHAR(5)" />
+			<column name="CUSTOMER_NAME" type="VARCHAR(50)" />
+			<column name="CUSTOMER_TYPE" type="VARCHAR(50)" />
+			<column name="GENDER" type="VARCHAR(50)" />
+			<column name="MARITAL_STATUS_CD" type="VARCHAR(5)" />
+			<column name="RESIDENT_FLAG" type="VARCHAR(50)" />
+			<column name="NATIONALITY_CODE" type="VARCHAR(50)" />
+			<column name="PROFESSION" type="VARCHAR(50)" />
+			<column name="NATURE_OF_BUSINESS" type="VARCHAR(50)" />
+			<column name="MB_AC_NO" type="bigint" />
+			<column name="DEPENDENTS" type="bigint" />
+			<column name="RELIGION" type="VARCHAR(50)" />
+			<column name="GROUP_ID" type="bigint" />
+			<column name="CUSTOMER_INDUSTRY" type="bigint" />
+			<column name="CUSTOMER_INDUSTRY_DESC" type="VARCHAR(100)" />
+			<column name="CASTE" type="VARCHAR(50)" />
+			<column name="CASTE_DESC" type="VARCHAR(100)" />
+			<column name="DOB" type="DATETIME" />
+			<column name="DOI" type="DATETIME" />
+			<column name="PAN" type="VARCHAR(50)" />
+			<column name="VAT_AC_NO" type="bigint" />
+			<column name="MONTHLY_INCOME" type="decimal(18,2)" />
+			<column name="YEARLY_INCOME" type="decimal(18,2)" />
+			<column name="ANNUAL_TURNOVER" type="decimal(18,2)" />
+			<column name="CUST_RATING" type="VARCHAR(50)" />
+			<column name="CURRENT_COMPANY" type="VARCHAR(200)" />
+			<column name="EDUCATION_CODE" type="VARCHAR(50)" />
+			<column name="DISABLED_FLAG" type="VARCHAR(50)" />
+			<column name="GROUP_DESC" type="VARCHAR(50)" />
+			<column name="CONSTITUTION" type="bigint" />
+			<column name="CONSTITUTION_DESC" type="VARCHAR(50)" />
+			<column name="RESIDENT_SINCE" type="VARCHAR(50)" />
+			<column name="M_ADDRESS1" type="VARCHAR(50)" />
+			<column name="M_ADDRESS2" type="VARCHAR(50)" />
+			<column name="M_ADDRESS3" type="VARCHAR(50)" />
+			<column name="M_ADDRESS4" type="VARCHAR(50)" />
+			<column name="M_LANDMARK" type="VARCHAR(50)" />
+			<column name="M_PHONE1" type="VARCHAR(50)" />
+			<column name="M_PHONE2" type="VARCHAR(50)" />
+			<column name="M_MOBILE1" type="VARCHAR(50)" />
+			<column name="M_MOBILE2" type="VARCHAR(50)" />
+			<column name="M_EMAIL" type="VARCHAR(50)" />
+			<column name="M_CITY" type="VARCHAR(50)" />
+			<column name="M_STATE" type="VARCHAR(50)" />
+			<column name="M_PINCODE" type="bigint" />
+			<column name="M_DISTRICT" type="VARCHAR(50)" />
+			<column name="M_COUNTRY" type="VARCHAR(50)" />
+			<column name="POPULATION_CAT" type="bigint" />
+			<column name="RELIGION_DESC" type="VARCHAR(50)" />
+			<column name="CUST_RATING_DESC" type="VARCHAR(50)" />
+			<column name="EDUCATION_DESC" type="VARCHAR(50)" />
+			<column name="PROFESSION_DESC" type="VARCHAR(50)" />
+			<column name="LAND_UNIT" type="VARCHAR(50)" />
+			<column name="NATURE_OF_BUSINESS_DESC" type="VARCHAR(50)" />
+			<column name="MARITAL_STATUS" type="VARCHAR(50)" />
+			<column name="OVERDUE_EMI_AMT" type="decimal(18,2)" />
+			<column name="OVERDUE_EMI_CNT" type="decimal(18,2)" />
+			<column name="OVERDUE_PRINCIPAL" type="decimal(18,2)" />
+			<column name="OVERDUE_INTEREST" type="decimal(18,2)" />
+			<column name="TOTAL_POS" type="decimal(18,2)" />
+			<column name="TOTAL_IOS" type="decimal(18,2)" />
+			<column name="LAST_EMI_BILLED_ON" type="DATETIME" />
+			<column name="BILLED_PROPINSTLID" type="decimal(18,2)" />
+			<column name="FUTURE_POS" type="decimal(18,2)" />
+			<column name="FUTURE_IOS" type="decimal(18,2)" />
+			<column name="MATURITY_DATE" type="DATETIME" />
+			<column name="INTEREST_PAID_L" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID_L" type="decimal(18,2)" />
+			<column name="BILLED_EMI_L" type="decimal(18,2)" />
+			<column name="EMI_COLLECTED_L" type="decimal(18,2)" />
+			<column name="OVERDUE_EMI_AMT_L" type="decimal(18,2)" />
+			<column name="LPP_CHARGED" type="decimal(18,2)" />
+			<column name="LPP_OUTSTANDING" type="decimal(18,2)" />
+			<column name="TOTAL_OTH_CHRG" type="decimal(18,2)" />
+			<column name="TOTAL_OTH_CHRG_OS" type="decimal(18,2)" />
+			<column name="GR_CR_L" type="decimal(18,2)" />
+			<column name="GR_DR_L" type="decimal(18,2)" />
+			<column name="RE_CR_L" type="decimal(18,2)" />
+			<column name="RE_DR_L" type="decimal(18,2)" />
+			<column name="IS_CR_L" type="decimal(18,2)" />
+			<column name="IS_DR_L" type="decimal(18,2)" />
+			<column name="UI_CR_L" type="decimal(18,2)" />
+			<column name="UI_DR_L" type="decimal(18,2)" />
+			<column name="AI_CR_L" type="decimal(18,2)" />
+			<column name="AI_DR_L" type="decimal(18,2)" />
+			<column name="EX_CR_L" type="decimal(18,2)" />
+			<column name="EX_DR_L" type="decimal(18,2)" />
+			<column name="AIA_CR_L" type="decimal(18,2)" />
+			<column name="AIA_DR_L" type="decimal(18,2)" />
+			<column name="LAST_PAYMENT_DT" type="DATETIME" />
+			<column name="CHQ_BOUNCE" type="bigint" />
+			<column name="GR_CR" type="decimal(18,2)" />
+			<column name="GR_DR" type="decimal(18,2)" />
+			<column name="RE_CR" type="decimal(18,2)" />
+			<column name="RE_DR" type="decimal(18,2)" />
+			<column name="IS_CR" type="decimal(18,2)" />
+			<column name="IS_DR" type="decimal(18,2)" />
+			<column name="UI_CR" type="decimal(18,2)" />
+			<column name="UI_DR" type="decimal(18,2)" />
+			<column name="AI_CR" type="decimal(18,2)" />
+			<column name="AI_DR" type="decimal(18,2)" />
+			<column name="AIA_CR" type="decimal(18,2)" />
+			<column name="AIA_DR" type="decimal(18,2)" />
+			<column name="EX_CR" type="decimal(18,2)" />
+			<column name="EX_DR" type="decimal(18,2)" />
+			<column name="ADDITIONAL_PARTPAID_AMT" type="decimal(18,2)" />
+			<column name="PREVIOUS_EMI_DUE" type="decimal(18,2)" />
+			<column name="ADDITIONAL_DISBURSAL_AMT" type="decimal(18,2)" />
+			<column name="INTEREST_PAID" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID" type="decimal(18,2)" />
+			<column name="BILLED_EMI" type="decimal(18,2)" />
+			<column name="EMI_COLLECTED" type="decimal(18,2)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="52" author="goutham.ch">
+		<createTable tableName="RBIADFEXTRACTHIST">
+			<column name="RNUM" type="bigint" />
+			<column name="AGREEMENT_ID" type="VARCHAR(18)" />
+			<column name="CUSTOMER_ID" type="VARCHAR(18)" />
+			<column name="PRODUCT_CODE" type="VARCHAR(8)" />
+			<column name="SCHEME_ID" type="bigint" />
+			<column name="CREDIT_PROMO_SCHEME_ID" type="VARCHAR(50)" />
+			<column name="CREDIT_PROMO_SCHEME_DESC" type="VARCHAR(50)" />
+			<column name="APPLICATION_DATE" type="DATETIME" />
+			<column name="APPROVAL_DATE" type="DATETIME" />
+			<column name="INSTLMODE" type="VARCHAR(50)" />
+			<column name="LOAN_AMT" type="decimal(13,2)" />
+			<column name="NO_OF_INSTALLMENTS" type="bigint" />
+			<column name="DISBURSAL_DATE" type="DATETIME" />
+			<column name="LOAN_START_DATE" type="DATETIME" />
+			<column name="CLOSURE_DATE" type="DATETIME" />
+			<column name="LOAN_BOARDING_DATE" type="DATETIME" />
+			<column name="APP_SERIAL_NO" type="bigint" />
+			<column name="TENURE" type="bigint" />
+			<column name="TOTAL_DISBURSED_AMT" type="decimal(18,2)" />
+			<column name="LOAN_AMT_REQ" type="decimal(18,2)" />
+			<column name="LOAN_PURPOSE" type="VARCHAR(50)" />
+			<column name="INSTALLMENT_TYPE" type="VARCHAR(50)" />
+			<column name="INSTALLMENT_TYPE_DESC" type="VARCHAR(50)" />
+			<column name="FREQUENCY" type="VARCHAR(50)" />
+			<column name="STS_CD" type="VARCHAR(50)" />
+			<column name="LOAN_STATUS" type="VARCHAR(50)" />
+			<column name="SECOND_SOURCE" type="VARCHAR(50)" />
+			<column name="DPD" type="bigint" />
+			<column name="NPA_STAGE_ID" type="VARCHAR(50)" />
+			<column name="ASSET_CLASS_ID" type="VARCHAR(50)" />
+			<column name="PSL_CATEGORY_ID" type="bigint" />
+			<column name="PSL_CATEGORY_DESC" type="VARCHAR(50)" />
+			<column name="INTEREST_RATE" type="decimal(10,7)" />
+			<column name="MARKUP" type="decimal(10,7)" />
+			<column name="RATE_TYPE" type="VARCHAR(50)" />
+			<column name="PLR_RATE" type="decimal(10,7)" />
+			<column name="PLR_TYPE" type="VARCHAR(50)" />
+			<column name="WEAKER_SECTION" type="VARCHAR(50)" />
+			<column name="WEAKER_SECTION_DESC" type="VARCHAR(50)" />
+			<column name="BANK_RATE" type="decimal(10,7)" />
+			<column name="BROKERID" type="bigint" />
+			<column name="BRANCH_ID" type="bigint" />
+			<column name="PSL_SUB_CATEGORY" type="bigint" />
+			<column name="PSL_SUB_CAT_DESC" type="VARCHAR(50)" />
+			<column name="SCHEME_DESC" type="int" />
+			<column name="LPP_RATE" type="VARCHAR(50)" />
+			<column name="PRODUCT_DESC" type="VARCHAR(50)" />
+			<column name="PRODUCT_TYPE" type="VARCHAR(50)" />
+			<column name="SECURITISED_FLAG" type="VARCHAR(1)" />
+			<column name="RUNDATE" type="DATETIME" />
+			<column name="UI_LMS_GL" type="bigint" />
+			<column name="UI_OFS_GL" type="bigint" />
+			<column name="GR_LMS_GL" type="bigint" />
+			<column name="GR_OFS_GL" type="bigint" />
+			<column name="RE_LMS_GL" type="bigint" />
+			<column name="RE_OFS_GL" type="bigint" />
+			<column name="EX_LMS_GL" type="bigint" />
+			<column name="EX_OFS_GL" type="bigint" />
+			<column name="AI_LMS_GL" type="bigint" />
+			<column name="AI_OFS_GL" type="bigint" />
+			<column name="IS_LMS_GL" type="bigint" />
+			<column name="IS_OFS_GL" type="bigint" />
+			<column name="AIA_LMS_GL" type="bigint" />
+			<column name="AIA_OFS_GL" type="bigint" />
+			<column name="LAND_VALUE" type="decimal(18,2)" />
+			<column name="DSA_CODE" type="bigint" />
+			<column name="DSA_DESC" type="VARCHAR(50)" />
+			<column name="HUB_BRANCH_ID" type="bigint" />
+			<column name="HUB_BRANCH_DESC" type="VARCHAR(50)" />
+			<column name="ADDITIONAL_DISBURSAL_AMT_L" type="decimal(18,2)" />
+			<column name="ADDITIONAL_PARTPAID_AMT_L" type="decimal(18,2)" />
+			<column name="INTEREST_ACCRUED" type="decimal(13,5)" />
+			<column name="SUB_INDUSTRY" type="bigint" />
+			<column name="SUB_INDUSTRY_DESC" type="VARCHAR(50)" />
+			<column name="LAND_AREA" type="bigint" />
+			<column name="LAND_UNIT_CD" type="VARCHAR(50)" />
+			<column name="CME" type="VARCHAR(50)" />
+			<column name="REAL_ESTATE" type="VARCHAR(50)" />
+			<column name="PDC_AC_NO" type="bigint" />
+			<column name="TOT_CLOSURE_AMT" type="decimal(18,2)" />
+			<column name="TOT_CLOSURE_AMT_COL" type="decimal(18,2)" />
+			<column name="TOT_WAIVE_OFF" type="decimal(18,2)" />
+			<column name="CLOSURE_AMT" type="decimal(18,2)" />
+			<column name="CLOSURE_AMT_COL" type="decimal(18,2)" />
+			<column name="WAIVE_OFF" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID_T" type="decimal(18,2)" />
+			<column name="INTEREST_PAID_T" type="decimal(18,2)" />
+			<column name="TERMIN_DATE" type="DATETIME" />
+			<column name="RESTRUCTURE_FLAG" type="VARCHAR(1)" />
+			<column name="RESCHEDULE_FLAG" type="VARCHAR(1)" />
+			<column name="RESTRUCTURE_DATE" type="DATETIME" />
+			<column name="RESTRUCTURE_TENURE" type="bigint" />
+			<column name="RESTRUCTURE_AMOUNT" type="decimal(18,2)" />
+			<column name="RESTRUCTURE_TYPE" type="VARCHAR(50)" />
+			<column name="BRANCH_DESC" type="VARCHAR(50)" />
+			<column name="B_CITY" type="VARCHAR(50)" />
+			<column name="B_STATE" type="VARCHAR(50)" />
+			<column name="B_PINCODE" type="bigint" />
+			<column name="SALUTATION" type="VARCHAR(5)" />
+			<column name="CUSTOMER_NAME" type="VARCHAR(50)" />
+			<column name="CUSTOMER_TYPE" type="VARCHAR(50)" />
+			<column name="GENDER" type="VARCHAR(50)" />
+			<column name="MARITAL_STATUS_CD" type="VARCHAR(5)" />
+			<column name="RESIDENT_FLAG" type="VARCHAR(50)" />
+			<column name="NATIONALITY_CODE" type="VARCHAR(50)" />
+			<column name="PROFESSION" type="VARCHAR(50)" />
+			<column name="NATURE_OF_BUSINESS" type="VARCHAR(50)" />
+			<column name="MB_AC_NO" type="bigint" />
+			<column name="DEPENDENTS" type="bigint" />
+			<column name="RELIGION" type="VARCHAR(50)" />
+			<column name="GROUP_ID" type="bigint" />
+			<column name="CUSTOMER_INDUSTRY" type="bigint" />
+			<column name="CUSTOMER_INDUSTRY_DESC" type="VARCHAR(100)" />
+			<column name="CASTE" type="VARCHAR(50)" />
+			<column name="CASTE_DESC" type="VARCHAR(100)" />
+			<column name="DOB" type="DATETIME" />
+			<column name="DOI" type="DATETIME" />
+			<column name="PAN" type="VARCHAR(50)" />
+			<column name="VAT_AC_NO" type="bigint" />
+			<column name="MONTHLY_INCOME" type="decimal(18,2)" />
+			<column name="YEARLY_INCOME" type="decimal(18,2)" />
+			<column name="ANNUAL_TURNOVER" type="decimal(18,2)" />
+			<column name="CUST_RATING" type="VARCHAR(50)" />
+			<column name="CURRENT_COMPANY" type="VARCHAR(200)" />
+			<column name="EDUCATION_CODE" type="VARCHAR(50)" />
+			<column name="DISABLED_FLAG" type="VARCHAR(50)" />
+			<column name="GROUP_DESC" type="VARCHAR(50)" />
+			<column name="CONSTITUTION" type="bigint" />
+			<column name="CONSTITUTION_DESC" type="VARCHAR(50)" />
+			<column name="RESIDENT_SINCE" type="VARCHAR(50)" />
+			<column name="M_ADDRESS1" type="VARCHAR(50)" />
+			<column name="M_ADDRESS2" type="VARCHAR(50)" />
+			<column name="M_ADDRESS3" type="VARCHAR(50)" />
+			<column name="M_ADDRESS4" type="VARCHAR(50)" />
+			<column name="M_LANDMARK" type="VARCHAR(50)" />
+			<column name="M_PHONE1" type="VARCHAR(50)" />
+			<column name="M_PHONE2" type="VARCHAR(50)" />
+			<column name="M_MOBILE1" type="VARCHAR(50)" />
+			<column name="M_MOBILE2" type="VARCHAR(50)" />
+			<column name="M_EMAIL" type="VARCHAR(50)" />
+			<column name="M_CITY" type="VARCHAR(50)" />
+			<column name="M_STATE" type="VARCHAR(50)" />
+			<column name="M_PINCODE" type="bigint" />
+			<column name="M_DISTRICT" type="VARCHAR(50)" />
+			<column name="M_COUNTRY" type="VARCHAR(50)" />
+			<column name="POPULATION_CAT" type="bigint" />
+			<column name="RELIGION_DESC" type="VARCHAR(50)" />
+			<column name="CUST_RATING_DESC" type="VARCHAR(50)" />
+			<column name="EDUCATION_DESC" type="VARCHAR(50)" />
+			<column name="PROFESSION_DESC" type="VARCHAR(50)" />
+			<column name="LAND_UNIT" type="VARCHAR(50)" />
+			<column name="NATURE_OF_BUSINESS_DESC" type="VARCHAR(50)" />
+			<column name="MARITAL_STATUS" type="VARCHAR(50)" />
+			<column name="OVERDUE_EMI_AMT" type="decimal(18,2)" />
+			<column name="OVERDUE_EMI_CNT" type="decimal(18,2)" />
+			<column name="OVERDUE_PRINCIPAL" type="decimal(18,2)" />
+			<column name="OVERDUE_INTEREST" type="decimal(18,2)" />
+			<column name="TOTAL_POS" type="decimal(18,2)" />
+			<column name="TOTAL_IOS" type="decimal(18,2)" />
+			<column name="LAST_EMI_BILLED_ON" type="DATETIME" />
+			<column name="BILLED_PROPINSTLID" type="decimal(18,2)" />
+			<column name="FUTURE_POS" type="decimal(18,2)" />
+			<column name="FUTURE_IOS" type="decimal(18,2)" />
+			<column name="MATURITY_DATE" type="DATETIME" />
+			<column name="INTEREST_PAID_L" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID_L" type="decimal(18,2)" />
+			<column name="BILLED_EMI_L" type="decimal(18,2)" />
+			<column name="EMI_COLLECTED_L" type="decimal(18,2)" />
+			<column name="OVERDUE_EMI_AMT_L" type="decimal(18,2)" />
+			<column name="LPP_CHARGED" type="decimal(18,2)" />
+			<column name="LPP_OUTSTANDING" type="decimal(18,2)" />
+			<column name="TOTAL_OTH_CHRG" type="decimal(18,2)" />
+			<column name="TOTAL_OTH_CHRG_OS" type="decimal(18,2)" />
+			<column name="GR_CR_L" type="decimal(18,2)" />
+			<column name="GR_DR_L" type="decimal(18,2)" />
+			<column name="RE_CR_L" type="decimal(18,2)" />
+			<column name="RE_DR_L" type="decimal(18,2)" />
+			<column name="IS_CR_L" type="decimal(18,2)" />
+			<column name="IS_DR_L" type="decimal(18,2)" />
+			<column name="UI_CR_L" type="decimal(18,2)" />
+			<column name="UI_DR_L" type="decimal(18,2)" />
+			<column name="AI_CR_L" type="decimal(18,2)" />
+			<column name="AI_DR_L" type="decimal(18,2)" />
+			<column name="EX_CR_L" type="decimal(18,2)" />
+			<column name="EX_DR_L" type="decimal(18,2)" />
+			<column name="AIA_CR_L" type="decimal(18,2)" />
+			<column name="AIA_DR_L" type="decimal(18,2)" />
+			<column name="LAST_PAYMENT_DT" type="DATETIME" />
+			<column name="CHQ_BOUNCE" type="bigint" />
+			<column name="GR_CR" type="decimal(18,2)" />
+			<column name="GR_DR" type="decimal(18,2)" />
+			<column name="RE_CR" type="decimal(18,2)" />
+			<column name="RE_DR" type="decimal(18,2)" />
+			<column name="IS_CR" type="decimal(18,2)" />
+			<column name="IS_DR" type="decimal(18,2)" />
+			<column name="UI_CR" type="decimal(18,2)" />
+			<column name="UI_DR" type="decimal(18,2)" />
+			<column name="AI_CR" type="decimal(18,2)" />
+			<column name="AI_DR" type="decimal(18,2)" />
+			<column name="AIA_CR" type="decimal(18,2)" />
+			<column name="AIA_DR" type="decimal(18,2)" />
+			<column name="EX_CR" type="decimal(18,2)" />
+			<column name="EX_DR" type="decimal(18,2)" />
+			<column name="ADDITIONAL_PARTPAID_AMT" type="decimal(18,2)" />
+			<column name="PREVIOUS_EMI_DUE" type="decimal(18,2)" />
+			<column name="ADDITIONAL_DISBURSAL_AMT" type="decimal(18,2)" />
+			<column name="INTEREST_PAID" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID" type="decimal(18,2)" />
+			<column name="BILLED_EMI" type="decimal(18,2)" />
+			<column name="EMI_COLLECTED" type="decimal(18,2)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="53" author="goutham.ch">
+		<createTable tableName="RBIADFEXTRACTHIST1">
+			<column name="RNUM" type="bigint" />
+			<column name="AGREEMENT_ID" type="VARCHAR(18)" />
+			<column name="CUSTOMER_ID" type="VARCHAR(18)" />
+			<column name="PRODUCT_CODE" type="VARCHAR(8)" />
+			<column name="SCHEME_ID" type="bigint" />
+			<column name="CREDIT_PROMO_SCHEME_ID" type="VARCHAR(50)" />
+			<column name="CREDIT_PROMO_SCHEME_DESC" type="VARCHAR(50)" />
+			<column name="APPLICATION_DATE" type="DATETIME" />
+			<column name="APPROVAL_DATE" type="DATETIME" />
+			<column name="INSTLMODE" type="VARCHAR(50)" />
+			<column name="LOAN_AMT" type="decimal(13,2)" />
+			<column name="NO_OF_INSTALLMENTS" type="bigint" />
+			<column name="DISBURSAL_DATE" type="DATETIME" />
+			<column name="LOAN_START_DATE" type="DATETIME" />
+			<column name="CLOSURE_DATE" type="DATETIME" />
+			<column name="LOAN_BOARDING_DATE" type="DATETIME" />
+			<column name="APP_SERIAL_NO" type="bigint" />
+			<column name="TENURE" type="bigint" />
+			<column name="TOTAL_DISBURSED_AMT" type="decimal(18,2)" />
+			<column name="LOAN_AMT_REQ" type="decimal(18,2)" />
+			<column name="LOAN_PURPOSE" type="VARCHAR(50)" />
+			<column name="INSTALLMENT_TYPE" type="VARCHAR(50)" />
+			<column name="INSTALLMENT_TYPE_DESC" type="VARCHAR(50)" />
+			<column name="FREQUENCY" type="VARCHAR(50)" />
+			<column name="STS_CD" type="VARCHAR(50)" />
+			<column name="LOAN_STATUS" type="VARCHAR(50)" />
+			<column name="SECOND_SOURCE" type="VARCHAR(50)" />
+			<column name="DPD" type="bigint" />
+			<column name="NPA_STAGE_ID" type="VARCHAR(50)" />
+			<column name="ASSET_CLASS_ID" type="VARCHAR(50)" />
+			<column name="PSL_CATEGORY_ID" type="bigint" />
+			<column name="PSL_CATEGORY_DESC" type="VARCHAR(50)" />
+			<column name="INTEREST_RATE" type="decimal(10,7)" />
+			<column name="MARKUP" type="decimal(10,7)" />
+			<column name="RATE_TYPE" type="VARCHAR(50)" />
+			<column name="PLR_RATE" type="decimal(10,7)" />
+			<column name="PLR_TYPE" type="VARCHAR(50)" />
+			<column name="WEAKER_SECTION" type="VARCHAR(50)" />
+			<column name="WEAKER_SECTION_DESC" type="VARCHAR(50)" />
+			<column name="BANK_RATE" type="decimal(10,7)" />
+			<column name="BROKERID" type="bigint" />
+			<column name="BRANCH_ID" type="bigint" />
+			<column name="PSL_SUB_CATEGORY" type="bigint" />
+			<column name="PSL_SUB_CAT_DESC" type="VARCHAR(50)" />
+			<column name="SCHEME_DESC" type="int" />
+			<column name="LPP_RATE" type="VARCHAR(50)" />
+			<column name="PRODUCT_DESC" type="VARCHAR(50)" />
+			<column name="PRODUCT_TYPE" type="VARCHAR(50)" />
+			<column name="SECURITISED_FLAG" type="VARCHAR(1)" />
+			<column name="RUNDATE" type="DATETIME" />
+			<column name="UI_LMS_GL" type="bigint" />
+			<column name="UI_OFS_GL" type="bigint" />
+			<column name="GR_LMS_GL" type="bigint" />
+			<column name="GR_OFS_GL" type="bigint" />
+			<column name="RE_LMS_GL" type="bigint" />
+			<column name="RE_OFS_GL" type="bigint" />
+			<column name="EX_LMS_GL" type="bigint" />
+			<column name="EX_OFS_GL" type="bigint" />
+			<column name="AI_LMS_GL" type="bigint" />
+			<column name="AI_OFS_GL" type="bigint" />
+			<column name="IS_LMS_GL" type="bigint" />
+			<column name="IS_OFS_GL" type="bigint" />
+			<column name="AIA_LMS_GL" type="bigint" />
+			<column name="AIA_OFS_GL" type="bigint" />
+			<column name="LAND_VALUE" type="decimal(18,2)" />
+			<column name="DSA_CODE" type="bigint" />
+			<column name="DSA_DESC" type="VARCHAR(50)" />
+			<column name="HUB_BRANCH_ID" type="bigint" />
+			<column name="HUB_BRANCH_DESC" type="VARCHAR(50)" />
+			<column name="ADDITIONAL_DISBURSAL_AMT_L" type="decimal(18,2)" />
+			<column name="ADDITIONAL_PARTPAID_AMT_L" type="decimal(18,2)" />
+			<column name="INTEREST_ACCRUED" type="decimal(13,5)" />
+			<column name="SUB_INDUSTRY" type="bigint" />
+			<column name="SUB_INDUSTRY_DESC" type="VARCHAR(50)" />
+			<column name="LAND_AREA" type="bigint" />
+			<column name="LAND_UNIT_CD" type="VARCHAR(50)" />
+			<column name="CME" type="VARCHAR(50)" />
+			<column name="REAL_ESTATE" type="VARCHAR(50)" />
+			<column name="PDC_AC_NO" type="bigint" />
+			<column name="TOT_CLOSURE_AMT" type="decimal(18,2)" />
+			<column name="TOT_CLOSURE_AMT_COL" type="decimal(18,2)" />
+			<column name="TOT_WAIVE_OFF" type="decimal(18,2)" />
+			<column name="CLOSURE_AMT" type="decimal(18,2)" />
+			<column name="CLOSURE_AMT_COL" type="decimal(18,2)" />
+			<column name="WAIVE_OFF" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID_T" type="decimal(18,2)" />
+			<column name="INTEREST_PAID_T" type="decimal(18,2)" />
+			<column name="TERMIN_DATE" type="DATETIME" />
+			<column name="RESTRUCTURE_FLAG" type="VARCHAR(1)" />
+			<column name="RESCHEDULE_FLAG" type="VARCHAR(1)" />
+			<column name="RESTRUCTURE_DATE" type="DATETIME" />
+			<column name="RESTRUCTURE_TENURE" type="bigint" />
+			<column name="RESTRUCTURE_AMOUNT" type="decimal(18,2)" />
+			<column name="RESTRUCTURE_TYPE" type="VARCHAR(50)" />
+			<column name="BRANCH_DESC" type="VARCHAR(50)" />
+			<column name="B_CITY" type="VARCHAR(50)" />
+			<column name="B_STATE" type="VARCHAR(50)" />
+			<column name="B_PINCODE" type="bigint" />
+			<column name="SALUTATION" type="VARCHAR(5)" />
+			<column name="CUSTOMER_NAME" type="VARCHAR(50)" />
+			<column name="CUSTOMER_TYPE" type="VARCHAR(50)" />
+			<column name="GENDER" type="VARCHAR(50)" />
+			<column name="MARITAL_STATUS_CD" type="VARCHAR(5)" />
+			<column name="RESIDENT_FLAG" type="VARCHAR(50)" />
+			<column name="NATIONALITY_CODE" type="VARCHAR(50)" />
+			<column name="PROFESSION" type="VARCHAR(50)" />
+			<column name="NATURE_OF_BUSINESS" type="VARCHAR(50)" />
+			<column name="MB_AC_NO" type="bigint" />
+			<column name="DEPENDENTS" type="bigint" />
+			<column name="RELIGION" type="VARCHAR(50)" />
+			<column name="GROUP_ID" type="bigint" />
+			<column name="CUSTOMER_INDUSTRY" type="bigint" />
+			<column name="CUSTOMER_INDUSTRY_DESC" type="VARCHAR(100)" />
+			<column name="CASTE" type="VARCHAR(50)" />
+			<column name="CASTE_DESC" type="VARCHAR(100)" />
+			<column name="DOB" type="DATETIME" />
+			<column name="DOI" type="DATETIME" />
+			<column name="PAN" type="VARCHAR(50)" />
+			<column name="VAT_AC_NO" type="bigint" />
+			<column name="MONTHLY_INCOME" type="decimal(18,2)" />
+			<column name="YEARLY_INCOME" type="decimal(18,2)" />
+			<column name="ANNUAL_TURNOVER" type="decimal(18,2)" />
+			<column name="CUST_RATING" type="VARCHAR(50)" />
+			<column name="CURRENT_COMPANY" type="VARCHAR(200)" />
+			<column name="EDUCATION_CODE" type="VARCHAR(50)" />
+			<column name="DISABLED_FLAG" type="VARCHAR(50)" />
+			<column name="GROUP_DESC" type="VARCHAR(50)" />
+			<column name="CONSTITUTION" type="bigint" />
+			<column name="CONSTITUTION_DESC" type="VARCHAR(50)" />
+			<column name="RESIDENT_SINCE" type="VARCHAR(50)" />
+			<column name="M_ADDRESS1" type="VARCHAR(50)" />
+			<column name="M_ADDRESS2" type="VARCHAR(50)" />
+			<column name="M_ADDRESS3" type="VARCHAR(50)" />
+			<column name="M_ADDRESS4" type="VARCHAR(50)" />
+			<column name="M_LANDMARK" type="VARCHAR(50)" />
+			<column name="M_PHONE1" type="VARCHAR(50)" />
+			<column name="M_PHONE2" type="VARCHAR(50)" />
+			<column name="M_MOBILE1" type="VARCHAR(50)" />
+			<column name="M_MOBILE2" type="VARCHAR(50)" />
+			<column name="M_EMAIL" type="VARCHAR(50)" />
+			<column name="M_CITY" type="VARCHAR(50)" />
+			<column name="M_STATE" type="VARCHAR(50)" />
+			<column name="M_PINCODE" type="bigint" />
+			<column name="M_DISTRICT" type="VARCHAR(50)" />
+			<column name="M_COUNTRY" type="VARCHAR(50)" />
+			<column name="POPULATION_CAT" type="bigint" />
+			<column name="RELIGION_DESC" type="VARCHAR(50)" />
+			<column name="CUST_RATING_DESC" type="VARCHAR(50)" />
+			<column name="EDUCATION_DESC" type="VARCHAR(50)" />
+			<column name="PROFESSION_DESC" type="VARCHAR(50)" />
+			<column name="LAND_UNIT" type="VARCHAR(50)" />
+			<column name="NATURE_OF_BUSINESS_DESC" type="VARCHAR(50)" />
+			<column name="MARITAL_STATUS" type="VARCHAR(50)" />
+			<column name="OVERDUE_EMI_AMT" type="decimal(18,2)" />
+			<column name="OVERDUE_EMI_CNT" type="decimal(18,2)" />
+			<column name="OVERDUE_PRINCIPAL" type="decimal(18,2)" />
+			<column name="OVERDUE_INTEREST" type="decimal(18,2)" />
+			<column name="TOTAL_POS" type="decimal(18,2)" />
+			<column name="TOTAL_IOS" type="decimal(18,2)" />
+			<column name="LAST_EMI_BILLED_ON" type="DATETIME" />
+			<column name="BILLED_PROPINSTLID" type="decimal(18,2)" />
+			<column name="FUTURE_POS" type="decimal(18,2)" />
+			<column name="FUTURE_IOS" type="decimal(18,2)" />
+			<column name="MATURITY_DATE" type="DATETIME" />
+			<column name="INTEREST_PAID_L" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID_L" type="decimal(18,2)" />
+			<column name="BILLED_EMI_L" type="decimal(18,2)" />
+			<column name="EMI_COLLECTED_L" type="decimal(18,2)" />
+			<column name="OVERDUE_EMI_AMT_L" type="decimal(18,2)" />
+			<column name="LPP_CHARGED" type="decimal(18,2)" />
+			<column name="LPP_OUTSTANDING" type="decimal(18,2)" />
+			<column name="TOTAL_OTH_CHRG" type="decimal(18,2)" />
+			<column name="TOTAL_OTH_CHRG_OS" type="decimal(18,2)" />
+			<column name="GR_CR_L" type="decimal(18,2)" />
+			<column name="GR_DR_L" type="decimal(18,2)" />
+			<column name="RE_CR_L" type="decimal(18,2)" />
+			<column name="RE_DR_L" type="decimal(18,2)" />
+			<column name="IS_CR_L" type="decimal(18,2)" />
+			<column name="IS_DR_L" type="decimal(18,2)" />
+			<column name="UI_CR_L" type="decimal(18,2)" />
+			<column name="UI_DR_L" type="decimal(18,2)" />
+			<column name="AI_CR_L" type="decimal(18,2)" />
+			<column name="AI_DR_L" type="decimal(18,2)" />
+			<column name="EX_CR_L" type="decimal(18,2)" />
+			<column name="EX_DR_L" type="decimal(18,2)" />
+			<column name="AIA_CR_L" type="decimal(18,2)" />
+			<column name="AIA_DR_L" type="decimal(18,2)" />
+			<column name="LAST_PAYMENT_DT" type="DATETIME" />
+			<column name="CHQ_BOUNCE" type="bigint" />
+			<column name="GR_CR" type="decimal(18,2)" />
+			<column name="GR_DR" type="decimal(18,2)" />
+			<column name="RE_CR" type="decimal(18,2)" />
+			<column name="RE_DR" type="decimal(18,2)" />
+			<column name="IS_CR" type="decimal(18,2)" />
+			<column name="IS_DR" type="decimal(18,2)" />
+			<column name="UI_CR" type="decimal(18,2)" />
+			<column name="UI_DR" type="decimal(18,2)" />
+			<column name="AI_CR" type="decimal(18,2)" />
+			<column name="AI_DR" type="decimal(18,2)" />
+			<column name="AIA_CR" type="decimal(18,2)" />
+			<column name="AIA_DR" type="decimal(18,2)" />
+			<column name="EX_CR" type="decimal(18,2)" />
+			<column name="EX_DR" type="decimal(18,2)" />
+			<column name="ADDITIONAL_PARTPAID_AMT" type="decimal(18,2)" />
+			<column name="PREVIOUS_EMI_DUE" type="decimal(18,2)" />
+			<column name="ADDITIONAL_DISBURSAL_AMT" type="decimal(18,2)" />
+			<column name="INTEREST_PAID" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID" type="decimal(18,2)" />
+			<column name="BILLED_EMI" type="decimal(18,2)" />
+			<column name="EMI_COLLECTED" type="decimal(18,2)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="020.01" author="sreeram.r">
+		<addColumn tableName="UCIC_CUSTOMERS_HISTORY">
+			<column name="FINID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="020.02" author="sreeram.r">
+		<modifyDataType tableName="UCIC_CUSTOMERS_HISTORY" columnName="CUSTID" newDataType="bigint" />
+	</changeSet>
+	
+	<changeSet id="019.02" author="sreeram.r">
+		<modifyDataType tableName="UCIC_CUSTOMERS" columnName="FINID" newDataType="bigint" />
+		<modifyDataType tableName="UCIC_CUSTOMERS" columnName="CUSTID" newDataType="bigint" />
+	</changeSet>
+	
+	<changeSet id="049.01" author="sreeram.r">
+		<modifyDataType tableName="EXT_BASEL_TWO" columnName="FEES" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_TWO" columnName="DEALER_COMM" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_TWO" columnName="MANF_DISC" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_TWO" columnName="CHARGES_PAID" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_TWO" columnName="TOT_AMT_PAID_MNTH_CHQ" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_TWO" columnName="TOT_AMT_PAID_MNTH_CASH" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_TWO" columnName="PRIN_LOSS_CLOSURE" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_TWO" columnName="RENT_PM" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_TWO" columnName="OBLIGATIONS" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_TWO" columnName="OBLIGATIONS_N" newDataType="decimal(18,2)" />
+	</changeSet>
+	
+		<changeSet id="050.01" author="sreeram.r">
+		<modifyDataType tableName="RPMSEXTRACT" columnName="POS_ON_CLOSURE" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="RPMSEXTRACT" columnName="TOT_PRIN_WAIVE_OFF" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="RPMSEXTRACT" columnName="TOT_INT_WAIVE_OFF" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="RPMSEXTRACT" columnName="WOFF_CHQBOUNCE_CHARGES" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="RPMSEXTRACT" columnName="WOFF_OVERDUE_CHARGE" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="RPMSEXTRACT" columnName="WOFF_OTHERS" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="RPMSEXTRACT" columnName="TURNOVER_AMT_YEAR_ONE" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="RPMSEXTRACT" columnName="TURNOVER_AMT_YEAR_TWO" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="RPMSEXTRACT" columnName="TURNOVER_AMT_YEAR_THREE" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_TWO" columnName="OBLIGATIONS_N" newDataType="decimal(18,2)" />
+	</changeSet>
+
+	<changeSet id="026.03" author="sreeram.r">
+		<modifyDataType tableName="ALM_REPORT" columnName="PYMT_FREQ" newDataType="VARCHAR(50)" />
+	</changeSet>
+	
+	<changeSet id="050.02" author="sreeram.r">
+		<modifyDataType tableName="RPMSEXTRACT" columnName="AGREEMENTID" newDataType="VARCHAR(20)" />
+	</changeSet>
+	<changeSet id="050.03" author="sreeram.r">
+		<modifyDataType tableName="RPMSEXTRACT" columnName="CUSTOMERID" newDataType="VARCHAR(20)" />
+		<modifyDataType tableName="RPMSEXTRACT" columnName="PARENT_LOAN_NO" newDataType="VARCHAR(20)" />
+	</changeSet>
+		
+	<changeSet id="24.3" author="sreeram.r">
+		<modifyDataType tableName="FINCON_GL_STG" columnName="JOURNAL_CATEGORY"	newDataType="VARCHAR(200)" />
+	</changeSet>
+	
+	<changeSet id="55" author="goutham.ch">
+		<createTable tableName="CUSTOMERS_MODIFICATIONS">
+			<column name="CUSTID"					type="bigint" />
+			<column name="CUSTCIF" 					type="VARCHAR(20)" /> 
+			<column name="FINREFERENCE" 			type="VARCHAR(20)" /> 
+			<column name="CREATION_DATE" 			type="datetime" /> 
+			<column name="CUSTCOREBANK" 			type="VARCHAR(50)" /> 
+			<column name="SOURCE_SYSTEM" 			type="VARCHAR(10)" /> 
+			<column name="CUSTCTGCODE" 				type="VARCHAR(8)" /> 
+			<column name="CUSTOMER_TYPE" 			type="VARCHAR(8)" /> 
+			<column name="SUBCATEGORY" 				type="NVARCHAR(200)" /> 
+			<column name="CUSTSHRTNAME" 			type="VARCHAR(200)" /> 
+			<column name="CUSTDOB" 					type="datetime" />
+			<column name="CUSTISBLOCKED" 			type="VARCHAR(2)" /> 
+			<column name="CLOSEDDATE" 				type="datetime" />
+			<column name="CLOSINGSTATUS" 			type="VARCHAR(100)" /> 
+			<column name="CUSTMOTHERMAIDEN" 		type="VARCHAR(50)" /> 
+			<column name="ACCNUMBER" 				type="VARCHAR(50)" /> 
+			<column name="COMPANYNAME" 				type="VARCHAR(100)" /> 
+			<column name="EMAIL1" 					type="VARCHAR(100)" /> 
+			<column name="EMAIL2" 					type="VARCHAR(100)" /> 
+			<column name="EMAIL3" 					type="VARCHAR(100)" /> 
+			<column name="MOBILE1" 					type="VARCHAR(20)" /> 
+			<column name="MOBILE2" 					type="VARCHAR(20)" /> 
+			<column name="MOBILE3" 					type="VARCHAR(20)" /> 
+			<column name="LANDLINE1" 				type="VARCHAR(50)" /> 
+			<column name="LANDLINE2" 				type="VARCHAR(50)" /> 
+			<column name="LANDLINE3" 				type="VARCHAR(50)" /> 
+			<column name="PAN" 						type="VARCHAR(100)" /> 
+			<column name="AADHAAR" 					type="VARCHAR(100)" /> 
+			<column name="VOTER_ID" 				type="VARCHAR(100)" /> 
+			<column name="DRIVING_LICENCE" 			type="VARCHAR(100)" /> 
+			<column name="PASSPORT" 				type="VARCHAR(100)" /> 
+			<column name="ADDR1TYPE" 				type="VARCHAR(10)" /> 
+			<column name="ADDR1LINE1" 				type="VARCHAR(150)" /> 
+			<column name="ADDR1LINE2" 				type="VARCHAR(150)" /> 
+			<column name="ADDR1LINE3" 				type="VARCHAR(150)" /> 
+			<column name="ADDR1LINE4" 				type="VARCHAR(150)" /> 
+			<column name="ADDR1CITY" 				type="VARCHAR(150)" /> 
+			<column name="ADDR1STATE" 				type="VARCHAR(150)" /> 
+			<column name="ADDR1PIN" 				type="VARCHAR(10)" /> 
+			<column name="ADDR2TYPE" 				type="VARCHAR(10)" /> 
+			<column name="ADDR2LINE1" 				type="VARCHAR(150)" /> 
+			<column name="ADDR2LINE2" 				type="VARCHAR(150)" /> 
+			<column name="ADDR2LINE3" 				type="VARCHAR(150)" /> 
+			<column name="ADDR2LINE4" 				type="VARCHAR(150)" /> 
+			<column name="ADDR2CITY" 				type="VARCHAR(150)" /> 
+			<column name="ADDR2STATE" 				type="VARCHAR(150)" /> 
+			<column name="ADDR2PIN" 				type="VARCHAR(10)" /> 
+			<column name="ADDR3TYPE" 				type="VARCHAR(10)" /> 
+			<column name="ADDR3LINE1" 				type="VARCHAR(150)" /> 
+			<column name="ADDR3LINE2" 				type="VARCHAR(150)" /> 
+			<column name="ADDR3LINE3" 				type="VARCHAR(150)" /> 
+			<column name="ADDR3LINE4" 				type="VARCHAR(150)" /> 
+			<column name="ADDR3CITY" 				type="VARCHAR(150)" /> 
+			<column name="ADDR3STATE" 				type="VARCHAR(150)" /> 
+			<column name="ADDR3PIN"					type="VARCHAR2(10)" /> 
+			<column name="INSERT_UPDATE_FLAG" 		type="VARCHAR(2)" /> 
+			<column name="LASTMNTON" 				type="datetime" />
+			<column name="PROCESS_DATE" 			type="datetime" /> 
+			<column name="FINID" 					type="bigint" /> 
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="37.02" author="goutham.ch">
+		<addColumn tableName="GST_VOUCHER_DETAILS">
+			<column name="TAXHEADERID" type="bigint" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+		
+		
+	<changeSet id="46.002" author="goutham.ch">
+		<sql>
+			<![CDATA[	 
+				DELETE FROM FILE_INTERFACE_CONFIG WHERE INTERFACE_NAME = 'GST_REQ';
+				DELETE FROM FILE_INTERFACE_CONFIG WHERE INTERFACE_NAME = 'GST_RESP';
+				DELETE FROM FILE_INTERFACE_CONFIG WHERE INTERFACE_NAME = 'GST_REQ_DONE';
+				DELETE FROM FILE_INTERFACE_CONFIG WHERE INTERFACE_NAME = 'GST_RESP_DONE';
+				
+				Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FIC_NAMES,FILE_TRANSFER) values ('GST_REQ',1,'GST/REQUEST',0,'PLFGST',null,'.txt','ddMMyy',null,null,null,'GST_REQ','Y');
+				Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FIC_NAMES,FILE_TRANSFER) values ('GST_RESP',1,'GST/RESPONSE',0,'OUT_PLFGST',null,null,'ddMMyy',null,null,null,'GST_RESP','Y');
+				Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FIC_NAMES,FILE_TRANSFER) values ('GST_REQ_DONE',1,'GST/REQUEST',0,null,'.done',null,null,null,null,null,'GST_REQ','Y');
+				Insert into FILE_INTERFACE_CONFIG (INTERFACE_NAME,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,FIC_NAMES,FILE_TRANSFER) values ('GST_RESP_DONE',1,'GST/RESPONSE',0,null,null,'.done',null,null,null,null,'GST_RESP','Y');
+	    	]]>
+		</sql>
+	</changeSet>
+	
+		<changeSet id="011.07" author="goutham.ch">
+		<sql>
+			<![CDATA[
+				INSERT INTO INTERFACE_ERROR_CODES(MODULE, ERROR_CODE, ERROR_MESSAGE) VALUES('COLLECTION_RECEIPT','CR2014', 	'Cheque date is greater than Receipt date.');
+				  ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="049.02" author="sreeram.r">
+		<modifyDataType tableName="EXT_BASEL_TWO" columnName="AGREEMENTID" newDataType="VARCHAR(50)" />
+	</changeSet>
+	
+	<changeSet id="24.4" author="sreeram.r">
+		<modifyDataType tableName="FINCON_GL_STG" columnName="ACC_DATE"	newDataType="VARCHAR(50)" />
 	</changeSet>
 </databaseChangeLog>

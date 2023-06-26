@@ -29,6 +29,7 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.noc.model.GenerateLetter;
@@ -237,7 +238,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 
 		String whereCond = "Where Id = ?";
 
-		if (doCheckAuthority(letters, whereCond, new Object[] { letters.getFinID() })) {
+		if (doCheckAuthority(letters, whereCond, new Object[] { letters.getId() })) {
 			if (isWorkFlowEnabled() && letters.getWorkflowId() == 0) {
 				letters.setWorkflowId(getWorkFlowId());
 			}

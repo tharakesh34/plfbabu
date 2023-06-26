@@ -120,6 +120,7 @@ import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.pennapps.core.util.ObjectUtil;
@@ -562,7 +563,9 @@ public class ReceiptCalculator {
 			rd.setEarlySettle(true);
 		}
 		FinanceMain fm = rd.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		fm.setClosureType(rd.getReceiptHeader().getClosureType());
+		if (fm.getClosureType() == null) {
+			fm.setClosureType(rd.getReceiptHeader().getClosureType());
+		}
 		List<FinFeeDetail> oldFinFeeDtls = rd.getFinFeeDetails();
 		List<FinFeeDetail> finFeedetails = null;
 
@@ -1347,9 +1350,8 @@ public class ReceiptCalculator {
 		BigDecimal amount = BigDecimal.ZERO;
 
 		FinReceiptHeader rch = rd.getReceiptHeader();
-		if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(amountType)
-				&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose()) && AdvanceType.hasAdvInterest(fm)
-				&& fm.isTDSApplicable()) {
+		if (ExcessType.ADVINT.equals(amountType) && FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())
+				&& AdvanceType.hasAdvInterest(fm) && fm.isTDSApplicable()) {
 			amount = rd.getIntTdsUnpaid();
 		}
 
@@ -1719,7 +1721,10 @@ public class ReceiptCalculator {
 
 		BigDecimal excessBal = rch.getBalAmount();
 
-		if (receiptPurposeCtg == 2 && excessBal.compareTo(BigDecimal.ZERO) > 0) {
+		FinServiceInstruction fsi = rd.getFinanceDetail().getFinScheduleData().getFinServiceInstruction();
+
+		if ((fsi != null && fsi.isClosureReceipt()) && receiptPurposeCtg == 2
+				&& excessBal.compareTo(BigDecimal.ZERO) > 0) {
 			for (int i = rcdList.size() - 1; i >= 0; i--) {
 				if (excessBal.compareTo(BigDecimal.ZERO) <= 0) {
 					break;
@@ -2226,7 +2231,7 @@ public class ReceiptCalculator {
 		}
 
 		for (XcessPayables xcess : rch.getXcessPayables()) {
-			if (!RepayConstants.EXAMOUNTTYPE_ADVINT.equals(xcess.getPayableType())) {
+			if (!ExcessType.ADVINT.equals(xcess.getPayableType())) {
 				continue;
 			}
 
@@ -2282,7 +2287,7 @@ public class ReceiptCalculator {
 			if (rch.getXcessPayables() != null && rch.getXcessPayables().size() > 0) {
 				receiptData = adjustAdvanceInt(receiptData);
 				for (XcessPayables xcess : rch.getXcessPayables()) {
-					if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(xcess.getPayableType())) {
+					if (ExcessType.ADVINT.equals(xcess.getPayableType())) {
 						continue;
 					}
 					BigDecimal balAmount = xcess.getBalanceAmt();
@@ -4795,9 +4800,9 @@ public class ReceiptCalculator {
 	private String payType(String mode) {
 		String payType = "";
 		if (ReceiptMode.EMIINADV.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_EMIINADV;
+			payType = ExcessType.EMIINADV;
 		} else if (ReceiptMode.EXCESS.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_EXCESS;
+			payType = ExcessType.EXCESS;
 			/*
 			 * while doing EarlySettlement or Closure receipt is used below payments, if we again open the same record
 			 * below mode of payments are shown as Zero to fix this we are adding these PayemtTypes here.
@@ -4813,7 +4818,7 @@ public class ReceiptCalculator {
 		} else if (ReceiptMode.TEXCESS.equals(mode)) {
 			payType = ReceiptMode.TEXCESS;
 		} else {
-			payType = RepayConstants.EXAMOUNTTYPE_PAYABLE;
+			payType = ExcessType.PAYABLE;
 		}
 		return payType;
 	}

@@ -28,6 +28,8 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -41,6 +43,7 @@ public class Cluster extends AbstractWorkflowEntity {
 	private Long id = Long.MIN_VALUE;
 	private String entity;
 	private String entityDesc;
+	@XmlElement(name = "cluster")
 	private String code;
 	private String clusterType;
 	private String name;

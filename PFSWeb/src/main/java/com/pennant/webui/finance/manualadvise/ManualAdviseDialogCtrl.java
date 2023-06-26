@@ -99,6 +99,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -1479,12 +1480,13 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		validate = validateAccounting(validate);
 		// Accounting Details Validations
 		if (validate) {
-			if (!isAccountingExecuted) {
+			if (AccountingExtension.VERIFY_ACCOUNTING && !isAccountingExecuted) {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 				return true;
 			}
-			if (!this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Save") && accountingDetailDialogCtrl
-					.getDisbCrSum().compareTo(accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
+			if (!this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Save")
+					&& accountingDetailDialogCtrl != null && accountingDetailDialogCtrl.getDisbCrSum()
+							.compareTo(accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 				return true;
 			}

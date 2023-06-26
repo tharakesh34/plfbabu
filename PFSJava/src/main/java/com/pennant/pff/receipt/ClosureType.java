@@ -18,7 +18,9 @@ public enum ClosureType {
 
 	TOP_UP("Top Up"),
 
-	CANCEL("Cancel");
+	CANCEL("Cancel"),
+
+	SETTLED("Settled");
 
 	private String code;
 

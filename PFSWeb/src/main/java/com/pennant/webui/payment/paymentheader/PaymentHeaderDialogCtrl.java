@@ -101,6 +101,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.feerefund.FeeRefundUtil;
 import com.pennant.pff.payment.model.PaymentDetail;
@@ -120,6 +121,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.autorefund.RefundBeneficiary;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 
 /**
  * This is the controller class for the /WEB-INF/pages/payment/PaymentHeader/paymentHeaderDialog.zul file. <br>
@@ -194,7 +196,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private CrossLoanKnockOffDAO crossLoanKnockOffDAO;
 	protected boolean leiMandatory = false;
 
-	private List<String> allowedExcesTypes = PennantStaticListUtil.getAllowedExcessTypeList();
+	private List<String> allowedExcesTypes = ExcessType.getAllowedTypes();
 
 	/**
 	 * default constructor.<br>
@@ -910,7 +912,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			validate = validateAccounting(validate);
 			// Accounting Details Validations
 			if (validate) {
-				if (!isAccountingExecuted) {
+				if (AccountingExtension.VERIFY_ACCOUNTING && !isAccountingExecuted) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 					return;
 				}
@@ -1497,7 +1499,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		List<FinExcessAmount> filterList = new ArrayList<>();
 		for (FinExcessAmount fea : excessList) {
-			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equalsIgnoreCase(fea.getAmountType())) {
+			if (ExcessType.EXCESS.equalsIgnoreCase(fea.getAmountType())) {
 				filterList.add(fea);
 			}
 		}
@@ -1997,7 +1999,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			BigDecimal paidAmount = pd.getAmount();
 			String desc = "";
 
-			if (!RepayConstants.EXAMOUNTTYPE_EXCESS.equals(pd.getAmountType())) {
+			if (!ExcessType.EXCESS.equals(pd.getAmountType())) {
 				desc = pd.getFeeTypeCode().concat(("-")).concat(pd.getFeeTypeDesc());
 				TaxHeader taxHeader = pd.getTaxHeader();
 				if (taxHeader != null) {

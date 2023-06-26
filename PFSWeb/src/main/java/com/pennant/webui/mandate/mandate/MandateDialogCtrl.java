@@ -493,7 +493,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		this.bankBranchID.setModuleName("BankBranch");
 		this.bankBranchID.setMandatoryStyle(true);
-		this.bankBranchID.setValueColumn("BranchCode");
+		this.bankBranchID.setValueColumn("BankBranchID");
 		this.bankBranchID.setDescColumn("BranchDesc");
 		this.bankBranchID.setDisplayStyle(2);
 
@@ -503,7 +503,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.bankBranchID.setValueType(DataType.LONG);
 		}
 
-		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
+		this.bankBranchID.setValidateColumns(new String[] { "BankBranchID" });
 
 		this.micr.setModuleName("BankBranch");
 		this.micr.setValueColumn("MICR");
@@ -514,7 +514,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.bankBranchID.setValueType(DataType.LONG);
 		}
 
-		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
+		// this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
 
 		this.mandateRef.setModuleName("Mandate");
 		this.mandateRef.setMandatoryStyle(true);
@@ -2161,23 +2161,29 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 						.setConstraint(new PTDateValidator(Labels.getLabel("label_MandateDialog_ExpiryDate.value"),
 								MandateExtension.EXPIRY_DATE_MANDATORY, true, null, false));
 			}
-		}
+			try {
+				if (this.expiryDate.getValue() != null
+						&& (this.expiryDate.getValue().compareTo(this.startDate.getValue()) <= 0
+								|| this.expiryDate.getValue().after(appExpiryDate))) {
+					this.expiryDate.setConstraint(new PTDateValidator(
+							Labels.getLabel("label_MandateDialog_ExpiryDate.value"),
+							MandateExtension.EXPIRY_DATE_MANDATORY, this.startDate.getValue(), appExpiryDate, true));
+				}
+				Date lanMatDate = this.mandate.getLoanMaturityDate();
+				Date expDate = this.expiryDate.getValue();
 
-		if (this.expiryDate.getValue() != null && (this.expiryDate.getValue().compareTo(this.startDate.getValue()) <= 0
-				|| this.expiryDate.getValue().after(appExpiryDate))) {
-			this.expiryDate.setConstraint(new PTDateValidator(Labels.getLabel("label_MandateDialog_ExpiryDate.value"),
-					MandateExtension.EXPIRY_DATE_MANDATORY, this.startDate.getValue(), appExpiryDate, true));
-		}
-
-		Date lanMatDate = this.mandate.getLoanMaturityDate();
-		Date expDate = this.expiryDate.getValue();
-
-		if (!fromLoan) {
-			if (expDate != null && lanMatDate != null && expDate.before(lanMatDate)) {
-				this.expiryDate
-						.setConstraint(new PTDateValidator(Labels.getLabel("label_MandateDialog_ExpiryDate.value"),
-								MandateExtension.EXPIRY_DATE_MANDATORY, lanMatDate, appExpiryDate, true));
+				if (!fromLoan) {
+					if (expDate != null && lanMatDate != null && expDate.before(lanMatDate)) {
+						this.expiryDate.setConstraint(
+								new PTDateValidator(Labels.getLabel("label_MandateDialog_ExpiryDate.value"),
+										MandateExtension.EXPIRY_DATE_MANDATORY, lanMatDate, appExpiryDate, true));
+					}
+				}
+			} catch (WrongValueException we) {
+				this.expiryDate.setConstraint(new PTDateValidator(
+						Labels.getLabel("label_MandateDialog_ExpiryDate.value"), validate, true, null, false));
 			}
+
 		}
 
 		if (!this.maxLimit.isReadonly()) {
@@ -2355,6 +2361,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		BankBranch details = (BankBranch) dataObject;
 
 		this.bankBranchID.setAttribute("bankBranchID", details.getBankBranchID());
+		this.bankBranchID.setValue(details.getBranchCode(), details.getBranchDesc());
 		this.bank.setValue(details.getBankName());
 		this.micr.setValue(details.getMICR());
 		this.ifsc.setValue(details.getIFSC());

@@ -10,7 +10,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.model.finance.CustEODEvent;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
@@ -22,6 +21,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 
 public class AutoRefundQueueDAOImpl extends SequenceDao<CustEODEvent> implements BatchJobQueueDAO {
 	private static final String SEQUENCE_NAME = "SEQ_AUTO_REFUND_QUEUE";
@@ -44,7 +44,7 @@ public class AutoRefundQueueDAOImpl extends SequenceDao<CustEODEvent> implements
 
 		try {
 			return this.jdbcOperations.update(sql.toString(), ps -> {
-				ps.setString(1, RepayConstants.EXAMOUNTTYPE_EXCESS);
+				ps.setString(1, ExcessType.EXCESS);
 				ps.setInt(2, 0);
 				ps.setInt(3, AdviseType.PAYABLE.id());
 				ps.setInt(4, 0);

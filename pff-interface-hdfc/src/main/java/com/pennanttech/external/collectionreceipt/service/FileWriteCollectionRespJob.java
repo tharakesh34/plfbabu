@@ -10,8 +10,6 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.batch.item.ExecutionContext;
@@ -36,25 +34,22 @@ import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.external.collectionreceipt.model.ExtCollectionReceiptData;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FileWriteCollectionRespJob extends AbstractJob
 		implements InterfaceConstants, ErrorCodesConstants, ExtIntfConfigConstants {
 
-	private static final Logger logger = LogManager.getLogger(FileWriteCollectionRespJob.class);
-
 	private static final String FETCH_QUERY = "Select * from COLL_RECEIPT_HEADER  Where WRITE_RESPONSE = ? AND RESP_FILE_STATUS =?";
 
-	private DataSource dataSource;
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
 	private ExtPresentmentDAO extPresentmentDAO;
-	private ApplicationContext applicationContext;
 
 	private CollectionReceiptService collectionReceiptService;
 
 	private static final String REJECTED_RECORDS_HEADER = "REJECTED RECORDS:||||||||||||||||||||||||||||||||||";
-	private static final String Reject_RECORDS_FOOTER = "||||||||||||||||||||||||||||||||||";
+	private static final String REJECT_RECORDS_FOOTER = "||||||||||||||||||||||||||||||||||";
 	private static final String SUCESS_RECORDS_FOOTER = "|||||||||||||||||||||||||||||||||";
 	private static final String UNDERLINE_HEADER = "-----------------||||||||||||||||||||||||||||||||||";
 	private static final String MAIN_HEADER = "AGREEMENTNO|RECEIPTNO|RECEIPT_CHANNEL|AGENCYID|CHEQUE NO.|DEALINGBANKID|DRAWNON|TOWARDS|RECEIPT AMT|CHEQUEDATE|CITY|RECEIPT DATE|RECEIPT";
@@ -63,8 +58,8 @@ public class FileWriteCollectionRespJob extends AbstractJob
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
-		applicationContext = ApplicationContextProvider.getApplicationContext();
-		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
+		ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+		DataSource extDataSource = applicationContext.getBean("extDataSource", DataSource.class);
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
 		extPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
 		collectionReceiptService = applicationContext.getBean(CollectionReceiptService.class);
@@ -74,7 +69,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<CollReceiptHeader> cursorItemReader = new JdbcCursorItemReader<CollReceiptHeader>();
-		cursorItemReader.setDataSource(dataSource);
+		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(1);
 		cursorItemReader.setSql(FETCH_QUERY);
 		cursorItemReader.setRowMapper(new RowMapper<CollReceiptHeader>() {
@@ -83,6 +78,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 				CollReceiptHeader collectionFile = new CollReceiptHeader();
 				collectionFile.setId(rs.getLong("ID"));
 				collectionFile.setRequestFileName(rs.getString("REQ_FILE_NAME"));
+				collectionFile.setErrorMessage(rs.getString("ERROR_MESSAGE"));
 				return collectionFile;
 			}
 		});
@@ -150,10 +146,10 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		String fileName = respConfig.getFilePrepend() + new SimpleDateFormat(respConfig.getDateFormat()).format(appDate)
 				+ respConfig.getFilePostpend() + fileSeqName + respConfig.getFileExtension();
 
-		fileName = TextFileUtil.fileName(filePath, fileName);
-
 		extReceiptHeader.setRespFileName(fileName);
 		extReceiptHeader.setRespFileLocation(filePath);
+
+		fileName = TextFileUtil.fileName(filePath, fileName);
 
 		List<CollReceiptDetail> successList = new ArrayList<>();
 		List<CollReceiptDetail> failedList = new ArrayList<>();
@@ -167,7 +163,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		}
 
 		// failed records preparation
-		List<StringBuilder> itemList = new ArrayList<StringBuilder>();
+		List<StringBuilder> itemList = new ArrayList<>();
 
 		StringBuilder firstRow = new StringBuilder();
 		firstRow.append(REJECTED_RECORDS_HEADER);
@@ -184,7 +180,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		int rejectRowNum = 0;
 		for (CollReceiptDetail rejectDetail : failedList) {
 
-			String[] dataArray = rejectDetail.getRecordData().toString().split("\\|");
+			String[] dataArray = rejectDetail.getRecordData().split("\\|");
 			rejectRowNum = rejectRowNum + 1;
 			String qualifiedChk = collectionReceiptService.calculateCheckSum(dataArray, rejectRowNum);
 
@@ -197,14 +193,17 @@ public class FileWriteCollectionRespJob extends AbstractJob
 			collectionReceiptData.setErrorCode(rejectDetail.getErrorMessage());
 			if (collectionReceiptData.getErrorCode() == null) {
 				collectionReceiptData.setErrorCode(extReceiptHeader.getErrorMessage());
+				if (collectionReceiptData.getErrorCode() == null) {
+					collectionReceiptData.setErrorCode("An Internal error occured while processing receipt.");
+				}
 			}
 
-			StringBuilder itemStr = prepareLine(collectionReceiptData, rejectRowNum);
+			StringBuilder itemStr = prepareLine(collectionReceiptData);
 			itemList.add(itemStr);
 		}
 
-		itemList.add(new StringBuilder(Reject_RECORDS_FOOTER));
-		itemList.add(new StringBuilder(Reject_RECORDS_FOOTER));
+		itemList.add(new StringBuilder(REJECT_RECORDS_FOOTER));
+		itemList.add(new StringBuilder(REJECT_RECORDS_FOOTER));
 
 		// Success records preparation
 		StringBuilder validRow = new StringBuilder();
@@ -223,7 +222,7 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		int totalSChecksum = 0;
 		for (CollReceiptDetail successDetail : successList) {
 
-			String[] dataArray = successDetail.getRecordData().toString().split("\\|");
+			String[] dataArray = successDetail.getRecordData().split("\\|");
 			successRowNum = successRowNum + 1;
 			String qualifiedChk = collectionReceiptService.calculateCheckSum(dataArray, successRowNum);
 
@@ -234,19 +233,31 @@ public class FileWriteCollectionRespJob extends AbstractJob
 			collectionReceiptData.setChecksum(qualifiedChk);
 			totalSChecksum = totalSChecksum + Integer.parseInt(qualifiedChk);
 
-			StringBuilder itemStr = prepareLine(collectionReceiptData, successRowNum);
+			StringBuilder itemStr = prepareLine(collectionReceiptData);
 			itemList.add(itemStr);
 
 		}
 
 		StringBuilder sucessFooter = new StringBuilder();
-		sucessFooter.append(successRowNum);
-		appendSeperator(sucessFooter, totalSChecksum);
+		if (successRowNum == 0) {
+			sucessFooter.append("");
+		} else {
+			sucessFooter.append(successRowNum);
+		}
+
+		if (totalSChecksum == 0) {
+			appendSeperator(sucessFooter, "");
+		} else {
+			appendSeperator(sucessFooter, successRowNum + "" + totalSChecksum);
+		}
+
 		sucessFooter.append(SUCESS_RECORDS_FOOTER);
 		itemList.add(sucessFooter);
 
 		try {
-			// super.writeDataToFile(fileName, itemList);
+			TextFileUtil fileUtil = new TextFileUtil();
+			fileUtil.writeDataToFile(fileName, itemList);
+
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
@@ -257,17 +268,20 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		if ("Y".equals(StringUtils.stripToEmpty(respConfig.getFileTransfer()))) {
 			try {
 				FileTransferUtil fileTransferUtil = new FileTransferUtil(respConfig);
+				fileTransferUtil.uploadToSFTP(App.getResourcePath(extReceiptHeader.getRespFileLocation()),
+						extReceiptHeader.getRespFileName());
+
 				String localReqFileName = extReceiptHeader.getRequestFileName();
 
-				fileTransferUtil.backupToSFTP(reqConfig.getFileLocation(), localReqFileName);
+				fileTransferUtil = new FileTransferUtil(reqConfig);
+				fileTransferUtil.backupToSFTP(App.getResourcePath(reqConfig.getFileLocation()), localReqFileName);
 
 				String reqFileTB = localReqFileName.substring(0,
 						localReqFileName.indexOf(reqConfig.getFileExtension()));
 				String finalFile = reqFileTB + ".inproc";
-				String deleteInproc = reqConfig.getFileTransferConfig().getSftpLocation().concat("/") + finalFile;
 
 				// Delete .inproc file
-				fileTransferUtil.deleteFileFromSFTP(deleteInproc);
+				fileTransferUtil.deleteFileFromSFTP(finalFile);
 
 			} catch (Exception e) {
 				logger.debug(Literal.EXCEPTION, e);
@@ -275,10 +289,21 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		}
 	}
 
-	private StringBuilder prepareLine(ExtCollectionReceiptData detail, int rejectRowNum) {
+	private StringBuilder prepareLine(ExtCollectionReceiptData detail) {
 		StringBuilder item = new StringBuilder();
-		append(item, detail.getAgreementNumber());
-		appendSeperator(item, "");
+
+		if (detail.getAgreementNumber() > 0) {
+			append(item, detail.getAgreementNumber());
+		} else {
+			append(item, "");
+		}
+
+		if (detail.getReceiptID() > 0) {
+			appendSeperator(item, detail.getReceiptID());
+		} else {
+			appendSeperator(item, "");
+		}
+
 		appendSeperator(item, detail.getReceiptChannel());
 		appendSeperator(item, detail.getAgencyId());
 		appendSeperator(item, detail.getChequeNumber());
@@ -306,12 +331,11 @@ public class FileWriteCollectionRespJob extends AbstractJob
 		appendSeperator(item, detail.getOtherCharge4());
 		appendSeperator(item, detail.getOtherAmt4());
 		appendSeperator(item, detail.getRemarks());
-		appendSeperator(item, "1000");// System Admin Id
+		appendSeperator(item, "1000");// PLF System Admin Id
 		appendSeperator(item, new SimpleDateFormat("dd-MMM-yy").format(detail.getUploadDate()));
-		appendSeperator(item, StringUtils.stripToEmpty(detail.getErrorCode()));// Reason
-		appendSeperator(item, "");// Redepositing flag
-		appendSeperator(item, rejectRowNum);
-		item.append(detail.getChecksum());// Checksum
+		appendSeperator(item, StringUtils.stripToEmpty(detail.getErrorCode()));
+		appendSeperator(item, "");
+		appendSeperator(item, detail.getChecksum());
 		return item;
 	}
 

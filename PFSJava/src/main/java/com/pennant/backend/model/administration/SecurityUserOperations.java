@@ -49,7 +49,7 @@ public class SecurityUserOperations extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private long oprID;
-	@XmlElement
+	@XmlElement(name = "oprCode")
 	private String lovDescOprCd;// operation code
 	@XmlElement
 	private String lovDescOprDesc;
@@ -63,10 +63,13 @@ public class SecurityUserOperations extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private String sourceId;
+	@XmlElement
+	private String mode;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("sourceId");
+		excludeFields.add("mode");
 		return excludeFields;
 	}
 
@@ -199,6 +202,14 @@ public class SecurityUserOperations extends AbstractWorkflowEntity {
 
 	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
+	}
+
+	public String getMode() {
+		return mode;
+	}
+
+	public void setMode(String mode) {
+		this.mode = mode;
 	}
 
 }

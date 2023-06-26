@@ -67,6 +67,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 
 public class AdvancePaymentService extends ServiceHelper {
 	private Logger logger = LogManager.getLogger(AdvancePaymentService.class);
@@ -143,10 +144,10 @@ public class AdvancePaymentService extends ServiceHelper {
 				if (AdvanceStage.getStage(fm.getAdvStage()) == AdvanceStage.FE) {
 					continue;
 				}
-				amountType = RepayConstants.EXAMOUNTTYPE_ADVEMI;
+				amountType = ExcessType.ADVEMI;
 				dueAmt = principalDue.add(profitDue);
 			} else {
-				amountType = RepayConstants.EXAMOUNTTYPE_ADVINT;
+				amountType = ExcessType.ADVINT;
 				dueAmt = profitDue;
 			}
 
@@ -173,11 +174,11 @@ public class AdvancePaymentService extends ServiceHelper {
 			}
 
 			/* Schedule Update */
-			if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(amountType)) {
+			if (ExcessType.ADVINT.equals(amountType)) {
 
 				curSchd.setSchdPftPaid(adjustedAmount);
 
-			} else if (RepayConstants.EXAMOUNTTYPE_ADVEMI.equals(amountType)) {
+			} else if (ExcessType.ADVEMI.equals(amountType)) {
 				BigDecimal emiPayNow = adjustedAmount;
 
 				if (emiPayNow.compareTo(profitDue) > 0) {
@@ -619,7 +620,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		boolean tdsApplicable = TDSCalculator.isTDSApplicable(financeMain);
 		BigDecimal pftSchd = curSchd.getProfitSchd();
 		BigDecimal tdsAmount = curSchd.getTDSAmount();
-		String amountType = RepayConstants.EXAMOUNTTYPE_ADVINT;
+		String amountType = ExcessType.ADVINT;
 
 		FinExcessAmount exAmount = this.finExcessAmountDAO.getExcessAmountsByReceiptId(finID, amountType, 0);
 
@@ -637,7 +638,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			exAmount = new FinExcessAmount();
 			exAmount.setFinID(finID);
 			exAmount.setFinReference(finReference);
-			exAmount.setAmountType(RepayConstants.EXAMOUNTTYPE_ADVINT);
+			exAmount.setAmountType(ExcessType.ADVINT);
 			exAmount.setAmount(bpiAmt);
 			exAmount.setBalanceAmt(bpiAmt);
 			exAmount.setReceiptID(null);
@@ -669,12 +670,12 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		// Advance Interest Amount Process
 		if (advInt.compareTo(BigDecimal.ZERO) > 0 && ImplementationConstants.RCVADV_CREATE_ON_INTEMI) {
-			updateExcess(advPay, RepayConstants.EXAMOUNTTYPE_ADVINT, moduleDefiner, lastMntBy);
+			updateExcess(advPay, ExcessType.ADVINT, moduleDefiner, lastMntBy);
 		}
 
 		// Advance EMI Amount Process
 		if (advEMI.compareTo(BigDecimal.ZERO) > 0 && ImplementationConstants.RCVADV_CREATE_ON_INTEMI) {
-			updateExcess(advPay, RepayConstants.EXAMOUNTTYPE_ADVEMI, moduleDefiner, lastMntBy);
+			updateExcess(advPay, ExcessType.ADVEMI, moduleDefiner, lastMntBy);
 		}
 
 	}
@@ -682,7 +683,7 @@ public class AdvancePaymentService extends ServiceHelper {
 	protected void updateExcess(AdvancePaymentDetail advPay, String excessType, String moduleDefiner, long lastMntBy) {
 		FinExcessAmount excess = null;
 		if (!StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
-			excess = finExcessAmountDAO.getFinExcessAmount(advPay.getFinID(), RepayConstants.EXAMOUNTTYPE_ADVINT);
+			excess = finExcessAmountDAO.getFinExcessAmount(advPay.getFinID(), ExcessType.ADVINT);
 		}
 
 		if (excess == null) {
@@ -690,14 +691,14 @@ public class AdvancePaymentService extends ServiceHelper {
 		}
 
 		BigDecimal amount = BigDecimal.ZERO;
-		if (StringUtils.equals(excessType, RepayConstants.EXAMOUNTTYPE_ADVINT)) {
+		if (StringUtils.equals(excessType, ExcessType.ADVINT)) {
 			amount = advPay.getAdvInt();
 			boolean advIntTDSInczUpf = SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_TDS_INCZ_UPF);
 			if (advIntTDSInczUpf) {
 				amount = amount.add(advPay.getAdvIntTds());
 			}
 
-		} else if (StringUtils.equals(excessType, RepayConstants.EXAMOUNTTYPE_ADVEMI)) {
+		} else if (StringUtils.equals(excessType, ExcessType.ADVEMI)) {
 			amount = advPay.getAdvEMI();
 			boolean advEMITDSInczUpf = SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_TDS_INCZ_UPF);
 			if (advEMITDSInczUpf) {
@@ -710,7 +711,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		}
 
 		FinExcessAmount existingExcessData = finExcessAmountDAO.getFinExcessAmount(advPay.getFinID(),
-				RepayConstants.EXAMOUNTTYPE_ADVINT);
+				ExcessType.ADVINT);
 
 		if (existingExcessData != null) {
 			excess.setExcessID(existingExcessData.getExcessID());
@@ -829,7 +830,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			return;
 		}
 
-		updateExcess(curAdvpay, RepayConstants.EXAMOUNTTYPE_ADVINT, fm.getModuleDefiner(), fm.getLastMntBy());
+		updateExcess(curAdvpay, ExcessType.ADVINT, fm.getModuleDefiner(), fm.getLastMntBy());
 	}
 
 	public void setAdvancePaymentDetails(FinanceDetail fd, AEAmountCodes amountCodes) {
@@ -865,7 +866,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		BigDecimal advIntBalance = BigDecimal.ZERO;
 		if (AdvanceType.hasAdvInterest(fm) || bpi) {
 			FinExcessAmount excessAmount = finExcessAmountDAO.getFinExcessAmount(fm.getFinID(),
-					RepayConstants.EXAMOUNTTYPE_ADVINT);
+					ExcessType.ADVINT);
 
 			if (excessAmount != null) {
 				advIntBalance = excessAmount.getBalanceAmt();

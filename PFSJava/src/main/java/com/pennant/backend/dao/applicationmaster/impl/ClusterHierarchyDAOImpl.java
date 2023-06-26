@@ -300,4 +300,13 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 
 		return jdbcOperations.queryForObject(sql, Integer.class, entityCode) > 0;
 	}
+
+	@Override
+	public boolean isClusterTypeExists(String clusterType, String entity) {
+		String sql = "Select Coalesce(count(ClusterType), 0) From Cluster_Hierarchy Where Entity = ? and ClusterType = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, entity, clusterType) > 0;
+	}
 }

@@ -941,7 +941,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	public List<Mandate> getMandatesForAutoSwap(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.FinID, m.MandateId, m.MandateType, fm.MandateId OldMandateId");
-		sql.append(", fm.SecurityMandateId OldSecmandateId, m.SecurityMandate");
+		sql.append(", fm.SecurityMandateId OldSecmandateId, m.SecurityMandate, m.SwapEffectiveDate");
 		sql.append(" From Mandates m");
 		sql.append(" Inner Join FinanceMain fm on fm.FinReference = m.OrgReference and fm.FinID = ?");
 		sql.append(" Where SwapIsActive = ? and m.MandateId <> fm.MandateId ");
@@ -960,6 +960,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			m.setOldSecMandate(JdbcUtil.getLong(rs.getObject("OldSecmandateId")));
 			m.setSecurityMandate(rs.getBoolean("SecurityMandate"));
 			m.setMandateType(rs.getString("MandateType"));
+			m.setSwapEffectiveDate(rs.getDate("SwapEffectiveDate"));
 
 			return m;
 		});
@@ -1236,5 +1237,34 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+	}
+
+	@Override
+	public List<Mandate> getMandatesForSwap(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.FinID, m.MandateId, m.MandateType, fm.MandateId OldMandateId");
+		sql.append(", fm.SecurityMandateId OldSecmandateId, m.SecurityMandate, m.SwapEffectiveDate");
+		sql.append(" From Mandates m");
+		sql.append(" Inner Join FinanceMain fm on fm.FinReference = m.OrgReference and fm.FinID = ?");
+		sql.append(" Where SwapIsActive = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, finID);
+			ps.setBoolean(2, true);
+		}, (rs, rowNum) -> {
+			Mandate m = new Mandate();
+
+			m.setFinID(rs.getLong("FinID"));
+			m.setMandateID(rs.getLong("MandateId"));
+			m.setOldMandate(JdbcUtil.getLong(rs.getObject("OldMandateId")));
+			m.setOldSecMandate(JdbcUtil.getLong(rs.getObject("OldSecmandateId")));
+			m.setSecurityMandate(rs.getBoolean("SecurityMandate"));
+			m.setMandateType(rs.getString("MandateType"));
+			m.setSwapEffectiveDate(rs.getDate("SwapEffectiveDate"));
+
+			return m;
+		});
 	}
 }

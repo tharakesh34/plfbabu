@@ -22,8 +22,8 @@ import com.pennant.backend.model.loandetail.LoanDetail;
 @XmlType(propOrder = { "custCIF", "custCategory", "custShrtName", "coreBankID", "custDOB", "gender", "custCRCPR",
 		"firstName", "middleName", "lastName", "fullName", "maritalStatus", "custMotherMaiden", "custTypeCode",
 		"custTypeDesc", "custFNameLclLng", "custNationality", "fullAddress", "custAddresses", "custPhoneNumbers",
-		"custEmails", "custEmployments", "customerIncomes", "loanDetail", "loanDetails", "returnStatus",
-		"custGroupID" })
+		"custEmails", "custEmployments", "customerIncomes", "loanDetail", "loanDetails", "returnStatus", "custGroupID",
+		"phone1", "phone2", "mobile1", "mobile2" })
 
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -88,6 +88,14 @@ public class CustomerData {
 	private String lastName;
 	@XmlElement(name = "groupID")
 	private long custGroupID;
+	@XmlElement
+	private String phone1;
+	@XmlElement
+	private String phone2;
+	@XmlElement
+	private String mobile1;
+	@XmlElement
+	private String mobile2;
 
 	public CustomerData() {
 		super();
@@ -323,6 +331,38 @@ public class CustomerData {
 
 	public void setCustGroupID(long custGroupID) {
 		this.custGroupID = custGroupID;
+	}
+
+	public String getPhone1() {
+		return phone1;
+	}
+
+	public void setPhone1(String phone1) {
+		this.phone1 = phone1;
+	}
+
+	public String getPhone2() {
+		return phone2;
+	}
+
+	public void setPhone2(String phone2) {
+		this.phone2 = phone2;
+	}
+
+	public String getMobile1() {
+		return mobile1;
+	}
+
+	public void setMobile1(String mobile1) {
+		this.mobile1 = mobile1;
+	}
+
+	public String getMobile2() {
+		return mobile2;
+	}
+
+	public void setMobile2(String mobile2) {
+		this.mobile2 = mobile2;
 	}
 
 }

@@ -167,6 +167,7 @@ import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.eod.cache.FeeTypeConfigCache;
 import com.pennant.pff.extension.LPPExtension;
+import com.pennant.pff.extension.PresentmentExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.presentment.exception.PresentmentException;
@@ -185,6 +186,7 @@ import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennapps.core.util.ObjectUtil;
 
@@ -2358,8 +2360,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			return;
 		}
 
-		FinExcessAmount excess = finExcessAmountDAO.getExcessAmountsByReceiptId(finID,
-				RepayConstants.EXCESSADJUSTTO_EXCESS, receiptId);
+		FinExcessAmount excess = finExcessAmountDAO.getExcessAmountsByReceiptId(finID, ExcessType.EXCESS, receiptId);
 
 		if (excess != null) {
 			excess.setBalanceAmt(excess.getBalanceAmt().subtract(excessAmt));
@@ -3216,7 +3217,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		long postingId = postingsDAO.getPostingId();
 
-		if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
+		if (PresentmentExtension.STAGE_ACCOUNTING_REQ) {
 			if (!ReceiptMode.PRESENTMENT.equals(receiptMode)) {
 				rdSet = postingsPreparationUtil.postReversalsByPostRef(receiptID, postingId, appDate);
 			}

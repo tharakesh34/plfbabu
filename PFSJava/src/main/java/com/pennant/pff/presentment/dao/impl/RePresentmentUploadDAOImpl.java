@@ -193,4 +193,33 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 
 		return sql.toString();
 	}
+
+	@Override
+	public String getPresentmenttype(String reference, Date dueDate) {
+		StringBuilder sql = new StringBuilder("Select ph.PresentmentType");
+		sql.append(" From PresentmentDetails pd");
+		sql.append(" Left Join presentmentheader ph on ph.Id = pd.PresentmentId");
+		sql.append(" Where pd.FinReference = ? and pd.SchDate = ?");
+		sql.append(" Order By pd.Lastmnton desc");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		List<PresentmentDetail> list = this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, reference);
+			ps.setDate(2, JdbcUtil.getDate(dueDate));
+		}, (rs, rowNum) -> {
+			PresentmentDetail pd = new PresentmentDetail();
+
+			pd.setPresentmentType(rs.getString(1));
+			return pd;
+		});
+
+		if (CollectionUtils.isEmpty(list)) {
+			return null;
+		}
+
+		PresentmentDetail pd = list.get(0);
+
+		return pd.getPresentmentType();
+	}
 }

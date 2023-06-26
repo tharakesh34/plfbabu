@@ -139,7 +139,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.mandate.MandateUtil;
@@ -162,6 +161,7 @@ import com.pennanttech.pff.overdraft.model.OverdraftLimitTransation;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.provision.model.Provision;
 import com.pennanttech.pff.provision.service.ProvisionService;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Reports/FinanceEnquiryHeaderDialogCtrl.zul.
@@ -364,7 +364,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			if (enquiry.isFinIsActive()) {
 				this.finStatus_header.setValue("Active");
-			} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
+			} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus) || !enquiry.isFinIsActive()) {
 				this.finStatus_header.setValue(Labels.getLabel("label_Closed"));
 			} else {
 				this.finStatus_header.setValue("Matured");
@@ -736,7 +736,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			feeDetails.forEach(ffd -> {
-				if (RepayConstants.EXAMOUNTTYPE_ADVEMI.equals(ffd.getFeeTypeCode())) {
+				if (ExcessType.ADVEMI.equals(ffd.getFeeTypeCode())) {
 					ffd.setTerms(finScheduleData.getFinanceMain().getAdvTerms());
 				}
 			});

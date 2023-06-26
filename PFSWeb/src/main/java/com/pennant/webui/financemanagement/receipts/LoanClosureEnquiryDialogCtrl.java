@@ -168,6 +168,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.pennapps.core.util.ObjectUtil;
@@ -1974,7 +1975,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				amountCodes.setPartnerBankAcType(rcd.getPartnerBankAcType());
 				amountCodes.setToExcessAmt(BigDecimal.ZERO);
 				amountCodes.setToEmiAdvance(BigDecimal.ZERO);
-				if (RepayConstants.EXCESSADJUSTTO_EXCESS.equals(repayHeader.getFinEvent())) {
+				if (ExcessType.EXCESS.equals(repayHeader.getFinEvent())) {
 					amountCodes.setToExcessAmt(repayHeader.getRepayAmount());
 				} else {
 					amountCodes.setToEmiAdvance(repayHeader.getRepayAmount());
@@ -3629,7 +3630,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				// Advance EMI
 				for (FinExcessAmount finExcessAmount : excessList) {
-					if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(finExcessAmount.getAmountType())) {
+					if (ExcessType.EMIINADV.equals(finExcessAmount.getAmountType())) {
 						closureReport.setAdvInsts(
 								PennantApplicationUtil.formateAmount(finExcessAmount.getBalanceAmt(), formatter));
 					}

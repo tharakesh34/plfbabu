@@ -26,6 +26,7 @@ public class NotificationConstants {
 	public static final String TEMPLATE_FOR_PVRN = "PN";
 	public static final String TEMPLATE_FOR_OTP = "OTP";
 	public static final String TEMPLATE_FOR_SU = "SU";
+	public static final String TEMPLATE_FOR_UPD = "UPD";
 
 	// Module Code for Notification to maintain parameters
 	public static final String MAIL_MODULE_FIN = "FIN";

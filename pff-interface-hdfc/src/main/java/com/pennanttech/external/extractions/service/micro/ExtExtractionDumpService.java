@@ -20,6 +20,9 @@ public class ExtExtractionDumpService implements MicroEodExternalProcessHook {
 
 	@Override
 	public void saveExtractionData(CustEODEvent custEODEvent, Date appdate) {
+		if (custEODEvent != null) {
+			return;
+		}
 		logger.debug(Literal.ENTERING);
 
 		boolean isEOM = false;

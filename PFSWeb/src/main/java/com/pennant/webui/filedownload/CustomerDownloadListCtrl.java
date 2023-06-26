@@ -97,7 +97,7 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> {
 	protected Listbox listBoxCustomerDownload;
 	protected Paging pagingCustomerDownloadList;
 
-	@Autowired
+	@Autowired(required = false)
 	private GLEMSCustomerProcess glemsCustomerProcess;
 
 	protected Listheader listheader_CustCIF;

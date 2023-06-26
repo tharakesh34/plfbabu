@@ -973,9 +973,8 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		}
 
 		if (!this.natureService.isReadonly()) {
-			this.natureService
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_NatureService.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM, true));
+			this.natureService.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_NatureService.value"), null, true));
 		}
 
 		logger.debug(Literal.LEAVING);

@@ -255,22 +255,21 @@ public class RevWriteOffUploadDAOImpl extends SequenceDao<RevWriteOffUploadDetai
 
 	@Override
 	public long getReceiptIdByRef(String finReference) {
-		String sql = "Select Max(ReceiptId) From WRITE_OFF_UPLOAD_LOG Where FinReference = ? and Event = ?";
+		String sql = "Select Max(ReceiptId) From FinWriteOffDetail Where FinReference = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			Long receiptID = this.jdbcOperations.queryForObject(sql, Long.class, finReference,
-					UploadTypes.WRITE_OFF.name());
+			Long receiptID = this.jdbcOperations.queryForObject(sql, Long.class, finReference);
 
 			if (receiptID == null) {
-				return Long.MIN_VALUE;
+				return 0;
 			}
 
 			return receiptID;
 		} catch (EmptyResultDataAccessException dae) {
 			logger.warn(Message.NO_RECORD_FOUND);
-			return Long.MIN_VALUE;
+			return 0;
 		}
 	}
 }

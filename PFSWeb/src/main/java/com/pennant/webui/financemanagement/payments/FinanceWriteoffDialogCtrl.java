@@ -49,6 +49,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -74,6 +75,7 @@ import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -106,6 +108,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
@@ -118,6 +121,7 @@ import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennapps.core.util.ObjectUtil;
 
@@ -200,6 +204,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private FinanceWriteoffService financeWriteoffService;
 	private FinanceReferenceDetailService financeReferenceDetailService;
 	private AccrualService accrualService;
+
+	private FinanceMainDAO financeMainDAO;
 
 	private int format = 0;
 
@@ -1015,6 +1021,15 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			aFinanceDetail.setUserAction(this.userAction.getSelectedItem().getLabel());
 		}
 
+		if (!recSave) {
+			FinanceMain fmTemp = this.financeMainDAO.getFinanceMain(aFinanceMain.getFinID(), TableType.MAIN_TAB);
+			if ((fmTemp.isUnderNpa() && !aFinanceMain.isUnderNpa())
+					|| (!fmTemp.isUnderNpa() && aFinanceMain.isUnderNpa())) {
+				MessageUtil.showError("NPA stage is changed, please re-initiate the write off.");
+				return;
+			}
+		}
+
 		aFinanceDetail.setAccountingEventCode(eventCode);
 
 		// Resetting Service Task ID's from Original State
@@ -1055,7 +1070,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Finance Accounting Details
 		if (!recSave && getAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
-			if (!getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
+			if (AccountingExtension.VERIFY_ACCOUNTING && !getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 				return;
 			}
@@ -1807,4 +1822,10 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void setFinEvent(String finEvent) {
 		this.finEvent = finEvent;
 	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
 }

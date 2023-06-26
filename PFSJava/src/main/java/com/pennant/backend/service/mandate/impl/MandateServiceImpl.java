@@ -311,9 +311,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 			mandateStatusDAO.save(mandateStatus, "");
 
-			Long securityMandate = mandateDAO.getSecurityMandateIdByRef(mandate.getOrgReference());
-			if (securityMandate == null) {
-				mandateDAO.updateFinMandateId(mandate.getMandateID(), mandate.getOrgReference());
+			if (mandate.isSecurityMandate()) {
+				Long securityMandate = mandateDAO.getSecurityMandateIdByRef(mandate.getOrgReference());
+				if (securityMandate == null) {
+					mandateDAO.updateFinMandateId(mandate.getMandateID(), mandate.getOrgReference());
+				}
 			}
 
 			if (ImplementationConstants.ALLOW_LIEN && InstrumentType.isSI(mandateType)) {

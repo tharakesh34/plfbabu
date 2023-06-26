@@ -26,6 +26,7 @@ import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.api.controller.AbstractController;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -50,7 +51,11 @@ public class SecurityUserController extends AbstractController {
 		user.setApprovedOn(new Timestamp(System.currentTimeMillis()));
 		user.setApprovedBy(ud.getUserId());
 		user.setPwdExpDt(DateUtil.addDays(new Date(System.currentTimeMillis()), -1));
-		user.setUsrPwd(((PasswordEncoder) SpringBeanUtil.getBean("passwordEncoder")).encode(user.getUsrPwd()));
+
+		if (AuthenticationType.DAO.name().equals(user.getAuthType())) {
+			user.setUsrRawPwd(user.getUsrPwd());
+			user.setUsrPwd(((PasswordEncoder) SpringBeanUtil.getBean("passwordEncoder")).encode(user.getUsrPwd()));
+		}
 
 		AuditHeader ah = getAuditHeader(user, PennantConstants.TRAN_WF);
 
@@ -89,6 +94,10 @@ public class SecurityUserController extends AbstractController {
 
 		if (!isAllowCluster) {
 			setRecordTypeForDivsions(user.getSecurityUserDivBranchList());
+		}
+
+		if (!prvUser.getAuthType().equals(user.getAuthType())) {
+			return getFailedStatus("92021", "For UpdateSecurityUser User Type cannot be updated");
 		}
 
 		user.setCreatedOn(prvUser.getCreatedOn());

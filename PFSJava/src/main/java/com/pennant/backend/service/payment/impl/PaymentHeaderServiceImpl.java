@@ -93,6 +93,7 @@ import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 
 /**
  * Service implementation for methods that depends on <b>PaymentHeader</b>.<br>
@@ -449,7 +450,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		List<PaymentDetail> pdtl = ph.getPaymentDetailList();
 
 		for (PaymentDetail pdt : pdtl) {
-			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(pdt.getAmountType())) {
+			if (ExcessType.EXCESS.equals(pdt.getAmountType())) {
 				FinExcessAmount fea = finExcessAmountDAO.getFinExcessByID(pdt.getReferenceId());
 				List<Long> receiptID = paymentHeaderDAO.getReceiptPurpose(fea.getExcessID());
 
@@ -756,19 +757,19 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 					eventMapping.put(feeTypeCode + "_CESS_P", gstAmount.add(cessTax.getPaidTax()));
 				}
 				break;
-			case RepayConstants.EXAMOUNTTYPE_EXCESS:
+			case ExcessType.EXCESS:
 				excessAmount = excessAmount.add(paymentDetail.getAmount());
 				break;
-			case RepayConstants.EXAMOUNTTYPE_EMIINADV:
+			case ExcessType.EMIINADV:
 				emiInAdavance = emiInAdavance.add(paymentDetail.getAmount());
 				break;
-			case RepayConstants.EXAMOUNTTYPE_ADVINT:
+			case ExcessType.ADVINT:
 				advInst = emiInAdavance.add(paymentDetail.getAmount());
 				break;
-			case RepayConstants.EXAMOUNTTYPE_CASHCLT:
+			case ExcessType.CASHCLT:
 				cashCtrl = cashCtrl.add(paymentDetail.getAmount());
 				break;
-			case RepayConstants.EXAMOUNTTYPE_DSF:
+			case ExcessType.DSF:
 				dsf = dsf.add(paymentDetail.getAmount());
 				break;
 

@@ -462,10 +462,15 @@ public class LoanTypeWriteOffDialogCtrl extends GFCBaseCtrl<FinTypeWriteOff> {
 			break;
 		case "dpdDays":
 			Intbox order = (Intbox) hbox.getLastChild();
-			String orderNum = order.getText();
+			int dpdDays = order.getValue();
 
-			if (StringUtils.isEmpty(orderNum) || orderNum.equals("0")) {
+			if (dpdDays == 0) {
 				throw new WrongValueException(order, Labels.getLabel("FIELD_IS_MAND", new String[] { "DPD Days " }));
+			}
+
+			if (dpdDays < 0) {
+				throw new WrongValueException(order,
+						Labels.getLabel("NUMBER_NOT_NEGATIVE", new String[] { "DPD Days " }));
 			}
 			break;
 		default:

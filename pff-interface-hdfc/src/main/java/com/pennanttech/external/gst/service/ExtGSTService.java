@@ -27,12 +27,12 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 	private ExtGSTDao extGSTDao;
 
 	public void processRequestFile(FileInterfaceConfig reqConfig, FileInterfaceConfig doneConfig, Date appDate) {
-
+		logger.debug(Literal.ENTERING);
 		// Dump GST Vouchers to create unique reference for each entry
 		extGSTDao.extractDetailsFromForGstCalculation();
-
 		// Write the file
 		writeRequestFile(reqConfig, doneConfig, appDate);
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void writeRequestFile(FileInterfaceConfig reqConfig, FileInterfaceConfig doneConfig, Date appDate) {
@@ -68,7 +68,7 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 		// Fetch records to write request file
 		List<GSTRequestDetail> gstRequestDetailList = extGSTDao.fetchRecords();
 
-		List<StringBuilder> itemList = new ArrayList<StringBuilder>();
+		List<StringBuilder> itemList = new ArrayList<>();
 
 		// Prepare file line items list
 		prepareFileItems(itemList, gstRequestDetailList);
@@ -85,12 +85,13 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 			long fileSeq = extGSTDao.getSeqNumber(SEQ_GST_INTF);
 			String fileSeqName = StringUtils.leftPad(String.valueOf(fileSeq), 5, "0");
 			String fileName = TextFileUtil.getFileName(reqConfig, appDate, fileSeqName);
-			String filePathWithName = reqConfig.getFileLocation() + File.separator + fileName;
+			String filePathWithName = App.getResourcePath(reqConfig.getFileLocation()) + File.separator + fileName;
 			super.writeDataToFile(filePathWithName, itemList);
 
 			// Write Done file
-			String doneFile = fileName + doneConfig.getFilePostpend();
-			List<StringBuilder> emptyList = new ArrayList<StringBuilder>();
+			String doneFile = App.getResourcePath(reqConfig.getFileLocation()) + File.separator + fileName
+					+ doneConfig.getFilePostpend();
+			List<StringBuilder> emptyList = new ArrayList<>();
 			emptyList.add(new StringBuilder(""));
 			super.writeDataToFile(doneFile, emptyList);
 
@@ -100,7 +101,7 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 
 			// Uploading to HDFC SFTP
 			if ("Y".equals(reqConfig.getFileTransfer())) {
-				String baseFilePath = reqConfig.getFileLocation();
+				String baseFilePath = App.getResourcePath(reqConfig.getFileLocation());
 				uploadToClientLocation(reqConfig, fileName, baseFilePath, doneFile);
 			}
 		} catch (Exception e) {
@@ -109,9 +110,10 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 	}
 
 	private void prepareFileItems(List<StringBuilder> itemList, List<GSTRequestDetail> gstRequestDetailList) {
-		StringBuilder item = new StringBuilder();
+
 		// DETAIL ITEM FOR REQUEST FILE
 		for (GSTRequestDetail data : gstRequestDetailList) {
+			StringBuilder item = new StringBuilder();
 			append(item, data.getRequestType());
 			appendSeperator(item, data.getCustomerId());
 			appendSeperator(item, data.getAccountId());
@@ -237,15 +239,12 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 		try {
 			// Now upload file to SFTP of client
 			fileTransferUtil.uploadToSFTP(baseFilePath, fileName);
-			logger.debug("Ext_GST:ReqFile upload Successful to Destination");
 
 			// Now upload done file to SFTP of client location as per configuration
 			fileTransferUtil.uploadToSFTP(baseFilePath, completeFileName);
-			logger.debug("Ext_GST:Completefile upload Sucessful to Destination");
 			fileBackup(reqConfig, fileName, completeFileName);
 		} catch (Exception e) {
 			logger.debug("Ext_GST:Unable to upload files from local path to destination.", e);
-			return;
 		}
 	}
 
@@ -255,7 +254,6 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 
 		String localBkpLocation = serverConfig.getFileLocalBackupLocation();
 		if (localBkpLocation == null || "".equals(localBkpLocation)) {
-			logger.debug("Ext_GST: Local backup location not configured, so returning.");
 			return;
 		}
 		File mainFile = new File(mainFilePath);
@@ -266,7 +264,11 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 		File completeFileBkp = new File(localBackupLocation + File.separator + completeFileToUpload.getName());
 		Files.copy(mainFile, mainFileBkp);
 		Files.copy(completeFileToUpload, completeFileBkp);
-		logger.debug("Ext_GST: MainFile & Completefile backup Successful");
 		logger.debug(Literal.LEAVING);
 	}
+
+	public void setExtGSTDao(ExtGSTDao extGSTDao) {
+		this.extGSTDao = extGSTDao;
+	}
+
 }

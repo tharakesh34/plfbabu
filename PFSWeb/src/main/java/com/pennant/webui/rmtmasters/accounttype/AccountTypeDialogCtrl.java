@@ -542,9 +542,14 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		try {
 			this.profitCenter.getValidatedValue();
 			ProfitCenter profitCenter = (ProfitCenter) this.profitCenter.getObject();
-			aAccountType.setProfitCenterID(profitCenter.getProfitCenterID());
-			aAccountType.setProfitCenterCode(profitCenter.getProfitCenterCode());
-			aAccountType.setProfitCenterDesc(profitCenter.getProfitCenterDesc());
+
+			if (profitCenter != null) {
+				aAccountType.setProfitCenterID(profitCenter.getProfitCenterID());
+				aAccountType.setProfitCenterCode(profitCenter.getProfitCenterCode());
+				aAccountType.setProfitCenterDesc(profitCenter.getProfitCenterDesc());
+			} else {
+				aAccountType.setProfitCenterID(null);
+			}
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -736,14 +741,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			this.acTypeGrpId.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AccountTypeDialog_AcTypeGrpId.value"), null, true));
 		}
-		if (!this.profitCenter.isReadonly()) {
-			this.profitCenter.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_AccountTypeDialog_ProfitCenter.value"), null, true));
-		}
-		if (!this.costCenter.isReadonly()) {
-			this.costCenter.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_AccountTypeDialog_CostCenter.value"), null, true, true));
-		}
+
 		if (!this.hSNNumber.isReadonly()) {
 			this.hSNNumber.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AccountTypeDialog_HSNNumber.value"), null, true));

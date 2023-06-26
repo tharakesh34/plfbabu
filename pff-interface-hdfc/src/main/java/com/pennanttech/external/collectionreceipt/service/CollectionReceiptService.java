@@ -22,6 +22,7 @@ import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.ExtCollectionReceiptData;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class CollectionReceiptService implements ErrorCodesConstants {
@@ -75,7 +76,13 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 		String receiptDate = TextFileUtil.getItem(dataArray, 10);
 		String receiptType = TextFileUtil.getItem(dataArray, 12);
 
-		int agreementCHK = generateChecksum(String.valueOf(agreementNumber));
+		int agreementCHK = 0;
+		if (agreementNumber == 0) {
+			agreementCHK = generateChecksum("");
+		} else {
+			agreementCHK = generateChecksum(String.valueOf(agreementNumber));
+		}
+
 		int grTotalCHK = generateChecksum(String.valueOf(grandTotal));
 		int chqDateCHK = generateChecksum(String.valueOf(chequeDate));
 		int receiptDateCHK = generateChecksum(String.valueOf(receiptDate));
@@ -107,7 +114,7 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 		cru.setReceiptModeStatus("R");
 		cru.setRealizationDate(getFormattedDate(collectionData.getReceiptDate()));
 		cru.setReceiptAmount(getAbsoluteAmount(collectionData.getGrandTotal()));
-		cru.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		cru.setExcessAdjustTo(ExcessType.EXCESS);
 		cru.setReceiptPurpose("SP");
 		cru.setStatus(RepayConstants.PAYSTATUS_REALIZED);
 		cru.setReceiptChannel(PennantConstants.List_Select);
@@ -127,7 +134,7 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 		cru.setBankCode(String.valueOf(collectionData.getDealingBankId()));
 		cru.setEffectSchdMethod("");
 
-		List<CreateReceiptUpload> alloc = new ArrayList<CreateReceiptUpload>();
+		List<CreateReceiptUpload> alloc = new ArrayList<>();
 
 		if (collectionData.getBccAmount().compareTo(BigDecimal.ZERO) > 0) {
 			CreateReceiptUpload alloc1 = new CreateReceiptUpload();
@@ -230,50 +237,6 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 			return;
 		}
 
-		if ((!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) && (collectionData.getAgencyId() != 0)
-				&& (collectionData.getAgreementNumber() != 0)) {
-			boolean isAgreementFound = extCollectionReceiptDao
-					.validateAgreementNumber(collectionData.getAgreementNumber());
-			if (!isAgreementFound) {
-				extRcd.setErrorCode(CR2011);
-				return;
-			}
-
-			boolean isAgencyIdFound = extCollectionReceiptDao.validateAgencyId(collectionData.getAgencyId());
-			if (!isAgencyIdFound) {
-				extRcd.setErrorCode(CR2012);
-				return;
-			}
-
-			List<ValueLabel> receiptTypes = PennantStaticListUtil.getReceiptChannels();
-			for (ValueLabel val : receiptTypes) {
-				if (val.getValue().equals(collectionData.getReceiptType())) {
-					continue;
-				} else {
-					extRcd.setErrorCode(CR2013);
-					return;
-				}
-			}
-
-		}
-
-		if (!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) {
-			if (!"C".equalsIgnoreCase(StringUtils.trimToEmpty(collectionData.getReceiptType()))
-					|| !"Q".equalsIgnoreCase(StringUtils.trimToEmpty(collectionData.getReceiptType()))) {
-				extRcd.setErrorCode(CR2004);
-				return;
-			}
-		}
-
-		if (!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) {
-			if ("Q".equalsIgnoreCase(StringUtils.trimToEmpty(collectionData.getReceiptType()))) {
-				if (collectionData.getChequeNumber() == 0) {
-					extRcd.setErrorCode(CR2005);
-					return;
-				}
-			}
-		}
-
 		if (collectionData.getDealingBankId() == 0) {
 			extRcd.setErrorCode(CR2006);
 			return;
@@ -289,18 +252,69 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 			return;
 		}
 
-		if (StringUtils.trimToEmpty(collectionData.getChequeDate()).isEmpty()) {
-			extRcd.setErrorCode(CR2009);
+		if (collectionData.getExcessAmount().compareTo(collectionData.getGrandTotal()) > 0) {
+			extRcd.setErrorCode(CR2010);
 			return;
 		}
 
-		if (collectionData.getExcessAmount().compareTo(collectionData.getGrandTotal()) > 0) {
-			extRcd.setErrorCode(CR2010);
-		}
-	}
+		List<String> validTypes = new ArrayList<>();
+		validTypes.add("C");
+		validTypes.add("Q");
 
-	public ExtCollectionReceiptDao getExtCollectionReceiptDao() {
-		return extCollectionReceiptDao;
+		if (!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) {
+			if (!validTypes.contains(collectionData.getReceiptType())) {
+				extRcd.setErrorCode(CR2004);
+				return;
+			}
+		}
+
+		if (!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) {
+			if ("Q".equalsIgnoreCase(StringUtils.trimToEmpty(collectionData.getReceiptType()))) {
+				if (collectionData.getChequeNumber() == 0) {
+					extRcd.setErrorCode(CR2005);
+					return;
+				}
+
+				if (StringUtils.trimToEmpty(collectionData.getChequeDate()).isEmpty()) {
+					extRcd.setErrorCode(CR2009);
+					return;
+				}
+
+				if (DateUtil.compare(getFormattedDate(collectionData.getChequeDate()),
+						getFormattedDate(collectionData.getReceiptDate())) > 0) {
+					extRcd.setErrorCode(CR2014);
+					return;
+				}
+			}
+		}
+
+		if ((!StringUtils.trimToEmpty(collectionData.getReceiptType()).isEmpty()) && (collectionData.getAgencyId() != 0)
+				&& (collectionData.getAgreementNumber() != 0)) {
+			boolean isAgreementFound = extCollectionReceiptDao
+					.validateAgreementNumber(String.valueOf(collectionData.getAgreementNumber()));
+			if (!isAgreementFound) {
+				extRcd.setErrorCode(CR2011);
+				return;
+			}
+
+			// boolean isAgencyIdFound = extCollectionReceiptDao.validateAgencyId(collectionData.getAgencyId());
+			// if (!isAgencyIdFound) {
+			// extRcd.setErrorCode(CR2012);
+			// return;
+			// }
+
+			List<ValueLabel> receiptTypes = PennantStaticListUtil.getReceiptChannels();
+			List<String> receiptValues = new ArrayList<>();
+
+			for (ValueLabel val : receiptTypes) {
+				receiptValues.add(val.getValue());
+			}
+
+			if (!receiptValues.contains(collectionData.getReceiptChannel())) {
+				extRcd.setErrorCode(CR2013);
+			}
+		}
+
 	}
 
 	public void setExtCollectionReceiptDao(ExtCollectionReceiptDao extCollectionReceiptDao) {
