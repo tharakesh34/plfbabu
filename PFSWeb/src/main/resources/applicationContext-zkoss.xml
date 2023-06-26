@@ -6016,8 +6016,6 @@
 	<!-- NESL Report -->
 	<bean id="neslFileDownloadListCtrl" class="com.pennanttech.interfacebajaj.NESLFileDownloadListCtrl"
 		scope="prototype" parent="basisListCtrl">
-		<property name="nESLPrepareLoansJsonReportService" ref="nESLPrepareLoansJsonReportService" />
-		<property name="nESLPrepareLoansExcelReportService" ref="nESLPrepareLoansExcelReportService" />
 		<property name="dataEngineConfig" ref="dataEngineConfig" />
 	</bean>
 

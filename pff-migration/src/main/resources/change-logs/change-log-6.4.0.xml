@@ -20940,6 +20940,69 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="ST#3007_113_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtaccountingset_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#3007_113" author="Gopal.p">
+		<createView viewName="RMTACCOUNTINGSET_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ACCOUNTSETID
+					, T1.EVENTCODE
+					, T1.ACCOUNTSETCODE
+					, T1.ACCOUNTSETCODENAME
+					, T1.VERSION
+					, T1.LASTMNTBY
+					, T1.LASTMNTON
+					, T1.RECORDSTATUS 
+                    , T1.ROLECODE
+					, T1.NEXTROLECODE
+					, T1.TASKID
+					, T1.NEXTTASKID
+					, T1.RECORDTYPE
+					, T1.WORKFLOWID
+					, T2.AEEVENTCODEDESC LOVDESCEVENTCODENAME 
+                    , T1.SYSTEMDEFAULT
+					, T1.ENTRYBYINVESTMENT
+				FROM RMTACCOUNTINGSET_TEMP T1 
+				INNER JOIN BMTAEEVENTS T2 ON T1.EVENTCODE = T2.AEEVENTCODE
+				UNION ALL
+				SELECT T1.ACCOUNTSETID
+					, T1.EVENTCODE
+					, T1.ACCOUNTSETCODE
+					, T1.ACCOUNTSETCODENAME
+					, T1.VERSION
+					, T1.LASTMNTBY
+					, T1.LASTMNTON
+					, T1.RECORDSTATUS 
+                    , T1.ROLECODE
+					, T1.NEXTROLECODE
+					, T1.TASKID
+					, T1.NEXTTASKID
+					, T1.RECORDTYPE
+					, T1.WORKFLOWID
+					, T2.AEEVENTCODEDESC LOVDESCEVENTCODENAME 
+                    , T1.SYSTEMDEFAULT
+					, T1.ENTRYBYINVESTMENT
+				FROM RMTACCOUNTINGSET T1 
+				INNER JOIN BMTAEEVENTS T2 ON T1.EVENTCODE = T2.AEEVENTCODE
+				WHERE NOT EXISTS (SELECT 1 FROM RMTACCOUNTINGSET_TEMP WHERE ACCOUNTSETID = T1.ACCOUNTSETID)
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#3007_113_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+		    	select deps_restore_dependencies ('plf', 'rmtaccountingset_view');
+		 	]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#3007_112_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -21063,73 +21126,11 @@
 	<changeSet id="ST#3007_112_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
-		    	select deps_restore_dependencies ('plf' 'rmttransactionentry_view');
+		    	select deps_restore_dependencies ('plf', 'rmttransactionentry_view');
 		 	]]>
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#3007_113_pre" author="Gopal.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'rmtaccountingset_view');
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="ST#3007_113" author="Gopal.p">
-		<createView viewName="RMTACCOUNTINGSET_VIEW" replaceIfExists="true">
-			<![CDATA[
-				SELECT T1.ACCOUNTSETID
-					, T1.EVENTCODE
-					, T1.ACCOUNTSETCODE
-					, T1.ACCOUNTSETCODENAME
-					, T1.VERSION
-					, T1.LASTMNTBY
-					, T1.LASTMNTON
-					, T1.RECORDSTATUS 
-                    , T1.ROLECODE
-					, T1.NEXTROLECODE
-					, T1.TASKID
-					, T1.NEXTTASKID
-					, T1.RECORDTYPE
-					, T1.WORKFLOWID
-					, T2.AEEVENTCODEDESC LOVDESCEVENTCODENAME 
-                    , T1.SYSTEMDEFAULT
-					, T1.ENTRYBYINVESTMENT
-				FROM RMTACCOUNTINGSET_TEMP T1 
-				INNER JOIN BMTAEEVENTS T2 ON T1.EVENTCODE = T2.AEEVENTCODE
-				UNION ALL
-				SELECT T1.ACCOUNTSETID
-					, T1.EVENTCODE
-					, T1.ACCOUNTSETCODE
-					, T1.ACCOUNTSETCODENAME
-					, T1.VERSION
-					, T1.LASTMNTBY
-					, T1.LASTMNTON
-					, T1.RECORDSTATUS 
-                    , T1.ROLECODE
-					, T1.NEXTROLECODE
-					, T1.TASKID
-					, T1.NEXTTASKID
-					, T1.RECORDTYPE
-					, T1.WORKFLOWID
-					, T2.AEEVENTCODEDESC LOVDESCEVENTCODENAME 
-                    , T1.SYSTEMDEFAULT
-					, T1.ENTRYBYINVESTMENT
-				FROM RMTACCOUNTINGSET T1 
-				INNER JOIN BMTAEEVENTS T2 ON T1.EVENTCODE = T2.AEEVENTCODE
-				WHERE NOT EXISTS (SELECT 1 FROM RMTACCOUNTINGSET_TEMP WHERE ACCOUNTSETID = T1.ACCOUNTSETID)
-			]]>
-		</createView>
-	</changeSet>
-	
-	<changeSet id="ST#3007_113_post" author="Gopal.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-		    	select deps_restore_dependencies ('plf', 'rmtaccountingset_view');
-		 	]]>
-		</sql>
-	</changeSet>
 	
 	<changeSet id="ST#3007_114_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
@@ -21357,4 +21358,203 @@
 			]]>
 		</sql>
 	</changeSet>
-</databaseChangeLog> 
+	
+	<changeSet id="TK#13888.1_pre" author="Sravanthi.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'vasmovement_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#13888.1" author="Sravanthi.G">
+		<createView viewName="VASMOVEMENT_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.VASMOVEMENTID,
+					T2.FINID,
+					T2.FINREFERENCE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINAMOUNT,
+					T2.FINSTARTDATE,
+					T2.MATURITYDATE,
+					T3.CUSTCIF,
+					T2.FINTYPE,
+					T2.FINCCY,
+					T2.FINBRANCH,
+					T2.NUMBEROFTERMS
+				FROM VASMOVEMENT_TEMP T1
+				INNER JOIN FINANCEMAIN T2 ON T2.FINID = T1.FINID
+				INNER JOIN CUSTOMERS T3 ON T3.CUSTID = T2.CUSTID
+				UNION ALL
+				SELECT T1.VASMOVEMENTID,
+					T2.FINID,
+					T2.FINREFERENCE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINAMOUNT,
+					T2.FINSTARTDATE,
+					T2.MATURITYDATE,
+					T3.CUSTCIF,
+					T2.FINTYPE,
+					T2.FINCCY,
+					T2.FINBRANCH,
+					T2.NUMBEROFTERMS
+				FROM VASMOVEMENT T1
+				INNER JOIN FINANCEMAIN T2 ON T2.FINID = T1.FINID
+				INNER JOIN CUSTOMERS T3 ON T3.CUSTID = T2.CUSTID
+				WHERE NOT EXISTS (SELECT 1 FROM VASMOVEMENT_TEMP WHERE VASMOVEMENTID = T1.VASMOVEMENTID)
+				UNION ALL
+				SELECT 0 VASMOVEMENTID,
+					T1.FINID,
+					T1.FINREFERENCE,
+					0 VERSION,
+					0 LASTMNTBY,
+					NULL LASTMNTON,
+					NULL RECORDSTATUS,
+					NULL ROLECODE,
+					NULL NEXTROLECODE,
+					NULL TASKID,
+					NULL NEXTTASKID,
+					NULL RECORDTYPE,
+					0 WORKFLOWID,
+					T1.FINAMOUNT,
+					T1.FINSTARTDATE,
+					T1.MATURITYDATE,
+					T3.CUSTCIF,
+					T1.FINTYPE,
+					T1.FINCCY,
+					T1.FINBRANCH,
+					T1.NUMBEROFTERMS
+				FROM FINANCEMAIN T1
+				INNER JOIN CUSTOMERS T3 ON T3.CUSTID = T2.CUSTID
+				WHERE NOT (T1.FINID IN (SELECT FINID FROM VASMOVEMENT_TEMP)) AND NOT T1.FINID IN (SELECT FINID FROM VASMOVEMENT)
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="TK#13888.1_post" author="Sravanthi.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'vasmovement_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#13888.2_pre" author="Sravanthi.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'vasmovementdetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#13888.2" author="Sravanthi.G">
+		<createView viewName="VASMOVEMENTDETAILS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.VASMOVEMENTID,
+					T1.VASMOVEMENTDETAILID,
+					T2.FINID,
+					T2.FINREFERENCE,
+					T1.VASREFERENCE,
+					T1.MOVEMENTDATE,
+					T1.MOVEMENTAMT,
+					T1.VASPROVIDER,
+					T1.VASPRODUCT,
+					T1.VASAMOUNT,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM VASMOVEMENTDETAILS_TEMP T1
+				INNER JOIN FINANCEMAIN T2 ON T2.FINID = T1.FINID
+				UNION ALL
+				SELECT T1.VASMOVEMENTID,
+					T1.VASMOVEMENTDETAILID,
+					T2.FINID,
+					T2.FINREFERENCE,
+					T1.VASREFERENCE,
+					T1.MOVEMENTDATE,
+					T1.MOVEMENTAMT,
+					T1.VASPROVIDER,
+					T1.VASPRODUCT,
+					T1.VASAMOUNT,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM VASMOVEMENTDETAILS T1
+				INNER JOIN FINANCEMAIN T2 ON T2.FINID = T1.FINID
+				WHERE NOT EXISTS (SELECT 1 FROM VASMOVEMENTDETAILS_TEMP WHERE VASMOVEMENTID = T1.VASMOVEMENTID AND VASMOVEMENTDETAILID = T1.VASMOVEMENTDETAILID)
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="TK#13888.2_post" author="Sravanthi.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'vasmovementdetails_view');
+			]]>
+		</sql>
+	</changeSet>
+	 
+	<changeSet id="TK#13888.3_pre" author="Sravanthi.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'lockedfinances_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#13888.3" author="Sravanthi.G">
+		<createView viewName="LOCKEDFINANCES_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
+					T2.USRLOGIN AS NEXTUSRNAME,
+					T2.USRMOBILE AS LOVVALUE,
+					T1.RECORDTYPE,
+					T1.RECORDSTATUS
+				FROM FINANCEMAIN_TEMP T1
+				INNER JOIN SECUSERS T2 ON T2.USRID::CHARACTER VARYING(20) = T1.NEXTUSERID
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="TK#13888.3_post" author="Sravanthi.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'lockedfinances_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+</databaseChangeLog>

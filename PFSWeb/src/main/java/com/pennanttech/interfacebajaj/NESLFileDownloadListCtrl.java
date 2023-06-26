@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
@@ -73,7 +74,6 @@ public class NESLFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> {
 	protected AmazonS3Bucket bucket;
 
 	private transient NESLPrepareLoansExcelReportService nESLPrepareLoansExcelReportService;
-
 	private transient NESLPrepareLoansJsonReportService nESLPrepareLoansJsonReportService;
 	private List<ValueLabel> reportFormatList = PennantStaticListUtil.getReportFormatList();
 	private List<ValueLabel> categoryCodes = PennantStaticListUtil.getCustCtgList();
@@ -342,6 +342,7 @@ public class NESLFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> {
 		return nESLPrepareLoansJsonReportService;
 	}
 
+	@Autowired(required = false)
 	public void setnESLPrepareLoansJsonReportService(
 			NESLPrepareLoansJsonReportService nESLPrepareLoansJsonReportService) {
 		this.nESLPrepareLoansJsonReportService = nESLPrepareLoansJsonReportService;
@@ -351,6 +352,7 @@ public class NESLFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> {
 		return nESLPrepareLoansExcelReportService;
 	}
 
+	@Autowired(required = false)
 	public void setnESLPrepareLoansExcelReportService(
 			NESLPrepareLoansExcelReportService nESLPrepareLoansExcelReportService) {
 		this.nESLPrepareLoansExcelReportService = nESLPrepareLoansExcelReportService;

@@ -13476,4 +13476,18 @@
 		parent="sequenceDao" />
 
 	<bean id="letterService" class="com.pennant.pff.letter.service.LetterService" />
+	
+	<bean id="lenderDataUploadDAO" class="com.pennant.backend.dao.lenderupload.impl.LenderDataUploadDAOImpl"
+		parent="basicDao" />
+		
+	<bean id="lenderDataDAO" class="com.pennant.backend.dao.lenderupload.impl.LenderDataDAOImpl"
+		parent="basicDao" />
+		
+	<bean id="lenderDataUploadService" class="com.pennant.backend.service.lenderupload.impl.LenderDataUploadServiceImpl">
+		<property name="lenderDataUploadDAO" ref="lenderDataUploadDAO" />	
+	</bean>
+	
+	<bean id="lenderDataService" class="com.pennant.backend.service.lenderupload.impl.LenderDataServiceImpl">
+		<property name="lenderDataDAO" ref="lenderDataDAO" />
+	</bean>
 </beans>
