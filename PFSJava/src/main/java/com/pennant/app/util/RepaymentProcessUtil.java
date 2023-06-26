@@ -156,11 +156,11 @@ public class RepaymentProcessUtil {
 	private LoanPaymentService loanPaymentService;
 	private AdvancePaymentService advancePaymentService;
 	private HoldMarkingService holdMarkingService;
+	private LetterService letterService;
 
 	private RepaymentPostingsUtil repaymentPostingsUtil;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private ReceiptCalculator receiptCalculator;
-	private LetterService letterService;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -2328,12 +2328,6 @@ public class RepaymentProcessUtil {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for Fetching Accounting Event Code based on Finance Event Action
-	 * 
-	 * @param finEvent
-	 * @return
-	 */
 	private String getEventCode(String finEvent, String receiptMode) {
 		switch (finEvent) {
 		case FinServiceEvent.SCHDRPY:
@@ -2365,12 +2359,6 @@ public class RepaymentProcessUtil {
 		return cal.getTime();
 	}
 
-	/**
-	 * Method for Sorting Schedule Details
-	 * 
-	 * @param financeScheduleDetail
-	 * @return
-	 */
 	public List<FinanceScheduleDetail> sortSchdDetails(List<FinanceScheduleDetail> financeScheduleDetail) {
 
 		if (financeScheduleDetail != null && financeScheduleDetail.size() > 0) {
@@ -2879,8 +2867,18 @@ public class RepaymentProcessUtil {
 	}
 
 	@Autowired
+	public void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
+		this.advancePaymentService = advancePaymentService;
+	}
+
+	@Autowired
 	public void setHoldMarkingService(HoldMarkingService holdMarkingService) {
 		this.holdMarkingService = holdMarkingService;
+	}
+
+	@Autowired
+	public void setLetterService(LetterService letterService) {
+		this.letterService = letterService;
 	}
 
 	@Autowired
@@ -2896,10 +2894,5 @@ public class RepaymentProcessUtil {
 	@Autowired
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
-	}
-
-	@Autowired
-	public void setLetterService(LetterService letterService) {
-		this.letterService = letterService;
 	}
 }
