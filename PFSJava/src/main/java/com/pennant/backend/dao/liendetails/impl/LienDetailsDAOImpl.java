@@ -30,11 +30,6 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 
 	@Override
 	public void save(LienDetails lu) {
-		if (lu.getLienID() <= 0) {
-			lu.setLienReference(String.valueOf((getNextValue("SEQ_LIEN_HEADER_LIEN_REF"))));
-			lu.setLienID((getNextValue("SEQ_LIEN_HEADER_LIEN_ID")));
-		}
-
 		StringBuilder sql = new StringBuilder("Insert Into Lien_Details");
 		sql.append(" (LienID, HeaderID, Reference, Marking, MarkingDate, MarkingReason");
 		sql.append(", DeMarking, DemarkingReason, DemarkingDate, LienReference, LienStatus, Source");

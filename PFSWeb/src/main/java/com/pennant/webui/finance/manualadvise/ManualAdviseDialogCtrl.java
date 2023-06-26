@@ -1484,8 +1484,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 				return true;
 			}
-			if (!this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Save") && accountingDetailDialogCtrl
-					.getDisbCrSum().compareTo(accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
+			if (!this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Save")
+					&& accountingDetailDialogCtrl != null && accountingDetailDialogCtrl.getDisbCrSum()
+							.compareTo(accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 				return true;
 			}

@@ -14,6 +14,7 @@ import org.springframework.security.saml.metadata.MetadataGeneratorFilter;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -22,7 +23,6 @@ import org.springframework.security.web.session.ConcurrentSessionFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.web.security.filter.AuthenticationFormFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -30,7 +30,7 @@ import com.pennanttech.pennapps.web.security.filter.AuthenticationFormFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private AuthenticationFormFilter authenticationFilter;
+	private UsernamePasswordAuthenticationFilter authenticationFilter;
 	@Autowired
 	private AuthenticationManager authenticationProvider;
 	@Autowired

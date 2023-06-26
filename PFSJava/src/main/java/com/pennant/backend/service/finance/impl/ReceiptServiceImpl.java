@@ -8399,6 +8399,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		FinanceType financeType = schdData.getFinanceType();
 		FinanceMain fm = schdData.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		fd.setFinFeeConfigList(
+				finFeeConfigService.getFinFeeConfigList(fm.getFinID(), AccountingEvent.EARLYSTL, false, "_View"));
 		receiptCalculator.fetchEventFees(rd, false);
 		receiptCalculator.fetchManualAdviseDetails(rd, rd.getValueDate());
 
