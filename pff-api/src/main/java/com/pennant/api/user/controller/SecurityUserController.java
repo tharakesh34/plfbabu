@@ -96,6 +96,10 @@ public class SecurityUserController extends AbstractController {
 			setRecordTypeForDivsions(user.getSecurityUserDivBranchList());
 		}
 
+		if (!prvUser.getAuthType().equals(user.getAuthType())) {
+			return getFailedStatus("92021", "For UpdateSecurityUser User Type cannot be updated");
+		}
+
 		user.setCreatedOn(prvUser.getCreatedOn());
 		user.setCreatedBy(prvUser.getCreatedBy());
 		user.setNewRecord(false);

@@ -509,7 +509,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			return auditHeader;
 		}
 
-		if (AuthenticationType.LDAP.name().equals(securityUser.getAuthType())) {
+		if (AuthenticationType.LDAP.name().equals(securityUser.getAuthType()) || !securityUser.isNotifyUser()) {
 			return auditHeader;
 		}
 
@@ -1522,8 +1522,8 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			user.setUserType(Labels.getLabel("label_Auth_Type_Internal"));
 		}
 
-		if (!user.isNotifyUser() && StringUtils.isEmpty(user.getUsrEmail())) {
-			setError(ad, ERR_RU0039, "User Email");
+		if (user.isNotifyUser() && StringUtils.isEmpty(user.getUsrEmail())) {
+			setError(ad, ERR_90502, "User Email");
 			logger.debug(Literal.LEAVING);
 			return ad;
 		}

@@ -94,10 +94,6 @@ public interface FinanceEnquiryRestService {
 	@Path("/financeEnquiry/getRateChangeDetails/{finReference}")
 	LoanEnquiryResponse getRateChangeDetails(@PathParam("finReference") String finReference);
 
-	
-
-	
-
 	@GET
 	@Path("/financeEnquiry/getChargeDetails/{finReference}")
 	LoanEnquiryResponse getChargeDetails(@PathParam("finReference") String finReference);
