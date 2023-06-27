@@ -28,6 +28,7 @@ public class FinconExtractionService implements InterfaceConstants, ExtIntfConfi
 	private static final Logger logger = LogManager.getLogger(FinconExtractionService.class);
 
 	public void processExtraction() {
+		logger.debug(Literal.ENTERING);
 		Date appDate = SysParamUtil.getAppDate();
 		MapSqlParameterSource appDateAsinPram = new MapSqlParameterSource();
 		appDateAsinPram.addValue("exe_postdate", appDate);
@@ -84,7 +85,7 @@ public class FinconExtractionService implements InterfaceConstants, ExtIntfConfi
 			fileBackup(finconGLConfig, mainFile);
 			mainFile.delete();
 		}
-
+		logger.debug(Literal.LEAVING);
 	}
 
 	private String getFileName(Date appDate, FileInterfaceConfig finconGLConfig) {
@@ -111,11 +112,11 @@ public class FinconExtractionService implements InterfaceConstants, ExtIntfConfi
 
 		try {
 			Files.copy(mainFile, mainFileBkp);
+			logger.debug("EXT_FINCONGL:MainFile  backup Successful");
 		} catch (IOException e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
 
-		logger.debug("EXT_FINCONGL:MainFile  backup Successful");
 		logger.debug(Literal.LEAVING);
 	}
 
