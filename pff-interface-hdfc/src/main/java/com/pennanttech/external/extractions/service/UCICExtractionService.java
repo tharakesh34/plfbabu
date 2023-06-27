@@ -90,18 +90,16 @@ public class UCICExtractionService extends TextFileUtil implements InterfaceCons
 			}
 
 			// since no exception write and share the complete file
-
-			String baseFilePathCompleted = App.getResourcePath(ucicReqCompleteConfig.getFileLocation());
-			String completeFileName = baseFilePathCompleted + File.separator + ucicReqCompleteConfig.getFilePrepend()
+			String compFile = File.separator + ucicReqCompleteConfig.getFilePrepend()
 					+ new SimpleDateFormat(ucicReqCompleteConfig.getDateFormat()).format(appDate)
 					+ ucicReqCompleteConfig.getFileExtension();
 
 			List<StringBuilder> emptyList = new ArrayList<>();
 			emptyList.add(new StringBuilder(""));
-			super.writeDataToFile(completeFileName, emptyList);
+			super.writeDataToFile(baseFilePath + File.separator + compFile, emptyList);
 			if ("Y".equals(ucicReqConfig.getFileTransfer())) {
 				FileTransferUtil sftpServerConfig = new FileTransferUtil(ucicReqConfig);
-				sftpServerConfig.uploadToSFTP(baseFilePath, completeFileName);
+				sftpServerConfig.uploadToSFTP(baseFilePath, compFile);
 			}
 		} catch (Exception e) {
 			logger.debug("Unable to download file from DB Server to local path.", e);
