@@ -2163,36 +2163,35 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		for (Mandate mandate : mdt) {
 			String mandateType = mandate.getMandateType();
-			if (StringUtils.isNotBlank(mandateType)) {
-				switch (InstrumentType.valueOf(mandateType)) {
-				case ECS:
-				case DD:
-				case NACH:
-				case EMANDATE:
-				case SI:
-					String ifsc = mandate.getIFSC();
-					String micr = mandate.getMICR();
-					String bankCode = mandate.getBankCode();
-					String branchCode = mandate.getBranchCode();
 
-					BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+			switch (InstrumentType.valueOf(mandateType)) {
+			case ECS:
+			case DD:
+			case NACH:
+			case EMANDATE:
+			case SI:
+				String ifsc = mandate.getIFSC();
+				String micr = mandate.getMICR();
+				String bankCode = mandate.getBankCode();
+				String branchCode = mandate.getBranchCode();
 
-					if (bankBranch.getError() != null) {
-						financeDetail.getFinScheduleData().getErrorDetails().add(bankBranch.getError());
-					}
+				BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
 
-					mandate.setBankCode(bankBranch.getBankCode());
-					mandate.setBranchCode(bankBranch.getBranchCode());
-					mandate.setBankBranchID(bankBranch.getBankBranchID());
-					mandate.setIFSC(bankBranch.getIFSC());
-					mandate.setBankBranchID(bankBranch.getBankBranchID());
-					break;
-				case DAS:
-					break;
-				default:
-					break;
-
+				if (bankBranch.getError() != null) {
+					financeDetail.getFinScheduleData().getErrorDetails().add(bankBranch.getError());
 				}
+
+				mandate.setBankCode(bankBranch.getBankCode());
+				mandate.setBranchCode(bankBranch.getBranchCode());
+				mandate.setBankBranchID(bankBranch.getBankBranchID());
+				mandate.setIFSC(bankBranch.getIFSC());
+				mandate.setBankBranchID(bankBranch.getBankBranchID());
+				break;
+			case DAS:
+				break;
+			default:
+				break;
+
 			}
 
 			if (!moveLoanStage) {
