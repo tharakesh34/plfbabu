@@ -202,7 +202,7 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 
 			StringBuilder query = new StringBuilder();
 			query.append(
-					" SELECT rm.CLUSTERID,rft.FINTYPEDESC,FM.FINBRANCH,rm.BRANCHDESC RBRANCHNAME,PD.FINREFERENCE,CQ.ACCHOLDERNAME,");
+					" SELECT cl.CODE,rft.FINTYPEDESC,FM.FINBRANCH,rm.BRANCHDESC RBRANCHNAME,PD.FINREFERENCE,CQ.ACCHOLDERNAME,");
 			query.append(" bt.BANKNAME,BK.BANKBRANCHID,BK.BRANCHDESC BBRANCHNAME,");
 			query.append(" BK.MICR,PH.ID,CQ.ACCOUNTNO,");
 			query.append(" CQ.CHEQUESERIALNO,CQ.CHEQUEDATE,PD.SCHDATE,");
@@ -216,6 +216,7 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 			query.append(" Inner Join RmtProvinceVsCity pc on pc.PcCity = BK.City ");
 			query.append(" inner join BMTBankDetail bt on bt.BANKCODE = BK.BANKCODE ");
 			query.append(" inner join RMTBRANCHES rm on rm.BRANCHCODE = FM.FINBRANCH ");
+			query.append(" inner join CLUSTERS cl on rm.CLUSTERID = cl.ID");
 			query.append(" inner join RMTFINANCETYPES rft on rft.FINTYPE = FM.FINTYPE ");
 			query.append(" WHERE  PH.ID= ? AND PH.MANDATETYPE = ? AND PD.PRESENTMENTAMT > ?");
 			query.append(" AND PD.ExcludeReason = ? AND CQ.EMIREFNO = PD.EMINO");
@@ -227,12 +228,12 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 			mainNamedJdbcTemplate.getJdbcOperations().query(queryStr, ps -> {
 				int i = 1;
 				ps.setLong(i++, presentmentHeader.getId());
-				ps.setString(i++, presentmentHeader.getMandateType());// FIXME
+				ps.setString(i++, presentmentHeader.getMandateType());
 				ps.setBigDecimal(i++, BigDecimal.ZERO);
 				ps.setInt(i++, RepayConstants.PEXC_EMIINCLUDE);
 			}, rs -> {
 				ExtPresentmentFile details = new ExtPresentmentFile();
-				details.setClusterId(StringUtils.trimToEmpty(rs.getString("CLUSTERID")));
+				details.setClusterId(StringUtils.trimToEmpty(rs.getString("CODE")));
 				details.setFinBranchId(rs.getString("FINBRANCH"));
 				details.setFinBranchName(rs.getString("RBRANCHNAME"));
 				details.setProduct(rs.getString("FINTYPEDESC"));
