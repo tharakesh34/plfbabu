@@ -19,7 +19,7 @@ public interface SecurityUserRestService {
 
 	@POST
 	@Path("/securityUserService/updateSecurityUser")
-	public WSReturnStatus updateSecurityUser(SecurityUser user);
+	public SecurityUser updateSecurityUser(SecurityUser user);
 
 	@POST
 	@Path("/securityUserService/addOperation")

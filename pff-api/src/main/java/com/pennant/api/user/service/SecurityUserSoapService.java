@@ -11,7 +11,7 @@ public interface SecurityUserSoapService {
 
 	SecurityUser createSecurityUser(@WebParam(name = "user") SecurityUser user);
 
-	WSReturnStatus updateSecurityUser(@WebParam(name = "user") SecurityUser user);
+	SecurityUser updateSecurityUser(@WebParam(name = "user") SecurityUser user);
 
 	WSReturnStatus addOperation(@WebParam(name = "user") SecurityUser user);
 

@@ -75,23 +75,27 @@ public class SecurityUserWebServiceImpl extends AbstractService
 	}
 
 	@Override
-	public WSReturnStatus updateSecurityUser(SecurityUser user) throws ServiceException {
+	public SecurityUser updateSecurityUser(SecurityUser user) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
 		logKeyFields(user.getUsrLogin(), user.getUsrFName());
 
 		if (user.getUsrID() <= 0) {
-			return getFailedStatus("90502", "usrId");
+			logger.debug(Literal.LEAVING);
+			return emptyResponseObject(getFailureStatus(user, "90502", "usrId"));
 		}
 
 		SecurityUser secUser = securityUserService.getApprovedSecurityUserById(user.getUsrID());
 
 		if (secUser == null) {
-			return getFailedStatus("93303", String.valueOf(user.getUsrID()));
+			logger.debug(Literal.LEAVING);
+			return emptyResponseObject(getFailureStatus(user, "93303", String.valueOf(user.getUsrID())));
 		}
 
 		if (!StringUtils.equals(secUser.getUsrLogin(), user.getUsrLogin())) {
-			return getFailedStatus("93307", String.valueOf(user.getUsrID()), String.valueOf(user.getUsrLogin()));
+			logger.debug(Literal.LEAVING);
+			return emptyResponseObject(getFailureStatus(user, "93307", String.valueOf(user.getUsrID()),
+					String.valueOf(user.getUsrLogin())));
 		}
 
 		boolean isAllowCluster = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER);
@@ -106,15 +110,15 @@ public class SecurityUserWebServiceImpl extends AbstractService
 
 		if (ah.getErrorMessage() != null) {
 			ErrorDetail ed = ah.getErrorMessage().get(0);
-			return getFailedStatus(ed.getCode(), ed.getError());
+			logger.debug(Literal.LEAVING);
+			return emptyResponseObject(getFailureStatus(user, ed.getCode(), ed.getError()));
 		}
 
 		user.setRequestSource(RequestSource.API);
 
-		WSReturnStatus returnStatus = securityUserController.updateSecurityUser(user, isAllowCluster, liu);
-
 		logger.debug(Literal.LEAVING);
-		return returnStatus;
+
+		return emptyResponseObject(securityUserController.updateSecurityUser(user, isAllowCluster, liu));
 	}
 
 	@Override
@@ -211,6 +215,42 @@ public class SecurityUserWebServiceImpl extends AbstractService
 
 		logger.debug(Literal.LEAVING);
 		return securityUserController.updateUserStatus(user, isUserEnable);
+	}
+
+	private SecurityUser getFailureStatus(SecurityUser user, String errorCode, String... errorDesc) {
+		user.setReturnStatus(getFailedStatus(errorCode, errorDesc));
+		return user;
+	}
+
+	private SecurityUser emptyResponseObject(SecurityUser user) {
+
+		user.setUsrPwd(null);
+		user.setUsrRawPwd(null);
+		user.setUsrLName(null);
+		user.setUsrMName(null);
+		user.setUsrFName(null);
+		user.setUsrMobile(null);
+		user.setUsrEmail(null);
+		user.setUsrCanSignonFrom(null);
+		user.setUsrCanSignonTo(null);
+		user.setUsrToken(null);
+		user.setUsrBranchCode(null);
+		user.setUsrDeptCode(null);
+		user.setUsrLanguage(null);
+		user.setUserStaffID(null);
+		user.setUsrAcExpDt(null);
+		user.setUsrDesg(null);
+		user.setAuthType(null);
+		user.setldapDomainName(null);
+		user.setDisableReason(null);
+		user.setEmployeeType(null);
+		user.setReason(null);
+		user.setConfirmPassword(null);
+		user.setBaseLocation(null);
+		user.setSecurityUserDivBranchList(null);
+		user.setSecurityUserOperationsList(null);
+
+		return user;
 	}
 
 	@Autowired
