@@ -62,29 +62,23 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil
 				logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1007));
 				return;
 			}
-			String remoteFilePath = dbServerConfig.getFileTransferConfig().getSftpLocation();
-
-			if (remoteFilePath == null || "".equals(remoteFilePath)) {
-				logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1008));
-				return;
-			}
 
 			try {
 				FileTransferUtil fileTransferUtil = new FileTransferUtil(dbServerConfig);
 				fileTransferUtil.downloadFromSFTP(fileName, baseFilePath);
+				if ("Y".equals(ucicAckConfig.getFileTransfer())) {
+					uploadFilesToClientLocation(appDate, ucicAckConfig, ucicAckConfConfig, baseFilePath, fileName);
+				} else {
+					// Request file is already downloaded to location, so we are generating complete file for the
+					// request
+					// file
+					writeCompleteFile(appDate, ucicAckConfig, ucicAckConfConfig);
+				}
 			} catch (Exception e) {
 				logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1011));
 				return;
 			}
 
-			if ("Y".equals(ucicAckConfig.getFileTransfer())) {
-				uploadFilesToClientLocation(appDate, ucicAckConfig, ucicAckConfConfig, baseFilePath, fileName);
-
-			} else {
-				// Request file is already downloaded to location, so we are generating complete file for the request
-				// file
-				writeCompleteFile(appDate, ucicAckConfig, ucicAckConfConfig);
-			}
 		} else {
 			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1012));
 		}

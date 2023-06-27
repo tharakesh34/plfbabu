@@ -56,13 +56,6 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 			return;
 		}
 
-		// Get configured remote path to save file to DB server location
-		String remoteFilePath = ucicDBServerConfig.getFileTransferConfig().getSftpLocation();
-		if (remoteFilePath == null || "".equals(remoteFilePath)) {
-			logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1008));
-			return;
-		}
-
 		// Read 10 files at a time using file status = 0
 		JdbcCursorItemReader<ExtUcicFile> cursorItemReader = new JdbcCursorItemReader<ExtUcicFile>();
 		cursorItemReader.setDataSource(extDataSource);

@@ -25,7 +25,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class ExtUcicWeekFileService extends TextFileUtil
 		implements InterfaceConstants, ExtIntfConfigConstants, ErrorCodesConstants {
 	private static final Logger logger = LogManager.getLogger(ExtUcicWeekFileService.class);
-	private FileInterfaceConfig ucicWeeklyConfig;
 
 	private ExternalDao externalDao;
 
@@ -33,7 +32,7 @@ public class ExtUcicWeekFileService extends TextFileUtil
 		logger.debug(Literal.ENTERING);
 
 		// Fetch UCIC weekly config from main configuration
-		ucicWeeklyConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_WEEKLY_FILE);
+		FileInterfaceConfig ucicWeeklyConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_WEEKLY_FILE);
 
 		if (ucicWeeklyConfig == null) {
 			return;
@@ -55,27 +54,23 @@ public class ExtUcicWeekFileService extends TextFileUtil
 			// Fetch request file from DB Server location and store it in client SFTP
 			FileInterfaceConfig serverConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_PLF_DB_SERVER);
 
-			// Now get remote file to local base location using SERVER config
-			String remoteFilePath = serverConfig.getFileTransferConfig().getSftpLocation();
-			if (remoteFilePath == null || "".equals(remoteFilePath)) {
-				return;
-			}
-			FileTransferUtil fileTransferUtil = new FileTransferUtil(ucicWeeklyConfig);
+			FileTransferUtil fileTransferUtil = new FileTransferUtil(serverConfig);
+
 			try {
 				fileTransferUtil.downloadFromSFTP(fileName, baseFilePath);
+				if ("Y".equals(ucicWeeklyConfig.getFileTransfer())) {
+					FileTransferUtil sFileTransferUtil = new FileTransferUtil(ucicWeeklyConfig);
+					// Now upload file to SFTP of client location as per configuration
+					File mainFile = new File(baseFilePath + File.separator + fileName);
+					sFileTransferUtil.uploadToSFTP(baseFilePath, fileName);
+
+					fileBackup(ucicWeeklyConfig, mainFile);
+				}
 			} catch (Exception e) {
 				logger.debug(InterfaceErrorCodeUtil.getErrorMessage(UC1011));
 				return;
 			}
 
-			if ("Y".equals(ucicWeeklyConfig.getFileTransfer())) {
-				FileTransferUtil sFileTransferUtil = new FileTransferUtil(serverConfig);
-				// Now upload file to SFTP of client location as per configuration
-				File mainFile = new File(baseFilePath + File.separator + fileName);
-				sFileTransferUtil.uploadToSFTP(baseFilePath, fileName);
-
-				fileBackup(ucicWeeklyConfig, mainFile);
-			}
 		}
 
 		logger.debug(Literal.LEAVING);
