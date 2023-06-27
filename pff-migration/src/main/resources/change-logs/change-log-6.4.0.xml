@@ -13372,10 +13372,10 @@
 			baseColumnNames="PincodeId" baseTableName="Service_Branches" referencedColumnNames="PincodeId" />
 	</changeSet>
 
-	<changeSet id="ST#1561.6" author="Mounika.M">
+<!-- 	<changeSet id="ST#1561.6" author="Mounika.M">
 		<addForeignKeyConstraint constraintName="fk_SB_City" referencedTableName="RMTProvinceVSCity"
 			baseColumnNames="City" baseTableName="Service_Branches" referencedColumnNames="PCCITY" />
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="ST#1561.7" author="Mounika.M">
 		<createTable tableName="Service_Branches_Temp">
@@ -13446,10 +13446,10 @@
 			baseColumnNames="PincodeId" baseTableName="Service_Branches_Temp" referencedColumnNames="PincodeId" />
 	</changeSet>
 
-	<changeSet id="ST#1561.11" author="Mounika.M">
+<!-- 	<changeSet id="ST#1561.11" author="Mounika.M">
 		<addForeignKeyConstraint constraintName="fk_SBT_City" referencedTableName="RMTProvinceVSCity"
 			baseColumnNames="City" baseTableName="Service_Branches_Temp" referencedColumnNames="PCCITY" />
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="ST#1561.12" author="Mounika.M">
 		<createSequence sequenceName="SEQ_Service_Branches_LoanType" minValue="1"
@@ -19925,6 +19925,10 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="ST#15956.100_6_pre" author="Gopal.p">
+		<addNotNullConstraint tableName="LOAN_LETTER_MANUAL_TEMP" columnName="Id" columnDataType="bigint" />
+	</changeSet>
 
 	<changeSet id="ST#15956.100_6" author="Gopal.p">
 		<addPrimaryKey tableName="LOAN_LETTER_MANUAL_TEMP" columnNames="ID"
@@ -19995,8 +19999,8 @@
 	<changeSet id="ST#15956.100_6.1" author="Gopal.p" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE LOAN_LETTER_MANUAL_TEMP ADD CONSTRAINT DF_FTT_WAIVERAMT DEFAULT 0 FOR WaiverAmt;
-				ALTER TABLE LOAN_LETTER_MANUAL_TEMP ADD CONSTRAINT DF_FTT_ACTUALAMT DEFAULT 0 FOR ActualAmt;
+				ALTER TABLE LOAN_LETTER_MANUAL_TEMP ADD CONSTRAINT DF_LLMT_WAIVERAMT DEFAULT 0 FOR WaiverAmt;
+				ALTER TABLE LOAN_LETTER_MANUAL_TEMP ADD CONSTRAINT DF_LLMT_ACTUALAMT DEFAULT 0 FOR ActualAmt;
 			]]>
 		</sql>
 	</changeSet>
@@ -20041,6 +20045,10 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="ST#15956.100_8_pre" author="Gopal.p">
+		<addNotNullConstraint tableName="LOAN_LETTER_MANUAL" columnName="Id" columnDataType="bigint" />
+	</changeSet>
 
 	<changeSet id="ST#15956.100_8" author="Gopal.p">
 		<addPrimaryKey tableName="LOAN_LETTER_MANUAL" columnNames="ID"
@@ -20050,8 +20058,8 @@
 	<changeSet id="ST#15956.100_8.1" author="Gopal.p" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE LOAN_LETTER_MANUAL ADD CONSTRAINT DF_FTT_WAIVERAMT DEFAULT 0 FOR WaiverAmt;
-				ALTER TABLE LOAN_LETTER_MANUAL ADD CONSTRAINT DF_FTT_ACTUALAMT DEFAULT 0 FOR ActualAmt;
+				ALTER TABLE LOAN_LETTER_MANUAL ADD CONSTRAINT DF_LLM_WAIVERAMT DEFAULT 0 FOR WaiverAmt;
+				ALTER TABLE LOAN_LETTER_MANUAL ADD CONSTRAINT DF_LLM_ACTUALAMT DEFAULT 0 FOR ActualAmt;
 			]]>
 		</sql>
 	</changeSet>
@@ -20147,14 +20155,21 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="TK#6522_1" author="Gireesh.g">
+	<changeSet id="TK#6522_1" author="Gireesh.g" dbms="oracle,postgresql">
 		<dropNotNullConstraint tableName="RMTAccountTypes" columnName="PROFITCENTERID"/>
 	</changeSet>
 	
-	<changeSet id="TK#6522_2" author="Gireesh.g">
+	<changeSet id="TK#6522_1" author="Gireesh.g" dbms="mssql">
+		<dropNotNullConstraint tableName="RMTAccountTypes" columnName="PROFITCENTERID" columnDataType="bigint"/>
+	</changeSet>
+	
+	<changeSet id="TK#6522_2" author="Gireesh.g" dbms="oracle,postgresql">
 		<dropNotNullConstraint tableName="RMTAccountTypes_Temp" columnName="PROFITCENTERID"/>
 	</changeSet>
 	
+	<changeSet id="TK#6522_2" author="Gireesh.g" dbms="mssql">
+		<dropNotNullConstraint tableName="RMTAccountTypes_Temp" columnName="PROFITCENTERID" columnDataType="bigint"/>
+	</changeSet>
 	<changeSet id="TK#6522_3" author="Gireesh.g">
 		<sql>
 			<![CDATA[
@@ -21367,7 +21382,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="TK#13888.1" author="Sravanthi.G">
+	<changeSet id="TK#13888.1" author="Sravanthi.G" dbms="oracle, mssql">
 		<createView viewName="VASMOVEMENT_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.VASMOVEMENTID,
@@ -21443,7 +21458,89 @@
 					T1.FINBRANCH,
 					T1.NUMBEROFTERMS
 				FROM FINANCEMAIN T1
+				INNER JOIN CUSTOMERS T3 ON T3.CUSTID = T1.CUSTID
+				WHERE NOT (T1.FINID IN (SELECT FINID FROM VASMOVEMENT_TEMP)) AND NOT T1.FINID IN (SELECT FINID FROM VASMOVEMENT)
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="TK#13888.1" author="Sravanthi.G" dbms="postgresql">
+		<createView viewName="VASMOVEMENT_VIEW" replaceIfExists="true" >
+			<![CDATA[
+				SELECT T1.VASMOVEMENTID,
+					T2.FINID,
+					T2.FINREFERENCE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINAMOUNT,
+					T2.FINSTARTDATE,
+					T2.MATURITYDATE,
+					T3.CUSTCIF,
+					T2.FINTYPE,
+					T2.FINCCY,
+					T2.FINBRANCH,
+					T2.NUMBEROFTERMS
+				FROM VASMOVEMENT_TEMP T1
+				INNER JOIN FINANCEMAIN T2 ON T2.FINID = T1.FINID
 				INNER JOIN CUSTOMERS T3 ON T3.CUSTID = T2.CUSTID
+				UNION ALL
+				SELECT T1.VASMOVEMENTID,
+					T2.FINID,
+					T2.FINREFERENCE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINAMOUNT,
+					T2.FINSTARTDATE,
+					T2.MATURITYDATE,
+					T3.CUSTCIF,
+					T2.FINTYPE,
+					T2.FINCCY,
+					T2.FINBRANCH,
+					T2.NUMBEROFTERMS
+				FROM VASMOVEMENT T1
+				INNER JOIN FINANCEMAIN T2 ON T2.FINID = T1.FINID
+				INNER JOIN CUSTOMERS T3 ON T3.CUSTID = T2.CUSTID
+				WHERE NOT EXISTS (SELECT 1 FROM VASMOVEMENT_TEMP WHERE VASMOVEMENTID = T1.VASMOVEMENTID)
+				UNION ALL
+				SELECT 0 VASMOVEMENTID,
+					T1.FINID,
+					T1.FINREFERENCE,
+					0 as VERSION,
+					0 as LASTMNTBY,
+					NULL LASTMNTON,
+					NULL RECORDSTATUS,
+					NULL ROLECODE,
+					NULL NEXTROLECODE,
+					NULL TASKID,
+					NULL NEXTTASKID,
+					NULL RECORDTYPE,
+					0 as WORKFLOWID,
+					T1.FINAMOUNT,
+					T1.FINSTARTDATE,
+					T1.MATURITYDATE,
+					T3.CUSTCIF,
+					T1.FINTYPE,
+					T1.FINCCY,
+					T1.FINBRANCH,
+					T1.NUMBEROFTERMS
+				FROM FINANCEMAIN T1
+				INNER JOIN CUSTOMERS T3 ON T3.CUSTID = T1.CUSTID
 				WHERE NOT (T1.FINID IN (SELECT FINID FROM VASMOVEMENT_TEMP)) AND NOT T1.FINID IN (SELECT FINID FROM VASMOVEMENT)
 			]]>
 		</createView>
@@ -21534,7 +21631,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="TK#13888.3" author="Sravanthi.G">
+	<changeSet id="TK#13888.3" author="Sravanthi.G" dbms="postgresql">
 		<createView viewName="LOCKEDFINANCES_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -21548,6 +21645,39 @@
 			]]>
 		</createView>
 	</changeSet>
+	
+	
+	<changeSet id="TK#13888.3" author="Sravanthi.G" dbms="oracle">
+		<createView viewName="LOCKEDFINANCES_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
+					T2.USRLOGIN AS NEXTUSRNAME,
+					T2.USRMOBILE AS LOVVALUE,
+					T1.RECORDTYPE,
+					T1.RECORDSTATUS
+				FROM FINANCEMAIN_TEMP T1
+				INNER JOIN SECUSERS T2 ON cast(T2.USRID as varchar2(20))= T1.NEXTUSERID
+			]]>
+		</createView>
+	</changeSet>
+	
+	
+	<changeSet id="TK#13888.3" author="Sravanthi.G" dbms="mssql">
+		<createView viewName="LOCKEDFINANCES_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
+					T2.USRLOGIN AS NEXTUSRNAME,
+					T2.USRMOBILE AS LOVVALUE,
+					T1.RECORDTYPE,
+					T1.RECORDSTATUS
+				FROM FINANCEMAIN_TEMP T1
+				INNER JOIN SECUSERS T2 ON cast(T2.USRID as varchar(20))= T1.NEXTUSERID
+			]]>
+		</createView>
+	</changeSet>
+
 	
 	<changeSet id="TK#13888.3_post" author="Sravanthi.G" dbms="postgresql">
 		<sql>
