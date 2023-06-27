@@ -79,7 +79,7 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 		}
 
 		// Fetch 10 files using extraction status = 0
-		JdbcCursorItemReader<ExtPresentmentFile> cursorItemReader = new JdbcCursorItemReader<ExtPresentmentFile>();
+		JdbcCursorItemReader<ExtPresentmentFile> cursorItemReader = new JdbcCursorItemReader<>();
 		cursorItemReader.setDataSource(extDataSource);
 		cursorItemReader.setFetchSize(10);
 		cursorItemReader.setSql(FETCH_QUERY);
