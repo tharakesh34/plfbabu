@@ -2,10 +2,12 @@ package com.pennanttech.extension.implementation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.pennanttech.pff.npa.NpaScope;
 import com.pennanttech.pff.provision.ProvisionBook;
 import com.pennanttech.pff.provision.ProvisionReversalStage;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 
 public class FeatureExtension implements IFeatureExtension {
 	static Map<String, Object> defaultExtensions = new HashMap<>();
@@ -19,6 +21,7 @@ public class FeatureExtension implements IFeatureExtension {
 	static Map<String, Object> receiptExtensions = new HashMap<>();
 	static Map<String, Object> lppExtensions = new HashMap<>();
 	static Map<String, Object> npaAndProvisionExtensions = new HashMap<>();
+	static Map<String, Object> excessExtensions = new HashMap<>();
 
 	/**
 	 * <p>
@@ -157,6 +160,7 @@ public class FeatureExtension implements IFeatureExtension {
 
 		npaAndProvisionExtensions();
 
+		excessExtensions();
 	}
 
 	private void customerExtensions() {
@@ -228,6 +232,11 @@ public class FeatureExtension implements IFeatureExtension {
 		return receiptExtensions;
 	}
 
+	@Override
+	public Map<String, Object> getExcessExtensions() {
+		return excessExtensions;
+	}
+
 	private void lppExtensions() {
 		lppExtensions.put("LPP_DUE_CREATION_REQ", false);
 	}
@@ -245,6 +254,16 @@ public class FeatureExtension implements IFeatureExtension {
 		npaAndProvisionExtensions.put("NPA_SCOPE", NpaScope.LOAN);
 
 		npaAndProvisionExtensions.put("PROVISION_BOOKS", ProvisionBook.REGULATORY);
+	}
+
+	private void excessExtensions() {
+		Set<String> defaultAdjustments = ExcessType.defaultAdjustToList();
+
+		excessExtensions.put("ALLOWED_ADJUSTMENTS", defaultAdjustments);
+
+		Set<String> defaultKnockOffFromList = ExcessType.defaultKnockOffFromList();
+
+		excessExtensions.put("ALLOWED_KNOCKOFF_FROM", defaultKnockOffFromList);
 	}
 
 }
