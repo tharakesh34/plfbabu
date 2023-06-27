@@ -2235,7 +2235,15 @@
 		<modifyDataType tableName="EXT_BASEL_TWO" columnName="AGREEMENTID" newDataType="VARCHAR(50)" />
 	</changeSet>
 	
-	<changeSet id="24.4" author="sreeram.r">
+	<changeSet id="24.04" author="sreeram.r">
+		<sql>
+			<![CDATA[
+				  truncate table FINCON_GL_STG;			
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="24.05" author="sreeram.r">
 		<modifyDataType tableName="FINCON_GL_STG" columnName="ACC_DATE"	newDataType="VARCHAR(50)" />
 	</changeSet>
 </databaseChangeLog>
