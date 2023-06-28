@@ -748,7 +748,11 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 			List<FinODDetails> odDetails) {
 
 		List<FinODDetails> list = odDetails.stream().filter(od -> od.getFinODTillDate().compareTo(pastDueDate) >= 0)
-				.collect(Collectors.toList());
+				.toList();
+
+		if (CollectionUtils.isEmpty(list)) {
+			return null;
+		}
 
 		Date npaPastDueDate = list.stream().findFirst().get().getFinODSchdDate();
 
@@ -767,7 +771,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		}
 
 		list = odDetails.stream().sorted((od1, od2) -> DateUtil.compare(od2.getFinODSchdDate(), od1.getFinODSchdDate()))
-				.collect(Collectors.toList());
+				.toList();
 
 		Optional<FinODDetails> findFirst = list.stream().filter(od -> od.getFinCurODDays() >= pastDueDaysForNpaStage)
 				.findFirst();
