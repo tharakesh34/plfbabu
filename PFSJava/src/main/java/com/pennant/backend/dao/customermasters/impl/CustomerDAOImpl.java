@@ -1714,7 +1714,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" Select CustID From FinanceMain_Temp Where CustID = ?");
 		sql.append(" union all");
 		sql.append(" Select CustID From FinanceMain Where CustID = ?");
-		sql.append(" and not exists (Select 1 from FinanceMain_Temp where FinID = FinanceMain.FinID))");
+		sql.append(" and not exists (Select 1 from FinanceMain_Temp where FinID = FinanceMain.FinID)) t");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, custID, custID) > 0;
