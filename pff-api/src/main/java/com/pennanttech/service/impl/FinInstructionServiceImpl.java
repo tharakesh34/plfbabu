@@ -2986,8 +2986,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 		}
 
-		List<FeeWaiverDetail> feeWaiverDetails = feeWaiverHeader.getFeeWaiverDetails();
-		for (FeeWaiverDetail fwd : feeWaiverDetails) {
+		for (FeeWaiverDetail fwd : feeWaiver.getFeeWaiverDetails()) {
 			if (fwd.getBalanceAmount() != null && fwd.getBalanceAmount().compareTo(BigDecimal.ZERO) > 0) {
 				actaulfeeWaiverDetails.add(fwd);
 			}
@@ -2995,7 +2994,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		feeWaiver.setFeeWaiverDetails(actaulfeeWaiverDetails);
 
-		if (feeWaiver.getFeeWaiverDetails().size() != feeWaiverDetails.size()) {
+		int actualFeeTypeCode = feeWaiver.getFeeWaiverDetails().size();
+		int feeTypeCode = feeWaiverHeader.getFeeWaiverDetails().size();
+		if (actualFeeTypeCode != feeTypeCode) {
 			String valueParm[] = new String[4];
 			valueParm[0] = "FeeType Codes";
 			valueParm[1] = "Should";
@@ -3004,8 +3005,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
 			return returnStatus;
 		}
-
-		for (FeeWaiverDetail fwd : feeWaiverDetails) {
+		List<FeeWaiverDetail> feeWaiverDetails = feeWaiverHeader.getFeeWaiverDetails();
+		for (FeeWaiverDetail fwd : feeWaiver.getFeeWaiverDetails()) {
 			if (StringUtils.isBlank(fwd.getFeeTypeCode())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "FeeType Code";
@@ -3052,9 +3053,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				valueParm[1] = "0";
 				return APIErrorHandlerService.getFailedStatus("91121", valueParm);
 			}
+
 		}
 		boolean feeCode = false;
-		for (FeeWaiverDetail feeWaiverDetail : feeWaiverDetails) {
+		for (FeeWaiverDetail feeWaiverDetail : feeWaiver.getFeeWaiverDetails()) {
 			for (FeeWaiverDetail compareWithBalance : actaulfeeWaiverDetails) {
 				if (StringUtils.equals(feeWaiverDetail.getFeeTypeCode(), compareWithBalance.getFeeTypeCode())) {
 					feeCode = true;
