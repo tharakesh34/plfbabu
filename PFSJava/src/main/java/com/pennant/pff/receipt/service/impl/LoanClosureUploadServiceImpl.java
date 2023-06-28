@@ -327,6 +327,7 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		FinScheduleData fsd = fd.getFinScheduleData();
 
 		FinanceMain fm = financeMainDAO.getFinanceMainForLMSEvent(lcu.getReferenceID());
+		fm.setClosureType(lcu.getClosureType());
 		fm.setPenaltyRates(finODPenaltyRateDAO.getFinODPenaltyRateByRef(fm.getFinID(), ""));
 		fsd.setFinanceMain(fm);
 		fsd.setFinPftDeatil(financeProfitDetailDAO.getFinProfitDetailsByFinRef(lcu.getReferenceID()));
