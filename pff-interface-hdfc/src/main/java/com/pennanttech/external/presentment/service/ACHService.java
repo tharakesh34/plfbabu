@@ -110,7 +110,7 @@ public class ACHService extends TextFileUtil implements InterfaceConstants, Erro
 				item.append(StringUtils.rightPad(batchRef, 18));// 18
 				item.append(StringUtils.rightPad("400240015", 11));// 11
 				item.append(StringUtils.rightPad("02402970000393", 35));// 35
-				item.append(StringUtils.rightPad("" + presentmentListNew.size(), 9));// 9
+				item.append(StringUtils.rightPad(prependZeros("" + presentmentListNew.size(), 9), 9));// 9
 				item.append(StringUtils.rightPad(EMPTY, 2));
 				item.append(StringUtils.rightPad(EMPTY, 57));
 				itemList.add(0, item); // Add at index 0, because this is header item
