@@ -21200,7 +21200,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#3007_115_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#3007_115.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'bmtaeevents_aview');
@@ -21208,7 +21208,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#3007_115" author="Gopal.p">
+	<changeSet id="ST#3007_115.1" author="Gopal.p">
 		<createView viewName="BMTAEEVENTS_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT AEEVENTCODE
@@ -21224,12 +21224,12 @@
 					, NEXTTASKID
 					, RECORDTYPE
 					, WORKFLOWID
-				FROM BMTAEEVENTS_TEMP
+				FROM BMTAEEVENTS
 			]]>
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#3007_115_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#3007_115.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 		    	select deps_restore_dependencies ('plf', 'bmtaeevents_aview');
