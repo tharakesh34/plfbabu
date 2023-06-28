@@ -146,7 +146,7 @@ public class FinODCAmountDAOImpl extends SequenceDao<FinOverDueCharges> implemen
 
 				@Override
 				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-					PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "ID" });
+					PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
 
 					int index = 1;
 
