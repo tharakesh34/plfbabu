@@ -807,8 +807,12 @@
 		<dropTable tableName="ADTLOAN_LETTER_MANUAL_BKP"/>
 	</changeSet>
 	
-	<changeSet id="TK#6522_1" author="Gireesh.g">
+	<changeSet id="TK#6522_1" author="Gireesh.g" dbms="postgresql,oracle">
 		<dropNotNullConstraint tableName="AdtRMTAccountTypes" columnName="PROFITCENTERID"/>
+	</changeSet>
+	
+	<changeSet id="TK#6522_1" author="Gireesh.g" dbms="mssql">
+		<dropNotNullConstraint tableName="AdtRMTAccountTypes" columnName="PROFITCENTERID" columnDataType="bigint"/>
 	</changeSet>
 	
 	<changeSet id="TK#6522_2" author="Gopal.p">

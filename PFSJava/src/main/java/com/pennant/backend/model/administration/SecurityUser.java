@@ -171,8 +171,6 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private String baseLocation;
 	@XmlElement
 	private boolean notifyUser;
-	@XmlElement
-	private String mode;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -193,7 +191,6 @@ public class SecurityUser extends AbstractWorkflowEntity {
 		excludeFields.add("confirmPassword");
 		excludeFields.add("requestSource");
 		excludeFields.add("notifyUser");
-		excludeFields.add("mode");
 		excludeFields.add("usrRawPwd");
 
 		return excludeFields;
@@ -802,14 +799,6 @@ public class SecurityUser extends AbstractWorkflowEntity {
 
 	public void setNotifyUser(boolean notifyUser) {
 		this.notifyUser = notifyUser;
-	}
-
-	public String getMode() {
-		return mode;
-	}
-
-	public void setMode(String mode) {
-		this.mode = mode;
 	}
 
 }

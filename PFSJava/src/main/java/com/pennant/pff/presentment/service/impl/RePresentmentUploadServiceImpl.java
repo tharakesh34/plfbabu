@@ -229,22 +229,6 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresent
 			return;
 		}
 
-		List<String> fileNames = representmentUploadDAO.isDuplicateExists(reference, dueDate, header.getId());
-
-		if (!fileNames.isEmpty()) {
-			StringBuilder message = new StringBuilder();
-
-			message.append("Duplicate RePresentMent exists with combination FinReference -");
-			message.append(reference);
-			message.append(", Due Date -").append(dueDate);
-			message.append("with filename").append(fileNames.get(0)).append("already exists");
-
-			setFailureStatus(detail, PresentmentError.REPRMNT523.name(), message.toString());
-
-			logger.info("Duplicate RePresentment found in RePresentUpload table..");
-			return;
-		}
-
 		setSuccesStatus(detail);
 
 		logger.info("Validated the Data for the reference {}", detail.getReference());

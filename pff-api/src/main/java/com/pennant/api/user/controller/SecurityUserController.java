@@ -83,7 +83,7 @@ public class SecurityUserController extends AbstractController {
 		return response;
 	}
 
-	public WSReturnStatus updateSecurityUser(SecurityUser user, boolean isAllowCluster, LoggedInUser ud) {
+	public SecurityUser updateSecurityUser(SecurityUser user, boolean isAllowCluster, LoggedInUser ud) {
 		logger.debug(Literal.ENTERING);
 
 		prepareRequiredData(user, ud);
@@ -97,7 +97,8 @@ public class SecurityUserController extends AbstractController {
 		}
 
 		if (!prvUser.getAuthType().equals(user.getAuthType())) {
-			return getFailedStatus("92021", "For UpdateSecurityUser User Type cannot be updated");
+			logger.debug(Literal.LEAVING);
+			return getFailureStatus(prvUser, "92021", "For UpdateSecurityUser User Type cannot be updated");
 		}
 
 		user.setCreatedOn(prvUser.getCreatedOn());
@@ -121,13 +122,14 @@ public class SecurityUserController extends AbstractController {
 		List<ErrorDetail> errors = ah.getErrorMessage();
 		if (CollectionUtils.isEmpty(ah.getErrorMessage())) {
 			logger.debug(Literal.LEAVING);
-			return getSuccessStatus();
+			prvUser.setReturnStatus(getSuccessStatus());
+			return prvUser;
 		}
 
 		ErrorDetail error = errors.get(errors.size() - 1);
 
 		logger.debug(Literal.LEAVING);
-		return getFailedStatus(error.getCode(), error.getError());
+		return getFailureStatus(prvUser, error.getCode(), error.getError());
 	}
 
 	public WSReturnStatus addOperation(SecurityUser user) {
@@ -392,6 +394,11 @@ public class SecurityUserController extends AbstractController {
 		response.setEmployeeType(null);
 		response.setDisableReason(null);
 		response.setBusinessVerticalCode(null);
+	}
+
+	private SecurityUser getFailureStatus(SecurityUser user, String errorCode, String... errorDesc) {
+		user.setReturnStatus(getFailedStatus(errorCode, errorDesc));
+		return user;
 	}
 
 	public void setSecurityUserService(SecurityUserService securityUserService) {

@@ -116,6 +116,7 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 		cru.setReceiptAmount(getAbsoluteAmount(collectionData.getGrandTotal()));
 		cru.setExcessAdjustTo(ExcessType.EXCESS);
 		cru.setReceiptPurpose("SP");
+		cru.setRemarks(collectionData.getRemarks());
 		cru.setStatus(RepayConstants.PAYSTATUS_REALIZED);
 		cru.setReceiptChannel(PennantConstants.List_Select);
 		// collectionData

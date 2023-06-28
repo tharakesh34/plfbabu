@@ -36,7 +36,7 @@ public class UCICExtractionService extends TextFileUtil implements InterfaceCons
 			if (resp != null && "SUCCESS".equals(resp)) {
 				logger.debug("Successfully extracted customers data.");
 			} else {
-				logger.debug("Customers data extraction Unsuccessful :" + resp);
+				logger.debug("Customers data extraction Unsuccessful", resp);
 				return;
 			}
 
@@ -71,15 +71,8 @@ public class UCICExtractionService extends TextFileUtil implements InterfaceCons
 
 			// Fetch request file from DB Server location and store it in client SFTP
 			FileInterfaceConfig serverConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_PLF_DB_SERVER);
-			String remoteFilePath = null;
 
 			if (serverConfig == null) {
-				return;
-			}
-
-			// Now get remote file to local base location using SERVER config
-			remoteFilePath = serverConfig.getFileTransferConfig().getSftpLocation();
-			if (remoteFilePath == null || "".equals(remoteFilePath)) {
 				return;
 			}
 
@@ -92,21 +85,22 @@ public class UCICExtractionService extends TextFileUtil implements InterfaceCons
 
 			// Uploading to HDFC SFTP
 			if ("Y".equals(ucicReqConfig.getFileTransfer())) {
-				FileTransferUtil sftpServerConfig = new FileTransferUtil(serverConfig);
+				FileTransferUtil sftpServerConfig = new FileTransferUtil(ucicReqConfig);
 				sftpServerConfig.uploadToSFTP(baseFilePath, fileName);
 			}
 
 			// since no exception write and share the complete file
-
-			String baseFilePathCompleted = App.getResourcePath(ucicReqCompleteConfig.getFileLocation());
-			String completeFileName = baseFilePathCompleted + File.separator + ucicReqCompleteConfig.getFilePrepend()
+			String compFile = File.separator + ucicReqCompleteConfig.getFilePrepend()
 					+ new SimpleDateFormat(ucicReqCompleteConfig.getDateFormat()).format(appDate)
 					+ ucicReqCompleteConfig.getFileExtension();
 
-			List<StringBuilder> emptyList = new ArrayList<StringBuilder>();
+			List<StringBuilder> emptyList = new ArrayList<>();
 			emptyList.add(new StringBuilder(""));
-			super.writeDataToFile(completeFileName, emptyList);
-			fileTransferUtil.uploadToSFTP(baseFilePath, completeFileName);
+			super.writeDataToFile(baseFilePath + File.separator + compFile, emptyList);
+			if ("Y".equals(ucicReqConfig.getFileTransfer())) {
+				FileTransferUtil sftpServerConfig = new FileTransferUtil(ucicReqConfig);
+				sftpServerConfig.uploadToSFTP(baseFilePath, compFile);
+			}
 		} catch (Exception e) {
 			logger.debug("Unable to download file from DB Server to local path.", e);
 			return;

@@ -8420,7 +8420,17 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		receiptDTO.setRoundAdjMth(SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD));
 		receiptDTO.setLppFeeType(feeTypeDAO.getTaxDetailByCode(Allocation.ODC));
 		receiptDTO.setFinType(financeType);
-		receiptDTO.setValuedate(SysParamUtil.getAppDate());
+
+		Date valueDate = rd.getValueDate();
+		if (valueDate == null) {
+			valueDate = rd.getReceiptHeader().getValueDate();
+		}
+
+		if (valueDate == null) {
+			valueDate = SysParamUtil.getAppDate();
+		}
+
+		receiptDTO.setValuedate(valueDate);
 
 		return receiptDTO;
 	}

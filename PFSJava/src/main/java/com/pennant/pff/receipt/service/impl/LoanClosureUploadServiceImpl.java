@@ -316,6 +316,7 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		rd.setFinID(lcu.getReferenceID());
 		rd.setFinReference(lcu.getReference());
 		rd.setUserDetails(lcu.getUserDetails());
+		rd.setValueDate(appDate);
 
 		FinReceiptHeader rch = new FinReceiptHeader();
 		rch.setReceiptPurpose(ReceiptPurpose.EARLYSETTLE.code());

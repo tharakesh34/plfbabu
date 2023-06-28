@@ -551,6 +551,15 @@
 		</createIndex>
 	</changeSet>
 
+	<changeSet id="26_pre" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				drop index IX_ACS_ACCCY on Accounts;
+				drop index IX_ACCOUNTS_ACTYPE on Accounts;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="26" author="murthy.y">
 		<dropColumn tableName="Accounts" columnName="AcCcy" />
 		<dropColumn tableName="Accounts" columnName="AcType" />
