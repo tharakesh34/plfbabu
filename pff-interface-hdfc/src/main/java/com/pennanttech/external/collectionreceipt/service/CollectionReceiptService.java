@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.receipt.model.CreateReceiptUpload;
@@ -107,7 +106,7 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 		boolean isCheque = false;
 		CreateReceiptUpload cru = new CreateReceiptUpload();
 		cru.setReference(String.valueOf(collectionData.getAgreementNumber()));
-		cru.setReferenceID(collectionData.getReceiptNumber());
+		cru.setPaymentRef(String.valueOf(collectionData.getReceiptNumber()));
 		cru.setAllocationType("M");
 		cru.setAppDate(SysParamUtil.getAppDate());
 		cru.setValueDate(getFormattedDate(collectionData.getReceiptDate()));
@@ -118,7 +117,7 @@ public class CollectionReceiptService implements ErrorCodesConstants {
 		cru.setReceiptPurpose("SP");
 		cru.setRemarks(collectionData.getRemarks());
 		cru.setStatus(RepayConstants.PAYSTATUS_REALIZED);
-		cru.setReceiptChannel(PennantConstants.List_Select);
+		cru.setReceiptChannel(collectionData.getReceiptChannel());
 		// collectionData
 		if ("Q".equals(StringUtils.stripToEmpty(collectionData.getReceiptType()))) {
 			isCheque = true;
