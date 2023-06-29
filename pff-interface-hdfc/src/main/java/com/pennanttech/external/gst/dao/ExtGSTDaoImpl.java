@@ -539,7 +539,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 		try {
 			String sql = " SELECT ID,TAXTYPE,TAXPERC,ACTUALTAX,PAIDTAX,NETTAX FROM  TAX_DETAILS  WHERE REFERENCEID =?";
 
-			extNamedJdbcTemplate.getJdbcOperations().query(sql, ps -> {
+			mainNamedJdbcTemplate.getJdbcOperations().query(sql, ps -> {
 				ps.setLong(1, taxHeaderId);
 			}, rs -> {
 				Taxes tax = new Taxes();
@@ -562,7 +562,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 		String sql = "UPDATE TAX_DETAILS  SET TAXPERC=?, ACTUALTAX=?, PAIDTAX=?, NETTAX=? WHERE  ID = ?";
 		logger.debug(Literal.SQL, sql);
 
-		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
+		mainNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 			ps.setBigDecimal(index++, taxes.getTaxPerc());
 			ps.setBigDecimal(index++, taxes.getActualTax());

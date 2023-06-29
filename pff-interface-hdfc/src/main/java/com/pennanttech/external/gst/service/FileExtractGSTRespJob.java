@@ -111,7 +111,7 @@ public class FileExtractGSTRespJob extends AbstractJob implements InterfaceConst
 						detailList.clear();
 					}
 					// update the file extraction as completed
-					header.setStatus(COMPLETED);
+					header.setStatus(UNPROCESSED);
 					header.setExtraction(COMPLETED);
 					extGSTDao.updateFileStatus(header);
 				} catch (Exception e) {
