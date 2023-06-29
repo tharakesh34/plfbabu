@@ -206,8 +206,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 		detail.setFm(fm);
 		detail.setReferenceID(fm.getFinID());
 
-		if (!(ExcessType.EXCESS.equals(detail.getExcessType())
-				|| ExcessType.PAYABLE.equals(detail.getExcessType()))) {
+		if (!(ExcessType.EXCESS.equals(detail.getExcessType()) || ExcessType.PAYABLE.equals(detail.getExcessType()))) {
 			setError(detail, PaymentUploadError.REFUP004);
 			return;
 		}
@@ -215,6 +214,11 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 		String feeTypeCode = StringUtils.trimToNull(detail.getFeeType());
 		Long feeTypeId = null;
 		if (ExcessType.PAYABLE.equals(detail.getExcessType())) {
+			if (StringUtils.isEmpty(feeTypeCode)) {
+				setError(detail, PaymentUploadError.REFUP016);
+				return;
+			}
+
 			feeTypeId = feeTypeDAO.getPayableFeeTypeID(feeTypeCode);
 
 			if (feeTypeId == null) {

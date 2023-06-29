@@ -173,14 +173,14 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 				}
 				index++;
 
-				if (index == 23) {
+				if (index > 10) {
 					paramSource.addValue("ERRORCODE", "9999");
 					paramSource.addValue("ERRORDESC", "Fee Types are exceeded the limit");
 
 					paramSource.addValue("STATUS", "F");
 					paramSource.addValue("PROGRESS", EodConstants.PROGRESS_FAILED);
 
-					continue;
+					break;
 				}
 			}
 

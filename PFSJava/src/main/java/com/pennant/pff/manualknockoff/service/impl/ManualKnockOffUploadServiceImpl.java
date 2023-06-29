@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -68,6 +69,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private FeeTypeDAO feeTypeDAO;
 
 	public ManualKnockOffUploadServiceImpl() {
 		super();
@@ -151,14 +153,22 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		}
 
 		String excessType = detail.getExcessType();
+		String feeTypeCode = detail.getFeeTypeCode();
 
-		if ("P".equals(excessType) && StringUtils.isEmpty(detail.getFeeTypeCode())) {
+		if ("P".equals(excessType) && StringUtils.isEmpty(feeTypeCode)) {
 			setError(detail, ManualKnockOffUploadError.MKOU_1013);
 			return;
 		}
 
-		if ((!"E".equals(excessType) && !"A".equals(excessType)) && StringUtils.isEmpty(detail.getFeeTypeCode())) {
+		if ((!"E".equals(excessType) && !"A".equals(excessType)) && StringUtils.isEmpty(feeTypeCode)) {
 			setError(detail, ManualKnockOffUploadError.MKOU_108);
+			return;
+		}
+
+		Long feeTypeId = feeTypeDAO.getPayableFeeTypeID(feeTypeCode);
+
+		if (feeTypeId == null || feeTypeId <= 0) {
+			setError(detail, ManualKnockOffUploadError.MKOU_1018);
 			return;
 		}
 
@@ -180,7 +190,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			}
 		} else {
 			List<ManualAdvise> maList = manualAdviseDAO.getManualAdviseByRefAndFeeCode(fm.getFinID(),
-					AdviseType.PAYABLE.id(), detail.getFeeTypeCode());
+					AdviseType.PAYABLE.id(), feeTypeCode);
 
 			maList = maList.stream().filter(ma -> !PennantConstants.MANUALADVISE_CANCEL.equals(ma.getStatus()))
 					.collect(Collectors.toList());
@@ -658,4 +668,10 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
+
+	@Autowired
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
+	}
+
 }

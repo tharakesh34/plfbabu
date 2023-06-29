@@ -39,7 +39,9 @@ public enum ManualKnockOffUploadError {
 
 	MKOU_1016("Record is already initiated by other process, unable to proceed."),
 
-	MKOU_1017("Allocated Amount should not be less than Receipt Amount.");
+	MKOU_1017("Allocated Amount should not be less than Receipt Amount."),
+
+	MKOU_1018("Invalid Fee Type Code.");
 
 	private String description;
 
