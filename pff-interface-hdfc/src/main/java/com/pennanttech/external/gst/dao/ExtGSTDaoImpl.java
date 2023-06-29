@@ -28,6 +28,7 @@ import com.pennanttech.external.gst.model.GSTVoucherDetails;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, InterfaceConstants {
 
@@ -396,21 +397,25 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 				+ " from GST_VOUCHER_DETAILS Where GST_VOUCHER_ID= ?";
 
 		logger.debug(Literal.SQL, sql);
+		try {
+			return extNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, (rs, rowNum) -> {
+				GSTVoucherDetails gvd = new GSTVoucherDetails();
 
-		return extNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, (rs, rowNum) -> {
-			GSTVoucherDetails gvd = new GSTVoucherDetails();
+				gvd.setGstVoucherId(rs.getLong("GST_VOUCHER_ID"));
+				gvd.setFinreference(rs.getString("FINREFERENCE"));
+				gvd.setAmountType(rs.getString("AMOUNT_TYPE"));
+				gvd.setActualAmount(rs.getBigDecimal("ACTUAL_AMOUNT"));
+				gvd.setReferenceAmount(rs.getBigDecimal("REFERENCE_AMOUNT"));
+				gvd.setReferenceField1(rs.getLong("REFERENCE_FIELD1"));
+				gvd.setReferenceField2(rs.getLong("REFERENCE_FIELD2"));
+				gvd.setTaxHeaderId(rs.getLong("TAXHEADERID"));
 
-			gvd.setGstVoucherId(rs.getLong("GST_VOUCHER_ID"));
-			gvd.setFinreference(rs.getString("FINREFERENCE"));
-			gvd.setAmountType(rs.getString("AMOUNT_TYPE"));
-			gvd.setActualAmount(rs.getBigDecimal("ACTUAL_AMOUNT"));
-			gvd.setReferenceAmount(rs.getBigDecimal("REFERENCE_AMOUNT"));
-			gvd.setReferenceField1(rs.getLong("REFERENCE_FIELD1"));
-			gvd.setReferenceField2(rs.getLong("REFERENCE_FIELD2"));
-			gvd.setTaxHeaderId(rs.getLong("TAXHEADERID"));
-
-			return gvd;
-		}, transactionUID);
+				return gvd;
+			}, transactionUID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 	@Override
