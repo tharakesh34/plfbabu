@@ -45,4 +45,6 @@ public interface ExtGSTDao {
 	List<Taxes> getTaxDetailsForHeaderId(long taxHeaderId);
 
 	void updateTaxDetails(Taxes taxes);
+
+	void updateFileWriteStatus(int status);
 }

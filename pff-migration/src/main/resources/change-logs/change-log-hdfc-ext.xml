@@ -2246,4 +2246,13 @@
 	<changeSet id="24.05" author="sreeram.r">
 		<modifyDataType tableName="FINCON_GL_STG" columnName="ACC_DATE"	newDataType="VARCHAR(50)" />
 	</changeSet>
+	
+	<changeSet id="56" author="goutham.ch">
+		<sql>
+           <![CDATA[
+                ALTER TABLE GSTHEADER RENAME TO GSTRESPHEADER;
+   				ALTER TABLE GSTDETAILS RENAME TO GSTRESPDETAILS;
+            ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

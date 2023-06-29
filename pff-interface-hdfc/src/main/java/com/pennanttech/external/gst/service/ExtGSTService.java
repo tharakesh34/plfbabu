@@ -45,6 +45,8 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 		// File header id generated
 		long reqHeaderId = extGSTDao.fetchHeaderIdForProcessing(gstReqFile);
 
+		gstReqFile.setId(reqHeaderId);
+
 		if (reqHeaderId == 0) {
 			logger.debug(Literal.LEAVING);
 			return;
@@ -98,6 +100,8 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 			gstReqFile.setFileName(fileName);
 			// Save Request file details and get headerId
 			extGSTDao.updateGSTRequestFileToHeaderId(gstReqFile);
+
+			extGSTDao.updateFileWriteStatus(FILE_WRITTEN);
 
 			// Uploading to HDFC SFTP
 			if ("Y".equals(reqConfig.getFileTransfer())) {

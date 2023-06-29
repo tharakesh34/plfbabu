@@ -285,7 +285,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 	@Override
 	public boolean isFileProcessed(String respFileName) {
 		logger.debug(Literal.ENTERING);
-		String sql = "Select count(1) from GSTHEADER Where FILE_NAME= ?";
+		String sql = "Select count(1) from GSTRESPHEADER Where FILE_NAME= ?";
 		logger.debug(Literal.SQL, sql);
 		try {
 			return extNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, Integer.class, respFileName) > 0;
@@ -298,7 +298,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 	public void saveResponseFile(GSTCompHeader compHeader) {
 		logger.info(Literal.ENTERING);
 		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
-		String sql = "INSERT INTO GSTHEADER (FILE_NAME,FILE_LOCATION,STATUS,EXTRACTION,CREATED_DATE,ERROR_CODE,ERROR_MESSAGE) VALUES (?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO GSTRESPHEADER (FILE_NAME,FILE_LOCATION,STATUS,EXTRACTION,CREATED_DATE,ERROR_CODE,ERROR_MESSAGE) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
 		logger.debug(Literal.SQL, sql);
 
@@ -318,7 +318,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 
 	@Override
 	public void updateFileStatus(GSTCompHeader header) {
-		String sql = "UPDATE GSTHEADER SET STATUS = ?,EXTRACTION=?,ERROR_CODE=?,ERROR_MESSAGE=? WHERE ID= ?";
+		String sql = "UPDATE GSTRESPHEADER SET STATUS = ?,EXTRACTION=?,ERROR_CODE=?,ERROR_MESSAGE=? WHERE ID= ?";
 
 		logger.debug(Literal.SQL, sql);
 
@@ -337,7 +337,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 	public int saveExtGSTCompRecordsData(List<GSTCompDetail> compDetails) {
 
 		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
-		String sql = "INSERT INTO GSTDETAILS ( HEADER_ID, RECORD_DATA, STATUS, CREATED_DATE) values(?,?,?,?)";
+		String sql = "INSERT INTO GSTRESPDETAILS ( HEADER_ID, RECORD_DATA, STATUS, CREATED_DATE) values(?,?,?,?)";
 
 		logger.debug(Literal.SQL, sql);
 
@@ -362,7 +362,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 
 	@Override
 	public void updateGSTRecordDetailStatus(GSTCompDetail detail) {
-		String sql = "UPDATE GSTDETAILS  SET STATUS = ?,GST_VOUCHER_ID=?, ERROR_CODE = ?, ERROR_MESSAGE = ? WHERE ID= ? ";
+		String sql = "UPDATE GSTRESPDETAILS  SET STATUS = ?,GST_VOUCHER_ID=?, ERROR_CODE = ?, ERROR_MESSAGE = ? WHERE ID= ? ";
 
 		logger.debug(Literal.SQL, sql);
 
@@ -574,6 +574,18 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 			ps.setBigDecimal(index++, taxes.getPaidTax());
 			ps.setBigDecimal(index++, taxes.getNetTax());
 			ps.setLong(index, taxes.getId());
+		});
+	}
+
+	@Override
+	public void updateFileWriteStatus(int status) {
+		String sql = "UPDATE GST_REQUEST_DETAIL SET STATUS = ?";
+
+		logger.debug(Literal.SQL, sql);
+
+		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
+			int index = 1;
+			ps.setInt(index, status);
 		});
 	}
 
