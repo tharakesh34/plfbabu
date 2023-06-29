@@ -89,11 +89,11 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 			super.writeDataToFile(filePathWithName, itemList);
 
 			// Write Done file
-			String doneFile = App.getResourcePath(reqConfig.getFileLocation()) + File.separator + fileName
-					+ doneConfig.getFilePostpend();
+			String doneFile = fileName + doneConfig.getFilePostpend();
+			String doneFileWithPath = App.getResourcePath(reqConfig.getFileLocation()) + File.separator + doneFile;
 			List<StringBuilder> emptyList = new ArrayList<>();
 			emptyList.add(new StringBuilder(""));
-			super.writeDataToFile(doneFile, emptyList);
+			super.writeDataToFile(doneFileWithPath, emptyList);
 
 			gstReqFile.setFileName(fileName);
 			// Save Request file details and get headerId
