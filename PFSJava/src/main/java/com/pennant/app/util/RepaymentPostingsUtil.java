@@ -1514,13 +1514,7 @@ public class RepaymentPostingsUtil {
 					for (ManualAdvise ma1 : ma) {
 						if (ma1.getAdviseID() == rcd.getPayAgainstID()) {
 							feeTypeCode = ma1.getFeeTypeCode();
-							Object object = dataMap.get(feeTypeCode + "_P");
-							BigDecimal amount = BigDecimal.ZERO;
-							if (object != null) {
-								amount = (BigDecimal) object;
-							}
-
-							dataMap.put(feeTypeCode + "_P", amount.add(rcd.getAmount()));
+							dataMap.put(feeTypeCode + "_P", rcd.getAmount());
 							break;
 						}
 					}
