@@ -509,13 +509,15 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 
 		if (ExcessType.PAYABLE.equals(clk.getExcessType()) && StringUtils.isEmpty(clk.getFeeTypeCode())) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_021);
+			return;
 		}
 
-		Long feeTypeId = feeTypeDAO.getPayableFeeTypeID(clk.getFeeTypeCode());
+		if (ExcessType.PAYABLE.equals(clk.getExcessType())) {
+			Long feeTypeId = feeTypeDAO.getPayableFeeTypeID(clk.getFeeTypeCode());
 
-		if (feeTypeId == null || feeTypeId <= 0) {
-			setError(clk, CrossLoanKnockOffUploadError.CLKU_029);
-			return;
+			if (feeTypeId == null || feeTypeId <= 0) {
+				setError(clk, CrossLoanKnockOffUploadError.CLKU_029);
+			}
 		}
 	}
 

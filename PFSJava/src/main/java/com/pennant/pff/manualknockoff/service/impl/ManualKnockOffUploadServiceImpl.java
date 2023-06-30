@@ -155,7 +155,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		String excessType = detail.getExcessType();
 		String feeTypeCode = detail.getFeeTypeCode();
 
-		if ("P".equals(excessType) && StringUtils.isEmpty(feeTypeCode)) {
+		if (ExcessType.PAYABLE.equals(excessType) && StringUtils.isEmpty(feeTypeCode)) {
 			setError(detail, ManualKnockOffUploadError.MKOU_1013);
 			return;
 		}
@@ -165,11 +165,13 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			return;
 		}
 
-		Long feeTypeId = feeTypeDAO.getPayableFeeTypeID(feeTypeCode);
+		if (ExcessType.PAYABLE.equals(excessType)) {
+			Long feeTypeId = feeTypeDAO.getPayableFeeTypeID(feeTypeCode);
 
-		if (feeTypeId == null || feeTypeId <= 0) {
-			setError(detail, ManualKnockOffUploadError.MKOU_1018);
-			return;
+			if (feeTypeId == null || feeTypeId <= 0) {
+				setError(detail, ManualKnockOffUploadError.MKOU_1018);
+				return;
+			}
 		}
 
 		BigDecimal balanceAmount = BigDecimal.ZERO;
