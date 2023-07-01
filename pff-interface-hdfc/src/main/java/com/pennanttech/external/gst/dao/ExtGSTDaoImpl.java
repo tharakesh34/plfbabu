@@ -28,6 +28,7 @@ import com.pennanttech.external.gst.model.GSTVoucherDetails;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, InterfaceConstants {
 
@@ -284,7 +285,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 	@Override
 	public boolean isFileProcessed(String respFileName) {
 		logger.debug(Literal.ENTERING);
-		String sql = "Select count(1) from GSTHEADER Where FILE_NAME= ?";
+		String sql = "Select count(1) from GSTRESPHEADER Where FILE_NAME= ?";
 		logger.debug(Literal.SQL, sql);
 		try {
 			return extNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, Integer.class, respFileName) > 0;
@@ -297,7 +298,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 	public void saveResponseFile(GSTCompHeader compHeader) {
 		logger.info(Literal.ENTERING);
 		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
-		String sql = "INSERT INTO GSTHEADER (FILE_NAME,FILE_LOCATION,STATUS,EXTRACTION,CREATED_DATE,ERROR_CODE,ERROR_MESSAGE) VALUES (?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO GSTRESPHEADER (FILE_NAME,FILE_LOCATION,STATUS,EXTRACTION,CREATED_DATE,ERROR_CODE,ERROR_MESSAGE) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
 		logger.debug(Literal.SQL, sql);
 
@@ -317,7 +318,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 
 	@Override
 	public void updateFileStatus(GSTCompHeader header) {
-		String sql = "UPDATE GSTHEADER SET STATUS = ?,EXTRACTION=?,ERROR_CODE=?,ERROR_MESSAGE=? WHERE ID= ?";
+		String sql = "UPDATE GSTRESPHEADER SET STATUS = ?,EXTRACTION=?,ERROR_CODE=?,ERROR_MESSAGE=? WHERE ID= ?";
 
 		logger.debug(Literal.SQL, sql);
 
@@ -336,7 +337,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 	public int saveExtGSTCompRecordsData(List<GSTCompDetail> compDetails) {
 
 		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
-		String sql = "INSERT INTO GSTDETAILS ( HEADER_ID, RECORD_DATA, STATUS, CREATED_DATE) values(?,?,?,?)";
+		String sql = "INSERT INTO GSTRESPDETAILS ( HEADER_ID, RECORD_DATA, STATUS, CREATED_DATE) values(?,?,?,?)";
 
 		logger.debug(Literal.SQL, sql);
 
@@ -361,7 +362,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 
 	@Override
 	public void updateGSTRecordDetailStatus(GSTCompDetail detail) {
-		String sql = "UPDATE GSTDETAILS  SET STATUS = ?,GST_VOUCHER_ID=?, ERROR_CODE = ?, ERROR_MESSAGE = ? WHERE ID= ? ";
+		String sql = "UPDATE GSTRESPDETAILS  SET STATUS = ?,GST_VOUCHER_ID=?, ERROR_CODE = ?, ERROR_MESSAGE = ? WHERE ID= ? ";
 
 		logger.debug(Literal.SQL, sql);
 
@@ -396,21 +397,25 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 				+ " from GST_VOUCHER_DETAILS Where GST_VOUCHER_ID= ?";
 
 		logger.debug(Literal.SQL, sql);
+		try {
+			return extNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, (rs, rowNum) -> {
+				GSTVoucherDetails gvd = new GSTVoucherDetails();
 
-		return extNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, (rs, rowNum) -> {
-			GSTVoucherDetails gvd = new GSTVoucherDetails();
+				gvd.setGstVoucherId(rs.getLong("GST_VOUCHER_ID"));
+				gvd.setFinreference(rs.getString("FINREFERENCE"));
+				gvd.setAmountType(rs.getString("AMOUNT_TYPE"));
+				gvd.setActualAmount(rs.getBigDecimal("ACTUAL_AMOUNT"));
+				gvd.setReferenceAmount(rs.getBigDecimal("REFERENCE_AMOUNT"));
+				gvd.setReferenceField1(rs.getLong("REFERENCE_FIELD1"));
+				gvd.setReferenceField2(rs.getLong("REFERENCE_FIELD2"));
+				gvd.setTaxHeaderId(rs.getLong("TAXHEADERID"));
 
-			gvd.setGstVoucherId(rs.getLong("GST_VOUCHER_ID"));
-			gvd.setFinreference(rs.getString("FINREFERENCE"));
-			gvd.setAmountType(rs.getString("AMOUNT_TYPE"));
-			gvd.setActualAmount(rs.getBigDecimal("ACTUAL_AMOUNT"));
-			gvd.setReferenceAmount(rs.getBigDecimal("REFERENCE_AMOUNT"));
-			gvd.setReferenceField1(rs.getLong("REFERENCE_FIELD1"));
-			gvd.setReferenceField2(rs.getLong("REFERENCE_FIELD2"));
-			gvd.setTaxHeaderId(rs.getLong("TAXHEADERID"));
-
-			return gvd;
-		}, transactionUID);
+				return gvd;
+			}, transactionUID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 	@Override
@@ -539,7 +544,7 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 		try {
 			String sql = " SELECT ID,TAXTYPE,TAXPERC,ACTUALTAX,PAIDTAX,NETTAX FROM  TAX_DETAILS  WHERE REFERENCEID =?";
 
-			extNamedJdbcTemplate.getJdbcOperations().query(sql, ps -> {
+			mainNamedJdbcTemplate.getJdbcOperations().query(sql, ps -> {
 				ps.setLong(1, taxHeaderId);
 			}, rs -> {
 				Taxes tax = new Taxes();
@@ -562,13 +567,25 @@ public class ExtGSTDaoImpl extends SequenceDao<Object> implements ExtGSTDao, Int
 		String sql = "UPDATE TAX_DETAILS  SET TAXPERC=?, ACTUALTAX=?, PAIDTAX=?, NETTAX=? WHERE  ID = ?";
 		logger.debug(Literal.SQL, sql);
 
-		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
+		mainNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
 			int index = 1;
 			ps.setBigDecimal(index++, taxes.getTaxPerc());
 			ps.setBigDecimal(index++, taxes.getActualTax());
 			ps.setBigDecimal(index++, taxes.getPaidTax());
 			ps.setBigDecimal(index++, taxes.getNetTax());
 			ps.setLong(index, taxes.getId());
+		});
+	}
+
+	@Override
+	public void updateFileWriteStatus(int status) {
+		String sql = "UPDATE GST_REQUEST_DETAIL SET STATUS = ?";
+
+		logger.debug(Literal.SQL, sql);
+
+		extNamedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
+			int index = 1;
+			ps.setInt(index, status);
 		});
 	}
 

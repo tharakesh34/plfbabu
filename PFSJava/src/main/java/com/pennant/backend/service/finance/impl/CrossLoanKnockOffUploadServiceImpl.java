@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffUploadDAO;
@@ -79,6 +80,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private ReceiptService receiptService;
+	private FeeTypeDAO feeTypeDAO;
 
 	public CrossLoanKnockOffUploadServiceImpl() {
 		super();
@@ -507,8 +509,16 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 
 		if (ExcessType.PAYABLE.equals(clk.getExcessType()) && StringUtils.isEmpty(clk.getFeeTypeCode())) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_021);
+			return;
 		}
 
+		if (ExcessType.PAYABLE.equals(clk.getExcessType())) {
+			Long feeTypeId = feeTypeDAO.getPayableFeeTypeID(clk.getFeeTypeCode());
+
+			if (feeTypeId == null || feeTypeId <= 0) {
+				setError(clk, CrossLoanKnockOffUploadError.CLKU_029);
+			}
+		}
 	}
 
 	private void doAllocationTypeValidations(CrossLoanKnockoffUpload clk) {
@@ -945,5 +955,10 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 	@Autowired
 	public void setReceiptService(ReceiptService receiptService) {
 		this.receiptService = receiptService;
+	}
+
+	@Autowired
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
 	}
 }

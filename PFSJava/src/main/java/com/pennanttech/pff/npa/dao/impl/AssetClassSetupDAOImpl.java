@@ -510,7 +510,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 
 	@Override
 	public int getMinDpdByEntity(String finType) {
-		StringBuilder sql = new StringBuilder("Select min(DpdMin) DpdMin");
+		StringBuilder sql = new StringBuilder("Select coalesce(min(DpdMin), 0) DpdMin");
 		sql.append(" From Asset_Class_Setup_Details asd");
 		sql.append(" Inner join RmtFinanceTypes ft on ft.AssetClassSetup  = asd.Setupid");
 		sql.append(" Where asd.npastage = ? and ft.FinType = ?");
@@ -518,7 +518,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), Integer.class, true, finType);
+			return jdbcOperations.queryForObject(sql.toString(), Integer.class, 1, finType);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}

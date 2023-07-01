@@ -1876,6 +1876,10 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		op.setLovDescOprCd(secOp.getOprCode());
 		op.setMode("DELETE");
 
+		if (editOperations.get(0).getLovDescOprCd().equals(op.getLovDescOprCd())) {
+			setError(ad, "92021", "User Operation already exists to EDIT");
+		}
+
 		secUserOperations.add(op);
 
 	}

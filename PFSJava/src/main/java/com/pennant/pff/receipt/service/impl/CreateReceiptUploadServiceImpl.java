@@ -16,10 +16,12 @@ import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
@@ -40,6 +42,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
@@ -53,6 +56,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 	private CreateReceiptUploadProcessRecord createReceiptUploadProcessRecord;
 	private PartnerBankDAO partnerBankDAO;
 	private BounceReasonDAO bounceReasonDAO;
+	private FinanceMainDAO financeMainDAO;
 
 	public CreateReceiptUploadServiceImpl() {
 		super();
@@ -299,9 +303,15 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 	public void createExtReceipt(CreateReceiptUpload detail, String entityCode) {
 
 		ReceiptUploadDetail rud = new ReceiptUploadDetail();
-
 		rud.setReference(detail.getReference());
-		rud.setFinID(detail.getReferenceID());
+		FinanceMain fm = financeMainDAO.getFinanceMain(rud.getReference(), TableType.MAIN_TAB);
+		if (fm == null) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorDesc("Invalid agreement Id provided.");
+			return;
+		}
+		rud.setFinID(fm.getFinID());
+		rud.setPaymentRef(detail.getPaymentRef());
 		rud.setAllocationType(detail.getAllocationType());
 		rud.setValueDate(detail.getAppDate());
 		rud.setRealizationDate(detail.getAppDate());
@@ -530,6 +540,11 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 	@Autowired
 	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
 		this.bounceReasonDAO = bounceReasonDAO;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }
