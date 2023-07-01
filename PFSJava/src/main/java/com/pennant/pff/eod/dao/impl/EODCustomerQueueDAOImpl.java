@@ -12,11 +12,13 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 
 public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implements BatchJobQueueDAO {
 	private static final String SEQUENCE_NAME = "SEQ_EOD_CUSTOMER_QUEUE";
@@ -30,6 +32,20 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 		sql.append(" From  FinanceMain fm");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
 		sql.append(" Where fm.FinIsActive = ?");
+		sql.append(" Union all");
+		sql.append(" Select distinct c.CustID, c.CustCoreBank, 0 LoanExist");
+		sql.append(" From  FinanceMain fm");
+		sql.append(" Inner Join (");
+		sql.append(" Select FinID From FinExcessAmount Where AmountType = ? and BalanceAmt > ?");
+		sql.append(" Union ALl");
+		sql.append(" Select FinID From ManualAdvise Where AdviseType = ?");
+		sql.append(" and (AdviseAmount - PaidAmount - WaivedAmount) > ?");
+		sql.append(" ) e on e.FinID = fm.FinID");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+		sql.append(" Where fm.FinIsActive = ? and c.CustCoreBank not in");
+		sql.append(" (Select distinct c.CustCoreBank From FinanceMain fm");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+		sql.append(" Where fm.FinIsActive = ?)");
 		sql.append(" Union all");
 		sql.append(" Select distinct c.CustID, c.CustCoreBank, 0 LoanExist");
 		sql.append(" From LimitHeader lh");
@@ -48,8 +64,14 @@ public class EODCustomerQueueDAOImpl extends SequenceDao<BatchJobQueue> implemen
 
 			ps.setDate(1, JdbcUtil.getDate(appDate));
 			ps.setBoolean(2, true);
-			ps.setBoolean(3, true);
-			ps.setBoolean(4, true);
+			ps.setString(3, ExcessType.EXCESS);
+			ps.setInt(4, 0);
+			ps.setInt(5, AdviseType.PAYABLE.id());
+			ps.setInt(6, 0);
+			ps.setBoolean(7, false);
+			ps.setBoolean(8, true);
+			ps.setBoolean(9, true);
+			ps.setBoolean(10, true);
 
 		});
 	}

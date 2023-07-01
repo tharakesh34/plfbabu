@@ -1,11 +1,14 @@
 package com.pennant.api.user.service;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.administration.SecurityUser;
+
+import jakarta.jws.WebParam;
 
 @Produces("application/json")
 public interface SecurityUserRestService {
@@ -16,7 +19,7 @@ public interface SecurityUserRestService {
 
 	@POST
 	@Path("/securityUserService/updateSecurityUser")
-	public WSReturnStatus updateSecurityUser(SecurityUser user);
+	public SecurityUser updateSecurityUser(SecurityUser user);
 
 	@POST
 	@Path("/securityUserService/addOperation")
@@ -33,4 +36,8 @@ public interface SecurityUserRestService {
 	@POST
 	@Path("/securityUserService/expireUser")
 	public WSReturnStatus expireUser(SecurityUser user);
+
+	@GET
+	@Path("/securityUserService/getSecurityUser")
+	public SecurityUser getSecurityUser(@WebParam(name = "securityUser") SecurityUser securityUser);
 }

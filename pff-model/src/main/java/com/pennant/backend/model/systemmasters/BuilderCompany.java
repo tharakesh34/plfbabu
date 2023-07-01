@@ -75,10 +75,10 @@ public class BuilderCompany extends AbstractWorkflowEntity {
 	private String code;
 	private String codeName;
 	private String areaName;
-	private int devavailablity;
+	private BigDecimal devavailablity = BigDecimal.ZERO;
 	private BigDecimal magnitude = BigDecimal.ZERO;
 	private BigDecimal absavailablity = BigDecimal.ZERO;
-	private int totalProj;
+	private BigDecimal totalProj;
 	private String approved;
 	private String remarks;
 	private String panDetails;
@@ -86,25 +86,25 @@ public class BuilderCompany extends AbstractWorkflowEntity {
 	private String accountNo;
 	// private String bankNameDesc;
 	private String bankName;
-	private long bankBranchId;
+	private Long bankBranchId;
 	private String BranDesc;
 	private String ifsc;
 	private BigDecimal limitOnAmt = BigDecimal.ZERO;
 	private BigDecimal limitOnUnits = BigDecimal.ZERO;
-	private int currentExpUni;
+	private BigDecimal currentExpUni;
 	private BigDecimal currentExpAmt = BigDecimal.ZERO;
 	private Date dateOfInCop;
-	private int noOfProj;
-	private int assHLPlayers;
-	private int onGoingProj;
-	private int expInBusiness;
+	private BigDecimal noOfProj;
+	private BigDecimal assHLPlayers;
+	private BigDecimal onGoingProj;
+	private BigDecimal expInBusiness;
 	private String recommendation;
-	private int magintudeInLacs;
-	private int noOfProjCons;
+	private BigDecimal magintudeInLacs;
+	private BigDecimal noOfProjCons;
 	private String lovDescCIFName;
 	private String custCIF;
 	private boolean active;
-	private long custId;
+	private Long custId;
 	private Long pinCodeId;
 
 	public BuilderCompany() {
@@ -235,11 +235,11 @@ public class BuilderCompany extends AbstractWorkflowEntity {
 		this.areaName = areaName;
 	}
 
-	public int getCurrentExpUni() {
+	public BigDecimal getCurrentExpUni() {
 		return currentExpUni;
 	}
 
-	public void setCurrentExpUni(int currentExpUni) {
+	public void setCurrentExpUni(BigDecimal currentExpUni) {
 		this.currentExpUni = currentExpUni;
 	}
 
@@ -251,19 +251,19 @@ public class BuilderCompany extends AbstractWorkflowEntity {
 		this.active = active;
 	}
 
-	public int getDevavailablity() {
+	public BigDecimal getDevavailablity() {
 		return devavailablity;
 	}
 
-	public void setDevavailablity(int devavailablity) {
+	public void setDevavailablity(BigDecimal devavailablity) {
 		this.devavailablity = devavailablity;
 	}
 
-	public long getCustId() {
+	public Long getCustId() {
 		return custId;
 	}
 
-	public void setCustId(long custId) {
+	public void setCustId(Long custId) {
 		this.custId = custId;
 	}
 
@@ -395,11 +395,11 @@ public class BuilderCompany extends AbstractWorkflowEntity {
 		this.absavailablity = absavailablity;
 	}
 
-	public int getTotalProj() {
+	public BigDecimal getTotalProj() {
 		return totalProj;
 	}
 
-	public void setTotalProj(int totalProj) {
+	public void setTotalProj(BigDecimal totalProj) {
 		this.totalProj = totalProj;
 	}
 
@@ -451,11 +451,11 @@ public class BuilderCompany extends AbstractWorkflowEntity {
 		this.bankName = bankName;
 	}
 
-	public long getBankBranchId() {
+	public Long getBankBranchId() {
 		return bankBranchId;
 	}
 
-	public void setBankBranchId(long bankBranchId) {
+	public void setBankBranchId(Long bankBranchId) {
 		this.bankBranchId = bankBranchId;
 	}
 
@@ -499,35 +499,35 @@ public class BuilderCompany extends AbstractWorkflowEntity {
 		this.dateOfInCop = dateOfInCop;
 	}
 
-	public int getNoOfProj() {
+	public BigDecimal getNoOfProj() {
 		return noOfProj;
 	}
 
-	public void setNoOfProj(int noOfProj) {
+	public void setNoOfProj(BigDecimal noOfProj) {
 		this.noOfProj = noOfProj;
 	}
 
-	public int getAssHLPlayers() {
+	public BigDecimal getAssHLPlayers() {
 		return assHLPlayers;
 	}
 
-	public void setAssHLPlayers(int assHLPlayers) {
+	public void setAssHLPlayers(BigDecimal assHLPlayers) {
 		this.assHLPlayers = assHLPlayers;
 	}
 
-	public int getOnGoingProj() {
+	public BigDecimal getOnGoingProj() {
 		return onGoingProj;
 	}
 
-	public void setOnGoingProj(int onGoingProj) {
+	public void setOnGoingProj(BigDecimal onGoingProj) {
 		this.onGoingProj = onGoingProj;
 	}
 
-	public int getExpInBusiness() {
+	public BigDecimal getExpInBusiness() {
 		return expInBusiness;
 	}
 
-	public void setExpInBusiness(int expInBusiness) {
+	public void setExpInBusiness(BigDecimal expInBusiness) {
 		this.expInBusiness = expInBusiness;
 	}
 
@@ -539,19 +539,19 @@ public class BuilderCompany extends AbstractWorkflowEntity {
 		this.recommendation = recommendation;
 	}
 
-	public int getMagintudeInLacs() {
+	public BigDecimal getMagintudeInLacs() {
 		return magintudeInLacs;
 	}
 
-	public void setMagintudeInLacs(int magintudeInLacs) {
+	public void setMagintudeInLacs(BigDecimal magintudeInLacs) {
 		this.magintudeInLacs = magintudeInLacs;
 	}
 
-	public int getNoOfProjCons() {
+	public BigDecimal getNoOfProjCons() {
 		return noOfProjCons;
 	}
 
-	public void setNoOfProjCons(int noOfProjCons) {
+	public void setNoOfProjCons(BigDecimal noOfProjCons) {
 		this.noOfProjCons = noOfProjCons;
 	}
 

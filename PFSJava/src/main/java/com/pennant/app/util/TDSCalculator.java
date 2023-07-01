@@ -17,14 +17,24 @@ import com.pennant.backend.util.PennantConstants;
 
 public class TDSCalculator {
 
-	public static String RPY_SCHD_DTLS = "RPY_SCHD_DTLS";
-	public static String SCHD_DTLS = "SCHD_DTLS";
-	public static String FM_DTLS = "FM_DTLS";
+	public static final String RPY_SCHD_DTLS = "RPY_SCHD_DTLS";
+	public static final String SCHD_DTLS = "SCHD_DTLS";
+	public static final String FM_DTLS = "FM_DTLS";
 
 	private static String TDS_ROUNDING_MODE;
 	private static int TDS_ROUNDING_TARGET;
 	private static BigDecimal TDS_PERCENTAGE = BigDecimal.ZERO;
-	private static final BigDecimal HUNDRED = new BigDecimal(100);
+	private static BigDecimal HUNDRED = new BigDecimal(100);
+
+	/**
+	 * Private constructor to hide the implicit public one.
+	 * 
+	 * @throws IllegalAccessException If the constructor is used to create and initialize a new instance of the
+	 *                                declaring class by suppressing Java language access checking.
+	 */
+	private TDSCalculator() throws IllegalAccessException {
+		throw new IllegalAccessException();
+	}
 
 	public static BigDecimal getTDSAmount(BigDecimal tdsAmount) {
 		initilizeAttributes();
@@ -91,7 +101,7 @@ public class TDSCalculator {
 		if (date != null && ImplementationConstants.ALLOW_TDS_PERC_BASED_ON_YEAR) {
 
 			if (getPreviousDate().compareTo(date) >= 0) {
-				return new BigDecimal(7.5);
+				return BigDecimal.valueOf(7.5);
 			} else {
 				return new BigDecimal(10);
 			}

@@ -59,4 +59,6 @@ public interface FeeTypeService {
 	FeeType getPayableFeeType(String feeTypeCode);
 
 	FeeType getApprovedFeeTypeByFeeCode(String string);
+
+	long getFeeTypeIdByCode(String code);
 }

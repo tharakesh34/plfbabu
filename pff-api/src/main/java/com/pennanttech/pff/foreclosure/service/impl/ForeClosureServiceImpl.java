@@ -30,12 +30,12 @@ import com.pennant.backend.model.finance.ForeClosureResponse;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.controller.FinStatementController;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.foreclosure.service.ForeClosureService;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.model.statement.FinStatementResponse;
@@ -161,9 +161,9 @@ public class ForeClosureServiceImpl implements ForeClosureService {
 			String amountType = fea.getAmountType();
 			BigDecimal balanceAmt = fea.getBalanceAmt();
 
-			if (StringUtils.contains(RepayConstants.EXAMOUNTTYPE_EXCESS, amountType)) {
+			if (StringUtils.contains(ExcessType.EXCESS, amountType)) {
 				letter.setExcessAmount(balanceAmt);
-			} else if (StringUtils.contains(RepayConstants.EXAMOUNTTYPE_EMIINADV, amountType)) {
+			} else if (StringUtils.contains(ExcessType.EMIINADV, amountType)) {
 				letter.setEmiInAdvance(balanceAmt);
 			}
 		}

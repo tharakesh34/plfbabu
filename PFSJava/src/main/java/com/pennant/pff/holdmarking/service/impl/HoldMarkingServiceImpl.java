@@ -106,10 +106,16 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 	}
 
 	@Override
-	public void updateHoldRemoval(BigDecimal amount, long finId, String finReference) {
+	public void updateHoldRemoval(BigDecimal amount, long finId, boolean isFateCorrection) {
 		logger.debug(Literal.ENTERING);
 
-		List<HoldMarkingHeader> list = holdMarkingHeaderDAO.getHoldListByFinId(finId);
+		List<HoldMarkingHeader> list = new ArrayList<>();
+
+		if (isFateCorrection) {
+			list = holdMarkingHeaderDAO.getAutoHold(finId);
+		} else {
+			list = holdMarkingHeaderDAO.getHoldListByFinId(finId);
+		}
 
 		if (CollectionUtils.isNotEmpty(list)) {
 			list = list.stream().sorted((l1, l2) -> Long.compare(l1.getHoldID(), l2.getHoldID()))
@@ -121,17 +127,25 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 			return;
 		}
 
+		updateHold(amount, list, isFateCorrection);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void updateHold(BigDecimal amount, List<HoldMarkingHeader> list, boolean isFateCorrection) {
 		for (HoldMarkingHeader headerList : list) {
 			if (amount.compareTo(BigDecimal.ZERO) > 0) {
 
 				if (amount.compareTo(headerList.getBalance()) > 0) {
+					amount = amount.subtract(headerList.getBalance());
+					headerList.setId(headerList.getId());
+					headerList.setHoldID(headerList.getHoldID());
+					headerList.setRemovalAmount(headerList.getBalance());
+
 					headerList.setBalance(BigDecimal.ZERO);
 					headerList.setReleaseAmount(headerList.getHoldAmount());
 
-					headerList.setId(headerList.getId());
-					headerList.setHoldID(headerList.getHoldID());
-					headerList.setRemovalAmount(headerList.getHoldAmount());
-					saveDetail(headerList);
+					saveDetail(headerList, isFateCorrection);
 				} else {
 					headerList.setBalance(headerList.getBalance().subtract(amount));
 					headerList.setReleaseAmount(headerList.getReleaseAmount().add(amount));
@@ -139,19 +153,16 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 					headerList.setId(headerList.getId());
 					headerList.setHoldID(headerList.getHoldID());
 					headerList.setRemovalAmount(amount);
-					saveDetail(headerList);
-				}
-				amount.subtract(headerList.getHoldAmount());
+					saveDetail(headerList, isFateCorrection);
 
+					amount = BigDecimal.ZERO;
+				}
 				holdMarkingHeaderDAO.updateHeader(headerList);
 			}
-
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
-	private void saveDetail(HoldMarkingHeader hmh) {
+	private void saveDetail(HoldMarkingHeader hmh, boolean isFateCorrection) {
 		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 		Date appData = SysParamUtil.getAppDate();
 		long userId = 1000;
@@ -165,10 +176,15 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 		hmd.setHoldType(PennantConstants.REMOVE_HOLD_MARKING);
 		hmd.setMarking(PennantConstants.AUTO_ASSIGNMENT);
 		hmd.setMovementDate(appData);
-		hmd.setStatus(InsuranceConstants.PENDING);
 		hmd.setAmount(hmh.getRemovalAmount());
 		hmd.setLogID(++count);
-		hmd.setHoldReleaseReason("Receipt");
+		if (isFateCorrection) {
+			hmd.setStatus(InsuranceConstants.SUCCESS);
+			hmd.setHoldReleaseReason("Presentment Fatecorrection");
+		} else {
+			hmd.setStatus(InsuranceConstants.PENDING);
+			hmd.setHoldReleaseReason("Receipt");
+		}
 		hmd.setCreatedBy(userId);
 		hmd.setCreatedOn(currentTime);
 		hmd.setLastMntBy(userId);
@@ -180,14 +196,14 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 	}
 
 	@Override
-	public void updateFundRecovery(BigDecimal amount, String accNum, long finId, String finReference) {
+	public void updateFundRecovery(BigDecimal amount, String accNum, long finId) {
 		logger.debug(Literal.ENTERING);
 
 		HoldMarkingHeader hmh = new HoldMarkingHeader();
 		String repayMethod = financeMainDAO.getApprovedRepayMethod(finId, "");
 
 		if (!InstrumentType.isSI(repayMethod)) {
-			updateHoldRemoval(amount, finId, finReference);
+			updateHoldRemoval(amount, finId, false);
 			return;
 		}
 
@@ -366,7 +382,7 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 
 		holdMarkingHeaderDAO.updateHeader(headerList);
 
-		saveDetail(headerList);
+		saveDetail(headerList, false);
 
 		logger.debug(Literal.LEAVING);
 	}

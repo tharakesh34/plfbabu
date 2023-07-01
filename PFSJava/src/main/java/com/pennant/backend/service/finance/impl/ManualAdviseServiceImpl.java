@@ -25,6 +25,7 @@
 package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,15 +40,18 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.CalculationUtil;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -56,6 +60,8 @@ import com.pennant.backend.model.finance.AdviseDueTaxDetail;
 import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinEODEvent;
+import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -68,16 +74,22 @@ import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
+import com.pennant.pff.eod.cache.BounceConfigCache;
+import com.pennant.pff.eod.cache.RuleConfigCache;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -1101,6 +1113,83 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 		logger.debug(Literal.LEAVING);
 		return eligibleAmt.compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO : eligibleAmt;
+	}
+
+	@Override
+	public ManualAdvise getMAForBounce(FinReceiptHeader rch, FinReceiptDetail rcd, String bounceCode, String remarks,
+			String presentmentType, Date appDate) {
+
+		BounceReason br = BounceConfigCache.getCacheBounceReason(bounceCode);
+
+		Rule rule = RuleConfigCache.getCacheRule(br.getRuleID());
+
+		BigDecimal bounceAmt = BigDecimal.ZERO;
+		if (rule != null) {
+			bounceAmt = getBounceAmount(rch, rcd, rule, br, presentmentType, appDate);
+		}
+
+		int finCcy = CurrencyUtil.getFormat(rch.getFinCcy());
+
+		ManualAdvise ma = new ManualAdvise();
+		ma.setAdviseType(AdviseType.RECEIVABLE.id());
+		ma.setFinID(rch.getFinID());
+		ma.setFinReference(rch.getReference());
+		ma.setFeeTypeID(feeTypeService.getFeeTypeIdByCode(PennantConstants.FEETYPE_BOUNCE));
+		ma.setSequence(0);
+		ma.setAdviseAmount(PennantApplicationUtil.unFormateAmount(bounceAmt, finCcy));
+		ma.setPaidAmount(BigDecimal.ZERO);
+		ma.setWaivedAmount(BigDecimal.ZERO);
+		ma.setRemarks(remarks);
+		ma.setReceiptID(rch.getReceiptID());
+		ma.setBounceID(br.getBounceID());
+		ma.setValueDate(appDate);
+		ma.setPostDate(appDate);
+		ma.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		ma.setLastMntBy(rch.getLastMntBy());
+		ma.setVersion(ma.getVersion() + 1);
+		ma.setBrReturnCode(br.getReturnCode());
+
+		logger.debug(Literal.LEAVING);
+		return ma;
+	}
+
+	private BigDecimal getBounceAmount(FinReceiptHeader rch, FinReceiptDetail rcd, Rule rule, BounceReason br,
+			String presentmentType, Date appDate) {
+
+		Map<String, Object> map = rcd.getDeclaredFieldValues();
+
+		map.put("br_finType", rch.getFinType());
+		map.put("br_dpdcount", DateUtil.getDaysBetween(rch.getReceiptDate(), appDate));
+		map.put("br_presentmentType", presentmentType);
+		map.put("br_bounceCode", br.getBounceCode());
+
+		String sqlRule = StringUtils.trimToEmpty(rule.getSQLRule());
+		Map<String, Object> eventMapping = getEventMapping(rch.getFinID(), sqlRule);
+
+		if (!eventMapping.isEmpty()) {
+			map.put("emptype", eventMapping.get("EMPTYPE"));
+			map.put("branchcity", eventMapping.get("BRANCHCITY"));
+			map.put("fincollateralreq", eventMapping.get("FINCOLLATERALREQ"));
+			map.put("btloan", eventMapping.get("BTLOAN"));
+			map.put("ae_businessvertical", eventMapping.get("BUSINESSVERTICAL"));
+			map.put("ae_alwflexi", eventMapping.get("ALWFLEXI"));
+			map.put("ae_finbranch", eventMapping.get("FINBRANCH"));
+			map.put("ae_entitycode", eventMapping.get("ENTITYCODE"));
+		}
+
+		String finCcy = rch.getFinCcy();
+		return (BigDecimal) RuleExecutionUtil.executeRule(sqlRule, map, finCcy, RuleReturnType.DECIMAL);
+	}
+
+	private Map<String, Object> getEventMapping(long finID, String sqlRule) {
+		if (sqlRule.contains("emptype") || sqlRule.contains("branchcity") || sqlRule.contains("fincollateralreq")
+				|| sqlRule.contains("btloan") || sqlRule.contains("ae_businessvertical")
+				|| sqlRule.contains("ae_alwflexi") || sqlRule.contains("ae_finbranch")
+				|| sqlRule.contains("ae_entitycode")) {
+			return financeMainDAO.getGLSubHeadCodes(finID);
+
+		}
+		return new HashMap<>();
 	}
 
 	@Override

@@ -11,9 +11,9 @@ public interface DocVerificationDAO {
 
 	long saveHeader(DocVerificationHeader header);
 
-	long saveDetail(DocVerificationDetail docDetails);
+	void saveDetail(DocVerificationDetail docDetails);
 
-	long saveAddress(DocVerificationAddress docAddress);
+	void saveAddress(DocVerificationAddress docAddress);
 
 	DocVerificationHeader getHeader(String referenceKey, String docType);
 

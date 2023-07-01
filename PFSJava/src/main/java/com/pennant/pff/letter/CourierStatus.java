@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.zkoss.util.resource.Labels;
-
 import com.pennant.backend.model.ValueLabel;
 
 public enum CourierStatus {
@@ -30,6 +28,10 @@ public enum CourierStatus {
 	}
 
 	public static CourierStatus getCourier(String courier) {
+		if (courier == null) {
+			return null;
+		}
+
 		List<CourierStatus> list = Arrays.asList(CourierStatus.values());
 
 		for (CourierStatus it : list) {
@@ -47,10 +49,10 @@ public enum CourierStatus {
 		if (courierStatus == null) {
 			courierStatus = new ArrayList<>(4);
 
-			courierStatus.add(new ValueLabel(D.getCode(), Labels.getLabel("label_CourierStatus_Delivered")));
-			courierStatus.add(new ValueLabel(T.getCode(), Labels.getLabel("label_CourierStatus_InTransit")));
-			courierStatus.add(new ValueLabel(R.getCode(), Labels.getLabel("label_CourierStatus_Returned")));
-			courierStatus.add(new ValueLabel(L.getCode(), Labels.getLabel("label_CourierStatus_Lost")));
+			courierStatus.add(new ValueLabel(D.getCode(), D.getCode()));
+			courierStatus.add(new ValueLabel(T.getCode(), T.getCode()));
+			courierStatus.add(new ValueLabel(R.getCode(), R.getCode()));
+			courierStatus.add(new ValueLabel(L.getCode(), L.getCode()));
 		}
 
 		return courierStatus;

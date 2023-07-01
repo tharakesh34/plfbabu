@@ -120,6 +120,7 @@ import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.pennapps.core.util.ObjectUtil;
@@ -562,7 +563,9 @@ public class ReceiptCalculator {
 			rd.setEarlySettle(true);
 		}
 		FinanceMain fm = rd.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		fm.setClosureType(rd.getReceiptHeader().getClosureType());
+		if (fm.getClosureType() == null) {
+			fm.setClosureType(rd.getReceiptHeader().getClosureType());
+		}
 		List<FinFeeDetail> oldFinFeeDtls = rd.getFinFeeDetails();
 		List<FinFeeDetail> finFeedetails = null;
 
@@ -1347,9 +1350,8 @@ public class ReceiptCalculator {
 		BigDecimal amount = BigDecimal.ZERO;
 
 		FinReceiptHeader rch = rd.getReceiptHeader();
-		if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(amountType)
-				&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose()) && AdvanceType.hasAdvInterest(fm)
-				&& fm.isTDSApplicable()) {
+		if (ExcessType.ADVINT.equals(amountType) && FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())
+				&& AdvanceType.hasAdvInterest(fm) && fm.isTDSApplicable()) {
 			amount = rd.getIntTdsUnpaid();
 		}
 
@@ -1665,6 +1667,8 @@ public class ReceiptCalculator {
 			}
 		}
 
+		int receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(rd.getReceiptHeader().getReceiptPurpose());
+
 		// write code to reduce Part Payments and Early Settlement balances from
 		// the allocation list
 
@@ -1698,8 +1702,6 @@ public class ReceiptCalculator {
 				rd = recalAutoAllocation(rd, rd.isPresentment());
 			}
 
-			int receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(rd.getReceiptHeader().getReceiptPurpose());
-
 			if (excess.compareTo(BigDecimal.ZERO) > 0) {
 				rph.setFinEvent(rch.getReceiptPurpose());
 				rph.setValueDate(rch.getValueDate());
@@ -1715,8 +1717,49 @@ public class ReceiptCalculator {
 					rph.setExcessAmount(excess);
 				}
 			}
-
 		}
+
+		BigDecimal excessBal = rch.getBalAmount();
+
+		FinServiceInstruction fsi = rd.getFinanceDetail().getFinScheduleData().getFinServiceInstruction();
+
+		if ((fsi != null && fsi.isClosureReceipt()) && receiptPurposeCtg == 2
+				&& excessBal.compareTo(BigDecimal.ZERO) > 0) {
+			for (int i = rcdList.size() - 1; i >= 0; i--) {
+				if (excessBal.compareTo(BigDecimal.ZERO) <= 0) {
+					break;
+				}
+
+				FinReceiptDetail rcd = rcdList.get(i);
+
+				BigDecimal excess = BigDecimal.ZERO;
+				if (excessBal.compareTo(rcd.getDueAmount()) >= 0) {
+					excess = rcd.getDueAmount();
+					excessBal = excessBal.subtract(rcd.getDueAmount());
+				} else {
+					excess = excessBal;
+					excessBal = BigDecimal.ZERO;
+				}
+
+				FinRepayHeader repayHeader = rcd.getRepayHeader();
+
+				if (repayHeader == null) {
+					repayHeader = new FinRepayHeader();
+					rcd.setRepayHeader(repayHeader);
+				}
+
+				excess = excess.add(repayHeader.getExcessAmount());
+
+				repayHeader.setFinEvent(rch.getReceiptPurpose());
+				repayHeader.setValueDate(rch.getValueDate());
+				if (rd.isEarlySettle()) {
+					repayHeader.setEarlyPayDate(rch.getValueDate());
+				}
+				repayHeader.setRepayAmount(repayHeader.getRepayAmount().add(excess));
+				repayHeader.setExcessAmount(excess);
+			}
+		}
+
 		rch.setWaviedAmt(totWaived);
 		rd.setAdjSchedule(false);
 
@@ -2188,7 +2231,7 @@ public class ReceiptCalculator {
 		}
 
 		for (XcessPayables xcess : rch.getXcessPayables()) {
-			if (!RepayConstants.EXAMOUNTTYPE_ADVINT.equals(xcess.getPayableType())) {
+			if (!ExcessType.ADVINT.equals(xcess.getPayableType())) {
 				continue;
 			}
 
@@ -2244,7 +2287,7 @@ public class ReceiptCalculator {
 			if (rch.getXcessPayables() != null && rch.getXcessPayables().size() > 0) {
 				receiptData = adjustAdvanceInt(receiptData);
 				for (XcessPayables xcess : rch.getXcessPayables()) {
-					if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(xcess.getPayableType())) {
+					if (ExcessType.ADVINT.equals(xcess.getPayableType())) {
 						continue;
 					}
 					BigDecimal balAmount = xcess.getBalanceAmt();
@@ -2499,22 +2542,16 @@ public class ReceiptCalculator {
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 		for (FinFeeDetail fee : feeList) {
 			if (allocate.getAllocationTo() == -(fee.getFeeTypeID())) {
+				BigDecimal paidAmountOriginal = allocate.getPaidNow().add(allocate.getTdsPaid());
+
 				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
-					BigDecimal paidAmountOriginal = BigDecimal.ZERO;
-					paidAmountOriginal = paidAmountOriginal.add(allocate.getPaidAmount());
-					paidAmountOriginal = paidAmountOriginal.add(allocate.getTdsPaid());
-					paidAmountOriginal = paidAmountOriginal.add(allocate.getPaidGST());
-
-					fee.setPaidAmountOriginal(paidAmountOriginal);
-
-					BigDecimal remainingFeeOriginal = BigDecimal.ZERO;
-					remainingFeeOriginal = remainingFeeOriginal.add(fee.getActualAmountOriginal());
-					remainingFeeOriginal = remainingFeeOriginal.subtract(allocate.getWaivedNow());
-					remainingFeeOriginal = remainingFeeOriginal.subtract(fee.getPaidAmountOriginal());
-
-					fee.setRemainingFeeOriginal(remainingFeeOriginal);
+					paidAmountOriginal = allocate.getPaidNow().subtract(allocate.getPaidGST())
+							.add(allocate.getTdsPaid());
 				}
 
+				fee.setPaidAmountOriginal(paidAmountOriginal);
+				fee.setRemainingFeeOriginal(fee.getActualAmountOriginal().subtract(allocate.getWaivedNow())
+						.subtract(fee.getPaidAmountOriginal()));
 				fee.setPaidAmount(fee.getPaidAmount().add(allocate.getPaidNow()));
 				fee.setWaivedAmount(fee.getWaivedAmount().add(allocate.getWaivedNow()));
 				fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount().add(fee.getWaivedAmount())));
@@ -3656,6 +3693,7 @@ public class ReceiptCalculator {
 		rch.setBalAmount(remainingBal);
 
 		receiptData.setRemBal(remainingBal);
+
 		receiptData.setTotReceiptAmount(rch.getReceiptAmount());
 		return receiptData;
 	}
@@ -4762,9 +4800,9 @@ public class ReceiptCalculator {
 	private String payType(String mode) {
 		String payType = "";
 		if (ReceiptMode.EMIINADV.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_EMIINADV;
+			payType = ExcessType.EMIINADV;
 		} else if (ReceiptMode.EXCESS.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_EXCESS;
+			payType = ExcessType.EXCESS;
 			/*
 			 * while doing EarlySettlement or Closure receipt is used below payments, if we again open the same record
 			 * below mode of payments are shown as Zero to fix this we are adding these PayemtTypes here.
@@ -4780,7 +4818,7 @@ public class ReceiptCalculator {
 		} else if (ReceiptMode.TEXCESS.equals(mode)) {
 			payType = ReceiptMode.TEXCESS;
 		} else {
-			payType = RepayConstants.EXAMOUNTTYPE_PAYABLE;
+			payType = ExcessType.PAYABLE;
 		}
 		return payType;
 	}

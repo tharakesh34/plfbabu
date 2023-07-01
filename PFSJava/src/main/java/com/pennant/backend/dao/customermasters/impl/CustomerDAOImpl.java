@@ -1743,7 +1743,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" Select CustID From FinanceMain_Temp Where CustID = ?");
 		sql.append(" union all");
 		sql.append(" Select CustID From FinanceMain Where CustID = ?");
-		sql.append(" and not exists (Select 1 from FinanceMain_Temp where FinID = FinanceMain.FinID))");
+		sql.append(" and not exists (Select 1 from FinanceMain_Temp where FinID = FinanceMain.FinID)) CustID_Count");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, custID, custID) > 0;
@@ -3316,13 +3316,13 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			sql.append(" Select CustID");
 			sql.append(", CustCIF, CustSalutationCode, CustFName, CustMName, CustLName");
 			sql.append(", CustCoreBank, CustShrtName, CustMotherMaiden, CustShrtNameLclLng");
-			sql.append(", CustGenderCode, CustCRCPR, CustDOB");
+			sql.append(", CustGenderCode, CustCRCPR, CustDOB, CustCtgCode");
 			sql.append(" From Customers Where CustID = ?");
 			break;
 		case TEMP_TAB:
 			sql.append(" Select CustSalutationCode, CustFName, CustMName, CustLName");
 			sql.append(", CustCoreBank, CustShrtName, CustMotherMaiden, CustShrtNameLclLng");
-			sql.append(", CustGenderCode, CustCRCPR, CustDOB");
+			sql.append(", CustGenderCode, CustCRCPR, CustDOB, CustCtgCode");
 			sql.append(" From Customers_Temp Where CustID = ?");
 			break;
 		case BOTH_TAB:
@@ -3330,12 +3330,12 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 			sql.append(" Select CustSalutationCode, CustFName, CustMName, CustLName");
 			sql.append(", CustCoreBank, CustShrtName, CustMotherMaiden, CustShrtNameLclLng");
-			sql.append(", CustGenderCode, CustCRCPR, CustDOB");
+			sql.append(", CustGenderCode, CustCRCPR, CustDOB, CustCtgCode");
 			sql.append(" From Customers_Temp Where CustID = ?");
 			sql.append(" Union All");
 			sql.append(" Select CustSalutationCode, CustFName, CustMName, CustLName");
 			sql.append(", CustCoreBank, CustShrtName, CustMotherMaiden, CustShrtNameLclLng");
-			sql.append(", CustGenderCode, CustCRCPR, CustDOB");
+			sql.append(", CustGenderCode, CustCRCPR, CustDOB, CustCtgCode");
 			sql.append(" From Customers c Where CustID = ?");
 			sql.append(" and not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
 			break;
@@ -3356,9 +3356,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				c.setCustCoreBank(rs.getString("CustCoreBank"));
 				c.setCustShrtName(rs.getString("CustShrtName"));
 				c.setCustMotherMaiden(rs.getString("CustMotherMaiden"));
-				c.setCustShrtNameLclLng(rs.getString("CustGenderCode"));
+				c.setCustShrtNameLclLng(rs.getString("CustShrtNameLclLng"));
 				c.setCustCRCPR(rs.getString("CustCRCPR"));
 				c.setCustDOB(rs.getDate("CustDOB"));
+				c.setCustCtgCode(rs.getString("CustCtgCode"));
+				c.setCustGenderCode(rs.getString("CustGenderCode"));
 
 				return c;
 			}, object);

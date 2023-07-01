@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.emiholidays.EMIHolidays;
 import com.pennant.backend.model.gracedetails.GraceDetails;
 import com.pennant.backend.model.loanbranch.LoanBranch;
@@ -31,7 +32,7 @@ import com.pennant.backend.model.loansummary.LoanSummary;
 		"lastDisbDate", "stage", "status", "connectorReference", "fixedRateTenor", "fixedTenorRate", "repayAmount",
 		"advType", "advTerms", "closedDate", "manufacturerDealerId", "finOcrRequired", "tdsType", "escrow",
 		"custBankId", "overdraftTxnChrgReq", "overdraftCalcChrg", "overdraftChrCalOn", "overdraftChrgAmtOrPerc",
-		"overdraftTxnChrgFeeType", "accNumber", "netDisbursementAmount" })
+		"overdraftTxnChrgFeeType", "accNumber", "netDisbursementAmount", "fromDate", "toDate" })
 
 @XmlRootElement(name = "loan")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -228,6 +229,10 @@ public class LoanDetail {
 	private Date fromDate;
 	@XmlElement
 	private Date toDate;
+	@XmlElement
+	private Integer noOfTerms;
+
+	private List<BaseRate> baseRates;
 
 	public LoanDetail() {
 		super();
@@ -991,5 +996,21 @@ public class LoanDetail {
 
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
+	}
+
+	public Integer getNoOfTerms() {
+		return noOfTerms;
+	}
+
+	public void setNoOfTerms(Integer noOfTerms) {
+		this.noOfTerms = noOfTerms;
+	}
+
+	public List<BaseRate> getBaseRates() {
+		return baseRates;
+	}
+
+	public void setBaseRates(List<BaseRate> baseRates) {
+		this.baseRates = baseRates;
 	}
 }

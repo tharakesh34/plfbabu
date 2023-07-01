@@ -40,13 +40,15 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 	public int prepareQueue(BatchJobQueue jobQueue) {
 		StringBuilder sql = new StringBuilder("Insert into LETTER_GENERATION_QUEUE (Id, LetterID)");
 		sql.append(" Select row_number() over(order by ID) ID, ID as LetterID");
-		sql.append(" From Loan_Letters_Stage Where Generated = ? and RequestType = ?");
+		sql.append(" From Loan_Letters_Stage Where Generated = ? and RequestType in (?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.update(sql.toString(), ps -> {
 			ps.setInt(1, 0);
 			ps.setString(2, "A");
+			ps.setString(3, "M");
+			ps.setString(4, "D");
 		});
 	}
 

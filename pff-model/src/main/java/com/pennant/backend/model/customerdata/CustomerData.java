@@ -12,14 +12,18 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
+import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.loandetail.LoanDetail;
 
-@XmlType(propOrder = { "custCIF", "custShrtName", "custDOB", "gender", "custCRCPR", "fullName", "custMotherMaiden",
-		"custFNameLclLng", "fullAddress", "custAddresses", "custPhoneNumbers", "custEmails", "custEmployments",
-		"loanDetail", "loanDetails", "returnStatus" })
+@XmlType(propOrder = { "custCIF", "custCategory", "custShrtName", "coreBankID", "custDOB", "gender", "custCRCPR",
+		"firstName", "middleName", "lastName", "fullName", "maritalStatus", "custMotherMaiden", "custTypeCode",
+		"custTypeDesc", "custFNameLclLng", "custNationality", "fullAddress", "custAddresses", "custPhoneNumbers",
+		"custEmails", "custEmployments", "customerIncomes", "loanDetail", "loanDetails", "returnStatus", "custGroupID",
+		"phone1", "phone2", "mobile1", "mobile2" })
 
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -27,6 +31,10 @@ public class CustomerData {
 
 	@XmlElement
 	private String custCIF;
+	@XmlElement
+	private String coreBankID;
+	@XmlElement
+	private String custCategory;
 	@XmlElement
 	private String custShrtName;
 	@XmlElement
@@ -42,7 +50,11 @@ public class CustomerData {
 	@XmlElement(name = "motherName")
 	private String custFNameLclLng;
 	@XmlElement
+	private String custNationality;
+	@XmlElement
 	private String fullAddress;
+	@XmlElement
+	private String natureOfBusiness;
 	@XmlElement
 	private List<CustomerAddres> custAddresses;
 	@XmlElement
@@ -53,11 +65,37 @@ public class CustomerData {
 	private List<CustomerEmploymentDetail> custEmployments;
 	@XmlElement(name = "loan")
 	private LoanDetail loanDetail;
+	@XmlElement
+	private List<CustomerIncome> customerIncomes;
+	@XmlElement
+	private List<CustomerDocument> customerDocuments;
 	@XmlElementWrapper(name = "loans")
 	@XmlElement
 	private List<LoanDetail> loanDetails;
 	@XmlElement
 	private WSReturnStatus returnStatus;
+	@XmlElement
+	private String maritalStatus;
+	@XmlElement
+	private String custTypeCode;
+	@XmlElement
+	private String custTypeDesc;
+	@XmlElement
+	private String firstName;
+	@XmlElement
+	private String middleName;
+	@XmlElement
+	private String lastName;
+	@XmlElement(name = "groupID")
+	private long custGroupID;
+	@XmlElement
+	private String phone1;
+	@XmlElement
+	private String phone2;
+	@XmlElement
+	private String mobile1;
+	@XmlElement
+	private String mobile2;
 
 	public CustomerData() {
 		super();
@@ -189,6 +227,142 @@ public class CustomerData {
 
 	public void setGender(String gender) {
 		this.gender = gender;
+	}
+
+	public String getCoreBankID() {
+		return coreBankID;
+	}
+
+	public void setCoreBankID(String coreBankID) {
+		this.coreBankID = coreBankID;
+	}
+
+	public String getCustNationality() {
+		return custNationality;
+	}
+
+	public void setCustNationality(String custNationality) {
+		this.custNationality = custNationality;
+	}
+
+	public String getNatureOfBusiness() {
+		return natureOfBusiness;
+	}
+
+	public void setNatureOfBusiness(String natureOfBusiness) {
+		this.natureOfBusiness = natureOfBusiness;
+	}
+
+	public List<CustomerIncome> getCustomerIncomes() {
+		return customerIncomes;
+	}
+
+	public void setCustomerIncomes(List<CustomerIncome> customerIncomes) {
+		this.customerIncomes = customerIncomes;
+	}
+
+	public List<CustomerDocument> getCustomerDocuments() {
+		return customerDocuments;
+	}
+
+	public void setCustomerDocuments(List<CustomerDocument> customerDocuments) {
+		this.customerDocuments = customerDocuments;
+	}
+
+	public String getMaritalStatus() {
+		return maritalStatus;
+	}
+
+	public void setMaritalStatus(String maritalStatus) {
+		this.maritalStatus = maritalStatus;
+	}
+
+	public String getCustCategory() {
+		return custCategory;
+	}
+
+	public void setCustCategory(String custCategory) {
+		this.custCategory = custCategory;
+	}
+
+	public String getCustTypeCode() {
+		return custTypeCode;
+	}
+
+	public void setCustTypeCode(String custTypeCode) {
+		this.custTypeCode = custTypeCode;
+	}
+
+	public String getCustTypeDesc() {
+		return custTypeDesc;
+	}
+
+	public void setCustTypeDesc(String custTypeDesc) {
+		this.custTypeDesc = custTypeDesc;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getMiddleName() {
+		return middleName;
+	}
+
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public long getCustGroupID() {
+		return custGroupID;
+	}
+
+	public void setCustGroupID(long custGroupID) {
+		this.custGroupID = custGroupID;
+	}
+
+	public String getPhone1() {
+		return phone1;
+	}
+
+	public void setPhone1(String phone1) {
+		this.phone1 = phone1;
+	}
+
+	public String getPhone2() {
+		return phone2;
+	}
+
+	public void setPhone2(String phone2) {
+		this.phone2 = phone2;
+	}
+
+	public String getMobile1() {
+		return mobile1;
+	}
+
+	public void setMobile1(String mobile1) {
+		this.mobile1 = mobile1;
+	}
+
+	public String getMobile2() {
+		return mobile2;
+	}
+
+	public void setMobile2(String mobile2) {
+		this.mobile2 = mobile2;
 	}
 
 }

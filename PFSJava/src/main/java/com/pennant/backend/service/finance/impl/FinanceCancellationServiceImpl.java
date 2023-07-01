@@ -123,6 +123,7 @@ import com.pennanttech.pff.core.util.LoanCancelationUtil;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennapps.core.util.ObjectUtil;
 
@@ -1018,8 +1019,8 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			}
 			// vallidation for manual dues
 			List<ManualAdvise> manualAdvise = manualAdviseDAO.getReceivableAdvises(finID, "");
-			if (CollectionUtils.isNotEmpty(manualAdvise)
-					&& !UploadTypes.LOAN_CANCEL.name().equals(fm.getFinSourceID())) {
+			if (CollectionUtils.isNotEmpty(manualAdvise) && !UploadTypes.LOAN_CANCEL.name().equals(fm.getFinSourceID())
+					&& !PennantConstants.FINSOURCE_ID_API.equalsIgnoreCase(fm.getFinSourceID())) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60022", errParm, valueParm));
 			}
 		}
@@ -1127,7 +1128,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		fsi.setReceivedDate(rd.getReceivedDate());
 		fsi.setRemarks(LoanCancelationUtil.LOAN_CANCEL_REMARKS);
 		fsi.setPaymentMode(ReceiptMode.EXCESS);
-		fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		fsi.setExcessAdjustTo(ExcessType.EXCESS);
 		fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		fsi.setReceiptdetailExits(false);
 		fsi.setUploadAllocationDetails(new ArrayList<>());

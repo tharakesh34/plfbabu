@@ -216,7 +216,8 @@ public class APIServices {
 		services.add("getCustomerDataByCIF");
 		services.add("getLoansByNameAndEMIAmount");
 		services.add("getRateChangeDetails");
-
+		services.add("getChargeDetails");
+		services.add("getSecurityUser");
 		return services;
 	}
 

@@ -24,8 +24,10 @@
  */
 package com.pennant.backend.model.administration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,6 +36,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.applicationmaster.Cluster;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -85,11 +90,13 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	private transient Map<String, Object> branches = new HashMap<>();
 
 	@XmlElement(name = "entities")
-	private String entitiesValues;
+	private List<Entity> entitiyList = new ArrayList<>();
 	@XmlElement(name = "clusters")
-	private String clusterValues;
+	private List<Cluster> clusterList = new ArrayList<>();
 	@XmlElement(name = "branches")
-	private String branchValues;
+	private List<Branch> branchList = new ArrayList<>();
+	@XmlElement
+	private String mode;
 
 	public SecurityUserDivBranch() {
 		super();
@@ -123,9 +130,11 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 		excludeFields.add("clusters");
 		excludeFields.add("branches");
 		excludeFields.add("clusterId");
-		excludeFields.add("entitiesValues");
-		excludeFields.add("clusterValues");
-		excludeFields.add("branchValues");
+		excludeFields.add("entitiyList");
+		excludeFields.add("clusterList");
+		excludeFields.add("branchList");
+		excludeFields.add("mode");
+
 		return excludeFields;
 	}
 
@@ -161,12 +170,12 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 		this.userBranch = userBranch;
 	}
 
-	public void setUserBranchDesc(String userBranchDesc) {
-		this.userBranchDesc = userBranchDesc;
-	}
-
 	public String getUserBranchDesc() {
 		return userBranchDesc;
+	}
+
+	public void setUserBranchDesc(String userBranchDesc) {
+		this.userBranchDesc = userBranchDesc;
 	}
 
 	public String getLovValue() {
@@ -177,28 +186,20 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public SecurityUserDivBranch getBefImage() {
-		return this.befImage;
-	}
-
-	public void setBefImage(SecurityUserDivBranch beforeImage) {
-		this.befImage = beforeImage;
-	}
-
-	public LoggedInUser getUserDetails() {
-		return userDetails;
-	}
-
-	public void setUserDetails(LoggedInUser userDetails) {
-		this.userDetails = userDetails;
-	}
-
 	public String getLovDescPriKey() {
 		return lovDescPriKey;
 	}
 
 	public void setLovDescPriKey(String lovDescPriKey) {
 		this.lovDescPriKey = lovDescPriKey;
+	}
+
+	public SecurityUserDivBranch getBefImage() {
+		return befImage;
+	}
+
+	public void setBefImage(SecurityUserDivBranch befImage) {
+		this.befImage = befImage;
 	}
 
 	public String getBranchSwiftBrnCde() {
@@ -215,6 +216,14 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 
 	public void setBranchProvince(String branchProvince) {
 		this.branchProvince = branchProvince;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
 	}
 
 	public String getEntity() {
@@ -245,8 +254,8 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 		return clusterId;
 	}
 
-	public void setClusterId(Long cluster) {
-		this.clusterId = cluster;
+	public void setClusterId(Long clusterId) {
+		this.clusterId = clusterId;
 	}
 
 	public String getClusterCode() {
@@ -345,28 +354,36 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 		this.branches = branches;
 	}
 
-	public String getEntitiesValues() {
-		return entitiesValues;
+	public List<Entity> getEntitiyList() {
+		return entitiyList;
 	}
 
-	public void setEntitiesValues(String entitiesValues) {
-		this.entitiesValues = entitiesValues;
+	public void setEntitiyList(List<Entity> entitiyList) {
+		this.entitiyList = entitiyList;
 	}
 
-	public String getClusterValues() {
-		return clusterValues;
+	public List<Cluster> getClusterList() {
+		return clusterList;
 	}
 
-	public void setClusterValues(String clusterValues) {
-		this.clusterValues = clusterValues;
+	public void setClusterList(List<Cluster> clusterList) {
+		this.clusterList = clusterList;
 	}
 
-	public String getBranchValues() {
-		return branchValues;
+	public List<Branch> getBranchList() {
+		return branchList;
 	}
 
-	public void setBranchValues(String branchValues) {
-		this.branchValues = branchValues;
+	public void setBranchList(List<Branch> branchList) {
+		this.branchList = branchList;
+	}
+
+	public String getMode() {
+		return mode;
+	}
+
+	public void setMode(String mode) {
+		this.mode = mode;
 	}
 
 }

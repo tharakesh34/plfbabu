@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -53,6 +54,7 @@ import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.upload.ReceiptDataValidator;
 
@@ -67,6 +69,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private FeeTypeDAO feeTypeDAO;
 
 	public ManualKnockOffUploadServiceImpl() {
 		super();
@@ -98,11 +101,6 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 
 		if (fm == null) {
 			setError(detail, ManualKnockOffUploadError.MKOU_102);
-			return;
-		}
-
-		if (!fm.isFinIsActive()) {
-			setError(detail, ManualKnockOffUploadError.MKOU_103);
 			return;
 		}
 
@@ -155,15 +153,25 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		}
 
 		String excessType = detail.getExcessType();
+		String feeTypeCode = detail.getFeeTypeCode();
 
-		if ("P".equals(excessType) && StringUtils.isEmpty(detail.getFeeTypeCode())) {
+		if (ExcessType.PAYABLE.equals(excessType) && StringUtils.isEmpty(feeTypeCode)) {
 			setError(detail, ManualKnockOffUploadError.MKOU_1013);
 			return;
 		}
 
-		if ((!"E".equals(excessType) && !"A".equals(excessType)) && StringUtils.isEmpty(detail.getFeeTypeCode())) {
+		if ((!"E".equals(excessType) && !"A".equals(excessType)) && StringUtils.isEmpty(feeTypeCode)) {
 			setError(detail, ManualKnockOffUploadError.MKOU_108);
 			return;
+		}
+
+		if (ExcessType.PAYABLE.equals(excessType)) {
+			Long feeTypeId = feeTypeDAO.getPayableFeeTypeID(feeTypeCode);
+
+			if (feeTypeId == null || feeTypeId <= 0) {
+				setError(detail, ManualKnockOffUploadError.MKOU_1018);
+				return;
+			}
 		}
 
 		BigDecimal balanceAmount = BigDecimal.ZERO;
@@ -184,7 +192,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			}
 		} else {
 			List<ManualAdvise> maList = manualAdviseDAO.getManualAdviseByRefAndFeeCode(fm.getFinID(),
-					AdviseType.PAYABLE.id(), detail.getFeeTypeCode());
+					AdviseType.PAYABLE.id(), feeTypeCode);
 
 			maList = maList.stream().filter(ma -> !PennantConstants.MANUALADVISE_CANCEL.equals(ma.getStatus()))
 					.collect(Collectors.toList());
@@ -290,11 +298,11 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		prepareUserDetails(header, fc);
 
 		List<FinServiceInstruction> fsiList = new ArrayList<>();
-		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(fc.getExcessType())) {
+		if (ExcessType.EXCESS.equals(fc.getExcessType())) {
 			fsiList.addAll(prepareRCDForExcess(header, fc));
 		}
 
-		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(fc.getExcessType())) {
+		if (ExcessType.PAYABLE.equals(fc.getExcessType())) {
 			fsiList.addAll(prepareRCDForPayable(header, fc));
 		}
 
@@ -490,7 +498,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		rud.setValueDate(valueDate);
 		rud.setRealizationDate(valueDate);
 		rud.setReceivedDate(valueDate);
-		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		rud.setExcessAdjustTo(ExcessType.EXCESS);
 		rud.setReceiptMode(receiptMode);
 		rud.setReceiptPurpose("SP");
 		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
@@ -662,4 +670,10 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
+
+	@Autowired
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
+	}
+
 }

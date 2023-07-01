@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-                                                                                                                                                    
+                                                                                                                                                        
+    
     
     
     
@@ -36,7 +37,8 @@
     
     
     <wb-module deploy-name="pff-api">
-                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                
+        
         
         
         
@@ -73,7 +75,8 @@
         
         
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
-                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                
+        
         
         
         
@@ -110,7 +113,8 @@
         
         
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
-                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                
+        
         
         
         
@@ -147,7 +151,8 @@
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                
+        
         
         
         
@@ -184,28 +189,26 @@
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module archiveName="PFSJava-6.4.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/PFSJava/PFSJava">
+        <dependent-module archiveName="pff-core-6.4.0.3.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-core/pff-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-core-6.4.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-core/pff-core">
+        <dependent-module archiveName="pff-interface-6.4.0.3.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-interface/pff-interface">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-interface-6.4.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-interface/pff-interface">
+        <dependent-module archiveName="pff-model-6.4.0.3.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-model/pff-model">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-model-6.4.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-model/pff-model">
+        <dependent-module archiveName="pff-extension-6.4.0.3.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-extension/pff-extension">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-extension-6.4.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-extension/pff-extension">
+        <dependent-module archiveName="pff-interface-core-6.4.0.3.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-interface-core/pff-interface-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-interface-core-6.4.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-interface-core/pff-interface-core">
+        <dependent-module archiveName="pff-extension-core-6.4.0.3.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-extension-core/pff-extension-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-extension-core-6.4.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-extension-core/pff-extension-core">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                
+        
         
         
         
@@ -242,7 +245,8 @@
         
         
         <property name="context-root" value="pff-api"/>
-                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                
+        
         
         
         
@@ -279,7 +283,8 @@
         
         
         <property name="java-output-path" value="/pff-api/target/classes"/>
-                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                
+        
         
         
         
@@ -316,7 +321,8 @@
         
         
         <property name="component.exclusion.patterns" value="WEB-INF/lib/stax-api-1.0.1.jar"/>
-                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                            
+    
     
     
     
@@ -353,7 +359,8 @@
     
     
     </wb-module>
-                                                                                                                                                
+                                                                                                                                                    
+
 
 
 

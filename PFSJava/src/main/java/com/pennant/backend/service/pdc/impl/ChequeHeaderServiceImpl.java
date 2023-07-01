@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -1132,7 +1133,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		List<ErrorDetail> errors = schdData.getErrorDetails();
 		if (CollectionUtils.isNotEmpty(errors)) {
 			ErrorDetail ed = errors.get(0);
-			return getError(ed.getCode(), ed.getError());
+			return getError(ed.getCode(), ed.getParameters());
 		}
 
 		return null;
@@ -1144,7 +1145,11 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		Date schDate = schedule.getSchDate();
 
 		if (repayAmount.compareTo(cheque.getAmount()) != 0) {
-			setError(schdData, "30570", DateUtil.formatToLongDate(schDate), String.valueOf(repayAmount + "INR"));
+
+			String parm = "Installment amount : " + String.valueOf(CurrencyUtil.format(repayAmount))
+					+ " for ScheduleDates " + DateUtil.formatToLongDate(schDate);
+
+			setError(schdData, "30570", "Cheque amount", parm);
 			return;
 		}
 

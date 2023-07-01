@@ -1,9 +1,12 @@
 package com.pennant.pff.branchchange.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -15,17 +18,13 @@ import org.springframework.transaction.TransactionStatus;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
-import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.branchchange.upload.BranchChangeUpload;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.pff.branchchange.dao.BranchChangeUploadDAO;
 import com.pennant.pff.branchchange.dao.BranchMigrationDAO;
-import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
@@ -42,9 +41,7 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 	private BranchDAO branchDAO;
 	private BranchMigrationDAO branchMigrationDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
-	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 
-	@Override
 	protected BranchChangeUpload getDetail(Object object) {
 		if (object instanceof BranchChangeUpload detail) {
 			return detail;
@@ -227,57 +224,152 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 		return branchChangeUploadDAO.getSqlQuery();
 	}
 
-	private void doBranchChange(Long finID, String oldBranch, String newBranch, Date appDate) {
-		String eventCode = AccountingEvent.BRNCHG;
-		int moduleID = FinanceConstants.MODULEID_FINTYPE;
-
+	private List<ReturnDataSet> prepareReturnDataSet(Long finID, String oldBranch, Date appDate) {
 		FinanceMain fm = financeMainDAO.getFinMainsForEODByFinRef(finID, true);
 
-		Long accountingID = AccountingEngine.getAccountSetID(fm.getFinType(), eventCode, moduleID);
+		String finReference = fm.getFinReference();
+		List<Accounts> accountsList = branchMigrationDAO.getAccounts(finReference, oldBranch);
 
-		if (accountingID == null || accountingID <= 0) {
-			logger.debug("Accounting Set not found with {} Event and {} Loan Type", eventCode, fm.getFinType());
-			return;
-		}
+		List<Accounts> accBalList = new ArrayList<>();
 
-		AEEvent aeEvent = new AEEvent();
-		AEAmountCodes amountCode = new AEAmountCodes();
-		aeEvent.setAeAmountCodes(amountCode);
-
-		aeEvent.setFinReference(fm.getFinReference());
-		aeEvent.setAccountingEvent(eventCode);
-		aeEvent.setPostDate(appDate);
-		aeEvent.setValueDate(appDate);
-
-		aeEvent.setBranch(newBranch);
-		aeEvent.setCcy(fm.getFinCcy());
-		aeEvent.setFinType(fm.getFinType());
-		aeEvent.setCustID(fm.getCustID());
-
-		amountCode.setFinType(aeEvent.getFinType());
-
-		Map<String, Object> dataMap = amountCode.getDeclaredFieldValues();
-
-		List<Accounts> accountsList = branchMigrationDAO.getAccounts(fm.getFinReference(), oldBranch);
+		Set<String> accset = new HashSet<>();
 
 		for (Accounts account : accountsList) {
-			if (AccountingEvent.LIABILITY.equals(account.getGroupCode())) {
-				dataMap.put("L_" + account.getAcType() + "_old_branch".toUpperCase(), account.getAcBalance());
-				dataMap.put("L_" + account.getAcType() + "_new_branch".toUpperCase(), account.getAcBalance());
-			}
-
-			if ("ASSET".equals(account.getGroupCode())) {
-				dataMap.put("A_" + account.getAcType() + "_old_branch".toUpperCase(), account.getAcBalance());
-				dataMap.put("A_" + account.getAcType() + "_new_branch".toUpperCase(), account.getAcBalance());
+			String acNumber = account.getAcNumber();
+			if (!accset.contains(acNumber)) {
+				accset.add(acNumber);
+				accBalList.add(account);
 			}
 		}
 
-		aeEvent.setDataMap(dataMap);
-		aeEvent.getAcSetIDList().add(accountingID);
-		aeEvent.setCustAppDate(appDate);
+		long linkedTranId = postingsPreparationUtil.getLinkedTranID();
 
-		postingsPreparationUtil.postAccountingEOD(aeEvent);
-		postingsPreparationUtil.saveAccountingEOD(aeEvent.getReturnDataSet());
+		List<ReturnDataSet> list = new ArrayList<>();
+
+		String tranCode = "";
+		String revTranCode = "";
+		String drOrCr = "";
+		for (Accounts account : accBalList) {
+			BigDecimal acBalance = account.getAcBalance();
+
+			if (acBalance.compareTo(BigDecimal.ZERO) == 0) {
+				continue;
+			}
+
+			ReturnDataSet rds = new ReturnDataSet();
+
+			rds.setEntityCode(account.getEntityCode());
+			rds.setAccount(account.getAcNumber());
+			rds.setAccountType(account.getAcType());
+			rds.setTranDesc(account.getAcTypeDesc());
+			rds.setAcCcy(account.getAcCcy());
+
+			rds.setLinkedTranId(linkedTranId);
+			rds.setFinID(finID);
+			rds.setFinReference(finReference);
+			rds.setFinEvent(AccountingEvent.BRNCHG);
+			rds.setUserBranch(AccountingEvent.BRNCHG);
+			rds.setPostDate(appDate);
+			rds.setAppDate(appDate);
+			rds.setValueDate(appDate);
+			rds.setAppValueDate(appDate);
+			rds.setAmountType("D");
+			rds.setPostStatus("S");
+			rds.setPostToSys("E");
+			rds.setDerivedTranOrder(0);
+			rds.setExchangeRate(BigDecimal.ZERO);
+			rds.setShadowPosting(false);
+
+			if (acBalance.compareTo(BigDecimal.ZERO) < 0) {
+				drOrCr = "C";
+				tranCode = "510";
+				revTranCode = "010";
+				acBalance = acBalance.negate();
+			} else {
+				drOrCr = "D";
+				tranCode = "010";
+				revTranCode = "510";
+			}
+
+			rds.setPostAmount(acBalance);
+			rds.setPostAmountLcCcy(acBalance);
+
+			rds.setDrOrCr(drOrCr);
+			rds.setTranCode(tranCode);
+			rds.setRevTranCode(revTranCode);
+			rds.setPostBranch(oldBranch);
+			rds.setPostref(oldBranch + "-" + account.getAcType() + "-" + account.getAcCcy());
+
+			list.add(rds);
+		}
+
+		return list;
+	}
+
+	private void doBranchChange(Long finID, String oldBranch, String newBranch, Date appDate) {
+		List<ReturnDataSet> list = prepareReturnDataSet(finID, oldBranch, appDate);
+
+		List<ReturnDataSet> sortedList = list.stream()
+				.sorted((rds1, rds2) -> StringUtils.compare(rds2.getDrOrCr(), rds1.getDrOrCr())).toList();
+
+		list.clear();
+
+		int transOrder = 1;
+		int transOrderID = 0;
+
+		String tranCode = "";
+		String revTranCode = "";
+		String drOrCr = "";
+
+		for (ReturnDataSet rds : sortedList) {
+			String finReference = rds.getFinReference();
+
+			transOrderID = transOrderID + 10;
+
+			rds.setTranOrderId(String.valueOf(transOrderID));
+			rds.setTransOrder(transOrder++);
+			rds.setPostingId(
+					finReference.concat("/").concat(AccountingEvent.BRNCHG).concat("/").concat(rds.getTranOrderId()));
+
+			if (rds.getDrOrCr().equals("C")) {
+				drOrCr = "D";
+				tranCode = "010";
+				revTranCode = "510";
+			} else {
+				drOrCr = "C";
+				tranCode = "510";
+				revTranCode = "010";
+			}
+
+			ReturnDataSet newRds = ObjectUtil.clone(rds);
+			transOrderID = transOrderID + 10;
+
+			newRds.setDrOrCr(drOrCr);
+			newRds.setTranCode(tranCode);
+			newRds.setRevTranCode(revTranCode);
+			newRds.setPostBranch(newBranch);
+			newRds.setPostref(newBranch + "-" + newRds.getAccountType() + "-" + newRds.getAcCcy());
+			newRds.setTranOrderId(String.valueOf(transOrderID++));
+			newRds.setTransOrder(transOrder++);
+			newRds.setPostingId(finReference.concat("/").concat(AccountingEvent.BRNCHG).concat("/")
+					.concat(newRds.getTranOrderId()));
+
+			if (rds.getDrOrCr().equals("D")) {
+				list.add(rds);
+			} else if (newRds.getDrOrCr().equals("D")) {
+				list.add(newRds);
+			}
+
+			if (rds.getDrOrCr().equals("C")) {
+				list.add(rds);
+			}
+			if (newRds.getDrOrCr().equals("C")) {
+				list.add(newRds);
+			}
+
+		}
+
+		postingsPreparationUtil.saveAccountingEOD(list);
 	}
 
 	@Override
@@ -344,11 +436,6 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 	@Autowired
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	@Autowired
-	public void setFinServiceInstrutionDAO(FinServiceInstrutionDAO finServiceInstrutionDAO) {
-		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
 	}
 
 }

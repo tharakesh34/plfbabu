@@ -141,6 +141,7 @@ public class JavaScriptBuilder extends Groupbox {
 	private List<JSRuleReturnType> jsRuleReturnTypeList = null;
 
 	private List<ValueLabel> closureTypeList = ClosureType.getTypes();
+
 	private List<ValueLabel> courierStatusList = CourierStatus.getTypes();
 
 	protected Groupbox groupbox;
@@ -1345,7 +1346,9 @@ public class JavaScriptBuilder extends Groupbox {
 						comboBox = (Combobox) treeCell.getFellowIfAny(uUID + "_rightOperandType");
 						comboBoxValue = comboBox.getSelectedItem().getValue();
 
-						if (StringUtils.equals(((Combobox) operand).getSelectedItem().getValue(), "fm_ClosureType")) {
+						if (StringUtils.equals(((Combobox) operand).getSelectedItem().getValue(), "fm_ClosureType")
+								|| StringUtils.equals(((Combobox) operand).getSelectedItem().getValue(),
+										"lt_closureType")) {
 							excludeFields = " , " + RuleConstants.CALCVALUE + " , " + RuleConstants.STATICTEXT + " , "
 									+ RuleConstants.DBVALUE + " , ";
 						}
@@ -1887,7 +1890,8 @@ public class JavaScriptBuilder extends Groupbox {
 					Combobox leftOperand = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand");
 					String selectedItem = leftOperand.getSelectedItem().getValue();
 
-					if (StringUtils.equals(selectedItem, "fm_ClosureType")) {
+					if (StringUtils.equals(selectedItem, "fm_ClosureType")
+							|| StringUtils.equals(selectedItem, "lt_closureType")) {
 						for (int i = 0; i < this.closureTypeList.size(); i++) {
 							ValueLabel closureDetails = this.closureTypeList.get(i);
 							String closureDetailsValue = closureDetails.getValue();
@@ -1904,7 +1908,18 @@ public class JavaScriptBuilder extends Groupbox {
 								}
 							}
 						}
-					} else if (StringUtils.equals(selectedItem, "PrvLetterCourierDeliveryStatus")) {
+
+						if (leftOperand.getSelectedIndex() != 0) {
+							comboitem.setLabel(Labels.getLabel("label_Settled"));
+							comboitem.setValue(ClosureType.SETTLED.code());
+							operand.appendChild(comboitem);
+
+							if (StringUtils.trimToEmpty(value).equals(Labels.getLabel("label_Settled"))) {
+								operand.setSelectedItem(comboitem);
+							}
+						}
+					} else if (StringUtils.equals(selectedItem, "PrvLetterCourierDeliveryStatus")
+							|| StringUtils.equals(selectedItem, "lt_prvLetterCourierDeliveryStatus")) {
 						for (int i = 0; i < this.courierStatusList.size(); i++) {
 							ValueLabel courierStatus = this.courierStatusList.get(i);
 							String courierStatusVaue = courierStatus.getValue();
@@ -2261,7 +2276,9 @@ public class JavaScriptBuilder extends Groupbox {
 						if (StringUtils.equals(rightOperandTypeValue, RuleConstants.STATICTEXT)
 								|| StringUtils.equals(rightOperandTypeValue, RuleConstants.DBVALUE)
 								|| StringUtils.equals("fm_ClosureType", leftOperandValue)
-								|| StringUtils.equals("PrvLetterCourierDeliveryStatus", leftOperandValue)) {
+								|| StringUtils.equals("lt_closureType", leftOperandValue)
+								|| StringUtils.equals("PrvLetterCourierDeliveryStatus", leftOperandValue)
+								|| StringUtils.equals("lt_prvLetterCourierDeliveryStatus", leftOperandValue)) {
 							rightOperandValue = "'" + rightOperandValue + "'";
 						}
 

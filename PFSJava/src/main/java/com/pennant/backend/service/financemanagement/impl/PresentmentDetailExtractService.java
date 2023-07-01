@@ -37,6 +37,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 
 public class PresentmentDetailExtractService {
 	private static final Logger logger = LogManager.getLogger(PresentmentDetailExtractService.class);
@@ -662,11 +663,11 @@ public class PresentmentDetailExtractService {
 			if (AdvanceStage.getStage(pd.getAdvStage()) == AdvanceStage.FE) {
 				return;
 			}
-			amountType = RepayConstants.EXAMOUNTTYPE_ADVEMI;
+			amountType = ExcessType.ADVEMI;
 			dueAmt = pd.getSchAmtDue();
 			exculdeReason = RepayConstants.PEXC_ADVEMI;
 		} else {
-			amountType = RepayConstants.EXAMOUNTTYPE_ADVINT;
+			amountType = ExcessType.ADVINT;
 			dueAmt = pd.getSchPftDue();
 			if (pd.getSchPriDue().compareTo(BigDecimal.ZERO) == 0) {
 				exculdeReason = RepayConstants.PEXC_ADVINT;

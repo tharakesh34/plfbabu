@@ -61,36 +61,13 @@ public class SecurityUserAccessServiceImpl extends GenericService<SecurityUserAc
 		logger.debug(Literal.ENTERING);
 
 		long userId = user.getUsrID();
-		long lastMntBy = user.getLastMntBy();
-		Timestamp lastMntOn = new Timestamp(System.currentTimeMillis());
 		securityUserAccessDAO.deleteDivisionBranchesByUser(userId, "UserAccess");
 
 		if (CollectionUtils.isNotEmpty(user.getSecurityUserDivBranchList())) {
 			List<SecurityUserAccess> list = new ArrayList<>();
 
 			for (SecurityUserDivBranch divisionBranch : user.getSecurityUserDivBranchList()) {
-				SecurityUserAccess access = new SecurityUserAccess();
-
-				access.setUsrId(userId);
-				access.setBranch(divisionBranch.getUserBranch());
-				access.setDivision(divisionBranch.getUserDivision());
-				access.setAccessType(divisionBranch.getAccessType());
-				access.setEntity(divisionBranch.getEntity());
-				access.setClusterId(divisionBranch.getClusterId());
-				access.setClusterType(divisionBranch.getClusterType());
-				access.setParentCluster(divisionBranch.getParentCluster());
-				access.setLastMntBy(lastMntBy);
-				access.setLastMntOn(lastMntOn);
-
-				access.setVersion(1);
-				access.setRecordStatus("Approved");
-				access.setRoleCode("");
-				access.setNextRoleCode("");
-				access.setTaskId("");
-				access.setNextTaskId("");
-				access.setWorkflowId(0);
-
-				list.add(access);
+				list.add(prepareUserAccess(user, divisionBranch));
 			}
 
 			securityUserAccessDAO.saveDivisionBranches(list);
@@ -99,6 +76,53 @@ public class SecurityUserAccessServiceImpl extends GenericService<SecurityUserAc
 				saveDivisionBranches(user, list);
 			}
 		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private SecurityUserAccess prepareUserAccess(SecurityUser user, SecurityUserDivBranch divisionBranch) {
+		SecurityUserAccess access = new SecurityUserAccess();
+
+		access.setUsrId(user.getUsrID());
+		access.setBranch(divisionBranch.getUserBranch());
+		access.setDivision(divisionBranch.getUserDivision());
+		access.setAccessType(divisionBranch.getAccessType());
+		access.setEntity(divisionBranch.getEntity());
+		access.setClusterId(divisionBranch.getClusterId());
+		access.setClusterType(divisionBranch.getClusterType());
+		access.setParentCluster(divisionBranch.getParentCluster());
+		access.setLastMntBy(user.getLastMntBy());
+		access.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+
+		access.setVersion(1);
+		access.setRecordStatus("Approved");
+		access.setRoleCode("");
+		access.setNextRoleCode("");
+		access.setTaskId("");
+		access.setNextTaskId("");
+		access.setWorkflowId(0);
+		return access;
+	}
+
+	@Override
+	public void saveDIvisionBranchesByMode(SecurityUser user) {
+		logger.debug(Literal.ENTERING);
+
+		List<SecurityUserAccess> list = new ArrayList<>();
+		for (SecurityUserDivBranch division : user.getSecurityUserDivBranchList()) {
+			switch (division.getRecordType()) {
+			case PennantConstants.RCD_ADD:
+				list.add(prepareUserAccess(user, division));
+				break;
+			case PennantConstants.RCD_DEL:
+				securityUserAccessDAO.deleteDivisionByAccessType(division);
+				break;
+			default:
+				break;
+			}
+		}
+
+		securityUserAccessDAO.saveDivisionBranches(list);
 
 		logger.debug(Literal.LEAVING);
 	}

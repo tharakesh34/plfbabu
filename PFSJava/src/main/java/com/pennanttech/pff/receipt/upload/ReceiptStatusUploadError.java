@@ -20,7 +20,7 @@ public enum ReceiptStatusUploadError {
 
 	RU08(" REALIZATION DATE is allowed only when RECEIPTMODE is { CHEQUE or DD } "),
 
-	RU09(" REALIZATION DATE is Mandatory in case of RECEIPT MODE { CHEQUE or DD }"),
+	RU09(" REALIZATION DATE is Mandatory when Status is R"),
 
 	RU010(" REALIZATION DATE should not be less than DEPOSITED DATE "),
 
@@ -44,7 +44,7 @@ public enum ReceiptStatusUploadError {
 
 	RU020(" NO DATA FOUND with specified receipt"),
 
-	RU021("REALIZATION DATE Should be empty when Status is B/C");
+	RU021("B/C status codes for already Realized receipts of ES/EP receipt modes's not ALLOWED");
 
 	private String description;
 

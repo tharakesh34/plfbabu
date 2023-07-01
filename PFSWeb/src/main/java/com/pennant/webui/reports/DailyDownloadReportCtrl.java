@@ -27,7 +27,6 @@ package com.pennant.webui.reports;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
@@ -210,7 +209,7 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -272,11 +271,9 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 	 * 
 	 * @param reportSrc
 	 * @return
-	 * @throws InterruptedException
-	 * @throws SQLException
 	 */
 	private boolean generateExcelReport(String folderPath, String reportName, String reportDesc, boolean bulkReportProc,
-			String zipFolderPath, Connection con) throws InterruptedException, SQLException {
+			String zipFolderPath, Connection con) {
 		logger.debug("Entering");
 
 		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ENDOFMONTH) + "/" + folderPath + "/" + reportName
@@ -473,10 +470,9 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 	 * This method takes source file and create .zip file of source file
 	 * 
 	 * @param fileLocation
-	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	private void createZIPFile(String fileLocation) throws FileNotFoundException, IOException {
+	private void createZIPFile(String fileLocation) throws IOException {
 		logger.debug("Entering");
 
 		File inFolder = null;

@@ -1075,7 +1075,7 @@ public class RepaymentPostingsUtil {
 				if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
 					fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 					pftDetail.setSvnAcrTillLBD(pftDetail.getTotalSvnAmount());
-				} else {
+				} else if (rch != null && fm.isOldActiveState()) {
 					rch.setClosureType(ClosureType.CLOSURE.code());
 				}
 
@@ -1096,18 +1096,19 @@ public class RepaymentPostingsUtil {
 			fm.setFinIsActive(false);
 			fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_CANCELLED);
 		} else {
-			fm.setFinIsActive(true);
-			fm.setClosedDate(null);
-			if (!fm.isWriteoffLoan()) {
-				fm.setClosingStatus(null);
-			}
+			fm.setFinIsActive(fm.isOldActiveState());
+			fm.setClosedDate(fm.getClosedDate());
+			fm.setClosingStatus(fm.getClosingStatus());
 		}
 
 		if (schdFullyPaid && MandateExtension.ALLOW_HOLD_MARKING) {
 			holdMarkingService.removeHold(fm);
 		}
 
-		fm.setClosureType(rch == null ? null : rch.getClosureType());
+		if (FinanceUtil.isClosedNow(fm)) {
+			fm.setClosureType(rch == null ? ClosureType.CLOSURE.code() : rch.getClosureType());
+		}
+
 		letterService.logForAutoLetter(fm, appDate);
 
 		pftDetail.setFinStatus(fm.getFinStatus());
@@ -1513,6 +1514,7 @@ public class RepaymentPostingsUtil {
 					for (ManualAdvise ma1 : ma) {
 						if (ma1.getAdviseID() == rcd.getPayAgainstID()) {
 							feeTypeCode = ma1.getFeeTypeCode();
+							dataMap.put(feeTypeCode + "_P", rcd.getAmount());
 							break;
 						}
 					}

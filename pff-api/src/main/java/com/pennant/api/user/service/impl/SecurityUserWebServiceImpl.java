@@ -13,8 +13,10 @@ import com.pennant.api.user.service.SecurityUserRestService;
 import com.pennant.api.user.service.SecurityUserSoapService;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.administration.SecurityUserService;
@@ -25,6 +27,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.RequestSource;
 
 @Service
 public class SecurityUserWebServiceImpl extends AbstractService
@@ -32,6 +35,7 @@ public class SecurityUserWebServiceImpl extends AbstractService
 
 	private SecurityUserService securityUserService;
 	private SecurityUserController securityUserController;
+	private SecurityUserOperationsDAO securityUserOperationsDAO;
 
 	@Override
 	public SecurityUser createSecurityUser(SecurityUser user) throws ServiceException {
@@ -40,6 +44,7 @@ public class SecurityUserWebServiceImpl extends AbstractService
 		boolean isAllowCluster = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER);
 		LoggedInUser liu = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 
+		user.setRequestSource(RequestSource.API);
 		AuditHeader ah = getAuditHeader(user, PennantConstants.TRAN_WF);
 
 		AuditDetail ad = securityUserService.doUserValidation(ah, isAllowCluster, false, liu);
@@ -51,11 +56,12 @@ public class SecurityUserWebServiceImpl extends AbstractService
 		if (CollectionUtils.isNotEmpty(errors)) {
 			ErrorDetail ed = errors.get(errors.size() - 1);
 
-			SecurityUser seqUser = new SecurityUser();
-			seqUser.setReturnStatus(getFailedStatus(ed.getCode(), ed.getError()));
-			return seqUser;
+			SecurityUser secUser = new SecurityUser();
+			secUser.setReturnStatus(getFailedStatus(ed.getCode(), ed.getError()));
+			return secUser;
 		}
 
+		user.setRequestSource(RequestSource.API);
 		SecurityUser response = securityUserController.createSecurityUser(user, liu);
 
 		logKeyFields(user.getUsrLogin(), user.getUsrFName());
@@ -69,23 +75,27 @@ public class SecurityUserWebServiceImpl extends AbstractService
 	}
 
 	@Override
-	public WSReturnStatus updateSecurityUser(SecurityUser user) throws ServiceException {
+	public SecurityUser updateSecurityUser(SecurityUser user) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
 		logKeyFields(user.getUsrLogin(), user.getUsrFName());
 
 		if (user.getUsrID() <= 0) {
-			return getFailedStatus("90502", "usrId");
+			logger.debug(Literal.LEAVING);
+			return emptyResponseObject(getFailureStatus(user, "90502", "usrId"));
 		}
 
 		SecurityUser secUser = securityUserService.getApprovedSecurityUserById(user.getUsrID());
 
 		if (secUser == null) {
-			return getFailedStatus("93303", String.valueOf(user.getUsrID()));
+			logger.debug(Literal.LEAVING);
+			return emptyResponseObject(getFailureStatus(user, "93303", String.valueOf(user.getUsrID())));
 		}
 
 		if (!StringUtils.equals(secUser.getUsrLogin(), user.getUsrLogin())) {
-			return getFailedStatus("93307", String.valueOf(user.getUsrID()), String.valueOf(user.getUsrLogin()));
+			logger.debug(Literal.LEAVING);
+			return emptyResponseObject(getFailureStatus(user, "93307", String.valueOf(user.getUsrID()),
+					String.valueOf(user.getUsrLogin())));
 		}
 
 		boolean isAllowCluster = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER);
@@ -100,13 +110,46 @@ public class SecurityUserWebServiceImpl extends AbstractService
 
 		if (ah.getErrorMessage() != null) {
 			ErrorDetail ed = ah.getErrorMessage().get(0);
-			return getFailedStatus(ed.getCode(), ed.getError());
+			logger.debug(Literal.LEAVING);
+			return emptyResponseObject(getFailureStatus(user, ed.getCode(), ed.getError()));
 		}
 
-		WSReturnStatus returnStatus = securityUserController.updateSecurityUser(user, isAllowCluster, liu);
+		user.setRequestSource(RequestSource.API);
 
 		logger.debug(Literal.LEAVING);
-		return returnStatus;
+
+		return emptyResponseObject(securityUserController.updateSecurityUser(user, isAllowCluster, liu));
+	}
+
+	@Override
+	public SecurityUser getSecurityUser(SecurityUser securityUser) {
+		logger.debug(Literal.ENTERING);
+
+		SecurityUser response;
+
+		String userName = securityUser.getUsrLogin();
+
+		if (StringUtils.isEmpty(userName)) {
+			response = new SecurityUser();
+			response.setReturnStatus(getFailedStatus("90502", "Login Name"));
+			return response;
+		}
+
+		response = securityUserService.getSecurityUserByLogin(userName);
+
+		if (response == null) {
+			response = new SecurityUser();
+			response.setReturnStatus(getFailedStatus("92021", "There is no approved User with requested Login Name"));
+		}
+
+		List<SecurityUserDivBranch> divBranchList = securityUserService.getSecUserDivBrList(response.getUsrID(), "");
+		response.setSecurityUserDivBranchList(securityUserService.prepareSecurityBranch(divBranchList));
+		response.setSecurityUserOperationsList(
+				securityUserOperationsDAO.getSecUserOperationsByUsrID(response, "_View"));
+		response.setReturnStatus(getSuccessStatus());
+		response.setUsrPwd(null);
+
+		return response;
 	}
 
 	private AuditHeader getAuditHeader(SecurityUser user, String tranType) {
@@ -174,6 +217,42 @@ public class SecurityUserWebServiceImpl extends AbstractService
 		return securityUserController.updateUserStatus(user, isUserEnable);
 	}
 
+	private SecurityUser getFailureStatus(SecurityUser user, String errorCode, String... errorDesc) {
+		user.setReturnStatus(getFailedStatus(errorCode, errorDesc));
+		return user;
+	}
+
+	private SecurityUser emptyResponseObject(SecurityUser user) {
+
+		user.setUsrPwd(null);
+		user.setUsrRawPwd(null);
+		user.setUsrLName(null);
+		user.setUsrMName(null);
+		user.setUsrFName(null);
+		user.setUsrMobile(null);
+		user.setUsrEmail(null);
+		user.setUsrCanSignonFrom(null);
+		user.setUsrCanSignonTo(null);
+		user.setUsrToken(null);
+		user.setUsrBranchCode(null);
+		user.setUsrDeptCode(null);
+		user.setUsrLanguage(null);
+		user.setUserStaffID(null);
+		user.setUsrAcExpDt(null);
+		user.setUsrDesg(null);
+		user.setAuthType(null);
+		user.setldapDomainName(null);
+		user.setDisableReason(null);
+		user.setEmployeeType(null);
+		user.setReason(null);
+		user.setConfirmPassword(null);
+		user.setBaseLocation(null);
+		user.setSecurityUserDivBranchList(null);
+		user.setSecurityUserOperationsList(null);
+
+		return user;
+	}
+
 	@Autowired
 	public void setSecurityUserService(SecurityUserService securityUserService) {
 		this.securityUserService = securityUserService;
@@ -184,4 +263,8 @@ public class SecurityUserWebServiceImpl extends AbstractService
 		this.securityUserController = securityUserController;
 	}
 
+	@Autowired
+	public void setSecurityUserOperationsDAO(SecurityUserOperationsDAO securityUserOperationsDAO) {
+		this.securityUserOperationsDAO = securityUserOperationsDAO;
+	}
 }

@@ -1,5 +1,6 @@
 package com.pennant.pff.noc.upload.service.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,16 +15,25 @@ import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NOCConstants;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.letter.LetterType;
+import com.pennant.pff.letter.dao.AutoLetterGenerationDAO;
+import com.pennant.pff.noc.dao.LoanTypeLetterMappingDAO;
+import com.pennant.pff.noc.model.GenerateLetter;
+import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennant.pff.noc.upload.dao.BlockAutoGenLetterUploadDAO;
 import com.pennant.pff.noc.upload.error.BlockAutoGenLetterUploadError;
 import com.pennant.pff.noc.upload.model.BlockAutoGenLetterUpload;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
 
@@ -32,6 +42,8 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 
 	private BlockAutoGenLetterUploadDAO blockAutoGenLetterUploadDAO;
 	private FinanceMainDAO financeMainDAO;
+	private LoanTypeLetterMappingDAO loanTypeLetterMappingDAO;
+	private AutoLetterGenerationDAO autoLetterGenerationDAO;
 
 	public BlockAutoGenLetterUploadServiceImpl() {
 		super();
@@ -196,6 +208,7 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 		try {
 			if (blockAutoGenLetterUploadDAO.isValidateAction(detail.getReferenceID())) {
 				blockAutoGenLetterUploadDAO.delete(detail.getReferenceID());
+				saveLetterGenarationDetails(detail.getReferenceID());
 			}
 
 			if (NOCConstants.BLOCK.equals(detail.getAction())) {
@@ -212,6 +225,62 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 
 			setFailureStatus(detail, e.getMessage());
 		}
+	}
+
+	private void saveLetterGenarationDetails(Long referenceID) {
+		FinanceMain fm = blockAutoGenLetterUploadDAO.getFinanceMain(referenceID, TableType.MAIN_TAB);
+
+		if (fm.getClosingStatus() == null) {
+			return;
+		}
+
+		Date appDate = SysParamUtil.getAppDate();
+
+		List<LoanTypeLetterMapping> letterMapping = loanTypeLetterMappingDAO.getLetterMapping(fm.getFinType());
+
+		String closureType = getClosureType(fm.getClosingStatus());
+
+		for (LoanTypeLetterMapping ltlp : letterMapping) {
+
+			LetterType letterType = LetterType.getType(ltlp.getLetterType());
+
+			if ((letterType == LetterType.CANCELLATION
+					&& FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus()))
+					|| (letterType == LetterType.NOC || letterType == LetterType.CLOSURE)
+							&& (ClosureType.isClosure(closureType) || ClosureType.isForeClosure(closureType))) {
+				if (!blockAutoGenLetterUploadDAO.isLetterInitiated(referenceID, ltlp.getLetterType())) {
+					GenerateLetter gl = new GenerateLetter();
+					gl.setFinID(referenceID);
+					gl.setRequestType("D");
+					gl.setLetterType(ltlp.getLetterType());
+					gl.setCreatedDate(appDate);
+					gl.setCreatedBy(ltlp.getCreatedBy());
+					gl.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+					gl.setAgreementTemplate(ltlp.getAgreementCodeId());
+					gl.setEmailTemplate(ltlp.getEmailTemplateId());
+					gl.setModeofTransfer(ltlp.getLetterMode());
+
+					autoLetterGenerationDAO.save(gl);
+				}
+			}
+		}
+	}
+
+	private String getClosureType(String closingStatus) {
+		String closureType = "";
+		switch (closingStatus) {
+		case FinanceConstants.CLOSE_STATUS_MATURED, FinanceConstants.CLOSE_STATUS_EARLYSETTLE: {
+			closureType = ClosureType.CLOSURE.code();
+			break;
+		}
+		case FinanceConstants.CLOSE_STATUS_CANCELLED: {
+			closureType = ClosureType.CANCEL.code();
+			break;
+		}
+
+		default:
+		}
+		return closureType;
 	}
 
 	private void validateAction(BlockAutoGenLetterUpload detail, String action) {
@@ -244,5 +313,15 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setLoanTypeLetterMappingDAO(LoanTypeLetterMappingDAO loanTypeLetterMappingDAO) {
+		this.loanTypeLetterMappingDAO = loanTypeLetterMappingDAO;
+	}
+
+	@Autowired
+	public void setAutoLetterGenerationDAO(AutoLetterGenerationDAO autoLetterGenerationDAO) {
+		this.autoLetterGenerationDAO = autoLetterGenerationDAO;
 	}
 }

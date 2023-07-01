@@ -440,10 +440,10 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			sql.append(", IntSecProvsnPer = ?, IntSecProvsnAmt = IntSecProvsnAmt + ?");
 			sql.append(", IntUnSecProvsnPer = ?, IntUnSecProvsnAmt = IntUnSecProvsnAmt + ?");
 			sql.append(", TotIntProvsnAmt = TotIntProvsnAmt + ?");
-			sql.append(", ManualProvision = ?, ManProvsnPer = ?, ManProvsnAmt = ManProvsnAmt + ?");
+			sql.append(", ManualProvision = ?, ManProvsnPer = ?");
 		}
 
-		sql.append(", PastDueDays = ?, NpaAging = ?, EffNpaAging = ?");
+		sql.append(", ManProvsnAmt = ?, PastDueDays = ?, NpaAging = ?, EffNpaAging = ?");
 		sql.append(", NpaPastDueDays = ?, EffNpaPastDueDays = ?, NpaClassID = ?, EffNpaClassID = ?");
 		sql.append(", OsPrincipal = ?, OSProfit = ?, OdPrincipal = ?, OdProfit = ?");
 		sql.append(", ProfitAccruedAndDue = ?, ProfitAccruedAndNotDue = ?");
@@ -464,6 +464,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setDate(++index, JdbcUtil.getDate(p.getProvisionDate()));
 			ps.setBigDecimal(++index, p.getRegProvsnPer());
 			ps.setBigDecimal(++index, p.getRegProvsnAmt());
+
 			ps.setBigDecimal(++index, p.getRegSecProvsnPer());
 			ps.setBigDecimal(++index, p.getRegSecProvsnAmt());
 			ps.setBigDecimal(++index, p.getRegUnSecProvsnPer());

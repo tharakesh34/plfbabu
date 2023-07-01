@@ -1427,21 +1427,14 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 
 	@Override
 	public FinanceType getFinanceType(final String finType) {
-		logger.debug("Entering");
-		FinanceType financeType = new FinanceType();
-		financeType.setFinType(finType);
+		String sql = "Select * FROM RMTFinanceTypes_View Where FinType = ?";
 
-		StringBuilder selectSql = new StringBuilder();
+		logger.debug(Literal.SQL + sql);
 
-		selectSql.append(" Select * FROM RMTFinanceTypes_View");
-		selectSql.append(" Where FinType = :FinType");
-
-		logger.debug("selectListSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql, typeRowMapper, finType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

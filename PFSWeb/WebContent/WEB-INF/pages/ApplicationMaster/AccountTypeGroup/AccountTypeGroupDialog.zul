@@ -62,8 +62,8 @@
 							<row>
 								<label id="label_AccounTypeGroupDialog_GroupDescription" value="${c:l('label_AccounTypeGroupDialog_GroupDescription.value')}" />
 								<hbox>
-									<space spacing="2px" />
-									<textbox id="groupDescription" maxlength="50" width="200px" />
+									<space spacing="2px" sclass="mandatory" />
+									<textbox id="groupDescription" maxlength="50" width="450px" />
 								</hbox>
 							</row>
 							<row>

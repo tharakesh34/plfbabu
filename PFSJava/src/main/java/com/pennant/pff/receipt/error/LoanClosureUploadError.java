@@ -13,7 +13,9 @@ public enum LoanClosureUploadError {
 
 	LCU_04("Closure type is not valid."),
 
-	LCU_05("Reason code is not valid.");
+	LCU_05("Reason code is not valid."),
+
+	LCU_06("Early settlment receipt is already in Realized mode.");
 
 	private String description;
 

@@ -141,7 +141,7 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 						setSuccesStatus(detail);
 
 						try {
-							processHoldMarking(detail);
+							processHoldMarking(detail, header);
 							setSuccesStatus(detail);
 						} catch (Exception e) {
 							setFailureStatus(detail, e.getMessage());
@@ -225,7 +225,7 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processHoldMarking(HoldMarkingUpload detail) {
+	private void processHoldMarking(HoldMarkingUpload detail, FileUploadHeader header) {
 		int count = 0;
 
 		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
@@ -267,6 +267,7 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 			if (hmd != null) {
 				map.put("Hold ID", String.valueOf(hmd.getHoldID()));
 				detail.setExtendedFields(map);
+				header.setExtendedFieldRequired(true);
 			}
 
 		} else {
@@ -290,22 +291,24 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 				if (detailAmount.compareTo(BigDecimal.ZERO) > 0) {
 
 					if (detailAmount.compareTo(headerList.getBalance()) > 0) {
+						detailAmount = detailAmount.subtract(headerList.getBalance());
+						hmd.setAmount(headerList.getBalance());
+						hmd.setiD(headerList.getId());
+						hmd.setHoldID(headerList.getHoldID());
+
 						headerList.setBalance(BigDecimal.ZERO);
 						headerList.setReleaseAmount(headerList.getHoldAmount());
 
-						detailAmount = detailAmount.subtract(headerList.getHoldAmount());
-						hmd.setAmount(headerList.getHoldAmount());
-						hmd.setiD(headerList.getId());
-						hmd.setHoldID(headerList.getHoldID());
 						updateMovementDetails(detail, hmd, list);
 					} else {
 						headerList.setBalance(headerList.getBalance().subtract(detailAmount));
 						headerList.setReleaseAmount(headerList.getReleaseAmount().add(detailAmount));
 
-						hmd.setAmount(headerList.getReleaseAmount());
+						hmd.setAmount(detailAmount);
 						hmd.setiD(headerList.getId());
 						hmd.setHoldID(headerList.getHoldID());
 						updateMovementDetails(detail, hmd, list);
+
 						detailAmount = BigDecimal.ZERO;
 					}
 					holdMarkingHeaderDAO.updateHeader(headerList);

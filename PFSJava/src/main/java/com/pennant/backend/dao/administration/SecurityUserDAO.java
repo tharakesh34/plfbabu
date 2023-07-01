@@ -91,4 +91,7 @@ public interface SecurityUserDAO {
 	boolean isDepartmentExsist(String deptCode);
 
 	boolean getDesignationCount(String usrDesg);
+
+	List<SecurityUserDivBranch> getDivisionsByAccessType(SecurityUserDivBranch branch);
+
 }

@@ -112,33 +112,34 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (FinID, FinReference, WriteoffDate, SeqNo, WrittenoffPri, WrittenoffPft, CurODPri, CurODPft");
 		sql.append(", UnPaidSchdPri, UnPaidSchdPft, PenaltyAmount, ProvisionedAmount, WriteoffPrincipal");
-		sql.append(", WriteoffProfit, AdjAmount, Remarks, WrittenoffSchFee, UnpaidSchFee, WriteoffSchFee)");
-		sql.append(" Values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", WriteoffProfit, AdjAmount, Remarks, WrittenoffSchFee, UnpaidSchFee, WriteoffSchFee, ReceiptID)");
+		sql.append(" Values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
+			int index = 0;
 
-			ps.setLong(index++, fwo.getFinID());
-			ps.setString(index++, fwo.getFinReference());
-			ps.setDate(index++, JdbcUtil.getDate(fwo.getWriteoffDate()));
-			ps.setInt(index++, fwo.getSeqNo());
-			ps.setBigDecimal(index++, fwo.getWrittenoffPri());
-			ps.setBigDecimal(index++, fwo.getWrittenoffPft());
-			ps.setBigDecimal(index++, fwo.getCurODPri());
-			ps.setBigDecimal(index++, fwo.getCurODPft());
-			ps.setBigDecimal(index++, fwo.getUnPaidSchdPri());
-			ps.setBigDecimal(index++, fwo.getUnPaidSchdPft());
-			ps.setBigDecimal(index++, fwo.getPenaltyAmount());
-			ps.setBigDecimal(index++, fwo.getProvisionedAmount());
-			ps.setBigDecimal(index++, fwo.getWriteoffPrincipal());
-			ps.setBigDecimal(index++, fwo.getWriteoffProfit());
-			ps.setBigDecimal(index++, fwo.getAdjAmount());
-			ps.setString(index++, fwo.getRemarks());
-			ps.setBigDecimal(index++, fwo.getWrittenoffSchFee());
-			ps.setBigDecimal(index++, fwo.getUnpaidSchFee());
-			ps.setBigDecimal(index, fwo.getWriteoffSchFee());
+			ps.setLong(++index, fwo.getFinID());
+			ps.setString(++index, fwo.getFinReference());
+			ps.setDate(++index, JdbcUtil.getDate(fwo.getWriteoffDate()));
+			ps.setInt(++index, fwo.getSeqNo());
+			ps.setBigDecimal(++index, fwo.getWrittenoffPri());
+			ps.setBigDecimal(++index, fwo.getWrittenoffPft());
+			ps.setBigDecimal(++index, fwo.getCurODPri());
+			ps.setBigDecimal(++index, fwo.getCurODPft());
+			ps.setBigDecimal(++index, fwo.getUnPaidSchdPri());
+			ps.setBigDecimal(++index, fwo.getUnPaidSchdPft());
+			ps.setBigDecimal(++index, fwo.getPenaltyAmount());
+			ps.setBigDecimal(++index, fwo.getProvisionedAmount());
+			ps.setBigDecimal(++index, fwo.getWriteoffPrincipal());
+			ps.setBigDecimal(++index, fwo.getWriteoffProfit());
+			ps.setBigDecimal(++index, fwo.getAdjAmount());
+			ps.setString(++index, fwo.getRemarks());
+			ps.setBigDecimal(++index, fwo.getWrittenoffSchFee());
+			ps.setBigDecimal(++index, fwo.getUnpaidSchFee());
+			ps.setBigDecimal(++index, fwo.getWriteoffSchFee());
+			ps.setObject(++index, fwo.getReceiptID());
 		});
 
 		return fwo.getFinReference();

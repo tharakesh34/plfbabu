@@ -118,9 +118,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_ManualProvisioningDialog(Event event) throws Exception {
+	public void onCreate$window_ManualProvisioningDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -352,6 +351,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		this.newProvisionIntPercentage.setValue(p.getNewIntProvisionPer());
 		this.newProvisionIntAmount.setValue(PennantApplicationUtil.formateAmount(p.getNewIntProvisionAmt(), format));
 		this.overrideProvision.setChecked(p.isOverrideProvision());
+		this.overrideProvision.setDisabled(isReadOnly("ManualProvisioningDialog_ManProvsnPer"));
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -419,6 +419,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		int format = CurrencyUtil.getFormat(provision.getFinCcy());
 
 		if (this.overrideProvision.isChecked()) {
 			try {
@@ -427,7 +428,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 				wve.add(we);
 			}
 			try {
-				provision.setManProvsnAmt(this.manProvisionAmount.getActualValue());
+				provision.setManProvsnAmt(
+						PennantApplicationUtil.unFormateAmount(this.manProvisionAmount.getActualValue(), format));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -442,7 +444,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -488,9 +490,9 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			this.manualProvision.setDisabled(true);
 		}
 
-		doWriteBeanToComponents(provision);
-
 		onCheckOverrideProvision();
+
+		doWriteBeanToComponents(provision);
 
 		onSelectManualAssetClassCode(provision.getManualAssetSubClassID());
 
@@ -547,8 +549,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 		doWriteComponentsToBean(aProvision);
 		if (this.manualProvision.isChecked() && provisionService.isAssetClassCodeValid(aProvision.getFinID(),
-				this.effManualAssetClassification.getValue())) {
-			MessageUtil.showError("ManualAsset Classification can't be upgarded");
+				this.effManualAssetClassification.getValue(), this.effManualAssetSubClassification.getValue())) {
+			MessageUtil.showError("Manual Asset Classification can't be upgarded");
 			return;
 		}
 
@@ -753,8 +755,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		manualProvisioningListCtrl.search();
 	}
 
-	public void onClick$btnSearchCustomer(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onClick$btnSearchCustomer(Event event) throws SuspendNotAllowedException {
+		logger.debug(Literal.ENTERING);
 
 		final Map<String, Object> map = new HashMap<>();
 
@@ -766,10 +768,10 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 		Executions.createComponents(PennantAppUtil.getCustomerPageName(), null, map);
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void onCheck$manualProvision(Event event) throws Exception {
+	public void onCheck$manualProvision(Event event) {
 		if (this.manualProvision.isChecked()) {
 			this.effManualAssetClassification.setDisabled(false);
 			this.effManualAssetSubClassification.setDisabled(false);
@@ -790,7 +792,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 	}
 
-	public void onCheck$overrideProvision(Event event) throws Exception {
+	public void onCheck$overrideProvision(Event event) {
 		onCheckOverrideProvision();
 	}
 
@@ -808,7 +810,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		}
 	}
 
-	public void onChange$manProvisionPercentage(Event event) throws Exception {
+	public void onChange$manProvisionPercentage(Event event) {
 		BigDecimal manPer = this.manProvisionPercentage.getValue();
 
 		this.manProvisionAmount.setValue("0");
@@ -847,11 +849,11 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		return comboValue;
 	}
 
-	public void onSelect$effManualAssetClassification(Event event) throws Exception {
+	public void onSelect$effManualAssetClassification(Event event) {
 		onSelectManualAssetClassCode(null);
 	}
 
-	public void onSelect$effManualAssetSubClassification(Event event) throws Exception {
+	public void onSelect$effManualAssetSubClassification(Event event) {
 		onSelectManualAssetSubClassCode();
 	}
 

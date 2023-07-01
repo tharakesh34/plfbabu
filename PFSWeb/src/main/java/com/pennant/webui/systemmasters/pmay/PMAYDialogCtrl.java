@@ -2,7 +2,6 @@ package com.pennant.webui.systemmasters.pmay;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -424,8 +423,6 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 					}
 				}
 				logger.error(Literal.EXCEPTION, e);
-			} catch (ParseException e) {
-				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 
@@ -800,8 +797,6 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 							parTab.setSelected(true);
 						}
 					}
-					logger.error(Literal.EXCEPTION, e);
-				} catch (ParseException e) {
 					logger.error(Literal.EXCEPTION, e);
 				}
 			} else {

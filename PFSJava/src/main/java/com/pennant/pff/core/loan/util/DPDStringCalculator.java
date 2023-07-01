@@ -220,7 +220,7 @@ public class DPDStringCalculator {
 			}
 			i++;
 		}
-		return String.valueOf((char) i);
+		return String.valueOf((char) --i);
 	}
 
 	public static int getWeekDay(Date date) {

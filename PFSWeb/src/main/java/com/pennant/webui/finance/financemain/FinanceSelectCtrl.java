@@ -1000,7 +1000,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else if (moduleDefiner.equals(FinServiceEvent.BASICMAINTAIN)
 				|| moduleDefiner.equals(FinServiceEvent.LINKDELINK)) {
 			whereClause = new StringBuilder(" ");
-		} else if (moduleDefiner.equals(FinServiceEvent.EXTENDEDFIELDS_MAINTAIN)) {
+		} else if (FinServiceEvent.EXTENDEDFIELDS_MAINTAIN.equals(moduleDefiner)
+				|| FinServiceEvent.FEEWAIVERS.equals(moduleDefiner)) {
 			whereClause = new StringBuilder(" FinIsActive in ( 0, 1) ");
 		} else if (moduleDefiner.equals(FinServiceEvent.COLLATERAL)) {
 			whereClause = new StringBuilder(" FinIsActive = 0");

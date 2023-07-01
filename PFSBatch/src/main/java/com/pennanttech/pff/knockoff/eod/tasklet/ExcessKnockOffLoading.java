@@ -13,11 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.eventproperties.EventProperties;
-import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.EODUtil;
-import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.knockoff.dao.ExcessKnockOffDAO;
 
 public class ExcessKnockOffLoading implements Tasklet {
@@ -50,9 +48,7 @@ public class ExcessKnockOffLoading implements Tasklet {
 
 		excessKnockOffDAO.logExcessForCrossLoanKnockOff(valueDate, executionDay, thresholdValue);
 
-
 		excessKnockOffDAO.logExcessForCrossLoanDetails(valueDate, executionDay);
-
 
 		logger.debug(Literal.LEAVING);
 		return RepeatStatus.FINISHED;

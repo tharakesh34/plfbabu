@@ -34,7 +34,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,8 +44,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
@@ -215,6 +212,7 @@ import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.document.DocVerificationUtil;
 import com.pennant.pff.document.model.DocVerificationHeader;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.knockoff.KnockOffType;
@@ -259,6 +257,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.pennapps.core.util.ObjectUtil;
@@ -672,7 +671,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			if (!(FinanceConstants.CLOSURE_APPROVER.equals(module) || FinanceConstants.CLOSURE_MAKER.equals(module))
 					&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())
-					&& RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(receiptData.getExcessType())) {
+					&& ExcessType.TEXCESS.equals(receiptData.getExcessType())) {
 				doProcessTerminationExcess(receiptData, rch);
 			}
 
@@ -731,6 +730,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				receiptData.getReceiptHeader().setDedupCheckRequired(false);
 			}
 
+			if (!btnCalcReceipts.isDisabled()) {
+				this.btnReceipt.setDisabled(true);
+			}
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_ReceiptDialog.onClose();
@@ -776,12 +779,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * 
 	 * @param event
 	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException {
+		logger.debug(Literal.ENTERING);
 
-		final Map<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<>();
 		CustomerDetails customerDetails = getCustomerDetailsService()
 				.getCustomerById(getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
 		String pageName = PennantAppUtil.getCustomerPageName();
@@ -792,7 +794,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		map.put("CustomerEnq", "CustomerEnq");
 		Executions.createComponents(pageName, null, map);
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -800,10 +802,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * 
 	 * @param event
 	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchFinreference(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onClick$btnSearchFinreference(Event event) throws SuspendNotAllowedException {
+		logger.debug(Literal.ENTERING);
 
 		// Preparation of Finance Enquiry Data
 		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -832,7 +833,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
 				this.window_ReceiptDialog, map);
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onSelectAccountTab(ForwardEvent event) {
@@ -1060,10 +1061,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				exclude.add("S");
 			}
 
-			List<ValueLabel> excessAdjustmentTypes = PennantStaticListUtil.getExcessAdjustmentTypes();
+			List<ValueLabel> excessAdjustmentTypes = ExcessType.getAdjustmentList();
 
-			fillComboBox(this.excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EXCESS,
-					excludeComboBox(excessAdjustmentTypes, exclude));
+			fillComboBox(this.excessAdjustTo, ExcessType.EXCESS, excludeComboBox(excessAdjustmentTypes, exclude));
 		}
 	}
 
@@ -1543,11 +1543,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method to fill finance data.
 	 * 
 	 * @param isChgReceipt
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
 	 */
-	private boolean setSummaryData(boolean isChgReceipt) throws IllegalAccessException, InvocationTargetException {
+	private boolean setSummaryData(boolean isChgReceipt) {
 		logger.debug(Literal.ENTERING);
 		receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(receiptData.getReceiptHeader().getReceiptPurpose());
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
@@ -1702,13 +1699,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for calculation of Schedule Repayment details List of data
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws AccountNotFoundException
 	 * @throws WrongValueException
+	 * @throws InterfaceException
 	 */
-	public void onClick$btnCalcReceipts(Event event)
-			throws InterruptedException, WrongValueException, InterfaceException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onClick$btnCalcReceipts(Event event) throws WrongValueException, InterfaceException {
+		logger.debug(Literal.ENTERING);
 		if (!isValidateData(true)) {
 			return;
 		}
@@ -1767,16 +1762,15 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(orgScheduleList);
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Processing Calculation button visible , if amount modified
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onFulfill$receiptAmount(Event event) throws InterruptedException {
+	public void onFulfill$receiptAmount(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		this.btnChangeReceipt.setDisabled(true);
@@ -2338,11 +2332,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		receiptData = getReceiptCalculator().setTotals(receiptData, 0);
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
 		receiptData.getReceiptHeader().setAllocationsSummary(allocationList);
-		try {
-			setSummaryData(true);
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
+		setSummaryData(true);
 		setBalances();
 		doFillAllocationDetail();
 	}
@@ -2351,9 +2341,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for Schedule Modifications with Effective Schedule Method
 	 * 
 	 * @param receiptData
-	 * @throws InterruptedException
 	 */
-	public boolean recalEarlyPaySchd(boolean isRecal) throws InterruptedException {
+	public boolean recalEarlyPaySchd(boolean isRecal) {
 		logger.debug(Literal.ENTERING);
 		// Schedule Recalculation Depends on Earlypay Effective Schedule method
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
@@ -2622,17 +2611,17 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private String payType(String mode) {
 		String payType = "";
 		if (ReceiptMode.EMIINADV.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_EMIINADV;
+			payType = ExcessType.EMIINADV;
 		} else if (ReceiptMode.EXCESS.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_EXCESS;
+			payType = ExcessType.EXCESS;
 		} else if (ReceiptMode.CASHCLT.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_CASHCLT;
+			payType = ExcessType.CASHCLT;
 		} else if (ReceiptMode.DSF.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_DSF;
+			payType = ExcessType.DSF;
 		} else if (ReceiptMode.TEXCESS.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_TEXCESS;
+			payType = ExcessType.TEXCESS;
 		} else {
-			payType = RepayConstants.EXAMOUNTTYPE_PAYABLE;
+			payType = ExcessType.PAYABLE;
 		}
 		return payType;
 	}
@@ -2659,22 +2648,22 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 
-			if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(payable.getPayableType())) {
+			if (ExcessType.EMIINADV.equals(payable.getPayableType())) {
 				rcd.setPaymentType(ReceiptMode.EMIINADV);
-			} else if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(payable.getPayableType())) {
+			} else if (ExcessType.EXCESS.equals(payable.getPayableType())) {
 				rcd.setPaymentType(ReceiptMode.EXCESS);
-			} else if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(payable.getPayableType())) {
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_ADVINT);
-			} else if (RepayConstants.EXAMOUNTTYPE_ADVEMI.equals(payable.getPayableType())) {
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_ADVEMI);
-			} else if (RepayConstants.EXAMOUNTTYPE_CASHCLT.equals(payable.getPayableType())) {
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_CASHCLT);
-			} else if (RepayConstants.EXAMOUNTTYPE_DSF.equals(payable.getPayableType())) {
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_DSF);
-			} else if (RepayConstants.EXAMOUNTTYPE_TEXCESS.equals(payable.getPayableType())) {
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_TEXCESS);
-			} else if (RepayConstants.EXAMOUNTTYPE_SETTLEMENT.equals(payable.getPayableType())) {
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_SETTLEMENT);
+			} else if (ExcessType.ADVINT.equals(payable.getPayableType())) {
+				rcd.setPaymentType(ExcessType.ADVINT);
+			} else if (ExcessType.ADVEMI.equals(payable.getPayableType())) {
+				rcd.setPaymentType(ExcessType.ADVEMI);
+			} else if (ExcessType.CASHCLT.equals(payable.getPayableType())) {
+				rcd.setPaymentType(ExcessType.CASHCLT);
+			} else if (ExcessType.DSF.equals(payable.getPayableType())) {
+				rcd.setPaymentType(ExcessType.DSF);
+			} else if (ExcessType.TEXCESS.equals(payable.getPayableType())) {
+				rcd.setPaymentType(ExcessType.TEXCESS);
+			} else if (ExcessType.SETTLEMENT.equals(payable.getPayableType())) {
+				rcd.setPaymentType(ExcessType.SETTLEMENT);
 			} else {
 				rcd.setPaymentType(ReceiptMode.PAYABLE);
 			}
@@ -2958,12 +2947,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for event of Changing Repayments Amount
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnChangeReceipt(Event event)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnChangeReceipt(Event event) {
 		doClearMessage();
 		doSetValidation();
 		doWriteComponentsToBean();
@@ -2998,15 +2983,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			doWriteComponentsToBean();
 
 			// Accounting Details Validations
-			if (SysParamUtil.isAllowed(SMTParameterConstants.RECEIPTS_SHOW_ACCOUNTING_TAB)) {
-				if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) != null
-						&& getTab(AssetConstants.UNIQUE_ID_ACCOUNTING).isVisible()) {
-					boolean validate = false;
-					validate = validateAccounting(validate);
-					if (validate && !isAccountingExecuted) {
-						MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
-						return;
-					}
+			if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) != null
+					&& getTab(AssetConstants.UNIQUE_ID_ACCOUNTING).isVisible()) {
+				boolean validate = false;
+				validate = validateAccounting(validate);
+				if (AccountingExtension.VERIFY_ACCOUNTING && validate && !isAccountingExecuted) {
+					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
+					return;
 				}
 			}
 
@@ -3311,7 +3294,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (!recSave && getAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
-			if (!getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
+			if (AccountingExtension.VERIFY_ACCOUNTING && !getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 				return;
 			}
@@ -3484,7 +3467,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				excldValues);
 
 		if (isKnockOff) {
-			fillComboBox(this.receiptMode, rch.getReceiptMode(), PennantStaticListUtil.getKnockOffFromVlaues(), "A,P");
+			fillComboBox(this.receiptMode, rch.getReceiptMode(), ExcessType.getKnockOffFromList(), "A,P");
 		}
 
 		this.receiptMode.setDisabled(true);
@@ -3656,10 +3639,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.earlySettlementReason.setButtonDisabled(true);
 			}
 		}
-		// Show Accounting Tab Details Based upon Role Condition using Work flow
-		if (isApprover() && SysParamUtil.isAllowed(SMTParameterConstants.RECEIPTS_SHOW_ACCOUNTING_TAB)) {
+
+		if (isApprover()) {
 			appendAccountingDetailTab(true);
 		}
+
 		fillComboBox(this.sourceofFund, receiptHeader.getSourceofFund(), sourceofFundList, "");
 
 		// append Extended Fields
@@ -3747,7 +3731,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private void appendScheduleMethod(FinReceiptHeader rch) {
 		String excessAdjustTo = rch.getExcessAdjustTo();
 		Set<String> exclude = new HashSet<>();
-		List<ValueLabel> excessAdjustToList = PennantStaticListUtil.getExcessAdjustmentTypes();
+		List<ValueLabel> excessAdjustToList = ExcessType.getAdjustmentList();
 
 		if (receiptPurposeCtg != 1) {
 			scheduleLabel.setValue(Labels.getLabel("label_ReceiptPayment_ExcessAmountAdjustment.value"));
@@ -4756,7 +4740,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					Labels.getLabel("label_ReceiptDialog_ReceivedFrom.value")));
 		}
 		if (this.excessAdjustTo.isVisible() && !this.excessAdjustTo.isDisabled()) {
-			this.excessAdjustTo.setConstraint(new StaticListValidator(PennantStaticListUtil.getExcessAdjustmentTypes(),
+			this.excessAdjustTo.setConstraint(new StaticListValidator(ExcessType.getAdjustmentList(),
 					Labels.getLabel("label_ReceiptDialog_ExcessAdjustTo.value")));
 		}
 		if (!this.allocationMethod.isDisabled()) {
@@ -5394,8 +5378,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	/**
 	 * Method for Processing Checklist Details when Check list Tab selected
 	 */
-	public void onSelectCheckListDetailsTab(ForwardEvent event)
-			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void onSelectCheckListDetailsTab(ForwardEvent event) {
 		this.doWriteComponentsToBean();
 
 		if (getFinanceCheckListReferenceDialogCtrl() != null) {
@@ -5410,8 +5393,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	/**
 	 * Method for Processing Agreement Details when Agreement list Tab selected
 	 */
-	public void onSelectAgreementDetailTab(ForwardEvent event)
-			throws IllegalAccessException, InvocationTargetException, InterruptedException, ParseException {
+	public void onSelectAgreementDetailTab(ForwardEvent event) {
 		this.doWriteComponentsToBean();
 
 		// refresh template tab
@@ -5605,7 +5587,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				amountCodes.setPartnerBankAcType(rcd.getPartnerBankAcType());
 				amountCodes.setToExcessAmt(BigDecimal.ZERO);
 				amountCodes.setToEmiAdvance(BigDecimal.ZERO);
-				if (RepayConstants.EXCESSADJUSTTO_EXCESS.equals(repayHeader.getFinEvent())) {
+				if (ExcessType.EXCESS.equals(repayHeader.getFinEvent())) {
 					amountCodes.setToExcessAmt(repayHeader.getRepayAmount());
 				} else {
 					amountCodes.setToEmiAdvance(repayHeader.getRepayAmount());
@@ -6907,10 +6889,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method to validate data
 	 * 
 	 * @return
-	 * @throws InterruptedException
-	 * @throws AccountNotFoundException
+	 * @throws InterfaceException
 	 */
-	private boolean isValidateData(boolean isCalProcess) throws InterruptedException, InterfaceException {
+	private boolean isValidateData(boolean isCalProcess) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		// Validate Field Details
@@ -7134,6 +7115,15 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 				if (!isValidPPDate) {
 					MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Invalid_ValueDate"));
+					return false;
+				}
+
+				receiptService.validateAdjustedAlloc(receiptData);
+
+				List<ErrorDetail> errors = receiptData.getFinanceDetail().getFinScheduleData().getErrorDetails();
+
+				if (CollectionUtils.isNotEmpty(errors)) {
+					MessageUtil.showError(errors.get(0).getError());
 					return false;
 				}
 
@@ -7398,7 +7388,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	// Linked Loans
 
-	public void onClick$btn_LinkedLoan(Event event) throws InterruptedException {
+	public void onClick$btn_LinkedLoan(Event event) {
 		logger.debug(Literal.ENTERING); // FIXME: PV: CODE
 		// REVIEW PENDING
 		isLinkedBtnClick = true;
@@ -7486,7 +7476,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/** new code to display chart by skipping jsps code start */
-	public void onSelectDashboardTab(Event event) throws InterruptedException {
+	public void onSelectDashboardTab(Event event) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		for (ChartDetail chartDetail : chartDetailList) {
@@ -8188,7 +8178,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		String payableDesc = xcessPayable.getPayableDesc();
 
 		if (FinServiceEvent.EARLYSETTLE.equals(receiptData.getReceiptHeader().getReceiptPurpose())
-				&& RepayConstants.EXAMOUNTTYPE_ADVINT.equals(xcessPayable.getPayableType())) {
+				&& ExcessType.ADVINT.equals(xcessPayable.getPayableType())) {
 			FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 			if (financeMain.isTDSApplicable()) {
 				payableDesc = payableDesc + "(-TDS)";
@@ -8288,7 +8278,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		receiptData.setEarlySettle(false);
 		receiptData.setValueDate(rch.getReceiptDate());
 		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-		rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+		rch.setExcessAdjustTo(ExcessType.TEXCESS);
 		rch.setClosureType(PennantConstants.List_Select);
 
 		rch.getAllocations().removeIf(al -> Allocation.FEE.equals(al.getAllocationType()));

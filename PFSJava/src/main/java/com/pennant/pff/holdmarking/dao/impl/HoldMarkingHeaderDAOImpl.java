@@ -3,6 +3,7 @@ package com.pennant.pff.holdmarking.dao.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.holdmarking.model.HoldMarkingHeader;
 import com.pennant.pff.holdmarking.upload.dao.HoldMarkingHeaderDAO;
 import com.pennant.pff.mandate.InstrumentType;
@@ -166,6 +167,34 @@ public class HoldMarkingHeaderDAOImpl extends SequenceDao<HoldMarkingHeader> imp
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
+	}
+
+	@Override
+	public List<HoldMarkingHeader> getAutoHold(long finId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" hmh.Id, hmh.HoldID, hmh.FinID, hmh.FinReference, hmh.HoldReference");
+		sql.append(" , hmh.AccountNumber, hmh.HoldAmount, hmh.ReleaseAmount, hmh.Balance");
+		sql.append(" From HOLD_MARKING_HEADER hmh");
+		sql.append(" Left Join HOLD_MARKING_DETAILS hmd on hmh.HoldID = hmd.HoldID");
+		sql.append(" Where  hmh.FinId = ? and hmd.HoldType = ? and hmd.Marking = ? and hmh.Balance > ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			HoldMarkingHeader hmh = new HoldMarkingHeader();
+
+			hmh.setId(rs.getLong("Id"));
+			hmh.setHoldID(rs.getLong("HoldID"));
+			hmh.setFinID(rs.getLong("FinID"));
+			hmh.setFinReference(rs.getString("FinReference"));
+			hmh.setHoldReference(rs.getLong("HoldReference"));
+			hmh.setAccountNumber(rs.getString("AccountNumber"));
+			hmh.setHoldAmount(rs.getBigDecimal("HoldAmount"));
+			hmh.setReleaseAmount(rs.getBigDecimal("ReleaseAmount"));
+			hmh.setBalance(rs.getBigDecimal(("Balance")));
+
+			return hmh;
+		}, finId, PennantConstants.HOLD_MARKING, PennantConstants.AUTO_ASSIGNMENT, 0);
 	}
 
 	@Override

@@ -1,13 +1,15 @@
 package com.pennant.backend.util;
 
+import java.nio.charset.StandardCharsets;
+
 public class NotificationConstants {
 
 	private NotificationConstants() {
 		super();
 	}
 
-	public static final String DEFAULT_CHARSET = "UTF-16";
-	
+	public static final String DEFAULT_CHARSET = StandardCharsets.UTF_8.name();
+
 	public static final String TEMPLATE_FORMAT_PLAIN = "P";
 	public static final String TEMPLATE_FORMAT_HTML = "H";
 	public static final String TEMPLATE_FOR_CN = "CN";
@@ -24,6 +26,7 @@ public class NotificationConstants {
 	public static final String TEMPLATE_FOR_PVRN = "PN";
 	public static final String TEMPLATE_FOR_OTP = "OTP";
 	public static final String TEMPLATE_FOR_SU = "SU";
+	public static final String TEMPLATE_FOR_UPD = "UPD";
 
 	// Module Code for Notification to maintain parameters
 	public static final String MAIL_MODULE_FIN = "FIN";
@@ -49,6 +52,4 @@ public class NotificationConstants {
 	public static final String SSL = "SSL";
 	public static final String TLS = "TLS";
 	public static final String AUTO = "AUTO";
-
-	public static final String UTF_EIGHT_CHARSET = "UTF-8";
 }

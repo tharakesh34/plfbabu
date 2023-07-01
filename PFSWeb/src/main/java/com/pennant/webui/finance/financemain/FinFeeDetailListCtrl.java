@@ -1554,6 +1554,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		finFeeDetails = sortFeesByFeeOrder(finFeeDetails);
 		setFinFeeDetailList(finFeeDetails);
 
+		getRole();
 		boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance");
 		if (financeMain.isQuickDisb() && readOnly && StringUtils.isBlank(this.moduleDefiner)) {
 			readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
@@ -1577,6 +1578,18 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 								&& PennantConstants.RECORD_TYPE_CAN.equals(finFeeDetail.getRecordType()))
 						|| finFeeDetail.isAlwPreIncomization()) {
 					continue;
+				}
+
+				if (this.generateLetter != null) {
+					if (this.generateLetter.getWaiverAmt() != null
+							&& this.generateLetter.getWaiverAmt().compareTo(BigDecimal.ZERO) > 0) {
+						finFeeDetail.setWaivedAmount(this.generateLetter.getWaiverAmt());
+					}
+
+					if (this.generateLetter.getActualAmt() != null
+							&& this.generateLetter.getActualAmt().compareTo(BigDecimal.ZERO) > 0) {
+						finFeeDetail.setActualAmount(this.generateLetter.getActualAmt());
+					}
 				}
 
 				// setting paid amount and remaining amount
@@ -1648,10 +1661,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				actualBox.setWidth("85px");
 				actualBox.setMaxlength(18);
 				actualBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-				if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, finFeeDetail.getTaxComponent())) {
+
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
 					actualBox.setDisabled(true);
 				} else {
-					actualBox.setDisabled(readOnly ? true : !finFeeDetail.isAlwModifyFee());
+					actualBox.setDisabled(readOnly && !finFeeDetail.isAlwModifyFee());
 				}
 
 				if (finFeeDetail.isRestructureFee()
@@ -1684,11 +1698,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 						&& finFeeDetail.getMaxWaiverPerc().compareTo(BigDecimal.ZERO) > 0) {
 
 					waiverBox.setDisabled(readOnly);
-				}
-
-				if (this.generateLetter != null && this.generateLetter.getWaiverAmt() != null
-						&& this.generateLetter.getWaiverAmt().compareTo(BigDecimal.ZERO) > 0) {
-					finFeeDetail.setWaivedAmount(this.generateLetter.getWaiverAmt());
 				}
 
 				waiverBox.setId(getComponentId(FEE_UNIQUEID_WAIVEDAMOUNT, finFeeDetail));
@@ -2336,6 +2345,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			if (!finFeeDetail.isTaxApplicable()) {
 				finFeeDetail.setActualAmount(PennantApplicationUtil.unFormateAmount(actualBox.getValue(), formatter));
 				finFeeDetail.setActualAmountGST(PennantApplicationUtil.unFormateAmount(BigDecimal.ZERO, formatter));
+			} else {
+				if ("GenerateLetter".equals(this.moduleDefiner)) {
+					finFeeDetail
+							.setActualAmount(PennantApplicationUtil.unFormateAmount(actualBox.getValue(), formatter));
+				}
 			}
 
 			finFeeDetail.setWaivedAmount(PennantApplicationUtil.unFormateAmount(waiverBox.getValue(), formatter));
@@ -2389,6 +2403,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 
 				feeSchdMthdBox.setDisabled(feeSchdMthdDisable);
+			}
+
+			if ("GenerateLetter".equals(this.moduleDefiner)) {
+				feeSchdMthdBox.setValue(Labels.getLabel("label_CreateReceivable_Advise"));
+				feeSchdMthdBox.setDisabled(true);
 			}
 		}
 
@@ -2850,6 +2869,16 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			// unFormating feeResult
 			feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
 
+			if ("GenerateLetter".equals(this.moduleDefiner)
+					&& CollectionUtils.isNotEmpty(financeDetail.getFinFeeDetails())) {
+				for (FinFeeDetail ffd : financeDetail.getFinFeeDetails()) {
+					if (ffd.getFinEvent().equals(fee.getFinEvent())) {
+						feeResult = ffd.getActualAmount();
+						fee.setWaivedAmount(ffd.getWaivedAmount());
+					}
+				}
+			}
+
 			fee.setCalculatedAmount(feeResult);
 
 			if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(fee.getTaxComponent())) {
@@ -2893,6 +2922,17 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 			if (PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE.equals(finFeeDetail.getCalculationType())) {
 				BigDecimal calPercentageFee = getCalculatedPercentageFee(finFeeDetail, finScheduleData, valueDate);
+
+				if ("GenerateLetter".equals(this.moduleDefiner)
+						&& CollectionUtils.isNotEmpty(financeDetail.getFinFeeDetails())) {
+					for (FinFeeDetail ffd : financeDetail.getFinFeeDetails()) {
+						if (ffd.getFinEvent().equals(finFeeDetail.getFinEvent())) {
+							calPercentageFee = ffd.getActualAmount();
+							finFeeDetail.setWaivedAmount(ffd.getWaivedAmount());
+						}
+					}
+				}
+
 				finFeeDetail.setCalculatedAmount(calPercentageFee);
 
 				if (CalculationConstants.REMFEE_WAIVED_BY_BANK.equals(finFeeDetail.getFeeScheduleMethod())) {

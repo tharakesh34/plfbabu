@@ -16,6 +16,7 @@ import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.chargedetails.ChargeDetails;
 import com.pennant.backend.model.customerdata.CustomerData;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -65,7 +66,7 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 
 		logger.debug("FinReference {}", finReference);
 
-		Long finID = getActiveFinID(finReference);
+		Long finID = getFinID(finReference);
 
 		if (finID == null) {
 			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
@@ -104,7 +105,7 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 
 		logger.debug("FinReference {}", finReference);
 
-		Long finID = getActiveFinID(finReference);
+		Long finID = getFinID(finReference);
 
 		if (finID == null) {
 			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
@@ -720,7 +721,7 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 
 		logger.debug("FinReference {}", finReference);
 
-		Long finID = financeMainDAO.getFinID(finReference);
+		Long finID = getFinID(finReference);
 
 		if (finID == null) {
 			response = new SourcingDetails();
@@ -865,7 +866,8 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 
 		if (custID == 0) {
 			logger.debug(Literal.LEAVING);
-			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(
+					getFailedStatus(ERROR_92021, "There is no approved Customer with the requested CIF"));
 			return enquiryResponse;
 		}
 
@@ -878,8 +880,55 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		return enquiryResponse;
 	}
 
-	private Long getActiveFinID(String finReference) {
-		return financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+	@Override
+	public LoanEnquiryResponse getChargeDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
+
+		WSReturnStatus wsrs = validateFinReference(finReference);
+
+		if (wsrs != null) {
+			enquiryResponse.setReturnStatus(wsrs);
+
+			logger.debug(Literal.LEAVING);
+
+			return enquiryResponse;
+		}
+
+		logReference(finReference);
+
+		logger.debug("FinReference {}", finReference);
+
+		Long finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
+
+		if (finID == null) {
+			logger.debug(Literal.LEAVING);
+
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
+
+			return enquiryResponse;
+		}
+
+		List<ChargeDetails> cd = financeEnquiryController.getChargeDetails(finID);
+
+		if (CollectionUtils.isEmpty(cd)) {
+			logger.debug(Literal.LEAVING);
+
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, "No Charges for the given FinReference"));
+
+			return enquiryResponse;
+		}
+
+		enquiryResponse.setChargeDetails(cd);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		logger.debug(Literal.LEAVING);
+		return enquiryResponse;
+	}
+
+	private Long getFinID(String finReference) {
+		return financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
 	}
 
 	private List<CustomerData> getCustomerData(List<CustomerData> cdList, List<Long> list) {
@@ -1001,5 +1050,4 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
-
 }

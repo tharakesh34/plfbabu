@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,10 +16,12 @@ import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
@@ -39,6 +42,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
@@ -52,6 +56,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 	private CreateReceiptUploadProcessRecord createReceiptUploadProcessRecord;
 	private PartnerBankDAO partnerBankDAO;
 	private BounceReasonDAO bounceReasonDAO;
+	private FinanceMainDAO financeMainDAO;
 
 	public CreateReceiptUploadServiceImpl() {
 		super();
@@ -109,16 +114,15 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 
 					try {
 						createReceiptUploadDAO.update(details);
-
-						List<FileUploadHeader> headerList = new ArrayList<>();
-						headerList.add(header);
-
-						updateHeader(headerList, true);
-
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
 					}
 				}
+
+				List<FileUploadHeader> headerList = new ArrayList<>();
+				headerList.add(header);
+
+				updateHeader(headerList, true);
 
 				logger.info("Processed the File {}", header.getFileName());
 			}
@@ -158,7 +162,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setBounceDate(detail.getBounceDate());
 		rud.setBounceReason(detail.getBounceReason());
 		rud.setCancelReason(detail.getBounceReason());
-		rud.setRemarks(detail.getBounceRemarks());
+		// rud.setRemarks(detail.getBounceRemarks());
 
 		PartnerBank pb = partnerBankDAO.getPartnerBankByCode(detail.getPartnerBankCode(), "");
 		if (pb != null) {
@@ -168,6 +172,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		if (RepayConstants.PAYSTATUS_BOUNCE.equals(detail.getReceiptModeStatus())) {
 			String returncode = bounceReasonDAO.getReturnCode(detail.getBounceReason());
 			rud.setBounceReason(returncode);
+			rud.setBounceRemarks(detail.getBounceRemarks());
 		}
 
 		String receiptMode = detail.getReceiptMode();
@@ -188,11 +193,12 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		}
 
 		if (AllocationType.MANUAL.equals(detail.getAllocationType())) {
+			boolean isEMIFound = false;
 			for (CreateReceiptUpload alloc : detail.getAllocations()) {
 				UploadAlloctionDetail uad = new UploadAlloctionDetail();
 
 				uad.setRootId(String.valueOf(alloc.getFeeId()));
-				uad.setAllocationType(Allocation.getCode(alloc.getCode()));
+				uad.setAllocationType(Allocation.getCode(getAllocationCode(alloc)));
 				uad.setReferenceCode(alloc.getCode());
 				uad.setStrPaidAmount(String.valueOf(alloc.getAmount()));
 				uad.setPaidAmount(alloc.getAmount());
@@ -200,14 +206,40 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 					uad.setWaivedAmount(waivedAmounts.get(alloc.getCode()));
 				}
 
+				if ("EM".equals(uad.getAllocationType())) {
+					isEMIFound = true;
+				}
+
 				list.add(uad);
+			}
+
+			if (!isEMIFound) {
+				UploadAlloctionDetail uad = new UploadAlloctionDetail();
+				for (CreateReceiptUpload alloc : detail.getAllocations()) {
+					if (Allocation.PFT.equals(alloc.getCode()) || Allocation.PRI.equals(alloc.getCode())) {
+						uad.setRootId(String.valueOf(alloc.getFeeId()));
+						uad.setAllocationType(Allocation.getCode(Allocation.EMI));
+						uad.setReferenceCode(Allocation.EMI);
+						uad.setStrPaidAmount(String.valueOf(uad.getPaidAmount().add(alloc.getAmount())));
+						uad.setPaidAmount(uad.getPaidAmount().add(alloc.getAmount()));
+						if (waivedAmounts.get(alloc.getCode()) != null) {
+							uad.setWaivedAmount(waivedAmounts.get(alloc.getCode()));
+						}
+
+						isEMIFound = true;
+					}
+				}
+
+				if (isEMIFound) {
+					list.add(uad);
+				}
 			}
 		}
 
 		rud.setListAllocationDetails(list);
 
 		if (AllocationType.MANUAL.equals(detail.getAllocationType()) && list != null
-				&& !(detail.getReceiptAmount().compareTo(getSumOfAllocations(list)) > 0)) {
+				&& (detail.getReceiptAmount().compareTo(getSumOfAllocations(list)) < 0)) {
 			setFailureStatus(detail, "", "RECEIPT Amount and Allocations amount should be same");
 			return;
 		}
@@ -231,6 +263,8 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		if (FinanceConstants.EARLYSETTLEMENT.equals(detail.getReceiptPurpose())) {
 			fsi.setClosureType(detail.getClosureType());
 		}
+
+		fsi.setCancelRemarks(detail.getBounceRemarks());
 
 		FinanceDetail fd = null;
 
@@ -257,17 +291,27 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		if (!schd.getErrorDetails().isEmpty()) {
 			setFailureStatus(detail, schd.getErrorDetails().get(0));
 		} else {
-			detail.setReceiptID(fd.getReceiptId());
 			setSuccesStatus(detail);
+
+			Map<String, String> map = new HashMap<>();
+			map.put("Receipt Id", String.valueOf(fd.getReceiptId()));
+			detail.setExtendedFields(map);
+			header.setExtendedFieldRequired(true);
 		}
 	}
 
 	public void createExtReceipt(CreateReceiptUpload detail, String entityCode) {
 
 		ReceiptUploadDetail rud = new ReceiptUploadDetail();
-
 		rud.setReference(detail.getReference());
-		rud.setFinID(detail.getReferenceID());
+		FinanceMain fm = financeMainDAO.getFinanceMain(rud.getReference(), TableType.MAIN_TAB);
+		if (fm == null) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorDesc("Invalid agreement Id provided.");
+			return;
+		}
+		rud.setFinID(fm.getFinID());
+		rud.setPaymentRef(detail.getPaymentRef());
 		rud.setAllocationType(detail.getAllocationType());
 		rud.setValueDate(detail.getAppDate());
 		rud.setRealizationDate(detail.getAppDate());
@@ -286,7 +330,6 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setReason(detail.getReason());
 		rud.setRemarks(detail.getRemarks());
 		rud.setChequeNo(detail.getChequeNumber());
-		rud.setChequeNo(detail.getChequeAccountNumber());
 		rud.setBankCode(detail.getBankCode());
 		rud.setPaymentRef(detail.getPaymentRef());
 		rud.setPanNumber(detail.getPanNumber());
@@ -329,12 +372,11 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 
 		rud.setListAllocationDetails(list);
 
-		if (AllocationType.MANUAL.equals(detail.getAllocationType()) && list != null) {
-			if (!(detail.getReceiptAmount().equals(getSumOfAllocations(list)))) {
-				detail.setProgress(EodConstants.PROGRESS_FAILED);
-				detail.setErrorDesc("RECEIPT Amount and Allocations amount should be same");
-				return;
-			}
+		if (AllocationType.MANUAL.equals(detail.getAllocationType()) && list != null
+				&& (detail.getReceiptAmount().compareTo(getSumOfAllocations(list)) < 0)) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorDesc("RECEIPT Amount and Allocations amount should be same");
+			return;
 		}
 
 		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, entityCode);
@@ -401,12 +443,57 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 	}
 
 	private BigDecimal getSumOfAllocations(List<UploadAlloctionDetail> list) {
+		List<UploadAlloctionDetail> newlist = new ArrayList<>();
+		newlist = list;
+		Optional<UploadAlloctionDetail> allocList = newlist.stream()
+				.filter(l1 -> Allocation.EMI.equals(l1.getAllocationType())).findFirst();
+
+		if (!allocList.isEmpty()) {
+			newlist.remove(allocList.get());
+		}
+
 		BigDecimal sum = BigDecimal.ZERO;
-		for (UploadAlloctionDetail cru : list) {
+		for (UploadAlloctionDetail cru : newlist) {
+			if (Allocation.EMI.equals(cru.getReferenceCode())) {
+				continue;
+			}
 			sum = sum.add(cru.getPaidAmount());
 		}
 
 		return sum;
+	}
+
+	private String getAllocationCode(CreateReceiptUpload alloc) {
+		String code = alloc.getCode();
+
+		code = code.replace("_W", "");
+		code = code.replace("_w", "");
+
+		if (code.equalsIgnoreCase("PRINCIPAL")) {
+			code = "PRI";
+		}
+
+		if (code.equalsIgnoreCase("INTEREST")) {
+			code = "PFT";
+		}
+
+		if (code.equalsIgnoreCase("FTINTEREST")) {
+			code = "FUTPFT";
+		}
+
+		if (code.equalsIgnoreCase("FTPRINCIPAL")) {
+			code = "FUTPRI";
+		}
+
+		if (code.equalsIgnoreCase("LPP")) {
+			code = "ODC";
+		}
+
+		if (code.equalsIgnoreCase("FC")) {
+			code = "FEE";
+		}
+
+		return code;
 	}
 
 	@Override
@@ -453,6 +540,11 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 	@Autowired
 	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
 		this.bounceReasonDAO = bounceReasonDAO;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }

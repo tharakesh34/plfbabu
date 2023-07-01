@@ -24,11 +24,9 @@
  */
 package com.pennant.webui.finance.financemain;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -81,6 +79,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -1384,7 +1383,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// Finance Accounting Details Tab
 			if (getAccountingDetailDialogCtrl() != null) {
 				// check if accounting rules executed or not
-				if (!recSave && !getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
+				if (AccountingExtension.VERIFY_ACCOUNTING && !recSave
+						&& !getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 					return;
 				}
@@ -2682,9 +2682,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		return idNumber;
 	}
 
-	public void onSelectCheckListDetailsTab(ForwardEvent event)
-			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
-
+	@Override
+	public void onSelectCheckListDetailsTab(ForwardEvent event) {
 		doWriteComponentsToBean(getFinanceDetail(), false);
 
 		if (getFinanceCheckListReferenceDialogCtrl() != null) {
@@ -2692,7 +2691,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			getFinanceCheckListReferenceDialogCtrl().doWriteBeanToComponents(getFinanceDetail().getCheckList(),
 					getFinanceDetail().getFinanceCheckList(), false);
 		}
-
 	}
 
 	public List<DocumentDetails> getDocumentDetails() {

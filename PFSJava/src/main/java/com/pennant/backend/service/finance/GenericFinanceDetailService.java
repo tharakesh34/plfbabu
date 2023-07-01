@@ -1306,6 +1306,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 			// Added Value date as Finance Start Date in case of origination Disbursement
 			valueDate = fm.getFinStartDate();
+
+			for (FinanceScheduleDetail schedule : schdData.getFinanceScheduleDetails()) {
+				if (schedule.isRepayOnSchDate() && schedule.getSchDate().compareTo(curBDay) < 0) {
+					valueDate = schedule.getSchDate();
+				}
+			}
+
 		} else {
 			pftDetail = profitDetailsDAO.getFinProfitDetailsById(finID);
 		}
@@ -1760,8 +1767,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			finFeeChargesDAO.deleteChargesBatch(finID, finEvent, isWIF, tableType);
 		}
 
-		if (!isWIF) {
-			finODPenaltyRateDAO.delete(finID, scheduleData.getFinODPenaltyRate().getFinEffectDate(), tableType);
+		if (!isWIF && scheduleData.getFinODPenaltyRate() != null) {
+			Date finEffectDate = scheduleData.getFinODPenaltyRate().getFinEffectDate();
+			if (finEffectDate != null) {
+				finODPenaltyRateDAO.delete(finID, finEffectDate, tableType);
+			}
 		}
 
 		logger.debug("Leaving ");

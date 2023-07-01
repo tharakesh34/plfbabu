@@ -1161,10 +1161,6 @@
 	   </addColumn>
 	</changeSet>
 	
-	<changeSet id="PSD#201401" author="Alekhya.T">
-		<modifyDataType tableName="ADTASSET_CLASS_SETUP_HEADER" columnName="repayhierarchy" newDataType="varchar(20)"/>
-	</changeSet>
-	
 	<changeSet id="1" author="Saikiran.n">
 		<addColumn tableName="AdtSecusers">
 			<column name="Deleted" type="boolean" />

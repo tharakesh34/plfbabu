@@ -63,9 +63,7 @@ public class DocVerificationDAOImpl extends BasicDao<DocVerificationHeader> impl
 	}
 
 	@Override
-	public long saveDetail(DocVerificationDetail detail) {
-		final KeyHolder keyHolder = new GeneratedKeyHolder();
-
+	public void saveDetail(DocVerificationDetail detail) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into DOC_VERIFICATION_DETAILS");
 		sql.append(" (Headerid, FullName, FatherOrHusbandName, Gender, DOB");
@@ -75,38 +73,22 @@ public class DocVerificationDAOImpl extends BasicDao<DocVerificationHeader> impl
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		jdbcOperations.update(new PreparedStatementCreator() {
-			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-				int index = 0;
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 0;
 
-				PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
-
-				ps.setLong(++index, detail.getHeaderId());
-				ps.setString(++index, detail.getFullName());
-				ps.setString(++index, detail.getFatherOrHusbandName());
-				ps.setString(++index, detail.getGender());
-				ps.setString(++index, detail.getDob());
-				ps.setInt(++index, detail.getAge());
-				ps.setString(++index, detail.getPanNumber());
-				ps.setString(++index, detail.getAadhaarNumber());
-
-				return ps;
-			}
-		}, keyHolder);
-
-		Number key = keyHolder.getKey();
-
-		if (key == null) {
-			return Long.MIN_VALUE;
-		}
-
-		return key.longValue();
+			ps.setLong(++index, detail.getHeaderId());
+			ps.setString(++index, detail.getFullName());
+			ps.setString(++index, detail.getFatherOrHusbandName());
+			ps.setString(++index, detail.getGender());
+			ps.setString(++index, detail.getDob());
+			ps.setInt(++index, detail.getAge());
+			ps.setString(++index, detail.getPanNumber());
+			ps.setString(++index, detail.getAadhaarNumber());
+		});
 	}
 
 	@Override
-	public long saveAddress(DocVerificationAddress address) {
-		final KeyHolder keyHolder = new GeneratedKeyHolder();
-
+	public void saveAddress(DocVerificationAddress address) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into DOC_VERIFICATION_ADDRESS");
 		sql.append(" (HeaderId, HouseNo, Street, Ditrict, State");
@@ -116,31 +98,18 @@ public class DocVerificationDAOImpl extends BasicDao<DocVerificationHeader> impl
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		jdbcOperations.update(new PreparedStatementCreator() {
-			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-				int index = 0;
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 0;
 
-				PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
+			ps.setLong(++index, address.getHeaderId());
+			ps.setString(++index, address.getHouseNo());
+			ps.setString(++index, address.getStreet());
+			ps.setString(++index, address.getDistrict());
+			ps.setString(++index, address.getState());
+			ps.setString(++index, address.getCountry());
+			ps.setString(++index, address.getZip());
+		});
 
-				ps.setLong(++index, address.getHeaderId());
-				ps.setString(++index, address.getHouseNo());
-				ps.setString(++index, address.getStreet());
-				ps.setString(++index, address.getDistrict());
-				ps.setString(++index, address.getState());
-				ps.setString(++index, address.getCountry());
-				ps.setString(++index, address.getZip());
-
-				return ps;
-			}
-		}, keyHolder);
-
-		Number key = keyHolder.getKey();
-
-		if (key == null) {
-			return Long.MIN_VALUE;
-		}
-
-		return key.longValue();
 	}
 
 	@Override

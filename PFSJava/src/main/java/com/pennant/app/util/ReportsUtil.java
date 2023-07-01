@@ -2,7 +2,6 @@ package com.pennant.app.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -91,7 +90,7 @@ public class ReportsUtil {
 
 		String template = getTemplate(reportName);
 
-		Map<String, Object> parameters = getParameters(userName, reportName, object);
+		Map<String, Object> parameters = getParameters(userName);
 
 		JRBeanCollectionDataSource mainDS = getDataSource(object);
 
@@ -115,7 +114,7 @@ public class ReportsUtil {
 
 		String template = getTemplate(reportSrc, reportName);
 
-		Map<String, Object> parameters = getParameters(userName, reportName, object);
+		Map<String, Object> parameters = getParameters(userName);
 
 		JRBeanCollectionDataSource mainDS = getDataSource(object);
 
@@ -162,7 +161,7 @@ public class ReportsUtil {
 
 		String template = getTemplate(reportName);
 
-		Map<String, Object> parameters = getParameters(userName, reportName, object);
+		Map<String, Object> parameters = getParameters(userName);
 
 		JRBeanCollectionDataSource mainDS = getDataSource(object);
 
@@ -338,7 +337,7 @@ public class ReportsUtil {
 		return reportSrc;
 	}
 
-	private static Map<String, Object> getParameters(String userName, String reportName, Object object) {
+	private static Map<String, Object> getParameters(String userName) {
 		Map<String, Object> parameters = new HashMap<>();
 
 		parameters.put("userName", userName);
@@ -391,7 +390,7 @@ public class ReportsUtil {
 			if (obj instanceof List) {
 				subListDS = new JRBeanCollectionDataSource((List<?>) obj);
 			} else {
-				List<Object> subList = new ArrayList<Object>();
+				List<Object> subList = new ArrayList<>();
 				subList.add(obj);
 				subListDS = new JRBeanCollectionDataSource(subList);
 			}
@@ -478,9 +477,8 @@ public class ReportsUtil {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public static void print(List<Object> listData, String reportName, String userName, Window dialogWindow)
-			throws JRException, FileNotFoundException {
-		logger.debug("Entering");
+	public static void print(List<Object> listData, String userName, Window dialogWindow) throws JRException {
+		logger.debug(Literal.ENTERING);
 
 		try {
 			JRBeanCollectionDataSource subListDS = null;
@@ -507,7 +505,7 @@ public class ReportsUtil {
 
 			byte[] buf = JasperRunManager.runReportToPdf(reportSrc, parameters, subListDS);
 
-			final Map<String, Object> auditMap = new HashMap<String, Object>();
+			final Map<String, Object> auditMap = new HashMap<>();
 			auditMap.put("reportBuffer", buf);
 			if (dialogWindow != null) {
 				auditMap.put("dialogWindow", dialogWindow);
@@ -518,7 +516,7 @@ public class ReportsUtil {
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public static void generateReport(String userName, String reportName, String whereCond,
@@ -532,9 +530,6 @@ public class ReportsUtil {
 	}
 
 	private static JRAbstractLRUVirtualizer getVirtualizer() {
-		int maxSize = 250;
-		JRSwapFile swapFile = new JRSwapFile(System.getProperty("java.io.tmpdir"), 250, 250);
-		JRAbstractLRUVirtualizer virtualizer = new JRSwapFileVirtualizer(maxSize, swapFile, true);
-		return virtualizer;
+		return new JRSwapFileVirtualizer(250, new JRSwapFile(System.getProperty("java.io.tmpdir"), 250, 250), true);
 	}
 }

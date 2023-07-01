@@ -365,4 +365,21 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 		return clusterid;
 	}
 
+	@Override
+	public List<String> getClusterCodes(String ClusterType, String entity) {
+		String sql = "Select Code From Clusters Where ClusterType = ? and Entity = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForList(sql, String.class, ClusterType, entity);
+	}
+
+	@Override
+	public boolean isValidClusterCode(String clusterCode, String entity) {
+		String sql = "Select count(Code) From Clusters Where Entity = ? and Code = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, entity, clusterCode) > 0;
+	}
 }

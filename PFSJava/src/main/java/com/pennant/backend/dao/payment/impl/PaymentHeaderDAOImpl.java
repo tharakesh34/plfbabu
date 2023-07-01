@@ -253,7 +253,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		sql.append(" fm.FinID, fm.FinReference, ft.FinType, ft.FinTypeDesc, ft.FinDivision");
 		sql.append(", fm.CalRoundingMode, fm.RoundingTarget, fm.FinBranch, fm.CustID, cu.CustCif");
 		sql.append(", cu.CustShrtName, curr.CcyCode, fm.FinStartDate, fm.MaturityDate, div.EntityCode");
-		sql.append(", fm.ClosingStatus, fm.WRITEOFFLOAN, h.HoldStatus ");
+		sql.append(", fm.ClosingStatus, fm.WRITEOFFLOAN, h.HoldStatus, fm.UnderNPA, fm.UnderSettlement");
 		sql.append(" From FinanceMainMaintenance_View fm");
 		sql.append(" Inner Join Customers cu on cu.CustID = fm.CustID");
 		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = fm.FinType");
@@ -287,6 +287,8 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 				fm.setClosingStatus(rs.getString("ClosingStatus"));
 				fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 				fm.setHoldStatus(rs.getString("HoldStatus"));
+				fm.setUnderNpa(rs.getBoolean("UnderNPA"));
+				fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
 
 				return fm;
 			}, finID);

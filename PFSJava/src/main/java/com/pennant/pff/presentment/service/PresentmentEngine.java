@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -77,6 +79,7 @@ import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.extension.PresentmentExtension;
 import com.pennant.pff.holdmarking.model.HoldMarkingDetail;
 import com.pennant.pff.holdmarking.model.HoldMarkingHeader;
+import com.pennant.pff.holdmarking.service.HoldMarkingService;
 import com.pennant.pff.holdmarking.upload.dao.HoldMarkingDetailDAO;
 import com.pennant.pff.holdmarking.upload.dao.HoldMarkingHeaderDAO;
 import com.pennant.pff.mandate.ChequeSatus;
@@ -109,6 +112,7 @@ import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.presentment.model.ConsecutiveBounce;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class PresentmentEngine {
@@ -152,6 +156,7 @@ public class PresentmentEngine {
 	private PresentmentImportProcess presentmentImportProcess;
 	private FinMandateService finMandateService;
 	private EventPropertiesService eventPropertiesService;
+	private HoldMarkingService holdMarkingService;
 
 	public PresentmentEngine() {
 		super();
@@ -194,7 +199,9 @@ public class PresentmentEngine {
 		info.append("\nApp Date: ").append(DateUtil.formatToShortDate(appDate));
 		info.append("\nAuto Extaction: ").append(autoExtract);
 
-		logger.info(info.toString());
+		String log = info.toString();
+
+		logger.info(log);
 
 		int count = 0;
 
@@ -210,6 +217,9 @@ public class PresentmentEngine {
 				ph.setMandateType(code);
 				ph.setAppDate(appDate);
 				ph.setDueDate(dueDates.get(code));
+
+				ph.setFromDate(header.getFromDate());
+				ph.setToDate(header.getToDate());
 
 				count = count + prepareDues(ph);
 			}
@@ -271,6 +281,9 @@ public class PresentmentEngine {
 
 		int count = 0;
 
+		String fromShortDate = DateUtil.formatToShortDate(fromDate);
+		String toShortDate = DateUtil.formatToShortDate(toDate);
+
 		if (fromDate != null && toDate != null && "#".equals(instrumentType)) {
 			/* From Screen when fromDate, toDate selected */
 			count = presentmentDAO.extarct(batchID, fromDate, toDate);
@@ -280,12 +293,11 @@ public class PresentmentEngine {
 		} else if (dueDate != null) {
 			/* From EOD for Auto Extraction */
 			count = presentmentDAO.extarct(batchID, instrumentType, dueDate, dueDate);
-			logger.info("\nInstrument Type {}\nDue Date {}", instrumentType, DateUtil.formatToShortDate(dueDate));
+			logger.info("\nInstrument Type {}\nDue Date {}", instrumentType, toShortDate);
 		}
 
 		if (fromDate != null && toDate != null) {
-			logger.info("\nInstrument Type {}\nFrom Date {}\nTo Date {}", instrumentType,
-					DateUtil.formatToShortDate(fromDate), DateUtil.formatToShortDate(toDate));
+			logger.info("\nInstrument Type {}\nFrom Date {}\nTo Date {}", instrumentType, fromShortDate, toShortDate);
 		}
 
 		if (count == 0) {
@@ -422,25 +434,45 @@ public class PresentmentEngine {
 		logger.debug(Literal.ENTERING);
 	}
 
-	public void groupByInclude(long batchID) throws SQLException {
+	public void groupByInclude(long batchID) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Integer> batchMap = presentmentDAO.batchSizeByInstrumentType();
 
-		List<String> instrumentTypes = presentmentDAO.getInstrumentTypes(batchID);
+		List<PresentmentHeader> list = presentmentDAO.getInstrumentTypes(batchID);
 
-		List<PresentmentDetail> list = new ArrayList<>();
+		Map<String, List<PresentmentHeader>> map = new HashMap<>();
+		for (PresentmentHeader ph : list) {
+			String key = ph.getMandateType().concat(DateUtil.formatToLongDate(ph.getSchdate()));
 
-		for (String instrumentType : instrumentTypes) {
-			Map<Long, Integer> headerMap = new LinkedHashMap<>();
-			Integer batchSize = batchMap.get(instrumentType);
+			List<PresentmentHeader> subList = map.get(key);
 
-			presentmentDAO.groupByInclude(batchID, instrumentType, this, headerMap, batchSize, list);
-
-			if (!list.isEmpty()) {
-				presentmentDAO.updateHeaderByInclude(list);
-				list.clear();
+			if (subList == null) {
+				subList = new ArrayList<>();
+				map.put(key, subList);
 			}
+
+			subList.add(ph);
+		}
+
+		for (Entry<String, List<PresentmentHeader>> entry : map.entrySet()) {
+			List<PresentmentDetail> pdList = new ArrayList<>();
+
+			for (PresentmentHeader ph : entry.getValue()) {
+				Map<Long, Integer> headerMap = new LinkedHashMap<>();
+				Integer batchSize = batchMap.get(ph.getMandateType());
+
+				presentmentDAO.groupByInclude(batchID, ph, this, headerMap, batchSize, pdList);
+
+				if (!pdList.isEmpty()) {
+					presentmentDAO.updateHeaderByInclude(pdList);
+					pdList.clear();
+				}
+			}
+		}
+
+		for (PresentmentHeader ph : list) {
+			presentmentDAO.deleteHeader(batchID, ph.getSchdate());
 		}
 
 		logger.debug(Literal.ENTERING);
@@ -477,7 +509,7 @@ public class PresentmentEngine {
 			list.add(pd);
 		}
 
-		if (size == batchSize) {
+		if (Objects.equals(size, batchSize)) {
 			headerMap.remove(headerID);
 		}
 
@@ -881,10 +913,9 @@ public class PresentmentEngine {
 			advanceType = AdvanceType.getType(pd.getAdvType());
 		}
 
-		if (FinanceConstants.FLAG_BPI.equals(pd.getBpiOrHoliday())) {
-			if (FinanceConstants.BPI_DISBURSMENT.equals(pd.getBpiTreatment()) && ph.isBpiPaidOnInstDate()) {
-				advanceType = AdvanceType.AF;
-			}
+		if (FinanceConstants.FLAG_BPI.equals(pd.getBpiOrHoliday())
+				&& (FinanceConstants.BPI_DISBURSMENT.equals(pd.getBpiTreatment()) && ph.isBpiPaidOnInstDate())) {
+			advanceType = AdvanceType.AF;
 		}
 
 		if (advanceType == null) {
@@ -893,29 +924,28 @@ public class PresentmentEngine {
 		}
 
 		int exculdeReason = 0;
-		BigDecimal dueAmt = BigDecimal.ZERO;
+		BigDecimal dueAmt = null;
 
 		if (advanceType == AdvanceType.AE) {
 			if (AdvanceStage.getStage(pd.getAdvStage()) == AdvanceStage.FE) {
 				logger.debug(Literal.LEAVING);
 				return;
 			}
-			amountType = RepayConstants.EXAMOUNTTYPE_ADVEMI;
+			amountType = ExcessType.ADVEMI;
 			dueAmt = pd.getSchAmtDue();
 			exculdeReason = RepayConstants.PEXC_ADVEMI;
 		} else {
-			amountType = RepayConstants.EXAMOUNTTYPE_ADVINT;
+			amountType = ExcessType.ADVINT;
 			dueAmt = pd.getSchPftDue();
 			if (pd.getSchPriDue().compareTo(BigDecimal.ZERO) == 0) {
 				exculdeReason = RepayConstants.PEXC_ADVINT;
 			}
 		}
 
-		if (FinanceConstants.FLAG_BPI.equals(pd.getBpiOrHoliday())) {
-			if (FinanceConstants.BPI_DISBURSMENT.equals(pd.getBpiTreatment()) && ph.isBpiPaidOnInstDate()) {
-				logger.debug(Literal.LEAVING);
-				return;
-			}
+		if (FinanceConstants.FLAG_BPI.equals(pd.getBpiOrHoliday())
+				&& (FinanceConstants.BPI_DISBURSMENT.equals(pd.getBpiTreatment()) && ph.isBpiPaidOnInstDate())) {
+			logger.debug(Literal.LEAVING);
+			return;
 		}
 
 		List<FinExcessAmount> list = finExcessAmountDAO.getExcessAmountsByRefAndType(pd.getFinID(), amountType);
@@ -924,13 +954,12 @@ public class PresentmentEngine {
 			BigDecimal excessBal = finExAmt.getBalanceAmt();
 			BigDecimal adjAmount = BigDecimal.ZERO;
 
-			if (dueAmt.compareTo(BigDecimal.ZERO) > 0) {
-				if (excessBal != null && excessBal.compareTo(BigDecimal.ZERO) > 0) {
-					if (dueAmt.compareTo(excessBal) >= 0) {
-						adjAmount = excessBal;
-					} else {
-						adjAmount = dueAmt;
-					}
+			if (dueAmt.compareTo(BigDecimal.ZERO) > 0
+					&& (excessBal != null && excessBal.compareTo(BigDecimal.ZERO) > 0)) {
+				if (dueAmt.compareTo(excessBal) >= 0) {
+					adjAmount = excessBal;
+				} else {
+					adjAmount = dueAmt;
 				}
 			}
 
@@ -965,7 +994,7 @@ public class PresentmentEngine {
 		long finID = pd.getFinID();
 
 		List<FinExcessAmount> list = finExcessAmountDAO.getExcessAmountsByRefAndType(finID, pd.getAppDate(),
-				RepayConstants.EXAMOUNTTYPE_EMIINADV);
+				ExcessType.EMIINADV);
 
 		BigDecimal dueAmount = pd.getSchAmtDue();
 
@@ -975,7 +1004,7 @@ public class PresentmentEngine {
 				break;
 			}
 			BigDecimal excessBal = excess.getBalanceAmt();
-			BigDecimal adjAmount = BigDecimal.ZERO;
+			BigDecimal adjAmount = null;
 
 			if (dueAmount.compareTo(excessBal) > 0) {
 				adjAmount = excessBal;
@@ -994,7 +1023,7 @@ public class PresentmentEngine {
 			pd.getExcessMovements().add(exMovement);
 		}
 
-		BigDecimal advanceAmt = BigDecimal.ZERO;
+		BigDecimal advanceAmt = null;
 		if (emiInAdvanceAmount.compareTo(pd.getSchAmtDue()) >= 0) {
 			pd.setExcludeReason(RepayConstants.PEXC_EMIINADVANCE);
 			pd.setPresentmentAmt(BigDecimal.ZERO);
@@ -1064,7 +1093,8 @@ public class PresentmentEngine {
 		}
 
 		if (ImplementationConstants.OVERDRAFT_REPRESENTMENT_CHARGES_INCLUDE && !odPresentments.isEmpty()) {
-			overdrafLoanService.createCharges(odPresentments.values().stream().collect(Collectors.toList()));
+			overdrafLoanService
+					.createCharges(odPresentments.values().stream().collect(Collectors.toCollection(ArrayList::new)));
 		}
 
 		if (FinanceConstants.FLAG_HOLDEMI.equals(pd.getBpiOrHoliday())) {
@@ -1221,9 +1251,7 @@ public class PresentmentEngine {
 
 		int count = 0;
 
-		List<PresentmentHeader> list = new ArrayList<>();
-
-		list = presentmentDAO.getpresentmentHeaderList(headerId);
+		List<PresentmentHeader> list = presentmentDAO.getpresentmentHeaderList(headerId);
 
 		for (PresentmentHeader ph : list) {
 			count = count + presentmentDAO.extract(batchID, ph);
@@ -1312,9 +1340,9 @@ public class PresentmentEngine {
 			status = presentmentImportProcess.getStatus(status);
 			bounceCode = presentmentImportProcess.getReasonCode(bounceCode);
 			if ((status == null || status.equals("")) && (bounceCode != null && !bounceCode.equals(""))) {
-				status = "F";
-			} else if ((status == null || status.equals("")) && (bounceCode == null || bounceCode.equals(""))) {
 				status = "S";
+			} else {
+				status = "F";
 			}
 		}
 
@@ -1331,7 +1359,8 @@ public class PresentmentEngine {
 		info.append("\nBounceRemarks: ").append(bounceRemarks);
 		info.append("\nFate Correction: ").append(fateCorrection);
 
-		logger.info(info.toString());
+		String log = info.toString();
+		logger.info(log);
 
 		/* Validations */
 		validateResponse(pd);
@@ -1374,7 +1403,7 @@ public class PresentmentEngine {
 		pd.setManualAdviseId(null);
 
 		if (RepayConstants.PEXC_SUCCESS.equals(clearingStatus)) {
-			if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
+			if (PresentmentExtension.STAGE_ACCOUNTING_REQ) {
 				AEEvent event = doPresentmentStageAccounting(pd);
 				linkedTranId = event.getLinkedTranId();
 				pd.setLinkedTranId(linkedTranId);
@@ -1453,6 +1482,11 @@ public class PresentmentEngine {
 			}
 		}
 
+		if (InstrumentType.SI.code().equals(pd.getMandateType()) && PresentmentStatus.SUCCESS.equals(clearingStatus)
+				&& "Y".equals(fateCorrection)) {
+			holdMarkingService.updateHoldRemoval(pd.getPresentmentAmt(), pd.getFinID(), true);
+		}
+
 		if ((InstrumentType.isPDC(mandateType) || InstrumentType.isIPDC(mandateType)) && checkStatus != null) {
 			presentmentDetailDAO.updateChequeStatus(mandateID, checkStatus);
 		}
@@ -1494,7 +1528,9 @@ public class PresentmentEngine {
 		String errorDesc = pd.getErrorDesc();
 		if (StringUtils.trimToNull(errorDesc) != null) {
 			errorDesc = (errorDesc.length() >= 1000) ? errorDesc.substring(0, 998) : errorDesc;
+			pd.setErrorDesc(errorDesc);
 		}
+
 		presentmentDetailDAO.updatePresentmentDetail(pd);
 		String accountNumber = mandateDAO.getMandateNumber(pd.getMandateId());
 
@@ -1692,6 +1728,14 @@ public class PresentmentEngine {
 			if (br == null) {
 				throw new PresentmentException(PresentmentError.PRMNT503);
 			}
+
+			if (InstrumentType.IPDC.code().equals(pd.getMandateType())) {
+				pd.setMandateType(InstrumentType.PDC.code());
+			}
+
+			if (br.getInstrumentType() == null || !StringUtils.equals(br.getInstrumentType(), pd.getMandateType())) {
+				throw new PresentmentException(PresentmentError.PRMNT503);
+			}
 		}
 
 		if (PresentmentStatus.BOUNCE.equals(status) && ImplementationConstants.PRESENT_RESP_BOUNCE_REMARKS_MAN) {
@@ -1746,7 +1790,6 @@ public class PresentmentEngine {
 		}
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setFinType(finType);
 		amountCodes.setPartnerBankAc(fm.getPartnerBankAc());
 		amountCodes.setPartnerBankAcType(fm.getPartnerBankAcType());
@@ -1831,11 +1874,10 @@ public class PresentmentEngine {
 		}
 
 		for (FinRepayHeader rph : repayHeaders) {
-			if (FinServiceEvent.SCHDRPY.equals(rh.getReceiptPurpose())) {
-				if (rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
-					finExcessAmountDAO.updExcessAfterRealize(rph.getFinID(), excessAdjustTo, rph.getExcessAmount(),
-							rh.getReceiptID());
-				}
+			if (FinServiceEvent.SCHDRPY.equals(rh.getReceiptPurpose())
+					&& (rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0)) {
+				finExcessAmountDAO.updExcessAfterRealize(rph.getFinID(), excessAdjustTo, rph.getExcessAmount(),
+						rh.getReceiptID());
 			}
 		}
 
@@ -2069,4 +2111,8 @@ public class PresentmentEngine {
 		this.holdMarkingHeaderDAO = holdMarkingHeaderDAO;
 	}
 
+	@Autowired
+	public void setHoldMarkingService(HoldMarkingService holdMarkingService) {
+		this.holdMarkingService = holdMarkingService;
+	}
 }

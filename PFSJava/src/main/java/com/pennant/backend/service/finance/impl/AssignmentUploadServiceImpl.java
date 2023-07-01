@@ -55,13 +55,13 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.AssignmentUploadService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 
 /**
  * Service implementation for methods that depends on <b>AssignmentUpload</b>.<br>
@@ -561,7 +561,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 
 			BigDecimal assginExcessAmt = BigDecimal.ZERO;
 			List<FinExcessAmount> list = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
-					RepayConstants.EXAMOUNTTYPE_EXCESS);
+					ExcessType.EXCESS);
 			for (FinExcessAmount fea : list) {
 				assginExcessAmt = assginExcessAmt.add(fea.getBalanceAmt());
 			}
@@ -571,7 +571,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			assginExcessAmt = CalculationUtil.roundAmount(assginExcessAmt, RoundingMode.HALF_DOWN.name(), 0);
 
 			BigDecimal assignEMIAdvAmt = BigDecimal.ZERO;
-			list = finExcessAmountDAO.getExcessAmountsByRefAndType(finID, RepayConstants.EXAMOUNTTYPE_EMIINADV);
+			list = finExcessAmountDAO.getExcessAmountsByRefAndType(finID, ExcessType.EMIINADV);
 
 			for (FinExcessAmount fea : list) {
 				assignEMIAdvAmt = assignEMIAdvAmt.add(fea.getBalanceAmt());

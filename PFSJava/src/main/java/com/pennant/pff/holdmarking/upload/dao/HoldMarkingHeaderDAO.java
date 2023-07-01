@@ -20,4 +20,6 @@ public interface HoldMarkingHeaderDAO {
 	List<HoldMarkingHeader> getHoldByAccNum(String accNum);
 
 	BigDecimal getHoldBalance(long finID, String accountNumber);
+
+	List<HoldMarkingHeader> getAutoHold(long finId);
 }

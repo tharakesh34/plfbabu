@@ -14,7 +14,7 @@ import com.pennanttech.pennapps.jdbc.search.ISearch;
 
 public interface GenerateLetterService {
 
-	List<GenerateLetter> getResult(ISearch searchFilters);
+	List<GenerateLetter> getResult(ISearch searchFilters, List<String> roleCodes);
 
 	List<ReportListDetail> getPrintLetters(List<String> workFlowRoles);
 
@@ -52,5 +52,9 @@ public interface GenerateLetterService {
 
 	List<ManualAdvise> getManualAdvises(long finID);
 
+	List<ManualAdvise> getpayableAdvises(long finID);
+
 	void deleteAutoLetterGeneration(long finID, String letterType);
+
+	void setMapDetails(GenerateLetter gl, List<GenerateLetter> letterInfo);
 }

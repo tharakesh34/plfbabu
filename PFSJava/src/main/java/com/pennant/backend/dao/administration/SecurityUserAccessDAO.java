@@ -49,4 +49,6 @@ public interface SecurityUserAccessDAO {
 
 	public void deleteDivisionBranches(String branchCode, long userId, String userDivision);
 
+	void deleteDivisionByAccessType(SecurityUserDivBranch branch);
+
 }

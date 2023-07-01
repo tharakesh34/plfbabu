@@ -59,7 +59,9 @@ public enum CrossLoanKnockOffUploadError {
 
 	CLKU_027("From Fin Reference is already cancelled, cross loan knockoff is not allowed."),
 
-	CLKU_028("Excess Amount should be greater than ZERO");
+	CLKU_028("Excess Amount should be greater than ZERO"),
+
+	CLKU_029("Invalid Fee Type Code.");
 
 	private String description;
 

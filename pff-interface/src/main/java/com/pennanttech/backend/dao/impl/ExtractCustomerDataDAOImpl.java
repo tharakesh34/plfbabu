@@ -10,8 +10,6 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -37,8 +35,6 @@ import com.pennanttech.pff.model.CustomerStaging;
 import com.pennanttech.pff.model.DownloadHeader;
 
 public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> implements ExtractCustomerDataDAO {
-	private static Logger logger = LogManager.getLogger(ExtractCustomerDataDAOImpl.class);
-
 	private NamedParameterJdbcTemplate portalTemplate;
 
 	public void setPortalDataSource(DataSource dataSource) {

@@ -137,7 +137,6 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 				rowCell = row.getCell(index);
 
 				if (rowCell != null) {
-
 					String strAmount = rowCell.toString();
 
 					if (StringUtils.isNotEmpty(strAmount)) {
@@ -155,14 +154,16 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 						}
 					}
 				}
+
 				index++;
 
-				if (index == 23) {
+				if (index > 10) {
 					record.addValue("ERRORCODE", "9999");
 					record.addValue("ERRORDESC", "Fee Types are exceeded the limit");
 
 					record.addValue("STATUS", "F");
 					record.addValue("PROGRESS", EodConstants.PROGRESS_FAILED);
+					break;
 				}
 			}
 

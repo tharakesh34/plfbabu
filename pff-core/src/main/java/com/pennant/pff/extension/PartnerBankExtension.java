@@ -8,15 +8,9 @@ public class PartnerBankExtension {
 		super();
 	}
 
-	public static boolean BRANCH_WISE_MAPPING;
-	public static String BRANCH_OR_CLUSTER;
-	public static String CLUSTER_TYPE;
-
-	static {
-		BRANCH_WISE_MAPPING = getValueAsBoolean("BRANCH_WISE_MAPPING", false);
-		BRANCH_OR_CLUSTER = getValueAsString("BRANCH_OR_CLUSTER", "B");
-		CLUSTER_TYPE = getValueAsString("CLUSTER_TYPE", "");
-	}
+	public static final boolean BRANCH_WISE_MAPPING = getValueAsBoolean("BRANCH_WISE_MAPPING", false);
+	public static final String BRANCH_OR_CLUSTER = getValueAsString("BRANCH_OR_CLUSTER", "B");
+	public static final String CLUSTER_TYPE = getValueAsString("CLUSTER_TYPE", "");
 
 	private static boolean getValueAsBoolean(String key, boolean defaultValue) {
 		return FeatureExtension.getValueAsBoolean(Module.PARTNERBANK, key, defaultValue);

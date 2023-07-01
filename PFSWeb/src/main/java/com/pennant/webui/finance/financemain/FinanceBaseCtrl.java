@@ -34,10 +34,8 @@
 
 package com.pennant.webui.finance.financemain;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -1120,8 +1118,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onSelectAgreementDetailTab(ForwardEvent event)
-			throws IllegalAccessException, InvocationTargetException, InterruptedException, ParseException {
+	public void onSelectAgreementDetailTab(ForwardEvent event) {
 		this.doWriteComponentsToBean(getFinanceDetail().getFinScheduleData(), new ArrayList<WrongValueException>());
 
 		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getCustomerDetails() != null) {
@@ -1292,8 +1289,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public void onSelectTab(ForwardEvent event)
-			throws IllegalAccessException, InvocationTargetException, InterruptedException, ParseException,
-			WrongValueException, IllegalArgumentException, NoSuchMethodException, SecurityException {
+			throws WrongValueException, IllegalArgumentException, SecurityException {
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		logger.debug(tab.getId() + " --> " + "Entering");
 		String module = getIDbyTab(tab.getId());
@@ -1578,15 +1574,13 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onSelectRecommendDetailTab(ForwardEvent event) throws InterruptedException {
+	public void onSelectRecommendDetailTab(ForwardEvent event) {
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		tab.removeForward(Events.ON_SELECT, (Tab) null, "onSelectRecommendDetailTab");
 		appendRecommendDetailTab(false);
 	}
 
-	public void onSelectCheckListDetailsTab(ForwardEvent event)
-			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
-
+	public void onSelectCheckListDetailsTab(ForwardEvent event) {
 		this.doWriteComponentsToBean(getFinanceDetail().getFinScheduleData(), new ArrayList<WrongValueException>());
 
 		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getCustomerDetails() != null) {
@@ -1599,7 +1593,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			getFinanceCheckListReferenceDialogCtrl().doWriteBeanToComponents(getFinanceDetail().getCheckList(),
 					getFinanceDetail().getFinanceCheckList(), false);
 		}
-
 	}
 
 	public boolean isAssetAvailable() {
@@ -1872,8 +1865,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onSelectCollateralTab(ForwardEvent event)
-			throws IllegalAccessException, InvocationTargetException, InterruptedException {
+	public void onSelectCollateralTab(ForwardEvent event) {
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
 			getCollateralHeaderDialogCtrl().doSetLabels(getFinBasicDetails());
 		} else {
@@ -3419,12 +3411,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method to calculate rates based on given base and special rate codes
-	 * 
-	 * @throws InterruptedException
 	 **/
 	protected void calculateRate(ExtendedCombobox baseRate, ExtendedCombobox splRate, ExtendedCombobox lovFieldTextBox,
-			Decimalbox margin, Decimalbox effectiveRate, Decimalbox minAllowedRate, Decimalbox maxAllowedRate)
-			throws InterruptedException {
+			Decimalbox margin, Decimalbox effectiveRate, Decimalbox minAllowedRate, Decimalbox maxAllowedRate) {
 		logger.debug("Entering");
 
 		RateDetail rateDetail = RateUtil.rates(baseRate.getValue(), this.finCcy.getValue(), splRate.getValue(),
@@ -3445,7 +3434,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 */
-	protected boolean doValidation(AuditHeader auditHeader) throws InterruptedException {
+	protected boolean doValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -5130,8 +5119,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		return aFinanceSchData;
 	}
 
-	public boolean processCustomerDetails(FinanceDetail financeDetail, boolean validatePhone)
-			throws ParseException, InterruptedException {
+	public boolean processCustomerDetails(FinanceDetail financeDetail, boolean validatePhone) {
 		logger.debug("Entering");
 		if (getCustomerDialogCtrl().getCustomerDetails() != null) {
 			return getCustomerDialogCtrl().doSave_CustomerDetail(financeDetail, custDetailTab, validatePhone);
@@ -5140,7 +5128,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		return true;
 	}
 
-	public boolean doCustomerValidation() throws ParseException, InterruptedException {
+	public boolean doCustomerValidation() {
 		logger.debug("Entering");
 		if (getCustomerDialogCtrl() != null) {
 			return processCustomerDetails(getFinanceDetail(), true);
@@ -6523,9 +6511,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param aFinanceDetail
 	 * @return
-	 * @throws InterruptedException
 	 */
-	protected boolean doValidateCommitment(FinanceDetail aFinanceDetail) throws InterruptedException {
+	protected boolean doValidateCommitment(FinanceDetail aFinanceDetail) {
 		logger.debug("Entering");
 
 		FinanceMain finMain = aFinanceDetail.getFinScheduleData().getFinanceMain();

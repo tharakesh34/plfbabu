@@ -1,6 +1,5 @@
 package com.pennant.pff.noc.webui;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +62,7 @@ public class ServiceBranchListCtrl extends GFCBaseListCtrl<ServiceBranch> {
 		super();
 	}
 
+	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "ServiceBranch";
 		super.pageRightName = "ServiceBranchList";
@@ -71,7 +71,7 @@ public class ServiceBranchListCtrl extends GFCBaseListCtrl<ServiceBranch> {
 	}
 
 	public void onCreate$windowServiceBranchList(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		setPageComponents(windowServiceBranchList, blServiceBranchList, lbServiceBranch, pagingServiceBranchList);
 
@@ -88,11 +88,11 @@ public class ServiceBranchListCtrl extends GFCBaseListCtrl<ServiceBranch> {
 
 		doRenderPage();
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnSearch(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		List<ServiceBranch> excludeCodes = this.serviceBranchService.getResult(getSearchFilters());
 
@@ -100,17 +100,17 @@ public class ServiceBranchListCtrl extends GFCBaseListCtrl<ServiceBranch> {
 
 		this.pagedListWrapper.initList(excludeCodes, lbServiceBranch, pagingServiceBranchList);
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnRefresh(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		doReset();
 
 		fillListData();
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnNew(Event event) {
@@ -126,15 +126,15 @@ public class ServiceBranchListCtrl extends GFCBaseListCtrl<ServiceBranch> {
 	}
 
 	public void onClick$print(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		doPrintResults(this.serviceBranchService.getPrintServices(getWorkFlowRoles()));
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onServiceBranchItemDoubleClicked(Event event) {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
+		logger.debug(Literal.ENTERING);
 
 		long id = (Long) this.lbServiceBranch.getSelectedItem().getAttribute("Id");
 
@@ -157,7 +157,7 @@ public class ServiceBranchListCtrl extends GFCBaseListCtrl<ServiceBranch> {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
 
-		logger.debug(Literal.LEAVING.concat(event.toString()));
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doShowDialogPage(ServiceBranch csb) {
@@ -187,25 +187,25 @@ public class ServiceBranchListCtrl extends GFCBaseListCtrl<ServiceBranch> {
 	private ISearch getSearchFilters() {
 		ISearch search = new Search();
 
-		String code = this.code.getValue();
-		if (StringUtils.isNotEmpty(code)) {
-			search.getFilters().add(new Filter("csb.Code", code, this.codeSort.getSelectedIndex()));
+		String sCode = this.code.getValue();
+		if (StringUtils.isNotEmpty(sCode)) {
+			search.getFilters().add(new Filter("csb.Code", sCode, this.codeSort.getSelectedIndex()));
 		}
 
-		String description = this.description.getValue();
-		if (StringUtils.isNotEmpty(description)) {
+		String sDescription = this.description.getValue();
+		if (StringUtils.isNotEmpty(sDescription)) {
 			search.getFilters()
-					.add(new Filter("csb.Description", description, this.descriptionSort.getSelectedIndex()));
+					.add(new Filter("csb.Description", sDescription, this.descriptionSort.getSelectedIndex()));
 		}
 
-		String city = this.city.getValue();
-		if (StringUtils.isNotEmpty(city)) {
-			search.getFilters().add(new Filter("csb.City", city, this.citySort.getSelectedIndex()));
+		String sCity = this.city.getValue();
+		if (StringUtils.isNotEmpty(sCity)) {
+			search.getFilters().add(new Filter("csb.City", sCity, this.citySort.getSelectedIndex()));
 		}
 
-		String pinCode = this.pinCode.getValue();
-		if (StringUtils.isNotEmpty(pinCode)) {
-			search.getFilters().add(new Filter("csb.PinCode", pinCode, this.pinCodeSort.getSelectedIndex()));
+		String sPinCode = this.pinCode.getValue();
+		if (StringUtils.isNotEmpty(sPinCode)) {
+			search.getFilters().add(new Filter("csb.PinCode", sPinCode, this.pinCodeSort.getSelectedIndex()));
 		}
 
 		String status = this.recordStatus.getValue();
@@ -223,9 +223,7 @@ public class ServiceBranchListCtrl extends GFCBaseListCtrl<ServiceBranch> {
 		return search;
 	}
 
-	private class CustomerServiceBranchModelItemRenderer implements ListitemRenderer<ServiceBranch>, Serializable {
-		private static final long serialVersionUID = 6056180845898696437L;
-
+	private class CustomerServiceBranchModelItemRenderer implements ListitemRenderer<ServiceBranch> {
 		public CustomerServiceBranchModelItemRenderer() {
 			super();
 		}

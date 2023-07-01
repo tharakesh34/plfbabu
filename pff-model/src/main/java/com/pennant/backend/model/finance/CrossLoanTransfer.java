@@ -54,6 +54,7 @@ public class CrossLoanTransfer extends AbstractWorkflowEntity {
 	private Timestamp approvedOn;
 	private List<ManualAdvise> manualAdvisesList = new ArrayList<>();
 	private Date postDate;
+	private String receiptModeStatus;
 
 	public CrossLoanTransfer() {
 		super();
@@ -76,6 +77,7 @@ public class CrossLoanTransfer extends AbstractWorkflowEntity {
 		excludeFields.add("valueDate");
 		excludeFields.add("excessValueDate");
 		excludeFields.add("postDate");
+		excludeFields.add("receiptModeStatus");
 
 		return excludeFields;
 	}
@@ -402,6 +404,14 @@ public class CrossLoanTransfer extends AbstractWorkflowEntity {
 
 	public void setPostDate(Date postDate) {
 		this.postDate = postDate;
+	}
+
+	public String getReceiptModeStatus() {
+		return receiptModeStatus;
+	}
+
+	public void setReceiptModeStatus(String receiptModeStatus) {
+		this.receiptModeStatus = receiptModeStatus;
 	}
 
 }

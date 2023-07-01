@@ -135,6 +135,12 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl<WriteOffUpload
 
 			FinanceWriteoffHeader fwh = financeWriteoffService.getFinanceWriteoffDetailById(detail.getReferenceID(),
 					"_View", null, FinServiceEvent.WRITEOFFPAY);
+
+			if (fwh.getFinanceWriteoff() == null) {
+				setFailureStatus(detail, "9999", "Invalid write off");
+				continue;
+			}
+
 			setWriteOffTotals(fwh);
 
 			AuditHeader auditHeader = getAuditHeader(fwh, PennantConstants.TRAN_WF);

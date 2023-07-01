@@ -50,7 +50,6 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
@@ -198,84 +197,6 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 			logger.error("Exception: ", e);
 		}
 
-		doSetAccountingMandatory();
-
-		logger.debug("leaving");
-	}
-
-	private void doSetAccountingMandatory() {
-		logger.debug("Entering");
-
-		FinanceTypeDialogCtrl financeTypeDialogCtrl = null;
-
-		if (this.mainController instanceof FinanceTypeDialogCtrl) {
-			financeTypeDialogCtrl = (FinanceTypeDialogCtrl) this.mainController;
-		} else {
-			return;
-		}
-
-		if (ImplementationConstants.ALLOW_ADDDBSF) {
-			if (isOverdraft) {
-				setAccountingMandStyle(AccountingEvent.ADDDBSF, false);
-			} else {
-				setAccountingMandStyle(AccountingEvent.ADDDBSF, true);
-			}
-		}
-		setAccountingMandStyle(AccountingEvent.ADDDBSN, true);
-		if (isOverdraft) {
-			setAccountingMandStyle(AccountingEvent.ADDDBSP, false);
-			setAccountingMandStyle(AccountingEvent.INSTDATE, false);
-			setAccountingMandStyle(AccountingEvent.AMZ, false);
-			setAccountingMandStyle(AccountingEvent.PROVSN, false);
-			setAccountingMandStyle(AccountingEvent.WRITEOFF, false);
-			setAccountingMandStyle(AccountingEvent.AMZPD, true);
-			setAccountingMandStyle(AccountingEvent.CMTDISB, true);
-			setAccountingMandStyle(AccountingEvent.RATCHG, false);
-			setAccountingMandStyle(AccountingEvent.SCDCHG, false);
-			setAccountingMandStyle(AccountingEvent.EMIHOLIDAY, false);
-			setAccountingMandStyle(AccountingEvent.REAGING, false);
-			setAccountingMandStyle(AccountingEvent.EARLYPAY, true);
-			setAccountingMandStyle(AccountingEvent.REPAY, true);
-			setAccountingMandStyle(AccountingEvent.EARLYSTL, false);
-			setAccountingMandStyle(AccountingEvent.AMENDMENT, false);
-			setAccountingMandStyle(AccountingEvent.SEGMENT, false);
-		} else {
-			setAccountingMandStyle(AccountingEvent.RATCHG, true);
-			setAccountingMandStyle(AccountingEvent.SCDCHG, true);
-			setAccountingMandStyle(AccountingEvent.EMIHOLIDAY, true);
-			setAccountingMandStyle(AccountingEvent.REAGING, true);
-			setAccountingMandStyle(AccountingEvent.EARLYPAY, true);
-			setAccountingMandStyle(AccountingEvent.EARLYSTL, true);
-			setAccountingMandStyle(AccountingEvent.AMENDMENT, true);
-			setAccountingMandStyle(AccountingEvent.SEGMENT, true);
-		}
-
-		setAccountingMandStyle(AccountingEvent.CANCELFIN, true);
-		setAccountingMandStyle(AccountingEvent.DISBINS, true);
-
-		boolean vasFlag = false;
-		if (StringUtils.isNotBlank(financeTypeDialogCtrl.alwdVasProduct.getValue())) {
-			vasFlag = true;
-		}
-		setAccountingMandStyle(AccountingEvent.VAS_ACCRUAL, vasFlag);
-		setAccountingMandStyle(AccountingEvent.VAS_FEE, vasFlag);
-
-		if (financeTypeDialogCtrl.alwPlanDeferment.isChecked()) {
-			setAccountingMandStyle(AccountingEvent.DEFFRQ, true);
-		}
-
-		if (financeTypeDialogCtrl.finIsAlwDifferment.isChecked()) {
-			setAccountingMandStyle(AccountingEvent.DEFRPY, true);
-		}
-
-		if (financeTypeDialogCtrl.finIsIntCpz.isChecked() || financeTypeDialogCtrl.finGrcIsIntCpz.isChecked()) {
-			if (!isCompReadonly) {
-				setAccountingMandStyle(AccountingEvent.COMPOUND, true);
-			}
-		} else {
-			setAccountingMandStyle(AccountingEvent.COMPOUND, false);
-		}
-
 		logger.debug("leaving");
 	}
 
@@ -393,6 +314,7 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 				settlement.setBefImage(befImage);
 			}
 			settlement.setEventDesc(eventDesc);
+			settlement.setMandatory(finTypeAcc.isMandatory());
 
 			finTypeAccEventMap.put(settlement.getEvent(), settlement);
 
@@ -415,6 +337,8 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 			}
 
 			npa.setEventDesc(eventDesc);
+			npa.setMandatory(finTypeAcc.isMandatory());
+
 			finTypeAccEventMap.put(npa.getEvent(), npa);
 
 			lc = new Listcell();
@@ -436,6 +360,8 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 			}
 
 			writeOff.setEventDesc(eventDesc);
+			writeOff.setMandatory(finTypeAcc.isMandatory());
+
 			finTypeAccEventMap.put(writeOff.getEvent(), writeOff);
 
 			lc = new Listcell();

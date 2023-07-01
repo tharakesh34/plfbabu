@@ -87,7 +87,7 @@ public class MandateUploadToDownloadCtrl extends GFCBaseCtrl<Configuration> {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window);
-		List<ValueLabel> menuList = new ArrayList<ValueLabel>();
+		List<ValueLabel> menuList = new ArrayList<>();
 		userId = getUserWorkspace().getUserDetails().getLoginId();
 		List<Configuration> configList = dataEngineConfig.getMenuList(true);
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
@@ -146,9 +146,8 @@ public class MandateUploadToDownloadCtrl extends GFCBaseCtrl<Configuration> {
 	 * when the Source type is changed. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	private void fileConfigurationSetup() throws Exception {
+	private void fileConfigurationSetup() {
 		logger.debug(Literal.ENTERING);
 
 		String path = config.getUploadPath();
@@ -162,7 +161,7 @@ public class MandateUploadToDownloadCtrl extends GFCBaseCtrl<Configuration> {
 			setComponentsVisibility(true);
 		} else if (StringUtils.equalsIgnoreCase(ConfigUtil.SERVER_FILE_LOCATION, uploadLoc)) {
 			setComponentsVisibility(false);
-			serverFiles = new ArrayList<ValueLabel>();
+			serverFiles = new ArrayList<>();
 			File file = new File(path);
 			File[] files = file.listFiles();
 
@@ -200,7 +199,7 @@ public class MandateUploadToDownloadCtrl extends GFCBaseCtrl<Configuration> {
 		} else {
 			Hbox hbox = null;
 			List<Hbox> item = rows.getChildren();
-			hbox = (Hbox) item.get(0);
+			hbox = item.get(0);
 			if (hbox.getChildren().size() == 2) {
 				rows = new Row();
 				rows.setStyle("overflow: visible !important");
@@ -229,9 +228,8 @@ public class MandateUploadToDownloadCtrl extends GFCBaseCtrl<Configuration> {
 	 * When user clicks on "btnImport"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnImport(Event event) throws InterruptedException {
+	public void onClick$btnImport(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		if (this.fileConfiguration.getSelectedIndex() == 0) {
@@ -255,7 +253,7 @@ public class MandateUploadToDownloadCtrl extends GFCBaseCtrl<Configuration> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void exceptionTrace(Exception e) throws InterruptedException {
+	private void exceptionTrace(Exception e) {
 		fileConfiguration.setValue(PennantConstants.List_Select);
 		fileConfiguration.setSelectedIndex(0);
 		MessageUtil.showError(e.getMessage());
@@ -317,7 +315,7 @@ public class MandateUploadToDownloadCtrl extends GFCBaseCtrl<Configuration> {
 		}
 	}
 
-	public void onChange$serverFileName(Event event) throws Exception {
+	public void onChange$serverFileName(Event event) {
 		try {
 			file = new File(this.serverFileName.getSelectedItem().getValue().toString());
 		} catch (Exception e) {

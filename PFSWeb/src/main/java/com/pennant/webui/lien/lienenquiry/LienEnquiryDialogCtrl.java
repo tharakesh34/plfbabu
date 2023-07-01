@@ -1,6 +1,5 @@
 package com.pennant.webui.lien.lienenquiry;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,9 +106,7 @@ public class LienEnquiryDialogCtrl extends GFCBaseCtrl<LienDetails> {
 		doClose(false);
 	}
 
-	public class ListModelItemRenderer implements ListitemRenderer<LienDetails>, Serializable {
-		private static final long serialVersionUID = 1L;
-
+	public class ListModelItemRenderer implements ListitemRenderer<LienDetails> {
 		private boolean headerType;
 
 		public ListModelItemRenderer(boolean headerType) {

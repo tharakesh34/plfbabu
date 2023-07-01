@@ -36,7 +36,6 @@ import com.pennant.backend.service.feerefund.FeeRefundHeaderService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.payment.model.PaymentDetail;
@@ -49,6 +48,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.autorefund.RefundBeneficiary;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennapps.core.util.ObjectUtil;
 
 public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<PaymentInstUploadDetail> {
@@ -206,15 +206,19 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 		detail.setFm(fm);
 		detail.setReferenceID(fm.getFinID());
 
-		if (!(RepayConstants.EXAMOUNTTYPE_EXCESS.equals(detail.getExcessType())
-				|| RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(detail.getExcessType()))) {
+		if (!(ExcessType.EXCESS.equals(detail.getExcessType()) || ExcessType.PAYABLE.equals(detail.getExcessType()))) {
 			setError(detail, PaymentUploadError.REFUP004);
 			return;
 		}
 
 		String feeTypeCode = StringUtils.trimToNull(detail.getFeeType());
 		Long feeTypeId = null;
-		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(detail.getExcessType())) {
+		if (ExcessType.PAYABLE.equals(detail.getExcessType())) {
+			if (StringUtils.isEmpty(feeTypeCode)) {
+				setError(detail, PaymentUploadError.REFUP016);
+				return;
+			}
+
 			feeTypeId = feeTypeDAO.getPayableFeeTypeID(feeTypeCode);
 
 			if (feeTypeId == null) {
@@ -245,7 +249,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 
 		BigDecimal balanceAmount = BigDecimal.ZERO;
 
-		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(detail.getExcessType())) {
+		if (ExcessType.EXCESS.equals(detail.getExcessType())) {
 			balanceAmount = finExcessAmountDAO.getExcessBalance(fm.getFinID());
 		} else {
 			balanceAmount = manualAdviseDAO.getPayableBalance(fm.getFinID(), feeTypeId);
@@ -278,11 +282,11 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 		ph.getPaymentInstruction().setPaymentAmount(detail.getPayAmount());
 		ph.getPaymentInstruction().setPostDate(appDate);
 
-		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(detail.getExcessType())) {
+		if (ExcessType.PAYABLE.equals(detail.getExcessType())) {
 			ph.getPaymentDetailList().addAll(preparePayable(detail));
 		}
 
-		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(detail.getExcessType())) {
+		if (ExcessType.EXCESS.equals(detail.getExcessType())) {
 			ph.getPaymentDetailList().addAll(prepareExcess(detail));
 		}
 
@@ -422,7 +426,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 				break;
 			}
 
-			if (!RepayConstants.EXAMOUNTTYPE_EXCESS.equals(fea.getAmountType())) {
+			if (!ExcessType.EXCESS.equals(fea.getAmountType())) {
 				continue;
 			}
 

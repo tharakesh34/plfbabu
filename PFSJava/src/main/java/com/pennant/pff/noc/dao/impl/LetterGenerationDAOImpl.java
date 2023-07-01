@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -32,8 +33,10 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 	}
 
 	@Override
-	public List<GenerateLetter> getResult(ISearch search) {
+	public List<GenerateLetter> getResult(ISearch search, List<String> roleCodes) {
 		List<Object> value = new ArrayList<>();
+
+		String whereCondition = QueryUtil.buildWhereClause(search, value);
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, FinID, LetterType, Finreference, CustAcctHolderName");
@@ -46,7 +49,16 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 		sql.append(" Union All ");
 		sql.append(getSqlQuery(TableType.MAIN_TAB));
 		sql.append(" Where not exists (Select 1 From Letter_Generate_Manual_Temp Where Id = gl.Id)) gl");
-		sql.append(QueryUtil.buildWhereClause(search, value));
+
+		if (!StringUtils.isEmpty(whereCondition)) {
+			sql.append(whereCondition);
+			sql.append(" and (NextRoleCode is null or NextRoleCode = '' or NextRoleCode in (");
+		} else {
+			sql.append(" Where (NextRoleCode is null or NextRoleCode = '' or NextRoleCode in (");
+		}
+
+		sql.append(JdbcUtil.getInCondition(roleCodes));
+		sql.append("))");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -55,6 +67,10 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 
 			for (Object object : value) {
 				ps.setObject(++index, object);
+			}
+
+			for (String roleCode : roleCodes) {
+				ps.setString(++index, roleCode);
 			}
 		}, new GenerateLetterRM());
 	}
@@ -302,10 +318,10 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 	@Override
 	public long save(GenerateLetter gl, TableType type) {
 		if (gl.getId() == 0 || gl.getId() == Long.MIN_VALUE) {
-			gl.setId(getNextValue("SEQ_Letter_Generate_Manual"));
+			gl.setId(getNextValue("SEQ_LOAN_LETTER_MANUAL"));
 		}
 
-		StringBuilder sql = new StringBuilder("Insert Into LOAN_LETTER_MANUAL ");
+		StringBuilder sql = new StringBuilder("Insert Into LOAN_LETTER_MANUAL");
 		sql.append(type.getSuffix());
 		sql.append("(LetterType, FinID");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy");

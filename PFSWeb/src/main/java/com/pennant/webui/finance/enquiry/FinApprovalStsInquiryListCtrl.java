@@ -194,15 +194,30 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 				sortOperator_cusShrtName, Operators.STRING);
 		registerField("FinType", listheader_FinApprovalStsInquiryList_FinType, SortOrder.NONE, finType,
 				sortOperator_finType, Operators.MULTISELECT);
-		registerField("FinBranch", branchCode, SortOrder.NONE, sortOperator_Branch, Operators.MULTISELECT);
-		registerField("NextRoleDesc", listheader_FinApprovalStsInquiryList_CurrentRole, SortOrder.NONE, currentRole,
-				sortOperator_CurrentRole, Operators.STRING);
-		registerField("PrvRoleDesc", listheader_FinApprovalStsInquiryList_PreviousRole, SortOrder.NONE, previousRole,
-				sortOperator_PreviousRole, Operators.STRING);
-		registerField("FinAmount", listheader_FinApprovalStsInquiryList_FinAmount);
+		if (branchCode != null) {
+			registerField("FinBranch", branchCode, SortOrder.NONE, sortOperator_Branch, Operators.MULTISELECT);
+		}
+
+		if (currentRole != null) {
+			registerField("NextRoleDesc", listheader_FinApprovalStsInquiryList_CurrentRole, SortOrder.NONE, currentRole,
+					sortOperator_CurrentRole, Operators.STRING);
+		}
+
+		if (currentRole != null) {
+			registerField("PrvRoleDesc", listheader_FinApprovalStsInquiryList_PreviousRole, SortOrder.NONE,
+					previousRole, sortOperator_PreviousRole, Operators.STRING);
+		}
+
+		if (listheader_FinApprovalStsInquiryList_FinAmount != null) {
+			registerField("FinAmount", listheader_FinApprovalStsInquiryList_FinAmount);
+		}
 		registerField("DownPayment");
 		registerField("FeeChargeAmt");
-		registerField("FinStartDate", listheader_FinApprovalStsInquiryList_FinStartDate);
+
+		if (listheader_FinApprovalStsInquiryList_FinStartDate != null) {
+			registerField("FinStartDate", listheader_FinApprovalStsInquiryList_FinStartDate);
+		}
+
 		registerField("CUSTID");
 		registerField("RoleCode");
 		registerField("NextRoleCode");
@@ -215,7 +230,11 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 		approvedList = true;
 		this.listheader_FinApprovalStsInquiryList_CurrentRole.setVisible(false);
 		this.listheader_FinApprovalStsInquiryList_PreviousRole.setVisible(false);
-		this.row_Role.setVisible(false);
+
+		if (this.row_Role != null) {
+			this.row_Role.setVisible(false);
+		}
+
 		doDesignByMode();
 
 	}

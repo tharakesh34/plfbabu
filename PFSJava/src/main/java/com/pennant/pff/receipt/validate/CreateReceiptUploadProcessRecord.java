@@ -401,7 +401,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		}
 
 		if ("M".equals(allocType) && !"SP".equals(rud.getReceiptPurpose())) {
-			setError(rud, "Values other than A in [ALLOCATIONTYPE] ");
+			setError(rud, "Other than Schedule Payment [ALLOCATIONTYPE] should be A ");
 			return;
 		}
 
@@ -489,8 +489,8 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			}
 
 			if (!ReceiptMode.NEFT.equals(subReceiptMode) && !ReceiptMode.RTGS.equals(subReceiptMode)
-					&& !ReceiptMode.IMPS.equals(subReceiptMode) && !"FT".equals(subReceiptMode)) {
-				setError(rud, "Values other than IMPS/RTGS/NEFT/FT in [RECEIPTMODE] ");
+					&& !ReceiptMode.IMPS.equals(subReceiptMode)) {
+				setError(rud, "Values other than IMPS/RTGS/NEFT in [RECEIPTMODE] ");
 				return;
 			}
 
@@ -563,12 +563,18 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			return;
 		}
 
-		String favourNumber = rud.getTransactionRef();
+		String chequeNumber = rud.getChequeNumber();
 		String bankcode = rud.getBankCode();
 
 		if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
-			if (favourNumber.length() > 6) {
-				setError(rud, "[TRANCATIONNUMBER] with length more than 6");
+
+			if (StringUtils.isBlank(chequeNumber)) {
+				setError(rud, "[CHEQUENUMBER] is Mandatory for CHEQUE or DD");
+				return;
+			}
+
+			if (chequeNumber != null && chequeNumber.length() > 6) {
+				setError(rud, "[CHEQUENUMBER] with length more than 6");
 				return;
 			}
 
@@ -590,7 +596,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		}
 
 		if (!ReceiptMode.CHEQUE.equals(receiptMode) && !ReceiptMode.DD.equals(receiptMode)
-				&& rud.getTransactionRef().length() > 50) {
+				&& rud.getTransactionRef() != null && rud.getTransactionRef().length() > 50) {
 			setError(rud, "[TRANSACTIONREF] with length more than 50");
 			return;
 		}
@@ -644,14 +650,13 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 				return;
 			}
 
-			if ((RepayConstants.PAYSTATUS_REALIZED.equals(modeStatus)
-					|| RepayConstants.PAYSTATUS_CANCEL.equals(modeStatus)
-					|| RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus)) && realizedDate == null) {
+			if (RepayConstants.PAYSTATUS_REALIZED.equals(modeStatus) && realizedDate == null) {
 				setError(rud, "[REALIZATIONDATE] is Mandatory incase of 'CHEQUE' or 'DD' ");
 				return;
 			}
 
-			if (DateUtil.compare(realizedDate, depositDate) < 0) {
+			if (RepayConstants.PAYSTATUS_REALIZED.equals(modeStatus) && realizedDate != null
+					&& DateUtil.compare(realizedDate, depositDate) < 0) {
 				setError(rud, "[REALIZATIONDATE]  Should  be greater than [DEPOSITDATE] ");
 				return;
 			}
@@ -710,9 +715,24 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			return;
 		}
 
+		if (RepayConstants.PAYSTATUS_DEPOSITED.equals(modeStatus) && realizedDate != null) {
+			setError(rud, "[REALIZATIONDATE] is Mandatory only when STATUS is 'R' ");
+			return;
+		}
+
 		if (RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus)) {
 			if (bounceDate == null) {
 				setError(rud, "[BOUNCEDATE] is Mandatory  ");
+				return;
+			}
+
+			if (DateUtil.compare(bounceDate, depositDate) < 0) {
+				setError(rud, "[BOUNCEDATE] Should not be less than the DEPOSITDATE ");
+				return;
+			}
+
+			if (DateUtil.compare(bounceDate, realizedDate) < 0) {
+				setError(rud, "[BOUNCEDATE] Should not be less than the REALIZATIONDATE ");
 				return;
 			}
 

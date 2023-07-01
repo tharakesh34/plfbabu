@@ -46,6 +46,8 @@ public final class FeatureExtension {
 			return extension.getLPPExtensions();
 		case NPA_PROVISION:
 			return extension.getNpaAndProvisionExtensions();
+		case EXCESS:
+			return extension.getExcessExtensions();
 		default:
 			return extension.getCustomConstants();
 		}
@@ -122,4 +124,5 @@ public final class FeatureExtension {
 			return defaultValue;
 		}
 	}
+
 }

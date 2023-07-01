@@ -211,7 +211,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		BTN_UPLOAD(11),
 
-		BTN_VIEW(12);
+		BTN_VIEW(12),
+
+		BANK_BRANCH_ID(13);
 
 		private final int index;
 
@@ -1402,6 +1404,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 			appendViewButton(listitem, cd, isReadOnly);
 
+			listitem.setAttribute(BANK_BRANCH_ID, this.bankBranchID.getAttribute(BANK_BRANCH_ID));
+
 			if (InstrumentType.isSPDC(cd.getChequeType())) {
 				listBoxSPDCChequeDetail.appendChild(listitem);
 			} else {
@@ -1611,7 +1615,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				wve.add(new WrongValueException(accType, Labels.getLabel("ChequeDetailDialog_AccountType_Mand")));
 			}
 
-			Object bankBranch = this.bankBranchID.getAttribute(BANK_BRANCH_ID);
+			Object bankBranch = listitem.getAttribute(BANK_BRANCH_ID);
 			if (bankBranch != null) {
 				BankBranch branch = (BankBranch) bankBranch;
 				cheque.setBankBranchID(branch.getBankBranchID());

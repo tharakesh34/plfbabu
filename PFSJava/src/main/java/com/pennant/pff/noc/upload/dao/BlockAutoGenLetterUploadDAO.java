@@ -2,7 +2,9 @@ package com.pennant.pff.noc.upload.dao;
 
 import java.util.List;
 
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.pff.noc.upload.model.BlockAutoGenLetterUpload;
+import com.pennanttech.pff.core.TableType;
 
 public interface BlockAutoGenLetterUploadDAO {
 
@@ -23,5 +25,9 @@ public interface BlockAutoGenLetterUploadDAO {
 	void savebyLog(BlockAutoGenLetterUpload bu);
 
 	String getRemarks(Long finID);
+
+	FinanceMain getFinanceMain(long finID, TableType tabeType);
+
+	boolean isLetterInitiated(Long finID, String letterType);
 
 }

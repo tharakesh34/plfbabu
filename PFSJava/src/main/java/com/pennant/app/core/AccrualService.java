@@ -80,11 +80,6 @@ public class AccrualService extends ServiceHelper {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
-			// Ignore ACCRUAL calculation when loan is WriteOff
-			if (finEODEvent.getFinanceMain().isWriteoffLoan()) {
-				continue;
-			}
-
 			finEODEvent = calculateAccruals(finEODEvent, custEODEvent);
 		}
 	}

@@ -3726,18 +3726,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				}
 
 				try {
-					validationRequired = true;
-
-					if (advMinTerms == 0 && advMaxTerms == 0 && advDefaultTerms >= 0) {
-						validationRequired = false;
-					}
-
-					if (validationRequired) {
-						if (advDefaultTerms < advMinTerms || advDefaultTerms > advMaxTerms) {
-							throw new WrongValueException(this.advDefaultTerms,
-									Labels.getLabel("NUMBER_RANGE_EQ", new String[] { advDftLabel,
-											String.valueOf(advMinTerms), String.valueOf(advMaxTerms) }));
-						}
+					if (advDefaultTerms < advMinTerms || advDefaultTerms > advMaxTerms) {
+						throw new WrongValueException(this.advDefaultTerms,
+								Labels.getLabel("NUMBER_RANGE_EQ", new String[] { advDftLabel,
+										String.valueOf(advMinTerms), String.valueOf(advMaxTerms) }));
 					}
 
 					aFinanceType.setAdvDefaultTerms(advDefaultTerms);

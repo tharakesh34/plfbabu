@@ -1,7 +1,6 @@
 package com.pennanttech.interceptor;
 
 import java.io.UnsupportedEncodingException;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -94,7 +93,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	@Override
 	public void handleMessage(Message message) throws Fault {
 		logger.debug(Literal.ENTERING);
-		Map<String, String> additionalInfo = new HashMap<String, String>();
+		Map<String, String> additionalInfo = new HashMap<>();
 		String authCredentials = null;
 
 		@SuppressWarnings("unchecked") // read the HTTP header details
@@ -188,10 +187,6 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 			logger.error(Literal.EXCEPTION, e1);
 			getErrorDetails("9999", null);
 
-		} catch (SQLException se) { // Server side exceptions
-			logger.error(Literal.EXCEPTION, se);
-			getErrorDetails("9999", null);
-
 		} catch (Fault e) { // any validation errors from application
 			if (StringUtils.isBlank(apiLogDetail.getAuthKey())) {
 				apiLogDetail.setAuthKey(header.getSecurityInfo());
@@ -210,10 +205,9 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	 * @param header
 	 * @param message
 	 * @throws UnsupportedEncodingException
-	 * @throws SQLException
 	 */
 	private void validateHeaderDetails(Map<String, List<String>> headerMap, APIHeader header, Message message)
-			throws UnsupportedEncodingException, SQLException {
+			throws UnsupportedEncodingException {
 		logger.debug(Literal.ENTERING);
 		APILogDetail apiLogDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange()
 				.get(APIHeader.API_LOG_KEY);
@@ -311,10 +305,9 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	 * @param header
 	 * @param message
 	 * @throws UnsupportedEncodingException
-	 * @throws SQLException
 	 */
 	private void validateAuthDetails(String authCredentials, APIHeader header, Message message)
-			throws UnsupportedEncodingException, SQLException {
+			throws UnsupportedEncodingException {
 		logger.debug(Literal.ENTERING);
 
 		ServletRequest request = (ServletRequest) message.get("HTTP.REQUEST");
@@ -391,7 +384,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	 */
 	private void getErrorDetails(String errorCode, String[] valueParm) {
 
-		ServiceExceptionDetails serviceExceptionDetailsArray[] = new ServiceExceptionDetails[1];
+		ServiceExceptionDetails[] serviceExceptionDetailsArray = new ServiceExceptionDetails[1];
 		ServiceExceptionDetails serviceExceptionDetails = new ServiceExceptionDetails();
 		serviceExceptionDetails.setFaultCode(errorCode);
 		// serviceExceptionDetails.setFaultMessage(errorDetailService.getErrorDetailById(errorCode).getErrorMessage());
@@ -408,8 +401,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	/*
 	 * Method to validate the channel server details
 	 */
-	private String validateServerToken(String token, String IPAddress, WebAuthenticationDetails authDetails)
-			throws SQLException {
+	private String validateServerToken(String token, String IPAddress, WebAuthenticationDetails authDetails) {
 		logger.debug(Literal.ENTERING);
 
 		ServerAuthentication webServiceServerSecurity = getServerAuthService().validateServer(token, IPAddress);
@@ -465,7 +457,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	/*
 	 * Method to create new token for the user session with expiry period.
 	 */
-	private String createSession(String userLogin, String tokenId, Timestamp expiry) throws SQLException {
+	private String createSession(String userLogin, String tokenId, Timestamp expiry) {
 		logger.debug(Literal.ENTERING);
 
 		UserAuthentication webServiceAuthanticastion = new UserAuthentication();
@@ -506,7 +498,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	/*
 	 * Method to validate the user session with the token. Extend the session timeout on every request.
 	 */
-	private long validateUserSession(String token, WebAuthenticationDetails authDetails) throws SQLException {
+	private long validateUserSession(String token, WebAuthenticationDetails authDetails) {
 		logger.debug(Literal.ENTERING);
 		Timestamp expiry = new Timestamp(System.currentTimeMillis());
 		UserAuthentication userAuthDetail = getUserAuthService().validateSession(token);
@@ -515,20 +507,18 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 			return -1;
 		}
 
-		if (userAuthDetail != null) {
-			if (StringUtils.isNotBlank(userAuthDetail.getUsrLogin())) {
-				SecurityUser userLoginDetails = getUserService().getUserByLogin(userAuthDetail.getUsrLogin());
-				this.setContext(userLoginDetails, authDetails);
+		if (StringUtils.isNotBlank(userAuthDetail.getUsrLogin())) {
+			SecurityUser userLoginDetails = getUserService().getUserByLogin(userAuthDetail.getUsrLogin());
+			this.setContext(userLoginDetails, authDetails);
+		}
+		if (expiry.getTime() <= userAuthDetail.getExpiry().getTime()) {
+			PFSParameter pFSParameter = systemParameterService.getApprovedPFSParameterById("WS_TOKENEXPPERIOD");
+			if (pFSParameter.getSysParmValue() != null) {
+				TOKEN_EXPIRY = Long.valueOf(pFSParameter.getSysParmValue());
 			}
-			if (expiry.getTime() <= userAuthDetail.getExpiry().getTime()) {
-				PFSParameter pFSParameter = systemParameterService.getApprovedPFSParameterById("WS_TOKENEXPPERIOD");
-				if (pFSParameter.getSysParmValue() != null) {
-					TOKEN_EXPIRY = Long.valueOf(pFSParameter.getSysParmValue());
-				}
-				expiry = new Timestamp(System.currentTimeMillis() + TOKEN_EXPIRY);
-				update(token, expiry);
-				return 1;
-			}
+			expiry = new Timestamp(System.currentTimeMillis() + TOKEN_EXPIRY);
+			update(token, expiry);
+			return 1;
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -538,7 +528,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	/*
 	 * Update the token details in the database.
 	 */
-	private void update(String tokenId, Timestamp expiry) throws SQLException {
+	private void update(String tokenId, Timestamp expiry) {
 		UserAuthentication webServiceAuthanticastion = new UserAuthentication();
 		webServiceAuthanticastion.setTokenId(tokenId);
 		webServiceAuthanticastion.setExpiry(expiry);

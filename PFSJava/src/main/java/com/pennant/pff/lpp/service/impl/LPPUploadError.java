@@ -34,7 +34,7 @@ public enum LPPUploadError {
 
 	LPP_15("[Grace Days] should be between {0 to 999}."),
 
-	LPP_16("[Grace Days] should be blank, when [Include Grace Days] value is N"),
+	LPP_16("[Grace Days] value should not be greater than {0}, when [Include Grace Days] value is {N}."),
 
 	LPP_17("[Apply To Existing Loans] should be blank, when [Loan Reference] is not blank."),
 
@@ -60,7 +60,11 @@ public enum LPPUploadError {
 
 	LPP_28("Not allowed to maintain the [Loan Type] as it is in under maintenance."),
 
-	LPP_29("Not allowed to maintain the duplicate [Loan Type].");
+	LPP_29("Not allowed to maintain the duplicate [Loan Type]."),
+
+	LPP_30("[Grace Days] Should not be blank, Value should be greater than {0} when [Include Grace Days] value is {Y}."),
+
+	LPP_31("Amount/Percentage Should not be blank, Value should be greater than {0}.");
 
 	private String description;
 

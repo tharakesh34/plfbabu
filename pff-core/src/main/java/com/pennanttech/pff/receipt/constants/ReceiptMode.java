@@ -22,7 +22,6 @@ public class ReceiptMode {
 	public static final String EXPERIA = "EXPERIA";
 	public static final String PORTAL = "PORTAL";
 	public static final String PAYU = "PAYU";
-	public static final String EXCESS = "EXCESS";
 	public static final String ESCROW = "ESCROW";
 	public static final String REPLEDGE = "REPLEDGE";
 	public static final String ONLINE = "ONLINE";
@@ -31,6 +30,16 @@ public class ReceiptMode {
 	public static final String RESTRUCT = "RESTRUCT";
 	public static final String DIGITAL = "DIGITAL";
 	public static final String BANKDEPOSIT = "BANKDEPT";
+
+	public static final String BBPS = "BBPS";
+	public static final String IFT = "IFT";
+	public static final String RTRNGDS = "RTRNGDS";
+	public static final String NACH = "NACH";
+	public static final String PAYMENTGATEWAY = "PAYMENTGATEWAY";
+	public static final String UPI = "UPI";
+	public static final String ZERORECEIPT = "FULLWAIVER";
+
+	public static final String EXCESS = "EXCESS";
 	public static final String EMIINADV = "EMIINADV";
 	public static final String ADVINT = "ADVINT";
 	public static final String ADVEMI = "ADVEMI";
@@ -41,30 +50,13 @@ public class ReceiptMode {
 	public static final String TEXCESS = "T";
 	public static final String SETTLEMENT = "S";
 
-	public static final String BBPS = "BBPS";
-	public static final String RTRNGDS = "RTRNGDS";
-	public static final String NACH = "NACH";
-	public static final String PAYMENTGATEWAY = "PAYMENTGATEWAY";
-	public static final String UPI = "UPI";
-	public static final String ZERORECEIPT = "FULLWAIVER";
-
 	private ReceiptMode() {
 		super();
 	}
 
 	public static String getReceiptMode(String receiptMode) {
 		switch (receiptMode) {
-		case EXPERIA:
-		case IMPS:
-		case NEFT:
-		case RTGS:
-		case BILLDESK:
-		case PAYU:
-		case PAYTM:
-		case PORTAL:
-		case ESCROW:
-		case DIGITAL:
-		case RTRNGDS:
+		case EXPERIA, IMPS, NEFT, RTGS, BILLDESK, PAYU, PAYTM, PORTAL, ESCROW, DIGITAL, RTRNGDS:
 			return ONLINE;
 		case RESTRUCT:
 			return RESTRUCT;
@@ -81,12 +73,9 @@ public class ReceiptMode {
 
 	public static String getReceiptChannel(String receiptMode) {
 		switch (receiptMode) {
-		case PORTAL:
-		case BILLDESK:
+		case PORTAL, BILLDESK:
 			return DisbursementConstants.RECEIPT_CHANNEL_POR;
-		case CASH:
-		case CHEQUE:
-		case DD:
+		case CASH, CHEQUE, DD:
 			return DisbursementConstants.PAYMENT_TYPE_OTC;
 		default:
 			return "";
@@ -100,8 +89,7 @@ public class ReceiptMode {
 		}
 
 		switch (receiptMode) {
-		case ONLINE:
-		case MOBILE:
+		case ONLINE, MOBILE:
 			return true;
 		default:
 			return false;
@@ -110,9 +98,7 @@ public class ReceiptMode {
 
 	public static boolean isOfflineMode(String receiptMode) {
 		switch (receiptMode) {
-		case CHEQUE:
-		case DD:
-		case CASH:
+		case CHEQUE, DD, CASH:
 			return true;
 		default:
 			return false;
@@ -122,8 +108,7 @@ public class ReceiptMode {
 	public static boolean isValidReceiptChannel(String receiptMode, String channel) {
 		if (isOfflineMode(receiptMode)) {
 			switch (channel) {
-			case DisbursementConstants.PAYMENT_TYPE_OTC:
-			case DisbursementConstants.PAYMENT_TYPE_MOB:
+			case DisbursementConstants.PAYMENT_TYPE_OTC, DisbursementConstants.PAYMENT_TYPE_MOB:
 				return true;
 			default:
 				return false;
@@ -147,10 +132,7 @@ public class ReceiptMode {
 
 	public static boolean isFundingAccountReq(String receiptMode) {
 		switch (receiptMode) {
-		case CHEQUE:
-		case DD:
-		case ONLINE:
-		case RESTRUCT:
+		case CHEQUE, DD, ONLINE, RESTRUCT:
 			return true;
 		default:
 			return false;
@@ -187,6 +169,7 @@ public class ReceiptMode {
 			subReceiptModes.add(PAYMENTGATEWAY);
 			subReceiptModes.add(UPI);
 			subReceiptModes.add(BBPS);
+			subReceiptModes.add(IFT);
 		}
 
 		return subReceiptModes;
@@ -194,11 +177,10 @@ public class ReceiptMode {
 
 	public static boolean isReceiptFromBank(String paymentType) {
 		return StringUtils.isNotEmpty(StringUtils.trimToEmpty(paymentType)) && !"#".equals(paymentType)
-				&& !ReceiptMode.EMIINADV.equals(paymentType) && !ReceiptMode.EXCESS.equals(paymentType)
-				&& !ReceiptMode.TEXCESS.equals(paymentType) && !ReceiptMode.PAYABLE.equals(paymentType)
-				&& !ReceiptMode.ADVINT.equals(paymentType) && !ReceiptMode.ADVEMI.equals(paymentType)
-				&& !ReceiptMode.CASHCLT.equals(paymentType) && !ReceiptMode.DSF.equals(paymentType)
-				&& !ReceiptMode.SETTLEMENT.equals(paymentType);
-
+				&& !EMIINADV.equals(paymentType) && !EXCESS.equals(paymentType) && !TEXCESS.equals(paymentType)
+				&& !PAYABLE.equals(paymentType) && !ADVINT.equals(paymentType) && !ADVEMI.equals(paymentType)
+				&& !CASHCLT.equals(paymentType) && !DSF.equals(paymentType) && !SETTLEMENT.equals(paymentType)
+				&& !PRESENTMENT.equals(paymentType);
 	}
+
 }

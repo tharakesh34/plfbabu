@@ -284,7 +284,7 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 		sql.append(", ExcessId PayableId");
 		sql.append(" From FinExcessAmount ea");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = ea.FinID");
-		sql.append(" Where  AmountType = ? and BALANCEAMT > ? and fm.FinIsActive = ? and");
+		sql.append(" Where  AmountType = ? and BALANCEAMT > ? and");
 		sql.append(" fm.WriteoffLoan = ? Group by fm.FinID, fm.FinReference, AmountType, ExcessId");
 		sql.append(" Union All");
 		sql.append(" Select FinID, FinReference, AmountType, sum(BALANCEAMT) BalanceAmount");
@@ -292,7 +292,7 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 		sql.append(" (Select fm.FinID, fm.FinReference, ? AmountType, BALANCEAMT, AdviseId PayableId");
 		sql.append(" From ManualAdvise ma");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = ma.FinID");
-		sql.append(" Where  ma.AdviseType = ? and BALANCEAMT > ? and fm.FinIsActive = ? and");
+		sql.append(" Where  ma.AdviseType = ? and BALANCEAMT > ? and");
 		sql.append(" fm.WriteoffLoan = ?) it Group by it.FinID, it.FinReference, it.AmountType, it.PayableId) T");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -306,12 +306,10 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 				ps.setString(index++, thresholdValue);
 				ps.setString(index++, "E");
 				ps.setInt(index++, 0);
-				ps.setInt(index++, 1);
 				ps.setInt(index++, 0);
 				ps.setString(index++, "P");
 				ps.setInt(index++, 2);
 				ps.setInt(index++, 0);
-				ps.setInt(index++, 1);
 				ps.setInt(index, 0);
 			});
 		} catch (DuplicateKeyException e) {
@@ -378,7 +376,7 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 		sql.append(" ake.ID, ake.FinID, ake.FinReference, ake.AmountType, ake.ValueDate");
 		sql.append(", ake.BalanceAmount, ake.ExecutionDay, ake.ThresholdValue, ake.PayableId");
 		sql.append(" From AUTO_KNOCKOFF_EXCESS_STAGE ake");
-		sql.append(" Inner Join FinanceMain fm on fm.FinReference = ake.FinReference and fm.FinIsActive = ?");
+		sql.append(" Inner Join FinanceMain fm on fm.FinReference = ake.FinReference");
 		sql.append(" Where fm.CustId = ? and ValueDate = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -386,7 +384,6 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 		return jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setInt(index++, 1);
 			ps.setLong(index++, custID);
 			ps.setDate(index, JdbcUtil.getDate(valueDate));
 		}, (rs, rowNum) -> {

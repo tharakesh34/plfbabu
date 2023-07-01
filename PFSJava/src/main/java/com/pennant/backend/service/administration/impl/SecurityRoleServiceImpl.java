@@ -326,6 +326,11 @@ public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implem
 
 	}
 
+	@Override
+	public List<SecurityRole> getApprovedRoles() {
+		return getSecurityRoleDAO().getApprovedSecurityRole();
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

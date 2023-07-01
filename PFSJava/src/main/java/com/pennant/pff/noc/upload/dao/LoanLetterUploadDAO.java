@@ -17,7 +17,7 @@ public interface LoanLetterUploadDAO {
 
 	String getCanceltype(String finReference);
 
-	List<LoanLetterUpload> getByReference(String reference);
+	boolean getByReference(long finID, String letterType);
 
 	FinTypeFees getFeeWaiverAllowed(String finType, String finEvent);
 

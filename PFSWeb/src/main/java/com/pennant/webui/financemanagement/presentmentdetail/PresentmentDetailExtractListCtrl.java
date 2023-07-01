@@ -27,6 +27,7 @@ package com.pennant.webui.financemanagement.presentmentdetail;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -362,10 +363,18 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 
 		if (PennantConstants.PROCESS_REPRESENTMENT.equalsIgnoreCase(presentmentType)) {
 			this.row_lppAndBounceRequited.setVisible(true);
+
+			HashSet<String> excludes = new HashSet<>();
+			excludes.add("SI");
+			excludes.add("IPDC");
+
+			fillComboBox(this.mandateType, "", excludeComboBox(MandateUtil.getInstrumentTypesForBE(), excludes));
 		} else {
 			this.row_lppAndBounceRequited.setVisible(false);
 			this.lppRequired.setChecked(false);
 			this.bounceRequired.setChecked(false);
+
+			fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypesForBE(), "");
 		}
 
 		logger.debug(Literal.LEAVING);

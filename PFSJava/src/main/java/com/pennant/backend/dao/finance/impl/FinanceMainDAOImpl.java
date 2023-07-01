@@ -564,7 +564,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower, AllowRevolving");
 		sql.append(", AppliedLoanAmt, FinIsRateRvwAtGrcEnd");
 		sql.append(", OverdraftTxnChrgReq, OverdraftCalcChrg, OverdraftChrgAmtOrPerc, OverdraftChrCalOn");
-		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn ");
+		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		if (!wif) {
 			sql.append(", InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated");
 			sql.append(", CustDSR, LimitValid, OverrideLimit, FinPurpose, FinStatus, FinStsReason");
@@ -588,6 +588,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", SourcingBranch, SourChannelCategory, AsmName, OfferId");
 			sql.append(", Pmay, parentRef, loanSplitted, AlwLoanSplit, InstBasedSchd, AllowSubvention");
 			sql.append(", TdsType, NoOfGrcSteps, CalcOfSteps, StepsAppliedFor, SecurityMandateID");
+			sql.append(", UnderNPA, UnderSettlement");
 		}
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId");
@@ -608,7 +609,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", ?, ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ? , ?, ?");
-			sql.append(", ?, ?, ?, ?");
+			sql.append(", ?, ?, ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 
 		}
@@ -771,6 +772,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setTimestamp(++index, fm.getCreatedOn());
 				ps.setObject(++index, fm.getApprovedBy());
 				ps.setTimestamp(++index, fm.getApprovedOn());
+
 				if (!wif) {
 					ps.setString(++index, fm.getInvestmentRef());
 					ps.setBoolean(++index, fm.isMigratedFinance());
@@ -874,6 +876,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					ps.setString(++index, fm.getCalcOfSteps());
 					ps.setString(++index, fm.getStepsAppliedFor());
 					ps.setObject(++index, fm.getSecurityMandateID());
+					ps.setBoolean(++index, fm.isUnderNpa());
+					ps.setBoolean(++index, fm.isUnderSettlement());
 				}
 				ps.setInt(++index, fm.getVersion());
 				ps.setLong(++index, fm.getLastMntBy());
@@ -5723,6 +5727,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.QuickDisb, FinAssetValue, FinCurrAssetValue");
 		sql.append(", fm.FinIsActive, RcdMaintainSts, ClosingStatus, MaturityDate, CalMaturity");
 		sql.append(", fm.RecordStatus, fm.RecordType, fm.RoleCode, fm.NextRoleCode, fm.WorkflowId");
+		sql.append(", fm.WriteoffLoan, fm.UnderNPA, fm.UnderSettlement");
 		sql.append(" From FinanceMain").append(tableType).append(" fm");
 		sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
@@ -5910,25 +5915,25 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		switch (tableType) {
 		case MAIN_TAB:
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
-			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference, RepayBaseRate, FinCcy");
 			sql.append(" From FinanceMain fm Where FinReference = ?");
 			break;
 		case TEMP_TAB:
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
-			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference, RepayBaseRate, FinCcy");
 			sql.append("  From FinanceMain_Temp fm Where FinReference = ?");
 			break;
 		case BOTH_TAB:
 			object = new Object[] { finReference, finReference };
 
 			sql.append("Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
-			sql.append(" , RepayProfitRate, FinStartDate, , FinReference From(");
+			sql.append(" , RepayProfitRate, FinStartDate, , FinReference, RepayBaseRate, FinCcy From(");
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
-			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference, RepayBaseRate, FinCcy");
 			sql.append("  From FinanceMain_Temp fm Where FinReference = ?");
 			sql.append(" Union All");
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
-			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference, RepayBaseRate, FinCcy");
 			sql.append("  From FinanceMain fm Where FinReference = ?");
 			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
 			sql.append(" ) fm");
@@ -5950,6 +5955,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setFinStartDate(rs.getDate("FinStartDate"));
 				fm.setRepayProfitRate(rs.getBigDecimal("RepayProfitRate"));
 				fm.setFinReference(rs.getString("FinReference"));
+				fm.setRepayBaseRate(rs.getString("RepayBaseRate"));
+				fm.setFinCcy(rs.getString("FinCcy"));
 
 				return fm;
 			}, object);
@@ -6043,6 +6050,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setRoleCode(rs.getString("RoleCode"));
 			fm.setNextRoleCode(rs.getString("NextRoleCode"));
 			fm.setCustID(rs.getLong("WorkflowId"));
+			fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+			fm.setUnderNpa(rs.getBoolean("UnderNPA"));
+			fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
 
 			return fm;
 		}
@@ -7080,7 +7090,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
 			sql.append(" From FinanceMain fm");
 			sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
-			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Left Join PSLDetail pd on pd.FinID = fm.FinID");
 			sql.append(" Where fm.FinID = ? ");
 			break;
 		case TEMP_TAB:
@@ -7093,7 +7103,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" Select CustID, CustRO1 From Customers c ");
 			sql.append(" Where not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
 			sql.append(" )) c on  c.CustID = fm.CustID");
-			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Left Join PSLDetail pd on pd.FinID = fm.FinID");
 			sql.append(" Where fm.FinID = ?");
 			break;
 		case BOTH_TAB:
@@ -7101,7 +7111,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
 			sql.append(" From FinanceMain fm");
 			sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
-			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Left Join PSLDetail pd on pd.FinID = fm.FinID");
 			sql.append(" Where fm.FinID = ? ");
 			sql.append(" Union All");
 			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
@@ -7113,7 +7123,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" Select CustID, CustRO1 From Customers c ");
 			sql.append(" Where not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
 			sql.append(" )) c on  c.CustID = fm.CustID");
-			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Left Join PSLDetail pd on pd.FinID = fm.FinID");
 			sql.append(" Where fm.FinID = ?");
 			sql.append(" Where not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
 		default:

@@ -90,6 +90,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.accounting.AccountingUtil;
 import com.pennant.pff.accounting.PostAgainst;
+import com.pennant.pff.extension.AccountingExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -243,9 +244,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * when the "delete" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException {
+	public void onClick$btnDelete(Event event) {
 		logger.debug("Entering" + event.toString());
 		doDelete();
 		logger.debug("Leaving" + event.toString());
@@ -277,9 +277,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * when the "help" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnHelp(Event event) throws InterruptedException {
+	public void onClick$btnHelp(Event event) {
 		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_feePostingsDialog);
 		logger.debug("Leaving" + event.toString());
@@ -899,10 +898,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 	/**
 	 * Deletes a JVPosting object from database.<br>
-	 * 
-	 * @throws InterruptedException
 	 */
-	private void doDelete() throws InterruptedException {
+	private void doDelete() {
 
 	}
 
@@ -937,7 +934,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 	}
 
-	public void onFulfill$partnerBankID(Event event) throws InterruptedException {
+	public void onFulfill$partnerBankID(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		Object dataObject = partnerBankID.getObject();
@@ -1039,7 +1036,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		validate = validateAccounting(validate);
 
 		// Accounting Details Validations
-		if (validate && !isAccountingExecuted) {
+		if (AccountingExtension.VERIFY_ACCOUNTING && validate && !isAccountingExecuted) {
 			MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 			return;
 		}

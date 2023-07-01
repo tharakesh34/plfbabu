@@ -489,7 +489,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 	}
 
 	@Override
-	public List<String> getAssetClassSetCodes(long finID) {
+	public List<AssetClassSetupDetail> getAssetClassSetCodes(long finID) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select acc.Code ClassCode, ascc.Code SubClassCode From Asset_Class_Setup_Details acsd ");
 		sql.append(" Inner Join Asset_Class_Codes acc On acc.Id = acsd.ClassID");
@@ -498,6 +498,31 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = na.FinType and acsd.SetupId = ft.AssetClassSetup");
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), (rs, rowNum) -> rs.getString(1));
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			AssetClassSetupDetail detail = new AssetClassSetupDetail();
+
+			detail.setClassCode(rs.getString("ClassCode"));
+			detail.setSubClassCode(rs.getString("SubClassCode"));
+			return detail;
+		}, finID);
+
+	}
+
+	@Override
+	public int getMinDpdByEntity(String finType) {
+		StringBuilder sql = new StringBuilder("Select coalesce(min(DpdMin), 0) DpdMin");
+		sql.append(" From Asset_Class_Setup_Details asd");
+		sql.append(" Inner join RmtFinanceTypes ft on ft.AssetClassSetup  = asd.Setupid");
+		sql.append(" Where asd.npastage = ? and ft.FinType = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), Integer.class, 1, finType);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return 0;
 	}
 }

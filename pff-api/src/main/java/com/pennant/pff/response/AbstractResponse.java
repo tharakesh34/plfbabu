@@ -1,19 +1,24 @@
 package com.pennant.pff.response;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customerdata.CustomerData;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.emiholidays.EMIHolidays;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -23,6 +28,7 @@ import com.pennant.backend.model.loanbranch.LoanBranch;
 import com.pennant.backend.model.loandetail.LoanDetail;
 import com.pennant.backend.model.loanschedules.LoanSchedules;
 import com.pennant.backend.model.loansummary.LoanSummary;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.pff.api.controller.AbstractController;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -33,6 +39,7 @@ public class AbstractResponse extends AbstractController {
 
 	private BranchDAO branchDAO;
 	private MandateDAO mandateDAO;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	public AbstractResponse() {
 		super();
@@ -55,13 +62,12 @@ public class AbstractResponse extends AbstractController {
 		LoanDetail ld = new LoanDetail();
 
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
-		FinanceSummary fs = fd.getFinScheduleData().getFinanceSummary();
 		List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
 		Branch branch = branchDAO.getBranchById(fm.getFinBranch(), "_AView");
 
 		setSchedules(ld, schedules);
 		setFinanceData(ld, fm);
-		setSummaryDetails(ld, fs);
+		setSummaryDetails(ld, fd);
 		setBranchDetails(ld, branch);
 		setGraceDetails(ld, fm);
 		setEMIHolidayDetails(ld, fm);
@@ -82,14 +88,44 @@ public class AbstractResponse extends AbstractController {
 		cd.setCustDOB(c.getCustDOB());
 		cd.setCustCRCPR(c.getCustCRCPR());
 		cd.setFullName(CustomerUtil.getCustomerFullName(c));
+		cd.setCustMotherMaiden(c.getCustMotherMaiden());
+		cd.setCustFNameLclLng(c.getCustFNameLclLng());
+		cd.setGender(c.getCustGenderCode());
+		cd.setMaritalStatus(c.getCustMaritalSts());
+		cd.setCustTypeCode(c.getCustTypeCode());
+		cd.setCustTypeDesc(c.getLovDescCustTypeCodeName());
+		cd.setFirstName(c.getCustFName());
+		cd.setMiddleName(c.getCustMName());
+		cd.setLastName(c.getCustLName());
+		cd.setCoreBankID(c.getCustCoreBank());
+		cd.setCustNationality(c.getCustNationality());
+		cd.setNatureOfBusiness(c.getNatureOfBusiness());
+		cd.setCustCategory(c.getLovDescCustCtgCodeName());
+		cd.setCustGroupID(c.getCustGroupID());
+		cd.setPhone1(details.getPhone1());
+		cd.setPhone2(details.getPhone2());
+		cd.setMobile1(details.getMobile1());
+		cd.setMobile2(details.getMobile2());
+
 		cd.setFullAddress(CustomerUtil.getCustomerFullAddress(details.getAddressList()));
 		cd.setCustAddresses(details.getAddressList());
 		cd.setCustPhoneNumbers(details.getCustomerPhoneNumList());
 		cd.setCustEmails(details.getCustomerEMailList());
 		cd.setCustEmployments(details.getEmploymentDetailsList());
-		cd.setCustMotherMaiden(c.getCustMotherMaiden());
-		cd.setCustFNameLclLng(c.getCustFNameLclLng());
-		cd.setGender(c.getCustGenderCode());
+		cd.setCustomerDocuments(details.getCustomerDocumentsList());
+		cd.setCustomerIncomes(setIncomeDetails(details.getCustomerIncomeList()));
+
+	}
+
+	private List<CustomerIncome> setIncomeDetails(List<CustomerIncome> customerIncomes) {
+		if (CollectionUtils.isEmpty(customerIncomes)) {
+			return null;
+		}
+
+		for (CustomerIncome ci : customerIncomes) {
+			ci.setGrossIncome((ci.getIncome().multiply(ci.getMargin())).divide(new BigDecimal(100)));
+		}
+		return customerIncomes;
 	}
 
 	private void setEMIHolidayDetails(LoanDetail ld, FinanceMain fm) {
@@ -228,7 +264,12 @@ public class AbstractResponse extends AbstractController {
 		ld.setLoanSchedules(ls);
 	}
 
-	private void setSummaryDetails(LoanDetail ld, FinanceSummary fs) {
+	private void setSummaryDetails(LoanDetail ld, FinanceDetail fd) {
+
+		FinScheduleData schData = fd.getFinScheduleData();
+		FinanceMain fm = schData.getFinanceMain();
+		FinanceSummary fs = schData.getFinanceSummary();
+
 		if (fs == null) {
 			return;
 		}
@@ -279,7 +320,9 @@ public class AbstractResponse extends AbstractController {
 		ls.setDueCharges(fs.getDueCharges());
 		ls.setOverDueAmount(fs.getOverDueAmount());
 		ls.setLoanEMI(fs.getLoanEMI());
-		ls.setForeClosureAmount(fs.getForeClosureAmount());
+		ls.setForeClosureAmount(FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())
+				? getForeClosureAmount(fm.getFinID())
+				: BigDecimal.ZERO);
 		ls.setInstallmentNo(fs.getInstallmentNo());
 		ls.setDueDate(fs.getSchDate());
 		ls.setLoanTotPrincipal(fs.getLoanTotPrincipal());
@@ -288,6 +331,14 @@ public class AbstractResponse extends AbstractController {
 		ls.setVehicleNo(fs.getVehicleNo());
 		ls.setMigratedNo(fs.getMigratedNo());
 		ls.setLastInstDate(fs.getLastInstDate());
+		ls.setDPDString(fs.getDPDString());
+		ls.setInterestComponent(fs.getInterestComponent());
+		ls.setPrincipalComponent(fs.getPrincipalComponent());
+		ls.setTotalAmount(fs.getTotalComponent());
+		ls.setAssetCost("");
+		ls.setAssetModel("");
+		ls.setCategoryID("");
+		ls.setCategoryDesc("");
 
 		ld.setLoanSummary(ls);
 	}
@@ -383,8 +434,9 @@ public class AbstractResponse extends AbstractController {
 			String accNumber = mandateDAO.getMandateNumber(fm.getMandateID());
 			ld.setAccNumber(accNumber != null ? accNumber : "");
 		}
-		ld.setNoOfMonths(DateUtil.getMonthsBetween(fm.getFinStartDate(), fm.getMaturityDate()));
-		ld.setNetDisbursementAmount(fm.getFinAmount().subtract(fm.getDeductFeeDisb().add(fm.getBpiAmount())));
+		ld.setNoOfMonths(
+				DateUtil.getMonthsBetweenInclusive(fm.getFinStartDate(), fm.getMaturityDate()) + fm.getAdvTerms());
+		ld.setNetDisbursementAmount(fm.getFinCurrAssetValue().subtract(fm.getDeductFeeDisb().add(fm.getBpiAmount())));
 		ld.setLoanName(fm.getLoanName());
 		ld.setCustDOB(fm.getCustDOB());
 	}
@@ -460,6 +512,10 @@ public class AbstractResponse extends AbstractController {
 		return address.toString();
 	}
 
+	private BigDecimal getForeClosureAmount(long finID) {
+		return finReceiptHeaderDAO.getForeClosureAmount(finID);
+	}
+
 	@Autowired
 	public void setBranchDAO(BranchDAO branchDAO) {
 		this.branchDAO = branchDAO;
@@ -468,5 +524,10 @@ public class AbstractResponse extends AbstractController {
 	@Autowired
 	public void setMandateDAO(MandateDAO mandateDAO) {
 		this.mandateDAO = mandateDAO;
+	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 }

@@ -1,6 +1,5 @@
 package com.pennant.pff.noc.webui;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,12 +8,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
+import org.zkoss.zul.Grid;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -30,6 +29,7 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.noc.model.GenerateLetter;
@@ -51,6 +51,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	protected Borderlayout blGenerateLetterList;
 	protected Paging pagingGenerateLetterList;
 	protected Listbox lbGenerateLetter;
+	protected Grid grid_generateLetterDetails;
 
 	protected Button btnNew;
 	protected Button btnSearch;
@@ -121,11 +122,17 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 		this.custCifSort.setModel(new ListModelList<>(new SearchOperators().getMultiStringOperators()));
 		this.custCifSort.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		this.blGenerateLetterList.setHeight(getBorderLayoutHeight());
+		this.lbGenerateLetter
+				.setHeight(getListBoxHeight(this.grid_generateLetterDetails.getRows().getVisibleItemCount() - 1));
+		this.pagingGenerateLetterList.setPageSize(getListRows());
+		this.pagingGenerateLetterList.setDetailed(true);
+
+		checkRights();
+
 		doSetFieldProperties();
 
 		fillListData();
-
-		doRenderPage();
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -157,7 +164,8 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	public void onClick$btnSearch(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		List<GenerateLetter> excludeCodes = this.generateLetterService.getResult(getSearchFilters());
+		List<GenerateLetter> excludeCodes = this.generateLetterService.getResult(getSearchFilters(),
+				getWorkFlowRoles());
 
 		this.lbGenerateLetter.setItemRenderer(new GenerateLetterModelItemRenderer());
 
@@ -230,7 +238,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 
 		String whereCond = "Where Id = ?";
 
-		if (doCheckAuthority(letters, whereCond, new Object[] { letters.getFinID() })) {
+		if (doCheckAuthority(letters, whereCond, new Object[] { letters.getId() })) {
 			if (isWorkFlowEnabled() && letters.getWorkflowId() == 0) {
 				letters.setWorkflowId(getWorkFlowId());
 			}
@@ -261,8 +269,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	}
 
 	public void fillListData() {
-
-		List<GenerateLetter> letters = this.generateLetterService.getResult(getSearchFilters());
+		List<GenerateLetter> letters = this.generateLetterService.getResult(getSearchFilters(), getWorkFlowRoles());
 
 		this.lbGenerateLetter.setItemRenderer(new GenerateLetterModelItemRenderer());
 
@@ -296,9 +303,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 		return search;
 	}
 
-	private class GenerateLetterModelItemRenderer implements ListitemRenderer<GenerateLetter>, Serializable {
-		private static final long serialVersionUID = 6056180845898696437L;
-
+	private class GenerateLetterModelItemRenderer implements ListitemRenderer<GenerateLetter> {
 		public GenerateLetterModelItemRenderer() {
 			super();
 		}
@@ -332,16 +337,17 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 
 	}
 
-	public void onChange$custCIF(Event event) throws Exception {
+	public void onChange$custCIF(Event event) {
 		customer = fetchCustomerDataByCIF();
 		addFilter(customer);
 	}
 
-	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
+	public void onClick$btnSearchCustCIF(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
-		final Map<String, Object> map = new HashMap<String, Object>();
+
+		final Map<String, Object> map = new HashMap<>();
 		map.put("DialogCtrl", this);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 
@@ -375,7 +381,6 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	}
 
 	public Customer fetchCustomerDataByCIF() {
-
 		customer = new Customer();
 		this.custCIF.setConstraint("");
 		this.custCIF.setErrorMessage("");

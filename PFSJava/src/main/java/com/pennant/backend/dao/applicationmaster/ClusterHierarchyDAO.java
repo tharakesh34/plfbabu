@@ -65,4 +65,6 @@ public interface ClusterHierarchyDAO extends BasicCrudDao<ClusterHierarchy> {
 	boolean isDuplicateKey(String entity, int seqOrder, TableType tableType);
 
 	boolean isExisitEntity(String entityCode);
+
+	boolean isClusterTypeExists(String clusterType, String entity);
 }

@@ -14,6 +14,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -85,6 +86,10 @@ public class ExtractionService {
 	private int prepare(PresentmentHeader ph) {
 		logger.debug(Literal.ENTERING);
 
+		if (presentmentDAO.getQueueCount() > 0) {
+			throw new AppException(Labels.getLabel("label_PresentmentInProcess"));
+		}
+
 		Date appDate = SysParamUtil.getAppDate();
 		long batchID = presentmentDAO.createBatch("EXTRACTION", 0);
 
@@ -96,6 +101,7 @@ public class ExtractionService {
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+
 		try {
 			count = presentmentEngine.preparation(ph);
 			transactionManager.commit(transactionStatus);
@@ -122,7 +128,7 @@ public class ExtractionService {
 		return count;
 	}
 
-	public void start(PresentmentHeader ph) throws Exception {
+	public void start(PresentmentHeader ph) {
 		logger.debug(Literal.ENTERING);
 
 		Date appDate = SysParamUtil.getAppDate();
@@ -156,8 +162,8 @@ public class ExtractionService {
 		try {
 			extractionJob.start(jobParameters);
 		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e.getMessage());
-			throw e;
+			logger.error(Literal.EXCEPTION, e);
+			throw new AppException("PRESENTMENT_EXTRATION_JOB Failed.", e);
 		}
 
 		logger.debug(Literal.LEAVING);

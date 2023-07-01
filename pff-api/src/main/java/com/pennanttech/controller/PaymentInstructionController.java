@@ -50,6 +50,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
@@ -570,10 +571,10 @@ public class PaymentInstructionController extends ExtendedTestClass {
 		}
 
 		switch (paymentType) {
-		case RepayConstants.EXAMOUNTTYPE_EMIINADV:
-		case RepayConstants.EXAMOUNTTYPE_ADVEMI:
-		case RepayConstants.EXAMOUNTTYPE_ADVINT:
-		case RepayConstants.EXAMOUNTTYPE_EXCESS:
+		case ExcessType.EMIINADV:
+		case ExcessType.ADVEMI:
+		case ExcessType.ADVINT:
+		case ExcessType.EXCESS:
 			return true;
 		default:
 			return false;

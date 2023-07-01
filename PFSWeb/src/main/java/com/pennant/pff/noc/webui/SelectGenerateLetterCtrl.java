@@ -21,8 +21,10 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.letter.LetterUtil;
@@ -32,6 +34,7 @@ import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.util.LoanCancelationUtil;
 
 public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 
@@ -46,6 +49,7 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 	private GenerateLetterListCtrl generateLetterListCtrl;
 	private GenerateLetter generateLetter;
 	private GenerateLetterService generateLetterService;
+	private ReasonDetailDAO reasonDetailDAO;
 
 	private final List<ValueLabel> letterTypeList = LetterUtil.getLetterTypes();
 
@@ -129,7 +133,7 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		if (generateLetterService.letterIsInQueu(fm.getFinID(), this.generateLetter.getLetterType())) {
-			String msg = Labels.getLabel("label_listheader_LetterType").concat(this.letterType.getValue())
+			String msg = Labels.getLabel("label_listheader_LetterType").concat(" ").concat(this.letterType.getValue())
 					+ " is Already Initiated For ".concat(this.finReference.getValue())
 					+ " and is in queue for letter generation, Do You Want proceed with Manual?";
 
@@ -145,6 +149,19 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 			MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_LetterType")
 					+ " for ".concat(this.finReference.getValue()));
 			return false;
+		}
+
+		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
+			List<ReasonHeader> reasons = this.reasonDetailDAO.getCancelReasonDetails(fm.getFinReference());
+
+			for (ReasonHeader rh : reasons) {
+				if (LoanCancelationUtil.LOAN_CANCEL_REBOOK.equals(rh.getCancelType())) {
+					MessageUtil
+							.showError("Cancellaton Type : " + Labels.getLabel("label_CancelType_CancelRebooked.label")
+									+ " is not allowed for issuing the letter.");
+					return false;
+				}
+			}
 		}
 
 		if ((FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())
@@ -238,5 +255,10 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 	@Autowired
 	public void setGenerateLetterService(GenerateLetterService generateLetterService) {
 		this.generateLetterService = generateLetterService;
+	}
+
+	@Autowired
+	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
+		this.reasonDetailDAO = reasonDetailDAO;
 	}
 }

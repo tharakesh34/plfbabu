@@ -349,8 +349,9 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			int frq = Integer.parseInt(setFrq());
 
 			int curDay = DateUtil.getDay(SysParamUtil.getAppDate());
+			int curSchDay = DateUtil.getDay(curSchd.getSchDate());
 
-			if (prvSchd != null && !isPrvShcdAdded && frq > curDay) {
+			if (prvSchd != null && !isPrvShcdAdded && frq > curDay && curSchDay > frq) {
 				comboitem = new Comboitem();
 				comboitem.setLabel(DateUtil.formatToLongDate(prvSchd.getSchDate()) + " " + prvSchd.getSpecifier());
 				comboitem.setValue(prvSchd.getSchDate());

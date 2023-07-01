@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -1229,20 +1228,15 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws ParseException
-	 * @throws CustomerNotFoundException
 	 */
-	public void onClick$btnSave(Event event) throws InterruptedException, ParseException {
-		logger.debug("Entering" + event.toString());
+	public void onClick$btnSave(Event event) {
+		logger.debug(Literal.ENTERING);
 		try {
 			doSave();
-		} catch (InterfaceException e) {
-			MessageUtil.showError(e);
 		} catch (AppException e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1251,38 +1245,35 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		doEdit();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * when the "help" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+	public void onClick$btnHelp(Event event) {
+		logger.debug(Literal.ENTERING);
 		MessageUtil.showHelpWindow(event, window_CustomerDialog);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * when the "delete" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws CustomerNotFoundException
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+	public void onClick$btnDelete(Event event) {
+		logger.debug(Literal.ENTERING);
 		try {
 			doDelete();
 		} catch (InterfaceException e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1291,9 +1282,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		doCancel();
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -3389,7 +3380,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		getCustomerListCtrl().refreshList();
 	}
 
-	private void doDelete() throws InterruptedException, InterfaceException {
+	private void doDelete() throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
 		CustomerDetails aCustomerDetails = ObjectUtil.clone(getCustomerDetails());
@@ -5716,7 +5707,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onFulfill$custBaseCcy(Event event) throws InterruptedException {
+	public void onFulfill$custBaseCcy(Event event) {
 		logger.debug("Entering");
 		Object dataObject = custBaseCcy.getObject();
 		if (dataObject instanceof String) {
@@ -5741,10 +5732,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	private String getCurrencyAlertMessage() {
-		String infoMsg = " \n 1) " + Labels.getLabel("gp_CustEmployeeDetails") + " \n 2) "
+		return " \n 1) " + Labels.getLabel("gp_CustEmployeeDetails") + " \n 2) "
 				+ Labels.getLabel("gp_CustomerChequeInfoDetails") + " \n 3) "
 				+ Labels.getLabel("gp_ExternalLiabilityDetails");
-		return infoMsg;
 	}
 
 	public void onFulfill$otherIncome(Event event) {
@@ -6174,7 +6164,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void onDirectorDetailItemDoubleClicked(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerDirectory.getSelectedItem();
 		if (item != null) {
@@ -6207,7 +6197,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public BigDecimal getTotSharePerc() {
@@ -6511,7 +6501,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void onCustomerAddressItemDoubleClicked(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerAddress.getSelectedItem();
 		if (item != null) {
@@ -6537,7 +6527,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doFillCustomerAddressDetails(List<CustomerAddres> customerAddresDetails) {
@@ -6600,7 +6590,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void onCustomerPhoneNumberItemDoubleClicked(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerPhoneNumbers.getSelectedItem();
 		if (item != null) {
@@ -6627,7 +6617,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doFillCustomerPhoneNumberDetails(List<CustomerPhoneNumber> customerPhoneNumDetails) {
@@ -7268,7 +7258,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @param event (Event)
 	 */
 	public void onClick$btnNotes(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes());
 		map.put("control", this);
@@ -7278,7 +7268,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -7415,10 +7405,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @param event
 	 */
 	public void onOpen$custGenderCode(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		custGenderCode.clearErrorMessage();
 		fillComboBox(this.custGenderCode, getComboboxValue(this.custGenderCode), PennantAppUtil.getGenderCodes(), "");
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -7427,11 +7417,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @param event
 	 */
 	public void onOpen$custSalutationCode(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		this.custSalutationCode.clearErrorMessage();
 		fillComboBox(this.custSalutationCode, getComboboxValue(this.custSalutationCode),
 				PennantAppUtil.getSalutationCodes(getComboboxValue(this.custGenderCode)), "");
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -7440,11 +7430,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @param event
 	 */
 	public void onOpen$custMaritalSts(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		this.custMaritalSts.clearErrorMessage();
 		fillComboBox(this.custMaritalSts, getComboboxValue(this.custMaritalSts),
 				PennantAppUtil.getMaritalStsTypes(getComboboxValue(this.custGenderCode)), "");
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setComboBoxValue(Combobox combobox, String value, String label) {
@@ -7606,16 +7596,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return false;
 	}
 
-	public void onChange$custDOB(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+	public void onChange$custDOB(Event event) {
+		logger.debug(Literal.ENTERING);
 		processDateDiff(this.custDOB.getValue(), this.age);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void onChange$empFrom(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+	public void onChange$empFrom(Event event) {
+		logger.debug(Literal.ENTERING);
 		processDateDiff(this.empFrom.getValue(), this.exp);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onChange$eidNumber(Event event) {
@@ -7809,7 +7799,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	}
 
-	public void onClick$btnNew_GSTDetails(Event event) throws Exception {
+	public void onClick$btnNew_GSTDetails(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		GSTDetail gstDetails = new GSTDetail();
@@ -7832,7 +7822,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onGstDetailsItemDoubleClicked(Event event) throws Exception {
+	public void onGstDetailsItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// get the selected invoiceHeader object
@@ -7861,7 +7851,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onCheckGstDefault(Event event) throws Exception {
+	public void onCheckGstDefault(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		GSTDetail detail = (GSTDetail) event.getData();
@@ -7871,7 +7861,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public String getCustcrcpr() {
-		return this.eidNumber.getValue().toString();
+		return this.eidNumber.getValue();
 	}
 
 	public String getCustomerShortName() {
@@ -8062,13 +8052,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.empType = empType;
 	}
 
-	public void onChange$natureOfBusiness(Event event) throws InterruptedException {
+	public void onChange$natureOfBusiness(Event event) {
 		logger.debug(Literal.ENTERING);
 		String natureOfBusiness = getComboboxValue(this.natureOfBusiness);
 		setNatOfBusiness(natureOfBusiness);
 	}
 
-	public void onChange$entityType(Event event) throws InterruptedException {
+	public void onChange$entityType(Event event) {
 		logger.debug(Literal.ENTERING);
 		String natureOfBusiness = getComboboxValue(this.entityType);
 		setNatOfBusiness(natureOfBusiness);
@@ -8360,12 +8350,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * when the "Upload" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws ParseException
-	 * @throws CustomerNotFoundException
 	 */
-	public void onClick$btnUploadExternalLiability(Event event) throws InterruptedException, ParseException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onClick$btnUploadExternalLiability(Event event) {
+		logger.debug(Literal.ENTERING);
 		try {
 			HashMap<String, Object> aruments = new HashMap<>();
 			aruments.put("moduleCode", moduleCode);
@@ -8377,25 +8364,22 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		} catch (InterfaceException e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * when the "Upload" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws ParseException
-	 * @throws CustomerNotFoundException
 	 */
-	public void onClick$btnDownloadExternalLiability(Event event) throws InterruptedException, ParseException {
-		logger.debug(Literal.ENTERING + event.toString());
+	public void onClick$btnDownloadExternalLiability(Event event) {
+		logger.debug(Literal.ENTERING);
 		try {
 			customerExtLiabilityUploadDialogCtrl.downloadExternalLiability(getCustomerExtLiabilityDetailList());
 		} catch (InterfaceException e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	// PSD#157199 Customer Dialog rights are deallocating when creating new co-applicant in loan
@@ -8412,6 +8396,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void renderCustFullName(String fullName) {
 
 		String[] names = fullName.split(" ");
+		if (names.length == 0) {
+			return;
+		}
 
 		this.custFirstName.setValue(names[0]);
 		if (names.length == 3) {
@@ -8450,7 +8437,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.dMSService = dMSService;
 	}
 
-	public ExtendedFieldRender getExtendedDetails() throws ParseException {
+	public ExtendedFieldRender getExtendedDetails() {
 		return extendedFieldCtrl.save(true);
 	}
 

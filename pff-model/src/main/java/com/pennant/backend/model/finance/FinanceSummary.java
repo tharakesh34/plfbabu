@@ -36,13 +36,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "effectiveRateOfReturn", "totalGracePft", "totalGraceCpz", "totalGrossGrcPft",
-		"totalCpz", "totalProfit", "totalRepayAmt", "feeChargeAmt", "numberOfTerms", "loanTenor", "maturityDate",
-		"firstDisbDate", "lastDisbDate", "firstEmiAmount", "nextSchDate", "nextRepayAmount", "futureInst",
-		"futureTenor", "firstInstDate", "paidTotal", "schdPriPaid", "schdPftPaid", "finLastRepayDate",
-		"totalOutStanding", "outStandPrincipal", "outStandProfit", "totalOverDue", "overDuePrincipal", "overDueProfit",
-		"overDueInstlments", "overDueCharges", "totalOverDueIncCharges", "finODDetail", "advPaymentAmount", "finStatus",
-		"fullyDisb", "sanctionAmt", "utilizedAmt", "availableAmt" })
+@XmlType(propOrder = { "effectiveRateOfReturn", "totalGracePft", "totalGraceCpz", "totalGrossGrcPft", "totalCpz",
+		"totalProfit", "totalRepayAmt", "feeChargeAmt", "numberOfTerms", "loanTenor", "maturityDate", "firstDisbDate",
+		"lastDisbDate", "firstEmiAmount", "nextSchDate", "nextRepayAmount", "futureInst", "futureTenor",
+		"firstInstDate", "paidTotal", "schdPriPaid", "schdPftPaid", "finLastRepayDate", "totalOutStanding",
+		"outStandPrincipal", "outStandProfit", "totalOverDue", "overDuePrincipal", "overDueProfit", "overDueInstlments",
+		"overDueCharges", "totalOverDueIncCharges", "finODDetail", "advPaymentAmount", "finStatus", "fullyDisb",
+		"sanctionAmt", "utilizedAmt", "availableAmt" })
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceSummary implements Serializable {
@@ -229,6 +229,10 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal totalLPI = BigDecimal.ZERO;
 	private BigDecimal lpiPaid = BigDecimal.ZERO;
 	private BigDecimal lpiWaived = BigDecimal.ZERO;
+	private BigDecimal interestComponent;
+	private BigDecimal principalComponent;
+	private BigDecimal totalComponent;
+	private String dPDString;
 
 	public FinanceSummary() {
 		super();
@@ -1297,5 +1301,37 @@ public class FinanceSummary implements Serializable {
 
 	public void setLpiWaived(BigDecimal lpiWaived) {
 		this.lpiWaived = lpiWaived;
+	}
+
+	public BigDecimal getInterestComponent() {
+		return interestComponent;
+	}
+
+	public void setInterestComponent(BigDecimal interestComponent) {
+		this.interestComponent = interestComponent;
+	}
+
+	public BigDecimal getPrincipalComponent() {
+		return principalComponent;
+	}
+
+	public void setPrincipalComponent(BigDecimal principalComponent) {
+		this.principalComponent = principalComponent;
+	}
+
+	public BigDecimal getTotalComponent() {
+		return totalComponent;
+	}
+
+	public void setTotalComponent(BigDecimal totalComponent) {
+		this.totalComponent = totalComponent;
+	}
+
+	public String getDPDString() {
+		return dPDString;
+	}
+
+	public void setDPDString(String dPDString) {
+		this.dPDString = dPDString;
 	}
 }

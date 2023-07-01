@@ -4,35 +4,41 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
+import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
-import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.applicant.ApplicantDetails;
+import com.pennant.backend.model.applicationmaster.BaseRate;
+import com.pennant.backend.model.chargedetails.ChargeDetails;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.ChequeDetail;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.GuarantorDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.loanbalance.LoanBalance;
 import com.pennant.backend.model.loandetail.LoanDetail;
 import com.pennant.backend.model.mandate.Mandate;
@@ -48,6 +54,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.CustomerUtil;
 import com.pennanttech.pff.core.util.SchdUtil;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public class FinanceEnquiryController extends AbstractController {
 
@@ -59,12 +66,13 @@ public class FinanceEnquiryController extends AbstractController {
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 	private MandateDAO mandateDAO;
-	private FinReceiptHeaderDAO finReceiptHeaderDAO;
-	private BounceReasonDAO bounceReasonDAO;
 	private GuarantorDetailDAO guarantorDetailDAO;
 	private FinODDetailsDAO finODDetailsDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinServiceInstrutionDAO finServiceInstrutionDAO;
+	private FinFeeDetailDAO finFeeDetailDAO;
+	private BaseRateDAO baseRateDAO;
+	private PresentmentDetailDAO presentmentDetailDAO;
 
 	private static final String ERROR_92021 = "92021";
 
@@ -86,7 +94,6 @@ public class FinanceEnquiryController extends AbstractController {
 		List<PaymentMode> paymentModes = new ArrayList<>();
 
 		PaymentMode response = new PaymentMode();
-		Date appDate = SysParamUtil.getAppDate();
 
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
@@ -97,12 +104,14 @@ public class FinanceEnquiryController extends AbstractController {
 
 		Mandate mandate = null;
 		Long mandateID = fm.getMandateID();
+		long oldMandateID = 0;
 
 		if (mandateID != null && mandateID > 0) {
 			mandate = mandateDAO.getMandateById(mandateID, "_AView");
 		}
+		List<Mandate> mandatesForAutoSwap = mandateDAO.getMandatesForSwap(fm.getFinID());
 
-		if (CollectionUtils.isEmpty(chequeDetails) && mandate == null) {
+		if (CollectionUtils.isEmpty(chequeDetails) && mandate == null && CollectionUtils.isEmpty(mandatesForAutoSwap)) {
 			response.setReturnStatus(
 					getFailedStatus(ERROR_92021, "Mandate or PDC details does not exists for the requested details."));
 
@@ -123,34 +132,47 @@ public class FinanceEnquiryController extends AbstractController {
 				}
 
 				cd.setSchdDate(schd.getSchDate());
-				String chequeSerialNo = Integer.toString(cd.getChequeSerialNo());
-				Long receiptId = finReceiptHeaderDAO.getReceiptIdByChequeSerialNo(chequeSerialNo);
-
-				if (receiptId != null) {
-					String bounceReason = bounceReasonDAO.getReasonByReceiptId(receiptId);
-					cd.setChequeBounceReason(bounceReason);
-				}
-
 				paymentModes.add(preparePaymentMode(cd));
 				continue;
 			}
 
-			if (mandate == null) {
+			if (mandate == null && CollectionUtils.isEmpty(mandatesForAutoSwap)) {
 				continue;
 			}
 
-			if (mandate.isSwapIsActive() && schd.getSchDate().compareTo(mandate.getSwapEffectiveDate()) >= 0
-					&& mandate.getMandateID() == mandateID) {
-				List<Mandate> mandatesForAutoSwap = mandateDAO.getMandatesForAutoSwap(fm.getCustID(), appDate);
-				if (!CollectionUtils.isEmpty(mandatesForAutoSwap)) {
-					mandate = mandatesForAutoSwap.get(0);
+			if (CollectionUtils.isNotEmpty(mandatesForAutoSwap)) {
+				List<Mandate> mandatesForAutoSwap2 = mandatesForAutoSwap.stream()
+						.filter(m -> m.getSwapEffectiveDate().compareTo(schd.getSchDate()) <= 0).toList().stream()
+						.sorted((m1, m2) -> m1.getSwapEffectiveDate().compareTo(m2.getSwapEffectiveDate())).toList();
+
+				if (CollectionUtils.isNotEmpty(mandatesForAutoSwap2)) {
+					long id = mandatesForAutoSwap.get(mandatesForAutoSwap2.size() - 1).getMandateID();
+					if (oldMandateID != id) {
+						mandate = mandateDAO.getMandateById(id, "_AView");
+					}
+					oldMandateID = id;
 				}
+
 			}
 
-			mandate.setSchdDate(schd.getSchDate());
-			mandate.setInstalmentNo(schd.getInstNumber());
+			if (mandate != null) {
+				mandate.setSchdDate(schd.getSchDate());
+				mandate.setInstalmentNo(schd.getInstNumber());
 
-			paymentModes.add(preparePaymentMode(mandate));
+				paymentModes.add(preparePaymentMode(mandate));
+			}
+
+		}
+
+		List<PresentmentDetail> presentmentDetails = presentmentDetailDAO.getBouncedPresenments(finID);
+		for (PaymentMode pm : paymentModes) {
+			for (PresentmentDetail pd : presentmentDetails) {
+				if (pm.getLoanDueDate().compareTo(pd.getSchDate()) == 0
+						&& StringUtils.containsIgnoreCase(pd.getInstrumentType(), pm.getLoanInstrumentMode())) {
+					pm.setBounceReason(pd.getBounceReason());
+					continue;
+				}
+			}
 		}
 
 		Long secMandateID = fm.getSecurityMandateID();
@@ -158,6 +180,17 @@ public class FinanceEnquiryController extends AbstractController {
 		if (secMandateID != null && secMandateID > 0) {
 			Mandate secMandate = mandateDAO.getMandateById(secMandateID, "_AView");
 			paymentModes.add(preparePaymentMode(secMandate));
+		}
+
+		for (ChequeDetail cd : chequeDetails) {
+			if (InstrumentType.PDC.name().equals(cd.getChequeType())) {
+				continue;
+			}
+			cd.seteMIRefNo(0);
+			cd.setSchdDate(null);
+
+			paymentModes.add(preparePaymentMode(cd));
+
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -181,46 +214,55 @@ public class FinanceEnquiryController extends AbstractController {
 
 		Mandate mandate = null;
 		Long mandateID = fm.getMandateID();
+		long oldMandateID = 0;
 		if (mandateID != null) {
 			mandate = mandateDAO.getMandateById(mandateID, "_AView");
 		}
+		List<Mandate> mandatesForAutoSwap = mandateDAO.getMandatesForSwap(fm.getFinID());
 
 		for (FinanceScheduleDetail fsd : fsdList) {
-			if (isEmpty && mandate == null) {
+			if (isEmpty && mandate == null && CollectionUtils.isEmpty(mandatesForAutoSwap)) {
 				response.setReturnStatus(
 						getFailedStatus(ERROR_92021, "Mandate and PDC does not exist for the given LAN"));
 				paymentModes.add(response);
 				break;
 			}
 			if (appDate.compareTo(fsd.getSchDate()) <= 0 && fsd.isRepayOnSchDate()) {
-				if (isEmpty) {
-					for (ChequeDetail cd : chequeDetailList) {
-						if (cd.geteMIRefNo() != fsd.getInstNumber()) {
-							continue;
-						}
-						cd.setSchdDate(fsd.getSchDate());
-						response = preparePaymentMode(cd);
-						paymentModes.add(response);
+
+				for (ChequeDetail cd : chequeDetailList) {
+					if (cd.geteMIRefNo() != fsd.getInstNumber()) {
 						continue;
 					}
-				}
-
-				if (mandate == null) {
+					cd.setSchdDate(fsd.getSchDate());
+					response = preparePaymentMode(cd);
+					paymentModes.add(response);
 					continue;
 				}
 
-				if (mandate.isSwapIsActive() && fsd.getSchDate().compareTo(mandate.getSwapEffectiveDate()) >= 0
-						&& mandate.getMandateID() == mandateID) {
-					List<Mandate> mandatesForAutoSwap = mandateDAO.getMandatesForAutoSwap(fm.getCustID(), appDate);
-					if (!CollectionUtils.isEmpty(mandatesForAutoSwap)) {
-						mandate = mandatesForAutoSwap.get(0);
+				if (mandate == null && CollectionUtils.isEmpty(mandatesForAutoSwap)) {
+					continue;
+				}
+
+				if (CollectionUtils.isNotEmpty(mandatesForAutoSwap)) {
+					List<Mandate> mandatesForAutoSwap2 = mandatesForAutoSwap.stream()
+							.filter(m -> m.getSwapEffectiveDate().compareTo(fsd.getSchDate()) <= 0).toList().stream()
+							.sorted((m1, m2) -> m1.getSwapEffectiveDate().compareTo(m2.getSwapEffectiveDate()))
+							.toList();
+
+					if (CollectionUtils.isNotEmpty(mandatesForAutoSwap2)) {
+						long id = mandatesForAutoSwap.get(mandatesForAutoSwap2.size() - 1).getMandateID();
+						if (oldMandateID != id) {
+							mandate = mandateDAO.getMandateById(id, "_AView");
+						}
+						oldMandateID = id;
 					}
 
 				}
-				mandate.setSchdDate(fsd.getSchDate());
-				mandate.setInstalmentNo(fsd.getInstNumber());
-				response = preparePaymentMode(mandate);
-				paymentModes.add(response);
+				if (mandate != null) {
+					mandate.setSchdDate(fsd.getSchDate());
+					mandate.setInstalmentNo(fsd.getInstNumber());
+					paymentModes.add(preparePaymentMode(mandate));
+				}
 			}
 		}
 
@@ -233,6 +275,278 @@ public class FinanceEnquiryController extends AbstractController {
 		}
 
 		return paymentModes;
+	}
+
+	public List<ApplicantDetails> getApplicantDetails(FinanceMain fm) {
+		logger.debug(Literal.ENTERING);
+
+		List<ApplicantDetails> response = new ArrayList<>();
+
+		long custID = fm.getCustID();
+		long finID = fm.getFinID();
+
+		Customer applicant = customerDAO.getBasicDetails(custID, TableType.MAIN_TAB);
+		applicant.setApplicantType("Applicant");
+		addApplicantDetails(applicant, response);
+
+		List<Customer> coApplicants = customerDAO.getBasicDetailsForJointCustomers(finID, TableType.MAIN_TAB);
+
+		for (Customer coApplicant : coApplicants) {
+			coApplicant.setApplicantType("CoApplicant");
+			addApplicantDetails(coApplicant, response);
+		}
+
+		List<GuarantorDetail> guarantors = guarantorDetailDAO.getGuarantorDetailByFinRef(finID, "_AView");
+
+		Customer guarantator;
+		for (GuarantorDetail guarantor : guarantors) {
+			if (guarantor.isBankCustomer()) {
+				long gurantorID = customerDAO.getCustIDByCIF(guarantor.getGuarantorCIF());
+				guarantator = customerDAO.getBasicDetails(gurantorID, TableType.MAIN_TAB);
+				guarantator.setApplicantType("Guarantor");
+				guarantator.setCustCIF(guarantor.getGuarantorCIF());
+
+				addApplicantDetails(guarantator, response);
+			} else {
+				ApplicantDetails ad = new ApplicantDetails();
+				ad.setApplicantType("Guarantor");
+				ad.setCustID(guarantor.getCustID());
+				ad.setFullName(guarantor.getGuarantorCIFName());
+
+				response.add(ad);
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	public LoanBalance getBalanceDetails(FinanceMain fm) {
+		logger.debug(Literal.ENTERING);
+
+		LoanBalance response = new LoanBalance();
+
+		long finID = fm.getFinID();
+		Date appDate = SysParamUtil.getAppDate();
+
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getBasicDetails(finID);
+		List<FinODDetails> odDetails = finODDetailsDAO.getLPPDueAmount(finID);
+		List<BigDecimal> bounceCharges = manualAdviseDAO.getBounceChargesByFinID(finID);
+
+		Date businessDate = appDate;
+		if (appDate.compareTo(fm.getMaturityDate()) >= 0) {
+			businessDate = DateUtil.addDays(fm.getMaturityDate(), -1);
+		}
+
+		int instalments = Collections.max(schedules.stream().map(schd -> schd.getInstNumber()).toList());
+
+		response.setInstalmentsPaid(SchdUtil.getPaidInstalments(schedules));
+		response.setExcessMoney(finExcessAmountDAO.getExcessBalance(finID));
+		response.setOverDueInstallment(SchdUtil.getOverDueEMI(businessDate, schedules));
+		response.setDueDate(SchdUtil.getNextInstalment(businessDate, schedules).getSchDate());
+		response.setTotalInstalments(instalments - fm.getAdvTerms());
+		response.setAdvanceInstalments(AdvanceType.AE.getCode().equals(fm.getAdvType()) ? fm.getAdvTerms() : 0);
+		response.setRepayMethod(fm.getFinRepayMethod());
+		response.setOutstandingPri(SchdUtil.getOutStandingPrincipal(schedules, appDate));
+		response.setOverDueCharges(SchdUtil.getLPPDueAmount(odDetails));
+		response.setChequeBounceCharges(bounceCharges.stream().reduce(BigDecimal.ZERO, BigDecimal::add));
+
+		logger.debug(Literal.LEAVING);
+
+		return response;
+	}
+
+	public List<LoanDetail> getRateChangeDetails(FinanceMain fm) {
+		logger.debug(Literal.ENTERING);
+
+		List<LoanDetail> ldList = new ArrayList<>();
+
+		LoanDetail ld = new LoanDetail();
+		long finID = fm.getFinID();
+
+		List<FinServiceInstruction> fsiList = finServiceInstrutionDAO.getFinServiceInstructions(finID, "",
+				FinServiceEvent.RATECHG);
+
+		if (StringUtils.isNotBlank(fm.getRepayBaseRate())) {
+			ld.setBaseRates(baseRateDAO.getBaseRates(fm.getRepayBaseRate(), fm.getFinCcy(), fm.getMaturityDate(), ""));
+		}
+
+		if (CollectionUtils.isEmpty(fsiList)) {
+			setRateCahngeDetails(fm, ld);
+
+			ldList.add(ld);
+
+			logger.debug(Literal.LEAVING);
+			return ldList;
+		}
+
+		getRateChange(fm, ldList, fsiList, ld);
+
+		return ldList;
+	}
+
+	public List<ChargeDetails> getChargeDetails(long finID) {
+		logger.debug(Literal.ENTERING);
+
+		List<ChargeDetails> response = new ArrayList<>();
+
+		List<ManualAdvise> recAdvises = manualAdviseDAO.getReceivableAdvises(finID, "_AView");
+		List<FinFeeDetail> fees = finFeeDetailDAO.getFinFeeDetailByFinRef(finID, false, "_AView");
+		List<FinODDetails> lppDues = finODDetailsDAO.getLPPDueAmount(finID);
+
+		Map<String, ChargeDetails> chargeDetails = new HashMap<>();
+
+		ChargeDetails cd;
+
+		for (ManualAdvise ma : recAdvises) {
+			if (!chargeDetails.containsKey(ma.getFeeTypeCode()) && BigDecimal.ZERO.compareTo(ma.getBalanceAmt()) < 0) {
+				cd = new ChargeDetails();
+				cd.setChargeTypeDesc(ma.getFeeTypeDesc());
+				cd.setDueAmount(ma.getBalanceAmt());
+
+				chargeDetails.put(ma.getFeeTypeCode(), cd);
+			} else if (BigDecimal.ZERO.compareTo(ma.getBalanceAmt()) < 0) {
+				cd = chargeDetails.get(ma.getFeeTypeCode());
+				cd.setDueAmount(cd.getDueAmount().add(ma.getBalanceAmt()));
+			}
+		}
+
+		for (FinFeeDetail fee : fees) {
+			if (!chargeDetails.containsKey(fee.getFeeTypeCode())
+					&& BigDecimal.ZERO.compareTo(fee.getRemainingFee()) < 0) {
+				cd = new ChargeDetails();
+				cd.setChargeTypeDesc(fee.getFeeTypeDesc());
+				cd.setDueAmount(fee.getRemainingFee());
+				cd.setChargeRate(fee.getPercentage());
+
+				chargeDetails.put(fee.getFeeTypeCode(), cd);
+			} else if (BigDecimal.ZERO.compareTo(fee.getRemainingFee()) < 0) {
+				cd = chargeDetails.get(fee.getFeeTypeCode());
+				cd.setDueAmount(cd.getDueAmount().add(fee.getRemainingFee()));
+			}
+		}
+
+		cd = new ChargeDetails();
+
+		cd.setChargeTypeDesc("Late Pay Penalty");
+		cd.setDueAmount(SchdUtil.getLPPDueAmount(lppDues));
+
+		if (BigDecimal.ZERO.compareTo(cd.getDueAmount()) < 0) {
+			chargeDetails.put("LPP", cd);
+		}
+
+		chargeDetails.forEach((k, v) -> response.add(v));
+
+		return response;
+
+	}
+
+	private void getRateChange(FinanceMain fm, List<LoanDetail> ldList, List<FinServiceInstruction> fsiList,
+			LoanDetail ld) {
+
+		FinServiceInstruction fsi = null;
+		Date toDate = null;
+
+		fsiList = fsiList.stream().sorted((fsi1, fsi2) -> fsi1.getFromDate().compareTo(fsi2.getFromDate())).toList();
+
+		for (int i = 0; i < fsiList.size(); i++) {
+			LoanDetail loanDetail = null;
+
+			fsi = fsiList.get(i);
+			Date fromDate = fsi.getFromDate();
+			toDate = fsi.getToDate();
+
+			if (i == 0) {
+				loanDetail = new LoanDetail();
+				loanDetail.setFromDate(fm.getFinStartDate());
+				loanDetail.setToDate(fromDate == null ? fsi.getFromDate() : fromDate);
+
+				if (!StringUtils.isEmpty(fm.getRepayBaseRate())) {
+					BaseRate b = getBaseRate(fm, loanDetail.getFromDate(), ld);
+					fm.setRepayProfitRate(b != null ? b.getBRRate() : BigDecimal.ZERO);
+				}
+
+				loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
+				ldList.add(loanDetail);
+			}
+
+			if (i != 0 && toDate.compareTo(fm.getMaturityDate()) != 0
+					&& fromDate.compareTo(fsiList.get(i - 1).getToDate()) > 0) {
+				loanDetail = new LoanDetail();
+				loanDetail.setFromDate(fsiList.get(i - 1).getToDate());
+				loanDetail.setToDate(fromDate);
+
+				if (StringUtils.isEmpty(fm.getRepayBaseRate())) {
+					BaseRate b = getBaseRate(fm, loanDetail.getFromDate(), ld);
+					fm.setRepayProfitRate(b != null ? b.getBRRate() : BigDecimal.ZERO);
+				}
+
+				loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
+				ldList.add(loanDetail);
+			}
+
+			loanDetail = new LoanDetail();
+			loanDetail.setFromDate(fromDate);
+			loanDetail.setToDate(toDate);
+			loanDetail.setRepayProfitRate(fsi.getActualRate());
+
+			ldList.add(loanDetail);
+		}
+
+		if (DateUtil.compare(fm.getMaturityDate(), toDate) == 0) {
+			return;
+		}
+
+		LoanDetail loanDetail = new LoanDetail();
+		loanDetail.setFromDate(toDate);
+		loanDetail.setToDate(fm.getMaturityDate());
+
+		if (StringUtils.isEmpty(fm.getRepayBaseRate())) {
+			BaseRate b = getBaseRate(fm, loanDetail.getFromDate(), ld);
+			fm.setRepayProfitRate(b != null ? b.getBRRate() : BigDecimal.ZERO);
+		}
+
+		loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
+		ldList.add(loanDetail);
+	}
+
+	private void setRateCahngeDetails(FinanceMain fm, LoanDetail ld) {
+		ld.setFromDate(fm.getFinStartDate());
+		ld.setToDate(fm.getMaturityDate());
+
+		if (StringUtils.isNotEmpty(fm.getRepayBaseRate())) {
+			BaseRate b = getBaseRate(fm, fm.getFinStartDate(), ld);
+			fm.setRepayProfitRate(b != null ? b.getBRRate() : BigDecimal.ZERO);
+		}
+
+		ld.setRepayProfitRate(fm.getRepayProfitRate());
+	}
+
+	private BaseRate getBaseRate(FinanceMain fm, Date date, LoanDetail ld) {
+
+		if (CollectionUtils.isEmpty(ld.getBaseRates())) {
+			return null;
+		}
+
+		List<BaseRate> baseRates = ld.getBaseRates().stream()
+				.filter(baseRate -> baseRate.getBREffDate().compareTo(date) <= 0).toList();
+
+		if (CollectionUtils.isEmpty(baseRates)) {
+			return null;
+		}
+
+		return Collections.max(baseRates, (b1, b2) -> b1.getBREffDate().compareTo(b2.getBREffDate()));
+	}
+
+	private void addApplicantDetails(Customer customer, List<ApplicantDetails> applicantDetails) {
+		ApplicantDetails ad = new ApplicantDetails();
+
+		ad.setFullName(CustomerUtil.getCustomerFullName(customer));
+		ad.setApplicantType(customer.getApplicantType());
+		ad.setRelation(customer.getRelationWithCust());
+		ad.setCustCIF(customer.getCustCIF());
+
+		applicantDetails.add(ad);
 	}
 
 	private PaymentMode preparePaymentMode(ChequeDetail cd) {
@@ -276,186 +590,6 @@ public class FinanceEnquiryController extends AbstractController {
 
 	}
 
-	public List<ApplicantDetails> getApplicantDetails(FinanceMain fm) {
-		logger.debug(Literal.ENTERING);
-
-		List<ApplicantDetails> response = new ArrayList<>();
-
-		Customer applicant = customerDAO.getBasicDetails(fm.getCustID(), TableType.MAIN_TAB);
-		applicant.setApplicantType("Applicant");
-		addApplicantDetails(applicant, response);
-
-		List<Customer> coApplicants = customerDAO.getBasicDetailsForJointCustomers(fm.getFinID(), TableType.MAIN_TAB);
-
-		for (Customer coApplicant : coApplicants) {
-			coApplicant.setApplicantType("CoApplicant");
-			addApplicantDetails(coApplicant, response);
-		}
-
-		List<GuarantorDetail> guarantors = guarantorDetailDAO.getGuarantorDetailByFinRef(fm.getFinID(), "_AView");
-
-		Customer guarantator;
-		for (GuarantorDetail guarantor : guarantors) {
-			if (guarantor.isBankCustomer()) {
-				guarantator = customerDAO.getBasicDetails(fm.getCustID(), TableType.MAIN_TAB);
-				guarantator.setApplicantType("Guarantor");
-				guarantator.setCustCIF(guarantor.getGuarantorCIF());
-
-				addApplicantDetails(guarantator, response);
-			} else {
-				guarantator = new Customer();
-				ApplicantDetails ad = new ApplicantDetails();
-				ad.setApplicantType("Guarantor");
-				ad.setCustID(guarantor.getCustID());
-				ad.setFullName(guarantor.getGuarantorCIFName());
-
-				response.add(ad);
-			}
-		}
-
-		logger.debug(Literal.LEAVING);
-		return response;
-	}
-
-	public LoanBalance getBalanceDetails(FinanceMain fm) {
-		logger.debug(Literal.ENTERING);
-
-		LoanBalance response = new LoanBalance();
-
-		long finID = fm.getFinID();
-		Date appDate = SysParamUtil.getAppDate();
-
-		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getBasicDetails(finID);
-		List<FinODDetails> odDetails = finODDetailsDAO.getLPPDueAmount(finID);
-		List<BigDecimal> bounceCharges = manualAdviseDAO.getBounceChargesByFinID(finID);
-
-		Date businessDate = appDate;
-		if (appDate.compareTo(fm.getMaturityDate()) >= 0) {
-			businessDate = DateUtil.addDays(fm.getMaturityDate(), -1);
-		}
-
-		int instalments = Collections
-				.max(schedules.stream().map(schd -> schd.getInstNumber()).collect(Collectors.toList()));
-
-		response.setInstalmentsPaid(SchdUtil.getPaidInstalments(schedules));
-		response.setExcessMoney(finExcessAmountDAO.getExcessBalance(finID));
-		response.setOverDueInstallment(SchdUtil.getOverDueEMI(businessDate, schedules));
-		response.setDueDate(SchdUtil.getNextInstalment(businessDate, schedules).getSchDate());
-		response.setTotalInstalments(instalments - fm.getAdvTerms());
-		response.setAdvanceInstalments(AdvanceType.AE.getCode().equals(fm.getAdvType()) ? fm.getAdvTerms() : 0);
-		response.setRepayMethod(fm.getFinRepayMethod());
-		response.setOutstandingPri(SchdUtil.getOutStandingPrincipal(schedules, appDate));
-		response.setOverDueCharges(SchdUtil.getLPPDueAmount(odDetails));
-		response.setChequeBounceCharges(bounceCharges.stream().reduce(BigDecimal.ZERO, BigDecimal::add));
-
-		logger.debug(Literal.LEAVING);
-
-		return response;
-	}
-
-	public List<LoanDetail> getRateChangeDetails(FinanceMain fm) {
-		logger.debug(Literal.ENTERING);
-
-		List<LoanDetail> ldList = new ArrayList<>();
-
-		LoanDetail ld = new LoanDetail();
-		long finID = fm.getFinID();
-
-		List<FinServiceInstruction> fsiList = finServiceInstrutionDAO.getFinServiceInstructions(finID, "",
-				FinServiceEvent.RATECHG);
-
-		if (CollectionUtils.isEmpty(fsiList)) {
-			setRateCahngeDetails(fm, ld);
-
-			ldList.add(ld);
-
-			logger.debug(Literal.LEAVING);
-			return ldList;
-		}
-
-		getRateChange(fm, ldList, ld, fsiList);
-
-		return ldList;
-	}
-
-	private void getRateChange(FinanceMain fm, List<LoanDetail> ldList, LoanDetail ld,
-			List<FinServiceInstruction> fsiList) {
-
-		FinServiceInstruction fsi = null;
-		for (int i = 0; i < fsiList.size(); i++) {
-			LoanDetail loanDetail = null;
-
-			fsi = fsiList.get(i);
-			Date fromDate = fsi.getRecalFromDate();
-			Date toDate = null;
-
-			if (i == 0) {
-				loanDetail = new LoanDetail();
-				loanDetail.setFromDate(fm.getFinStartDate());
-				loanDetail.setToDate(fromDate == null ? fsi.getFromDate() : fromDate);
-				loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
-				ldList.add(loanDetail);
-			}
-
-			if (fsiList.size() - 1 > i) {
-				toDate = fsiList.get(i + 1).getRecalFromDate();
-			}
-
-			loanDetail = new LoanDetail();
-			switch (fsi.getRecalType()) {
-			case CalculationConstants.RPYCHG_TILLMDT:
-				loanDetail.setFromDate(fromDate);
-				loanDetail.setToDate(toDate == null ? fm.getMaturityDate() : toDate);
-				loanDetail.setRepayProfitRate(fsi.getActualRate());
-				break;
-			case CalculationConstants.RPYCHG_TILLDATE:
-				loanDetail.setFromDate(fromDate);
-				loanDetail.setToDate(toDate);
-				loanDetail.setRepayProfitRate(fsi.getActualRate());
-				break;
-			default:
-				loanDetail.setFromDate(fsi.getFromDate());
-				loanDetail.setToDate(toDate == null ? fsi.getToDate() : toDate);
-				loanDetail.setRepayProfitRate(fsi.getActualRate());
-				break;
-			}
-
-			ldList.add(loanDetail);
-		}
-
-		if ((CalculationConstants.RPYCHG_TILLMDT.equals(fsi.getRecalType())
-				&& fm.getMaturityDate().compareTo(fsi.getToDate()) == 0)
-				|| (CalculationConstants.RPYCHG_TILLDATE.equals(fsi.getRecalType())
-						&& fm.getMaturityDate().compareTo(fsi.getRecalToDate()) == 0)
-				|| fm.getMaturityDate().compareTo(fsi.getToDate()) == 0) {
-
-			return;
-		}
-
-		LoanDetail loanDetail = new LoanDetail();
-		loanDetail.setFromDate(fsi.getRecalToDate() == null ? fsi.getToDate() : fsi.getRecalToDate());
-		loanDetail.setToDate(fm.getMaturityDate());
-		loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
-		ldList.add(loanDetail);
-	}
-
-	private void setRateCahngeDetails(FinanceMain fm, LoanDetail ld) {
-		ld.setFromDate(fm.getFinStartDate());
-		ld.setToDate(fm.getMaturityDate());
-		ld.setRepayProfitRate(fm.getRepayProfitRate());
-	}
-
-	private void addApplicantDetails(Customer customer, List<ApplicantDetails> applicantDetails) {
-		ApplicantDetails ad = new ApplicantDetails();
-
-		ad.setFullName(CustomerUtil.getCustomerFullName(customer));
-		ad.setApplicantType(customer.getApplicantType());
-		ad.setRelation(customer.getRelationWithCust());
-		ad.setCustCIF(customer.getCustCIF());
-
-		applicantDetails.add(ad);
-	}
-
 	@Autowired
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
@@ -482,16 +616,6 @@ public class FinanceEnquiryController extends AbstractController {
 	}
 
 	@Autowired
-	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
-		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
-	}
-
-	@Autowired
-	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
-		this.bounceReasonDAO = bounceReasonDAO;
-	}
-
-	@Autowired
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
@@ -512,6 +636,11 @@ public class FinanceEnquiryController extends AbstractController {
 	}
 
 	@Autowired
+	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
+		this.finFeeDetailDAO = finFeeDetailDAO;
+	}
+
+	@Autowired
 	public void setCustomerEnquiryService(CustomerEnquiryService customerEnquiryService) {
 		this.customerEnquiryService = customerEnquiryService;
 	}
@@ -519,5 +648,15 @@ public class FinanceEnquiryController extends AbstractController {
 	@Autowired
 	public void setFinanceEnquiryService(FinanceEnquiryService financeEnquiryService) {
 		this.financeEnquiryService = financeEnquiryService;
+	}
+
+	@Autowired
+	public void setBaseRateDAO(BaseRateDAO baseRateDAO) {
+		this.baseRateDAO = baseRateDAO;
+	}
+
+	@Autowired
+	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
+		this.presentmentDetailDAO = presentmentDetailDAO;
 	}
 }

@@ -325,7 +325,7 @@ public class ExtendedFieldDetailsService {
 		} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)
 				|| efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_EDT)) {
 			efr.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-			if (efr.isWorkflow()) {
+			if (efr.isWorkflow() && !efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_EDT)) {
 				isRcdType = true;
 			}
 		} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
@@ -1811,8 +1811,7 @@ public class ExtendedFieldDetailsService {
 					DateUtil.addDays(SysParamUtil.getAppDate(), Integer.parseInt(value[1]))) > 0) {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName() + ":" + dateValue;
-				valueParm[1] = String
-						.valueOf(DateUtil.addDays(SysParamUtil.getAppDate(), Integer.parseInt(value[1])));
+				valueParm[1] = String.valueOf(DateUtil.addDays(SysParamUtil.getAppDate(), Integer.parseInt(value[1])));
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", "", valueParm)));
 			}
 			break;

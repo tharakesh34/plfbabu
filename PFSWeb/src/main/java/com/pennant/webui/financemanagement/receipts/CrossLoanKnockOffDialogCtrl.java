@@ -29,10 +29,8 @@
  */
 package com.pennant.webui.financemanagement.receipts;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,8 +42,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -168,6 +164,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.pennapps.core.util.ObjectUtil;
@@ -509,10 +506,9 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	 * 
 	 * @param event
 	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchFinreference(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering " + event.toString());
+	public void onClick$btnSearchFinreference(Event event) throws SuspendNotAllowedException {
+		logger.debug(Literal.ENTERING);
 
 		// Preparation of Finance Enquiry Data
 		FinReceiptHeader finReceiptHeader = receiptData.getReceiptHeader();
@@ -541,7 +537,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
 				this.windowCrossLoanKnockOffDialog, map);
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -594,10 +590,9 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				exclude.add("S");
 			}
 
-			List<ValueLabel> excessAdjustmentTypes = PennantStaticListUtil.getExcessAdjustmentTypes();
+			List<ValueLabel> excessAdjustmentTypes = ExcessType.getAdjustmentList();
 
-			fillComboBox(this.excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EXCESS,
-					excludeComboBox(excessAdjustmentTypes, exclude));
+			fillComboBox(this.excessAdjustTo, ExcessType.EXCESS, excludeComboBox(excessAdjustmentTypes, exclude));
 		}
 	}
 
@@ -938,13 +933,11 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	 * Method for calculation of Schedule Repayment details List of data
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws AccountNotFoundException
 	 * @throws WrongValueException
+	 * @throws InterfaceException
 	 */
-	public void onClick$btnCalcReceipts(Event event)
-			throws InterruptedException, WrongValueException, InterfaceException {
-		logger.debug("Entering" + event.toString());
+	public void onClick$btnCalcReceipts(Event event) throws WrongValueException, InterfaceException {
+		logger.debug(Literal.ENTERING);
 		if (!isValidateData(true)) {
 			return;
 		}
@@ -986,16 +979,15 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			this.btnCalcReceipts.setDisabled(true);
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Processing Calculation button visible , if amount modified
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onFulfill$receiptAmount(Event event) throws InterruptedException {
+	public void onFulfill$receiptAmount(Event event) {
 		logger.debug("Entering");
 
 		this.btnChangeReceipt.setDisabled(true);
@@ -1272,7 +1264,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		receiptData.setAccruedTillLBD(schData.getFinanceMain().getLovDescAccruedTillLBD());
 
 		// Allocation Process start
-		if (StringUtils.equals(allocateMthd, RepayConstants.ALLOCTYPE_AUTO)) {
+		if (StringUtils.equals(allocateMthd, AllocationType.AUTO)) {
 			receiptData = receiptCalculator.recalAutoAllocation(receiptData, false);
 		}
 
@@ -1331,9 +1323,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	 * Method for Schedule Modifications with Effective Schedule Method
 	 * 
 	 * @param receiptData
-	 * @throws InterruptedException
 	 */
-	public boolean recalEarlyPaySchd(boolean isRecal) throws InterruptedException {
+	public boolean recalEarlyPaySchd(boolean isRecal) {
 		logger.debug("Entering");
 		// Schedule Recalculation Depends on Earlypay Effective Schedule method
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
@@ -1603,15 +1594,15 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	private String payType(String mode) {
 		String payType = "";
 		if (ReceiptMode.EMIINADV.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_EMIINADV;
+			payType = ExcessType.EMIINADV;
 		} else if (ReceiptMode.EXCESS.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_EXCESS;
+			payType = ExcessType.EXCESS;
 		} else if (ReceiptMode.CASHCLT.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_CASHCLT;
+			payType = ExcessType.CASHCLT;
 		} else if (ReceiptMode.DSF.equals(mode)) {
-			payType = RepayConstants.EXAMOUNTTYPE_DSF;
+			payType = ExcessType.DSF;
 		} else {
-			payType = RepayConstants.EXAMOUNTTYPE_PAYABLE;
+			payType = ExcessType.PAYABLE;
 		}
 		return payType;
 	}
@@ -1638,18 +1629,18 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 
-			if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(payable.getPayableType())) {
+			if (ExcessType.EMIINADV.equals(payable.getPayableType())) {
 				rcd.setPaymentType(ReceiptMode.EMIINADV);
-			} else if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(payable.getPayableType())) {
+			} else if (ExcessType.EXCESS.equals(payable.getPayableType())) {
 				rcd.setPaymentType(ReceiptMode.EXCESS);
-			} else if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(payable.getPayableType())) {
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_ADVINT);
-			} else if (RepayConstants.EXAMOUNTTYPE_ADVEMI.equals(payable.getPayableType())) {
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_ADVEMI);
-			} else if (RepayConstants.EXAMOUNTTYPE_CASHCLT.equals(payable.getPayableType())) {
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_CASHCLT);
-			} else if (RepayConstants.EXAMOUNTTYPE_DSF.equals(payable.getPayableType())) {
-				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_DSF);
+			} else if (ExcessType.ADVINT.equals(payable.getPayableType())) {
+				rcd.setPaymentType(ExcessType.ADVINT);
+			} else if (ExcessType.ADVEMI.equals(payable.getPayableType())) {
+				rcd.setPaymentType(ExcessType.ADVEMI);
+			} else if (ExcessType.CASHCLT.equals(payable.getPayableType())) {
+				rcd.setPaymentType(ExcessType.CASHCLT);
+			} else if (ExcessType.DSF.equals(payable.getPayableType())) {
+				rcd.setPaymentType(ExcessType.DSF);
 			} else {
 				rcd.setPaymentType(ReceiptMode.PAYABLE);
 			}
@@ -1808,7 +1799,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		return receiptSeqId;
 	}
 
-	private void setRepayDetailData() throws InterruptedException {
+	private void setRepayDetailData() {
 		logger.debug("Entering");
 
 		// Repay Schedule Data rebuild
@@ -1879,12 +1870,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	 * Method for event of Changing Repayments Amount
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnChangeReceipt(Event event)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnChangeReceipt(Event event) {
 		doClearMessage();
 		doSetValidation();
 		doWriteComponentsToBean();
@@ -2142,10 +2129,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 
 	/**
 	 * Method for Writing Data into Fields from Bean
-	 * 
-	 * @throws InterruptedException
 	 */
-	private void doWriteBeanToComponents() throws InterruptedException {
+	private void doWriteBeanToComponents() {
 		logger.debug("Entering");
 
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
@@ -2165,19 +2150,11 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		fillComboBox(this.receiptPurpose, rch.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(),
 				",FeePayment,");
 		this.receiptPurpose.setDisabled(true);
-		/*
-		 * fillComboBox(this.excessAdjustTo, rch.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
-		 * "");
-		 */
-
-		if (finType.isDeveloperFinance()) {
-			fillComboBox(this.receiptMode, rch.getReceiptMode(), PennantStaticListUtil.getKnockOffFromVlaues(), "");
-		} else {
-			fillComboBox(this.receiptMode, rch.getReceiptMode(), PennantStaticListUtil.getKnockOffFromVlaues(), "");
-		}
 
 		if (isKnockOff) {
-			fillComboBox(this.receiptMode, rch.getReceiptMode(), PennantStaticListUtil.getKnockOffFromVlaues(), "A,P");
+			fillComboBox(this.receiptMode, rch.getReceiptMode(), ExcessType.getKnockOffFromList(), "A,P");
+		} else {
+			fillComboBox(this.receiptMode, rch.getReceiptMode(), ExcessType.getKnockOffFromList(), "");
 		}
 
 		this.receiptMode.setDisabled(true);
@@ -2344,7 +2321,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				exclude.add("S");
 			}
 
-			List<ValueLabel> excessAdjustToList = PennantStaticListUtil.getExcessAdjustmentTypes();
+			List<ValueLabel> excessAdjustToList = ExcessType.getAdjustmentList();
 
 			fillComboBox(excessAdjustTo, rch.getExcessAdjustTo(), excludeComboBox(excessAdjustToList, exclude));
 		} else {
@@ -2357,17 +2334,9 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			List<ValueLabel> epyMethodList = getEffectiveSchdMethods();
 			String defaultMethod = "";
 
-			// final String defMethod = getFinanceDetail().getFinScheduleData().getFinanceType().getFinScheduleOn();
-
 			if (!epyMethodList.isEmpty()) {
 				defaultMethod = StringUtils.isEmpty(rch.getEffectSchdMethod()) ? epyMethodList.get(0).getValue()
 						: rch.getEffectSchdMethod();
-
-				// PSD : 165320
-				/*
-				 * if(epyMethodList.stream().filter(o -> o.getValue().equals(defMethod)).findFirst().isPresent()){
-				 * defaultMethod = defMethod; }
-				 */
 			}
 
 			if (!getFinanceMain().isManualSchedule()) {
@@ -3201,7 +3170,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 					Labels.getLabel("label_ReceiptDialog_ReceivedFrom.value")));
 		}
 		if (this.excessAdjustTo.isVisible() && !this.excessAdjustTo.isDisabled()) {
-			this.excessAdjustTo.setConstraint(new StaticListValidator(PennantStaticListUtil.getExcessAdjustmentTypes(),
+			this.excessAdjustTo.setConstraint(new StaticListValidator(ExcessType.getAdjustmentList(),
 					Labels.getLabel("label_ReceiptDialog_ExcessAdjustTo.value")));
 		}
 		if (!this.allocationMethod.isDisabled()) {
@@ -3562,8 +3531,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	/**
 	 * Method for Processing Checklist Details when Check list Tab selected
 	 */
-	public void onSelectCheckListDetailsTab(ForwardEvent event)
-			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void onSelectCheckListDetailsTab(ForwardEvent event) {
 		this.doWriteComponentsToBean();
 
 		if (financeCheckListReferenceDialogCtrl != null) {
@@ -3577,8 +3545,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	/**
 	 * Method for Processing Agreement Details when Agreement list Tab selected
 	 */
-	public void onSelectAgreementDetailTab(ForwardEvent event)
-			throws IllegalAccessException, InvocationTargetException, InterruptedException, ParseException {
+	public void onSelectAgreementDetailTab(ForwardEvent event) {
 		this.doWriteComponentsToBean();
 
 		// refresh template tab
@@ -3590,10 +3557,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public FinanceDetail onExecuteStageAccDetail() throws Exception {
+	public FinanceDetail onExecuteStageAccDetail() {
 		logger.debug("Entering");
 
 		receiptData.getFinanceDetail().setModuleDefiner(FinServiceEvent.RECEIPT);
@@ -3763,9 +3728,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	 * @param auditHeader
 	 * @param method
 	 * @return
-	 * @throws Exception
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -4031,7 +3995,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		return repayScheduleDetails;
 	}
 
-	private boolean isValidateData(boolean isCalProcess) throws InterruptedException, InterfaceException {
+	private boolean isValidateData(boolean isCalProcess) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 		if (isCalProcess) {
 			doClearMessage();
@@ -4281,10 +4245,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	 * when user clicks on button "Notes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
-
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain());
 	}
 
@@ -4314,7 +4276,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	}
 
 	/** new code to display chart by skipping jsps code start */
-	public void onSelectDashboardTab(Event event) throws InterruptedException {
+	public void onSelectDashboardTab(Event event) {
 		logger.debug("Entering");
 
 		for (ChartDetail chartDetail : chartDetailList) {
@@ -4630,8 +4592,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		this.listBoxExcess.appendChild(item);
 	}
 
-	public void onClick$btnSearchFromFinreference(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering " + event.toString());
+	public void onClick$btnSearchFromFinreference(Event event) throws SuspendNotAllowedException {
+		logger.debug(Literal.ENTERING);
 
 		// Preparation of Finance Enquiry Data
 		FinReceiptHeader finReceiptHeader = receiptData.getReceiptHeader();
@@ -4662,11 +4624,11 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
 				this.windowCrossLoanKnockOffDialog, map);
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnSearchToFinreference(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering " + event.toString());
+	public void onClick$btnSearchToFinreference(Event event) throws SuspendNotAllowedException {
+		logger.debug(Literal.ENTERING);
 
 		// Preparation of Finance Enquiry Data
 		FinReceiptHeader finReceiptHeader = receiptData.getReceiptHeader();
@@ -4697,12 +4659,12 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
 				this.windowCrossLoanKnockOffDialog, map);
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onAllocateNetPaidChange(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
-		// FIXME: PV: CODE REVIEW PENDING
+
 		int idx = (int) event.getData();
 		String id = "AllocateNetPaid_" + idx;
 
@@ -4721,12 +4683,9 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		BigDecimal totalPaid = receiptCalculator.getPaidAmount(allocate, paidAmount);
 		allocate.setTotalPaid(paidAmount);
 		allocate.setPaidAmount(paidAmount);
-		// allocate.setPaidAmount(allocate.getTotRecv());
 
 		// GST Calculations
 		if (StringUtils.isNotBlank(allocate.getTaxType())) {
-			// always paid amount we are taking the inclusive type here because
-			// we are doing reverse calculation here
 			allocate.setPaidCGST(BigDecimal.ZERO);
 			allocate.setPaidSGST(BigDecimal.ZERO);
 			allocate.setPaidUGST(BigDecimal.ZERO);

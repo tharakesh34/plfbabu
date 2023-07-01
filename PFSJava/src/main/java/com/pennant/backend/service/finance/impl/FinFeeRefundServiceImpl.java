@@ -54,6 +54,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 
 /**
  * @author ganesh.p
@@ -828,7 +829,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 			excess = new FinExcessAmount();
 			excess.setFinID(frh.getFinID());
 			excess.setFinReference(frh.getFinReference());
-			excess.setAmountType(RepayConstants.EXCESSADJUSTTO_EXCESS);
+			excess.setAmountType(ExcessType.EXCESS);
 			excess.setAmount(excessAmt);
 			excess.setUtilisedAmt(BigDecimal.ZERO);
 			excess.setBalanceAmt(excessAmt);

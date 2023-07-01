@@ -28,7 +28,6 @@ package com.pennant.webui.filedownload;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -98,7 +97,7 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> {
 	protected Listbox listBoxCustomerDownload;
 	protected Paging pagingCustomerDownloadList;
 
-	@Autowired
+	@Autowired(required = false)
 	private GLEMSCustomerProcess glemsCustomerProcess;
 
 	protected Listheader listheader_CustCIF;
@@ -279,7 +278,7 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public String downloadFromServer(String filePath) throws FileNotFoundException, IOException {
+	public String downloadFromServer(String filePath) throws IOException {
 		String Path = App.getProperty("external.interface.glems.customer.path");
 		String CustomerPath = Path.concat(File.separator);
 		String fileName = StringUtils.substringAfter(filePath, CustomerPath);
@@ -508,7 +507,7 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> {
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}

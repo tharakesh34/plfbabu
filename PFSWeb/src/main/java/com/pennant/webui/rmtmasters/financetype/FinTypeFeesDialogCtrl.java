@@ -320,9 +320,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug(Literal.ENTERING);
 		doSave();
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -331,33 +331,31 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug(event.toString());
+		logger.debug(Literal.ENTERING);
 		doEdit();
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * when the "help" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+	public void onClick$btnHelp(Event event) {
+		logger.debug(Literal.ENTERING);
 		MessageUtil.showHelpWindow(event, window_FinTypeFeesDialog);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * when the "delete" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+	public void onClick$btnDelete(Event event) {
+		logger.debug(Literal.ENTERING);
 		doDelete();
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -366,9 +364,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug(event.toString());
+		logger.debug(Literal.ENTERING);
 		doCancel();
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -526,12 +524,11 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinTypeFees
-	 * @throws InterruptedException
 	 */
-	public void doWriteComponentsToBean(FinTypeFees aFinTypeFees) throws InterruptedException {
+	public void doWriteComponentsToBean(FinTypeFees aFinTypeFees) {
 		logger.debug("Entering");
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		ArrayList<WrongValueException> wve = new ArrayList<>();
 
 		try {
 			if (readIDValueFromExtCombobox(this.feeType) == null) {
@@ -694,7 +691,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -708,9 +705,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinTypeFees
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(FinTypeFees aFinTypeFees) throws InterruptedException {
+	public void doShowDialog(FinTypeFees aFinTypeFees) {
 		logger.debug("Entering");
 		// set Readonly mode accordingly if the object is new or not.
 		if (aFinTypeFees.isNewRecord()) {
@@ -819,7 +815,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		return false;
 	}
 
-	private void doDelete() throws InterruptedException {
+	private void doDelete() {
 		logger.debug(Literal.ENTERING);
 		final FinTypeFees aFinTypeFees = new FinTypeFees();
 		BeanUtils.copyProperties(getFinTypeFees(), aFinTypeFees);
@@ -1210,8 +1206,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		logger.debug("Leaving");
 	}
 
-	public void onFulfill$finEvent(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+	public void onFulfill$finEvent(Event event) {
+		logger.debug(Literal.ENTERING);
 
 		String excluedeFields = "";
 		this.ruleCode.setObject("");
@@ -1260,10 +1256,10 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 
 		doSetFeeSchdMethod(finEventValue);
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void onFulfill$feeType(Event event) throws InterruptedException {
+	public void onFulfill$feeType(Event event) {
 		this.ruleCode.setObject("");
 		this.ruleCode.setValue("", "");
 		doSetRuleFilters(this.ruleCode, "FEES");

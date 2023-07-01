@@ -24,8 +24,6 @@
  */
 package com.pennant.webui.finance.financemain;
 
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +48,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.legal.legaldetail.LegalDetailLoanListCtrl;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -174,12 +171,6 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	@Override
 	protected void doReadOnly() {
 		super.doReadOnly();
-	}
-
-	@Override
-	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
-		super.doWriteBeanToComponents(aFinanceDetail, onLoadProcess);
 	}
 
 	@Override

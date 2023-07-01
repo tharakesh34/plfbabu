@@ -1,9 +1,11 @@
 package com.pennant.backend.service.customermasters.impl;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +82,7 @@ public class CustomerEnquiryServiceImpl implements CustomerEnquiryService {
 		cd.setCustomerPhoneNumList(cd.getCustomerPhoneNumList().stream()
 				.sorted(Comparator.comparingInt(CustomerPhoneNumber::getPhoneTypePriority).reversed())
 				.collect(Collectors.toList()));
+		setPhoneNumbers(cd);
 		cd.setCustomerEMailList(cd.getCustomerEMailList().stream()
 				.sorted(Comparator.comparingInt(CustomerEMail::getCustEMailPriority).reversed())
 				.collect(Collectors.toList()));
@@ -88,6 +91,37 @@ public class CustomerEnquiryServiceImpl implements CustomerEnquiryService {
 		logger.debug(Literal.LEAVING);
 
 		return cd;
+	}
+
+	private void setPhoneNumbers(CustomerDetails cd) {
+		List<CustomerPhoneNumber> custPhoneNumbers = cd.getCustomerPhoneNumList();
+
+		List<CustomerPhoneNumber> mobileList = custPhoneNumbers.stream()
+				.filter(phone -> !"[0-9]{10,13}".equals(phone.getPhoneRegex())).toList();
+
+		if (CollectionUtils.isNotEmpty(mobileList)) {
+			mobileList = mobileList.stream()
+					.sorted(Comparator.comparingInt(CustomerPhoneNumber::getPhoneTypePriority).reversed())
+					.collect(Collectors.toList());
+			cd.setMobile1(mobileList.get(0).getPhoneNumber());
+			if (mobileList.size() > 1) {
+				cd.setMobile2(mobileList.get(1).getPhoneNumber());
+			}
+		}
+
+		List<CustomerPhoneNumber> phoneList = custPhoneNumbers.stream()
+				.filter(phone -> "[0-9]{10,13}".equals(phone.getPhoneRegex())).toList();
+
+		if (CollectionUtils.isNotEmpty(phoneList)) {
+			phoneList = phoneList.stream()
+					.sorted(Comparator.comparingInt(CustomerPhoneNumber::getPhoneTypePriority).reversed())
+					.collect(Collectors.toList());
+			cd.setPhone1(phoneList.get(0).getPhoneNumber());
+			if (phoneList.size() > 1) {
+				cd.setPhone2(phoneList.get(1).getPhoneNumber());
+			}
+		}
+
 	}
 
 	@Autowired

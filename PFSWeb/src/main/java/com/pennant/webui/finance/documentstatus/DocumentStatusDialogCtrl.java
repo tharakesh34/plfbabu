@@ -171,7 +171,7 @@ public class DocumentStatusDialogCtrl extends GFCBaseCtrl<DocumentStatusDetail> 
 		this.recordStatus.setValue(dsh.getRecordStatus());
 	}
 
-	public void onClick$btnSave(Event event) throws InterruptedException {
+	public void onClick$btnSave(Event event) {
 		doSave();
 	}
 
@@ -264,7 +264,7 @@ public class DocumentStatusDialogCtrl extends GFCBaseCtrl<DocumentStatusDetail> 
 
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.dsh);
 	}
 

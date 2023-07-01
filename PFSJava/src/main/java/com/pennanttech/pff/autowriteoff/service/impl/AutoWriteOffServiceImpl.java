@@ -43,9 +43,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinanceWriteoffService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
-import com.pennant.pff.excess.ExcessHead;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.autowriteoff.dao.AutoWriteOffDAO;
@@ -55,6 +53,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.util.SchdUtil;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class AutoWriteOffServiceImpl implements AutoWriteOffService {
@@ -185,16 +184,14 @@ public class AutoWriteOffServiceImpl implements AutoWriteOffService {
 		for (FinExcessAmount excess : excessDetails) {
 			String amountType = excess.getAmountType();
 
-			if (!(ExcessHead.isEmiInAdv(amountType) || ExcessHead.isExcess(amountType) || ExcessHead.isDsf(amountType)
-					|| ExcessHead.isCashclt(amountType))) {
-				continue;
+			if (ExcessType.isWriteOffReceiptAllowed(amountType)) {
+				awl = createReceipt(schdData, excess, null, receiptDTO, awl);
+				if (awl != null && awl.getCode() != null) {
+					logger.debug(Literal.LEAVING);
+					return awl;
+				}
 			}
 
-			awl = createReceipt(schdData, excess, null, receiptDTO, awl);
-			if (awl != null && awl.getCode() != null) {
-				logger.debug(Literal.LEAVING);
-				return awl;
-			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -251,7 +248,7 @@ public class AutoWriteOffServiceImpl implements AutoWriteOffService {
 		} else if (fea != null) {
 			receiptAmt = fea.getBalanceAmt();
 			payAgainstID = fea.getExcessID();
-			receiptMode = ExcessHead.valueOf(fea.getAmountType()).name();
+			receiptMode = ExcessType.getReceiptMode(fea.getAmountType());
 		}
 
 		FinanceMain fm = schdData.getFinanceMain();
@@ -268,7 +265,7 @@ public class AutoWriteOffServiceImpl implements AutoWriteOffService {
 		fsi.setAmount(receiptAmt);
 
 		fsi.setPaymentMode(receiptMode);
-		fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		fsi.setExcessAdjustTo(ExcessType.EXCESS);
 		fsi.setPanNumber(receiptDTO.getCustomer().getCustCRCPR());
 		fsi.setReqType("Post");
 		fsi.setNonStp(true);
@@ -308,6 +305,10 @@ public class AutoWriteOffServiceImpl implements AutoWriteOffService {
 		logger.debug(Literal.ENTERING);
 		FinanceWriteoffHeader header = financeWriteoffService.getFinanceWriteoffDetailById(finID, "_View", null,
 				FinServiceEvent.WRITEOFFPAY);
+
+		if (header.getFinanceWriteoff() == null) {
+			return header.getFinReference();
+		}
 
 		setWriteOffTotals(header);
 		header.setFinSource(UploadConstants.FINSOURCE_ID_AUTOPROCESS);

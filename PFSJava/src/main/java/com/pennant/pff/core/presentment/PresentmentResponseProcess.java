@@ -258,7 +258,7 @@ public class PresentmentResponseProcess implements Runnable {
 			pd.setManualAdviseId(null);
 
 			if (RepayConstants.PEXC_SUCCESS.equals(clearingStatus)) {
-				if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
+				if (PresentmentExtension.STAGE_ACCOUNTING_REQ) {
 					AEEvent event = doPresentmentStageAccounting(pd);
 					linkedTranId = event.getLinkedTranId();
 					pd.setLinkedTranId(linkedTranId);

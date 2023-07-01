@@ -78,6 +78,7 @@ import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 /**
  * ************************************************************<br>
@@ -560,7 +561,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processCSVUploadDetails(UploadHeader uploadHeader) throws IOException, Exception {
+	private void processCSVUploadDetails(UploadHeader uploadHeader) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		BufferedReader br = null;
@@ -791,10 +792,12 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			ma.setFinReference(finReference);
 			ma.setFinID(fm.getFinID());
 			ma.setValueDate(valueDate);
+			String feType = row.get(2);
+			FeeType feetype = uploadHeaderService.getApprovedFeeTypeByFeeCode(feeType);
 
 			BigDecimal eblAmount = manualAdviseService.getEligibleAmount(ma, fee);
 
-			if (advise.compareTo(eblAmount) > 0) {
+			if (!Allocation.ADHOC.equals(feetype.getPayableLinkTo()) && advise.compareTo(eblAmount) > 0) {
 				reason.append("Advise Amount should be less than or equal to Eligible Amount.");
 				error = true;
 			}
@@ -1127,7 +1130,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -1135,7 +1138,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onFulfill$downloadEntity(Event event) throws Exception {
+	public void onFulfill$downloadEntity(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doClearMessage();

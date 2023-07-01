@@ -125,7 +125,7 @@ public class LoanLetter implements Serializable {
 	private int loanCancellationAge;
 	private String closureType;
 	private int sequenceNo;
-	private String statusOfpreviousletters;
+	private String prvLetterCourierDeliveryStatus;
 	private String closureDate;
 	private String cancelDate;
 	private String letterSeqNo;
@@ -950,12 +950,12 @@ public class LoanLetter implements Serializable {
 		this.sequenceNo = sequenceNo;
 	}
 
-	public String getStatusOfpreviousletters() {
-		return statusOfpreviousletters;
+	public String getPrvLetterCourierDeliveryStatus() {
+		return prvLetterCourierDeliveryStatus;
 	}
 
-	public void setStatusOfpreviousletters(String statusOfpreviousletters) {
-		this.statusOfpreviousletters = statusOfpreviousletters;
+	public void setPrvLetterCourierDeliveryStatus(String prvLetterCourierDeliveryStatus) {
+		this.prvLetterCourierDeliveryStatus = prvLetterCourierDeliveryStatus;
 	}
 
 	public String getClosureDate() {
@@ -1001,6 +1001,7 @@ public class LoanLetter implements Serializable {
 		map.put("LetterSeqNo", this.letterSeqNo);
 		map.put("CSBCode", this.csbCode);
 		map.put("CSBDescription", this.csbDescription);
+		map.put("PrvLetterCourierDeliveryStatus", this.prvLetterCourierDeliveryStatus);
 
 		return map;
 	}

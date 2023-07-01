@@ -25,10 +25,10 @@ public class ExcessKnockOffQueueDAOImpl extends SequenceDao<CustEODEvent> implem
 
 	@Override
 	public int prepareQueue(BatchJobQueue jobQueue) {
-		String sql = "Insert Into Cross_Loan_KnockOff_Queue(ID, CustID) Select row_number() over(order by CustID) ID, CustID From (Select distinct CustID From Cross_Loan_KnockOff_Stage) T";
+		String sql = "Insert Into Cross_Loan_KnockOff_Queue(ID, CustID) Select row_number() over(order by CustID) ID, CustID From (Select distinct stg.CustID From Cross_Loan_KnockOff_Stage stg inner join Cross_Loan_KnockOff_Dtl_Stage dtlstg on dtlstg.ExcessId = stg.ID) T";
 
 		if (CustomerExtension.CUST_CORE_BANK_ID) {
-			sql = "Insert Into Cross_Loan_KnockOff_Queue(ID, CoreBankId) Select row_number() over(order by CoreBankId) ID, CoreBankId From (Select distinct CoreBankId From Cross_Loan_KnockOff_Stage) T";
+			sql = "Insert Into Cross_Loan_KnockOff_Queue(ID, CoreBankId) Select row_number() over(order by CoreBankId) ID, CoreBankId From (Select distinct stg.CoreBankId From Cross_Loan_KnockOff_Stage stg inner join Cross_Loan_KnockOff_Dtl_Stage dtlstg on dtlstg.ExcessId = stg.ID) T";
 		}
 
 		logger.debug(Literal.SQL.concat(sql));

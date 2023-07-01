@@ -52,6 +52,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennant.pff.settlement.dao.SettlementDAO;
 import com.pennant.pff.settlement.dao.SettlementScheduleDAO;
 import com.pennant.pff.settlement.model.FinSettlementHeader;
@@ -66,6 +67,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class SettlementServiceImpl extends GenericService<FinSettlementHeader> implements SettlementService {
@@ -590,16 +592,16 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 			extDataMap.put("ae_toExcessAmt", rch.getReceiptAmount());
 
 			switch (rch.getExcessAdjustTo()) {
-			case RepayConstants.EXCESSADJUSTTO_EXCESS:
+			case ExcessType.EXCESS:
 				extDataMap.put("ae_toExcessAmt", rch.getReceiptAmount());
 				break;
-			case RepayConstants.EXCESSADJUSTTO_EMIINADV:
+			case ExcessType.EMIINADV:
 				extDataMap.put("ae_toEmiAdvance", rch.getReceiptAmount());
 				break;
-			case RepayConstants.EXCESSADJUSTTO_TEXCESS:
+			case ExcessType.TEXCESS:
 				extDataMap.put("ae_toTExcessAmt", rch.getReceiptAmount());
 				break;
-			case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
+			case ExcessType.SETTLEMENT:
 				extDataMap.put("ae_toSettlement", rch.getReceiptAmount());
 				break;
 			default:
@@ -613,7 +615,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 
 			rch.getReceiptDetails().get(0).getRepayHeader().setLinkedTranId(aeEvent.getLinkedTranId());
-			finReceiptHeaderDAO.updateExcessAdjustTo(receiptID, RepayConstants.EXCESSADJUSTTO_EXCESS);
+			finReceiptHeaderDAO.updateExcessAdjustTo(receiptID, ExcessType.EXCESS);
 
 			FinRepayHeader finRepayHeader = new FinRepayHeader();
 			finRepayHeader.setRepayID(repayID);
@@ -621,8 +623,8 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 			finRepayHeader.setFinID(rch.getFinID());
 			financeRepaymentsDAO.updateLinkedTranId(finRepayHeader);
 
-			FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(rch.getFinID(),
-					RepayConstants.EXAMOUNTTYPE_SETTLEMENT, receiptID);
+			FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(rch.getFinID(), ExcessType.SETTLEMENT,
+					receiptID);
 
 			finExcessAmountDAO.updateUtiliseOnly(fea.getExcessID(), fea.getBalanceAmt());
 
@@ -646,7 +648,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 		FinExcessAmount excess = new FinExcessAmount();
 		excess.setFinID(fea.getFinID());
 		excess.setFinReference(fea.getFinReference());
-		excess.setAmountType(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		excess.setAmountType(ExcessType.EXCESS);
 		excess.setAmount(fea.getBalanceAmt());
 		excess.setUtilisedAmt(BigDecimal.ZERO);
 		excess.setBalanceAmt(fea.getBalanceAmt());
@@ -724,7 +726,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 		rch.setFinType(schdData.getFinanceMain().getFinType());
 		rch.setReceiptAmount(fsh.getSettlementAmount());
 		rch.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
-		rch.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+		rch.setExcessAdjustTo(ExcessType.EXCESS);
 		rch.setReceiptMode(ReceiptMode.EXCESS);
 		rch.setAllocationType(AllocationType.AUTO);
 		rch.setEffectSchdMethod(CalculationConstants.EARLYPAY_ADJMUR);
@@ -811,7 +813,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 
 		receiptData.setTotalPastDues(receiptCalculator.getTotalNetPastDue(receiptData));
 		rch.setReceiptAmount(actualReceiptAmount);
-		rch.setClosureType("Settled");
+		rch.setClosureType(ClosureType.SETTLED.code());
 		for (XcessPayables xcess : rch.getXcessPayables()) {
 			BigDecimal balAmount = xcess.getBalanceAmt();
 			if (actualReceiptAmount.compareTo(BigDecimal.ZERO) <= 0) {
@@ -863,8 +865,8 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 		for (FinReceiptHeader receipt : rl) {
 			long recID = receipt.getReceiptID();
 
-			FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(fsh.getFinID(),
-					RepayConstants.EXAMOUNTTYPE_SETTLEMENT, recID);
+			FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(fsh.getFinID(), ExcessType.SETTLEMENT,
+					recID);
 
 			finExcessAmountDAO.updateUtiliseOnly(fea.getExcessID(), fea.getBalanceAmt());
 

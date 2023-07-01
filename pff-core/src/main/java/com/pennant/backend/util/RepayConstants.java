@@ -64,27 +64,6 @@ public class RepayConstants {
 
 	// Manual Receipts Usage
 	public static final char REPAY_FEE = 'F';
-
-	// Excess Amounts to in Receipts
-	public static final String EXAMOUNTTYPE_EXCESS = "E";
-	public static final String EXAMOUNTTYPE_EMIINADV = "A";
-	public static final String EXAMOUNTTYPE_PAYABLE = "P";
-	public static final String EXAMOUNTTYPE_ADVINT = "ADVINT";
-	public static final String EXAMOUNTTYPE_ADVEMI = "ADVEMI";
-	public static final String EXAMOUNTTYPE_CASHCLT = "CASHCLT";
-	public static final String EXAMOUNTTYPE_DSF = "DSF";
-	public static final String EXAMOUNTTYPE_TEXCESS = "T";
-	public static final String EXAMOUNTTYPE_SETTLEMENT = "S";
-
-	// Excess Adjustment to in Receipts
-	public static final String EXCESSADJUSTTO_EXCESS = "E";
-	public static final String EXCESSADJUSTTO_EMIINADV = "A";
-	public static final String EXCESSADJUSTTO_PAYABLE = "P";
-	public static final String EXCESSADJUSTTO_BOUNCE = "B";
-	public static final String EXCESSADJUSTTO_SETTLEMENT = "S";
-	public static final String EXCESSADJUSTTO_TEXCESS = "T";
-	public static final String EXCESSADJUSTTO_RECADJ = "R";
-
 	public static final String REQTYPE_INQUIRY = "Inquiry";
 	public static final String REQTYPE_POST = "Post";
 

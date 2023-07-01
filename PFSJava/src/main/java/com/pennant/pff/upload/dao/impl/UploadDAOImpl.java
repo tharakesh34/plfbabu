@@ -290,6 +290,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 			ruh.setNextTaskId(rs.getString("NextTaskId"));
 			ruh.setRecordType(rs.getString("RecordType"));
 			ruh.setWorkflowId(rs.getLong("WorkflowId"));
+			ruh.setCreatedByName(rs.getString("UsrLogin"));
 
 			return ruh;
 		});

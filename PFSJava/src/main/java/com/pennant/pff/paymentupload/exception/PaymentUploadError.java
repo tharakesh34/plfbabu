@@ -52,7 +52,9 @@ public enum PaymentUploadError {
 
 	REFUP014("Duplicate Record is found in File for the Reference and Excess Type"),
 
-	REFUP015("Refunds not allowed for Written off Loan");
+	REFUP015("Refunds not allowed for Written off Loan"),
+
+	REFUP016("FeeTypeCode is Mandatory when excess type is Payable");
 
 	private String description;
 

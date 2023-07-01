@@ -295,6 +295,11 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 		boolean active = (boolean) selectedItem.getAttribute("active");
 		Rule rule = null;
 
+		if (RuleConstants.MODULE_SUBHEAD.equals(ruleModule) && "DEFAULT".equals(ruleCode)) {
+			MessageUtil.showMessage("Sub Head Rule [DEFAULT] is not allowed for maintenance.");
+			return;
+		}
+
 		if (RuleConstants.MODULE_FEEPERC.equals(this.ruleModule.getValue())) {
 			rule = ruleService.getActiveRuleByID(ruleCode, ruleModule, ruleEvent, active);
 		} else {

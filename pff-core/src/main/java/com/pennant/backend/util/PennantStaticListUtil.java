@@ -364,12 +364,8 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> minPrePaymentCalculationTypes;
 	private static List<ValueLabel> maxPrePaymentCalculationTypes;
 	private static List<ValueLabel> prePaymentCalculatedOn;
-	private static List<String> allowedExcessTypeList;
 	private static List<ValueLabel> enqSettlementStatus;
-	private static List<ValueLabel> excessTransferHead;
 	private static List<ValueLabel> sanctionStatusList;
-	private static List<ValueLabel> finTypeLetterType;
-	private static List<ValueLabel> finTypeLetterMappingMode;
 	private static List<ValueLabel> subCategory;
 
 	/**
@@ -3044,35 +3040,6 @@ public class PennantStaticListUtil {
 		return receiptPurposes;
 	}
 
-	public static List<ValueLabel> getExcessAdjustmentTypes() {
-		if (excessAdjustTo == null) {
-			excessAdjustTo = new ArrayList<ValueLabel>(2);
-			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EXCESS,
-					Labels.getLabel("label_ExcessAdjustTo_ExcessAmount")));
-			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EMIINADV,
-					Labels.getLabel("label_ExcessAdjustTo_EMIInAdvance")));
-			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_SETTLEMENT,
-					Labels.getLabel("label_ExcessAdjustTo_Settlement")));
-
-			if (ImplementationConstants.ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS) {
-				excessAdjustTo.add(new ValueLabel(ReceiptMode.CASHCLT,
-						Labels.getLabel("label_RecceiptDialog_ExcessType_CASHCLT")));
-				excessAdjustTo
-						.add(new ValueLabel(ReceiptMode.DSF, Labels.getLabel("label_RecceiptDialog_ExcessType_DSF")));
-			}
-			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_TEXCESS,
-					Labels.getLabel("label_RecceiptDialog_ExcessType_TEXCESS")));
-
-			// excessAdjustTo.add(new
-			// ValueLabel(RepayConstants.EXCESSADJUSTTO_PAYABLE,
-			// Labels.getLabel("label_ExcessAdjustTo_PayableAdvise")));
-			// excessAdjustTo.add(new
-			// ValueLabel(RepayConstants.EXCESSADJUSTTO_PARTPAY,
-			// Labels.getLabel("label_ExcessAdjustTo_PartialSettlement")));
-		}
-		return excessAdjustTo;
-	}
-
 	public static List<ValueLabel> getReceiptModes() {
 		if (receiptModes == null) {
 			receiptModes = new ArrayList<>(11);
@@ -4453,19 +4420,6 @@ public class PennantStaticListUtil {
 		return receiptChannels;
 	}
 
-	public static List<ValueLabel> getKnockOffFromVlaues() {
-		if (knockOffFrom == null) {
-			knockOffFrom = new ArrayList<>(3);
-			knockOffFrom.add(new ValueLabel(ReceiptMode.EXCESS, Labels.getLabel("label_Excess")));
-			knockOffFrom.add(new ValueLabel(ReceiptMode.EMIINADV, Labels.getLabel("label_EMI_Advance")));
-			knockOffFrom.add(new ValueLabel(ReceiptMode.PAYABLE, Labels.getLabel("label_Payable_Advice")));
-			knockOffFrom.add(new ValueLabel(ReceiptMode.CASHCLT, Labels.getLabel("label_CASHCLT")));
-			knockOffFrom.add(new ValueLabel(ReceiptMode.DSF, Labels.getLabel("label_DSF")));
-			knockOffFrom.add(new ValueLabel(ReceiptMode.PRESENTMENT, Labels.getLabel("label_PRESENTMENT")));
-		}
-		return knockOffFrom;
-	}
-
 	public static List<ValueLabel> getKnockOffPurpose() {
 		if (knockOffPurpose == null) {
 			knockOffPurpose = new ArrayList<>(3);
@@ -4489,17 +4443,6 @@ public class PennantStaticListUtil {
 
 		}
 		return loanClosurePurpose;
-	}
-
-	public static List<String> getExcessList() {
-		if (excessList == null) {
-			excessList = new ArrayList<>(3);
-			excessList.add(ReceiptMode.EXCESS);
-			excessList.add(ReceiptMode.EMIINADV);
-			excessList.add(ReceiptMode.PAYABLE);
-
-		}
-		return excessList;
 	}
 
 	public static List<ValueLabel> getCashPositionStatusList() {
@@ -5525,14 +5468,6 @@ public class PennantStaticListUtil {
 		return minPrePaymentCalculationTypes;
 	}
 
-	public static List<String> getAllowedExcessTypeList() {
-		if (allowedExcessTypeList == null) {
-			allowedExcessTypeList = new ArrayList<>(1);
-			allowedExcessTypeList.add(RepayConstants.EXAMOUNTTYPE_EXCESS);
-		}
-		return allowedExcessTypeList;
-	}
-
 	public static List<ValueLabel> getEnquirySettlementStatus() {
 		if (enqSettlementStatus == null) {
 			enqSettlementStatus = new ArrayList<>(3);
@@ -5544,21 +5479,6 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ReceiptModeStatus_Cancel")));
 		}
 		return enqSettlementStatus;
-	}
-
-	public static List<ValueLabel> getExcessTransferTypes() {
-		if (excessTransferHead == null) {
-			excessTransferHead = new ArrayList<>(3);
-			excessTransferHead.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EXCESS,
-					Labels.getLabel("label_ExcessAdjustTo_ExcessAmount")));
-			excessTransferHead.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EMIINADV,
-					Labels.getLabel("label_ExcessAdjustTo_EMIInAdvance")));
-			excessTransferHead.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_TEXCESS,
-					Labels.getLabel("label_RecceiptDialog_ExcessType_TEXCESS")));
-			excessTransferHead.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_SETTLEMENT,
-					Labels.getLabel("label_ExcessAdjustTo_Settlement")));
-		}
-		return excessTransferHead;
 	}
 
 	public static List<ValueLabel> getSanctionStatusList() {

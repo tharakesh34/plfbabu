@@ -147,7 +147,7 @@ public class BranchChangeUploadDAOImpl extends SequenceDao<BranchChangeUpload> i
 	@Override
 	public boolean getReceiptQueueList(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Reference From FinReceiptHeader_Temp fr");
+		sql.append(" count(Reference) From FinReceiptHeader_Temp fr");
 		sql.append(" Inner Join FinanceMain fm on fm.Finreference = fr.Reference");
 		sql.append(" Where fm.FinID = ?");
 

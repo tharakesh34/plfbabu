@@ -40,6 +40,7 @@ import com.pennant.backend.model.administration.SecurityUserAccess;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Cluster;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -107,9 +108,9 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 	public List<Branch> getBranches() {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("select branchcode, entity, clusterId from rmtbranches");
+		String sql = "select branchcode, entity, clusterId from rmtbranches";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 		RowMapper<Branch> typeRowMapper = BeanPropertyRowMapper.newInstance(Branch.class);
 
 		return this.jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), typeRowMapper);
@@ -258,6 +259,42 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 		this.jdbcTemplate.update(sql.toString(), parameterSource);
 		logger.debug(Literal.LEAVING);
 
+	}
+
+	@Override
+	public void deleteDivisionByAccessType(SecurityUserDivBranch branch) {
+		Object[] object = null;
+
+		StringBuilder sql = new StringBuilder("Delete From SecUserAccess");
+
+		object = getWhereConditionforDelete(branch, sql);
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		this.jdbcOperations.update(sql.toString(), object);
+	}
+
+	private Object[] getWhereConditionforDelete(SecurityUserDivBranch branch, StringBuilder sql) {
+		Object[] object = null;
+		switch (branch.getAccessType()) {
+		case PennantConstants.ACCESSTYPE_ENTITY:
+			object = new Object[] { branch.getUsrID(), branch.getUserDivision(), branch.getAccessType() };
+			sql.append(" Where UsrID = ? and Division = ? and AccessType = ?");
+			return object;
+		case PennantConstants.ACCESSTYPE_CLUSTER:
+			object = new Object[] { branch.getUsrID(), branch.getUserDivision(), branch.getAccessType(),
+					branch.getEntity(), branch.getClusterType() };
+			sql.append(" Where UsrID = ? and Division = ? and AccessType = ? and Entity = ? and ClusterType = ?");
+			return object;
+		case PennantConstants.ACCESSTYPE_BRANCH:
+			object = new Object[] { branch.getUsrID(), branch.getUserDivision(), branch.getAccessType(),
+					branch.getEntity(), branch.getParentCluster() };
+			sql.append(" Where UsrID = ? and Division = ? and AccessType = ? and Entity = ? and ParentCluster = ?");
+			return object;
+		default:
+			break;
+		}
+		return null;
 	}
 
 }

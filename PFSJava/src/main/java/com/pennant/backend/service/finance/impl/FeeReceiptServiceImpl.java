@@ -94,6 +94,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennapps.core.util.ObjectUtil;
 
@@ -558,7 +559,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		rch.setTaskId("");
 		rch.setNextTaskId("");
 		rch.setWorkflowId(0);
-		rch.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+		rch.setExcessAdjustTo(ExcessType.EXCESS);
 
 		if (StringUtils.isEmpty(rch.getExtReference())) {
 			rch.setExtReference(rch.getReference());
@@ -1087,7 +1088,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		header.setReceiptID(receiptId);
 		header.setReceiptPurpose(FinServiceEvent.FEEPAYMENT);
-		header.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+		header.setExcessAdjustTo(ExcessType.EXCESS);
 		header.setAllocationType(AllocationType.AUTO);
 		header.setReceiptAmount(fsi.getAmount());
 		header.setEffectSchdMethod(PennantConstants.List_Select);

@@ -38,6 +38,7 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -473,6 +474,8 @@ public class FeeCalculator {
 
 		prepareExecutionMap(rd, fm, dataMap);
 
+		int formatter = CurrencyUtil.getFormat(fm.getFinCcy());
+
 		String finCcy = fm.getFinCcy();
 
 		for (FinFeeDetail fee : feeList) {
@@ -482,6 +485,8 @@ public class FeeCalculator {
 
 			BigDecimal feeResult = this.finFeeDetailService.getFeeResult(ruleSqlMap.get(fee.getRuleCode()), dataMap,
 					finCcy);
+
+			feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
 
 			fee.setCalculatedAmount(feeResult);
 

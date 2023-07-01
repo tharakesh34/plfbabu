@@ -82,6 +82,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class AutoKnockOffProcessService {
@@ -136,7 +137,7 @@ public class AutoKnockOffProcessService {
 		}
 		// header.setPayAgainstId(knockOffData.getPayableId());
 		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-		rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		rch.setExcessAdjustTo(ExcessType.EXCESS);
 		rch.setAllocationType(AllocationType.AUTO);
 		rch.setEffectSchdMethod(PennantConstants.List_Select);
 		rch.setActFinReceipt(true);

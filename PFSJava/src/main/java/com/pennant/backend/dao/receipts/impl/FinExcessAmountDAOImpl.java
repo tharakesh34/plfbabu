@@ -20,7 +20,6 @@ import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
@@ -32,6 +31,7 @@ import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennanttech.pff.receipt.constants.ExcessType;
 
 /**
  * DAO methods implementation for the <b>Finance Repayments</b> class.<br>
@@ -480,7 +480,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		RowMapper<FinExcessAmount> rowMapper = new ExcessAmountRowMapper();
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, "UPFRONT", finID,
-					RepayConstants.EXAMOUNTTYPE_EXCESS, receiptId);
+					ExcessType.EXCESS, receiptId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -1028,7 +1028,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return jdbcOperations.queryForObject(sql, BigDecimal.class, finID, RepayConstants.EXAMOUNTTYPE_EXCESS);
+			return jdbcOperations.queryForObject(sql, BigDecimal.class, finID, ExcessType.EXCESS);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return BigDecimal.ZERO;
@@ -1046,7 +1046,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			int index = 0;
 
 			ps.setLong(++index, finID);
-			ps.setString(++index, RepayConstants.EXAMOUNTTYPE_EXCESS);
+			ps.setString(++index, ExcessType.EXCESS);
 			ps.setBigDecimal(++index, BigDecimal.ZERO);
 			ps.setDate(++index, JdbcUtil.getDate(maxValueDate));
 		}, new ExcessAmountRowMapper());

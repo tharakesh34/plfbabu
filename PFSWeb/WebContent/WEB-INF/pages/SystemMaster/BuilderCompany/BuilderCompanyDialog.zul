@@ -138,7 +138,7 @@
 									<label id="label_DevAvailablity" value="${c:l('label_BuilderCompanyDialog_DevAvailablity.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<intbox id="devavailablity" width="150px" style="text-align:right" />
+										<decimalbox id="devavailablity" maxlength="19" width="150px" />
 									</hbox>
 								</row>
 								<row id="row8">
@@ -157,7 +157,7 @@
 									<label id="label_TotalProj" value="${c:l('label_BuilderCompanyDialog_TotalProj.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<intbox id="totalProj" maxlength="3" width="150px" style="text-align:right" />
+										<decimalbox id="totalProj" maxlength="3" width="150px" style="text-align:right" />
 									</hbox>
 									<label id="label_Approved" value="${c:l('label_BuilderCompanyDialog_Approved.value')}" />
 									<hbox>
@@ -217,7 +217,7 @@
 									<label id="label_CurrentExpUni" value="${c:l('label_BuilderCompanyDialog_CurrentExpUni.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<intbox id="currentExpUni" maxlength="18" width="150px" style="text-align:right" />
+										<decimalbox id="currentExpUni" maxlength="18" width="150px" style="text-align:right" />
 									</hbox>
 								</row>
 								<row id="row15">
@@ -257,13 +257,13 @@
 									<label id="label_NoOfProj" value="${c:l('label_BuilderCompanyDialog_NoOfProj.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" id="space_NoOfProj" />
-										<intbox id="noOfProj" width="150px" style="text-align:right" />
+										<decimalbox id="noOfProj" width="150px" style="text-align:right" />
 									</hbox>
 
 									<label id="label_AssHLPlayers" value="${c:l('label_BuilderCompanyDialog_AssHLPlayers.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" id="space_AssHLPlayers" />
-										<intbox id="assHLPlayers" maxlength="3" width="150px" style="text-align:right" />
+										<decimalbox id="assHLPlayers" maxlength="3" width="150px" style="text-align:right" />
 									</hbox>
 
 								</row>
@@ -271,13 +271,13 @@
 									<label id="label_OnGoingProj" value="${c:l('label_BuilderCompanyDialog_OnGoingProj.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" id="space_OnGoingProj" />
-										<intbox id="onGoingProj" width="150px" style="text-align:right" />
+										<decimalbox id="onGoingProj" width="150px" style="text-align:right" />
 									</hbox>
 
 									<label id="label_ExpInBusiness" value="${c:l('label_BuilderCompanyDialog_ExpInBusiness.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" id="space_ExpInBusiness" />
-										<intbox id="expInBusiness" maxlength="3" width="150px" style="text-align:right" />
+										<decimalbox id="expInBusiness" maxlength="3" width="150px" style="text-align:right" />
 									</hbox>
 
 								</row>
@@ -291,7 +291,7 @@
 									<label id="label_MagintudeInLacs" value="${c:l('label_BuilderCompanyDialog_MagintudeInLacs.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" id="space_MagintudeInLacs" />
-										<intbox id="magintudeInLacs" width="150px" style="text-align:right" />
+										<decimalbox id="magintudeInLacs" width="150px" style="text-align:right" />
 									</hbox>
 
 								</row>
@@ -299,7 +299,7 @@
 									<label id="label_NoOfProjCons" value="${c:l('label_BuilderCompanyDialog_NoOfProjCons.value')}" />
 									<hbox>
 										<space spacing="2px" id="space_NoOfProjCons" />
-										<intbox id="noOfProjCons" width="150px" style="text-align:right" />
+										<decimalbox id="noOfProjCons" width="150px" style="text-align:right" />
 									</hbox>
 								</row>
 							</rows>

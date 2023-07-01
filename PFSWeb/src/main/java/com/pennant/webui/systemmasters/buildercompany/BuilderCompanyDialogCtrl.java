@@ -24,6 +24,7 @@
  */
 package com.pennant.webui.systemmasters.buildercompany;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -47,7 +48,6 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
-import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Space;
@@ -117,10 +117,10 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 	protected ExtendedCombobox city;
 	protected ExtendedCombobox state;
 	protected ExtendedCombobox code;
-	protected Intbox devavailablity;
+	protected Decimalbox devavailablity;
 	protected Decimalbox magnitude;
 	protected Decimalbox absavailablity;
-	protected Intbox totalProj;
+	protected Decimalbox totalProj;
 	protected Combobox approved;
 	protected Textbox remarks;
 	protected Textbox panDetails;
@@ -131,16 +131,16 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 	protected Textbox ifsc;
 	protected CurrencyBox limitOnAmt;
 	protected Decimalbox limitOnUnits;
-	protected Intbox currentExpUni;
+	protected Decimalbox currentExpUni;
 	protected CurrencyBox currentExpAmt;
 	protected Datebox dateOfInCop;
-	protected Intbox noOfProj;
-	protected Intbox assHLPlayers;
-	protected Intbox onGoingProj;
-	protected Intbox expInBusiness;
+	protected Decimalbox noOfProj;
+	protected Decimalbox assHLPlayers;
+	protected Decimalbox onGoingProj;
+	protected Decimalbox expInBusiness;
 	protected Combobox recommendation;
-	protected Intbox magintudeInLacs;
-	protected Intbox noOfProjCons;
+	protected Decimalbox magintudeInLacs;
+	protected Decimalbox noOfProjCons;
 	protected Label bankNameDesc;
 	protected Button btnSearchCustId;
 	protected Label custDesc;
@@ -734,7 +734,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 			wve.add(we);
 		}
 		try {
-			aBuilderCompany.setDevavailablity(this.devavailablity.intValue());
+			aBuilderCompany.setDevavailablity(this.devavailablity.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -748,7 +748,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		 * this.totalProj.getValue())); } catch (WrongValueException we) { wve.add(we); }
 		 */
 		try {
-			aBuilderCompany.setTotalProj(this.totalProj.intValue());
+			aBuilderCompany.setTotalProj(this.totalProj.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -775,7 +775,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		}
 		try {
 			doValidate(this.noOfProj, "label_BuilderCompanyDialog_NoOfProj.value");
-			aBuilderCompany.setNoOfProj(this.noOfProj.intValue());
+			aBuilderCompany.setNoOfProj(this.noOfProj.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -794,7 +794,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 
 		try {
 			if (this.currentExpUni.getValue() != null) {
-				aBuilderCompany.setCurrentExpUni(this.currentExpUni.intValue());
+				aBuilderCompany.setCurrentExpUni(this.currentExpUni.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -812,31 +812,31 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 			wve.add(we);
 		}
 		try {
-			aBuilderCompany.setNoOfProjCons(this.noOfProjCons.intValue());
+			aBuilderCompany.setNoOfProjCons(this.noOfProjCons.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			doValidate(this.assHLPlayers, "label_BuilderCompanyDialog_AssHLPlayers.value");
-			aBuilderCompany.setAssHLPlayers(this.assHLPlayers.intValue());
+			aBuilderCompany.setAssHLPlayers(this.assHLPlayers.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			doValidate(this.onGoingProj, "label_BuilderCompanyDialog_OnGoingProj.value");
-			aBuilderCompany.setOnGoingProj(this.onGoingProj.intValue());
+			aBuilderCompany.setOnGoingProj(this.onGoingProj.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			doValidate(this.expInBusiness, "label_BuilderCompanyDialog_ExpInBusiness.value");
-			aBuilderCompany.setExpInBusiness(this.expInBusiness.intValue());
+			aBuilderCompany.setExpInBusiness(this.expInBusiness.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			doValidate(this.magintudeInLacs, "label_BuilderCompanyDialog_MagintudeInLacs.value");
-			aBuilderCompany.setMagintudeInLacs(this.magintudeInLacs.intValue());
+			aBuilderCompany.setMagintudeInLacs(this.magintudeInLacs.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -864,12 +864,12 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doValidate(Intbox component, String lable) {
-		Integer value = component.getValue();
+	private void doValidate(Decimalbox component, String lable) {
+		BigDecimal value = component.getValue();
 		if (value == null && PennantConstants.BRANCH_APF.equals(getComboboxValue(this.apfType))) {
 			throw new WrongValueException(component,
 					Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel(lable) }));
-		} else if (value != null && value < 0) {
+		} else if (value != null && value.compareTo(BigDecimal.ZERO) < 0) {
 			throw new WrongValueException(component,
 					Labels.getLabel("NUMBER_NOT_NEGATIVE", new String[] { Labels.getLabel(lable) }));
 		}
@@ -934,8 +934,8 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 					Labels.getLabel("label_BuilderCompanyDialog_groupId.value"), null, true, true));
 		}
 		if (!this.apfType.isDisabled()) {
-			this.apfType.setConstraint(
-					new PTListValidator<ValueLabel>(Labels.getLabel("label_BuilderCompany_BranchAPF.value"), aPFTypeList, false));
+			this.apfType.setConstraint(new PTListValidator<ValueLabel>(
+					Labels.getLabel("label_BuilderCompany_BranchAPF.value"), aPFTypeList, false));
 		}
 		if (!this.cityType.isDisabled()) {
 			this.cityType.setConstraint(new PTListValidator<ValueLabel>(

@@ -184,6 +184,8 @@ public class AccountingEvent {
 			excludeEvents.add(AccountingEvent.PROVCHG);
 		}
 
+		excludeEvents.add(AccountingEvent.BRNCHG);
+		
 		return excludeEvents;
 	}
 }
