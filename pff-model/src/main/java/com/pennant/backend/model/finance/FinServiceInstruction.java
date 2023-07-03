@@ -123,6 +123,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private String remarks;
 	@XmlElement
 	private String repayFrq;
+	@XmlElement
 	private String repayPftFrq;
 	private String repayRvwFrq;
 	private String repayCpzFrq;

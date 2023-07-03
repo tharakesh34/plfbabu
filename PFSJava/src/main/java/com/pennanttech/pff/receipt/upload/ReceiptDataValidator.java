@@ -322,11 +322,13 @@ public class ReceiptDataValidator {
 		}
 
 		String strCollectionAgentId = rud.getStrCollectionAgentId();
-		if (StringUtils.isNumeric(strCollectionAgentId)) {
-			rud.setCollectionAgentId(Long.parseLong(strCollectionAgentId));
-		} else {
-			setError(rud, "Non numeric value in [COLLECTIONAGENT] ");
-			return;
+		if (StringUtils.isNotBlank(strCollectionAgentId)) {
+			if (StringUtils.isNumeric(strCollectionAgentId)) {
+				rud.setCollectionAgentId(Long.parseLong(strCollectionAgentId));
+			} else {
+				setError(rud, "Non numeric value in [COLLECTIONAGENT] ");
+				return;
+			}
 		}
 
 		if (RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus) || RepayConstants.PAYSTATUS_CANCEL.equals(modeStatus)) {

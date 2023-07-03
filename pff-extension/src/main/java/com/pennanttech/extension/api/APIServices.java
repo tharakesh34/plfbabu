@@ -218,6 +218,7 @@ public class APIServices {
 		services.add("getRateChangeDetails");
 		services.add("getChargeDetails");
 		services.add("getSecurityUser");
+		services.add("reScheduling");
 		return services;
 	}
 
