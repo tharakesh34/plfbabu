@@ -3005,8 +3005,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 		}
 
-		List<FeeWaiverDetail> feeWaiverDetails = feeWaiver.getFeeWaiverDetails();
-		for (FeeWaiverDetail fwd : feeWaiverDetails) {
+
+		for (FeeWaiverDetail fwd : feeWaiver.getFeeWaiverDetails()) {
 			if (fwd.getBalanceAmount() != null && fwd.getBalanceAmount().compareTo(BigDecimal.ZERO) > 0) {
 				actaulfeeWaiverDetails.add(fwd);
 			}
@@ -3032,7 +3032,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 
-		for (FeeWaiverDetail fwd : feeWaiverDetails) {
+		for (FeeWaiverDetail fwd : feeWaiver.getFeeWaiverDetails()) {
 			if (StringUtils.isBlank(fwd.getFeeTypeCode())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "FeeType Code";
@@ -3047,7 +3047,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		// Validating The Waiver amount with the Balance
 
 		BigDecimal totCurWaivedAmt = BigDecimal.ZERO;
-		for (FeeWaiverDetail fwd : feeWaiverDetails) {
+		for (FeeWaiverDetail fwd : feeWaiver.getFeeWaiverDetails()) {
 			for (FeeWaiverDetail compareWithBalance : actaulfeeWaiverDetails) {
 				if (StringUtils.equals(fwd.getFeeTypeCode(), compareWithBalance.getFeeTypeCode())) {
 					BigDecimal balanceAmount = compareWithBalance.getReceivableAmount();
@@ -3081,7 +3081,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 		boolean feeCode = false;
-		for (FeeWaiverDetail feeWaiverDetail : feeWaiverDetails) {
+		for (FeeWaiverDetail feeWaiverDetail : feeWaiver.getFeeWaiverDetails()) {
 			for (FeeWaiverDetail compareWithBalance : actaulfeeWaiverDetails) {
 				if (StringUtils.equals(feeWaiverDetail.getFeeTypeCode(), compareWithBalance.getFeeTypeCode())) {
 					feeCode = true;
